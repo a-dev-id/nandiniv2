@@ -11,28 +11,31 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pages', function (Blueprint $table) {
+        Schema::create('page_sections', function (Blueprint $table) {
             $table->id();
 
-            $table->string('title');
-            $table->string('slug')->unique();
+            $table->foreignId('page_id')
+                ->constrained('pages')
+                ->cascadeOnDelete();
 
+            $table->string('section_key')->nullable();
+            $table->string('title')->nullable();
             $table->string('subtitle')->nullable();
             $table->text('excerpt')->nullable();
             $table->longText('description')->nullable();
 
-            $table->string('hero_image')->nullable();
-            $table->string('hero_mobile_image')->nullable();
+            $table->string('image')->nullable();
+            $table->string('mobile_image')->nullable();
 
-            $table->string('meta_title')->nullable();
-            $table->text('meta_description')->nullable();
+            $table->string('button_label')->nullable();
+            $table->string('button_url')->nullable();
 
             $table->boolean('is_active')->default(true);
             $table->unsignedInteger('sort_order')->default(0);
 
             $table->timestamps();
 
-            $table->index(['is_active', 'sort_order']);
+            $table->index(['page_id', 'is_active', 'sort_order']);
         });
     }
 
@@ -41,6 +44,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pages');
+        Schema::dropIfExists('page_sections');
     }
 };

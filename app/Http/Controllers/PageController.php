@@ -1,0 +1,67 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Offer;
+use App\Models\Page;
+use Illuminate\View\View;
+
+class PageController extends Controller
+{
+    public function home(): View
+    {
+        $page = Page::query()
+            ->with([
+                'sections' => function ($query) {
+                    $query
+                        ->where('is_active', true)
+                        ->orderBy('sort_order');
+                },
+            ])
+            ->where('slug', 'home')
+            ->where('is_active', true)
+            ->first();
+
+        $featuredOffers = Offer::query()
+            ->where('is_active', true)
+            ->where('is_featured', true)
+            ->where(function ($query) {
+                $query
+                    ->whereNull('valid_start_date')
+                    ->orWhereDate('valid_start_date', '<=', today());
+            })
+            ->where(function ($query) {
+                $query
+                    ->whereNull('valid_end_date')
+                    ->orWhereDate('valid_end_date', '>=', today());
+            })
+            ->orderBy('sort_order')
+            ->orderByDesc('valid_start_date')
+            ->limit(6)
+            ->get();
+
+        return view('pages.home', [
+            'page' => $page,
+            'featuredOffers' => $featuredOffers,
+        ]);
+    }
+
+    public function show(string $slug): View
+    {
+        $page = Page::query()
+            ->with([
+                'sections' => function ($query) {
+                    $query
+                        ->where('is_active', true)
+                        ->orderBy('sort_order');
+                },
+            ])
+            ->where('slug', $slug)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        return view('pages.show', [
+            'page' => $page,
+        ]);
+    }
+}

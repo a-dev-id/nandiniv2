@@ -3,24 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Page extends Model
+class PageSection extends Model
 {
     protected $fillable = [
+        'page_id',
+        'section_key',
         'title',
-        'slug',
         'subtitle',
         'excerpt',
         'description',
-
-        'hero_image',
-        'hero_image_alt',
-        'hero_mobile_image',
-        'hero_mobile_image_alt',
-
-        'meta_title',
-        'meta_description',
+        'button_label',
+        'button_url',
         'is_active',
         'sort_order',
     ];
@@ -30,8 +26,13 @@ class Page extends Model
         'sort_order' => 'integer',
     ];
 
-    public function sections(): HasMany
+    public function page(): BelongsTo
     {
-        return $this->hasMany(PageSection::class)->orderBy('sort_order');
+        return $this->belongsTo(Page::class);
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(PageSectionImage::class)->orderBy('sort_order');
     }
 }
