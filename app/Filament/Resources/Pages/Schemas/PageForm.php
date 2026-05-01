@@ -30,6 +30,13 @@ class PageForm
                     ])
                     ->columns(2)
                     ->schema([
+                        TextInput::make('page_name')
+                            ->required()
+                            ->maxLength(255)
+                            ->label('Page Name')
+                            ->columnSpanFull()
+                            ->helperText('Unique name for internal reference, e.g., "Home", "About Us".'),
+
                         TextInput::make('title')
                             ->required()
                             ->maxLength(255)
@@ -61,6 +68,45 @@ class PageForm
                                 ['undo', 'redo'],
                             ])
                             ->columnSpanFull(),
+
+                        Section::make('SEO')
+                            ->columnSpanFull()
+                            ->schema([
+                                TextInput::make('meta_title')
+                                    ->label('Meta Title')
+                                    ->live(debounce: 500)
+                                    ->maxLength(70)
+                                    ->helperText(function (?string $state): string {
+                                        $text = trim($state ?? '');
+                                        $characters = mb_strlen($text);
+
+                                        return "{$characters}/60 characters recommended";
+                                    }),
+
+                                Textarea::make('meta_description')
+                                    ->label('Meta Description')
+                                    ->rows(3)
+                                    ->live(debounce: 500)
+                                    ->maxLength(180)
+                                    ->helperText(function (?string $state): string {
+                                        $text = trim($state ?? '');
+                                        $characters = mb_strlen($text);
+
+                                        return "{$characters}/160 characters recommended";
+                                    }),
+                            ]),
+
+                        Section::make('Settings')
+                            ->columnSpanFull()
+                            ->schema([
+                                Toggle::make('is_active')
+                                    ->label('Active')
+                                    ->default(true)
+                                    ->required(),
+
+                                Hidden::make('sort_order')
+                                    ->default(0),
+                            ]),
                     ]),
 
                 Grid::make()
@@ -123,30 +169,6 @@ class PageForm
                                     ->label('Mobile Alt Text')
                                     ->placeholder('Example: Nandini Jungle resort view on mobile hero image')
                                     ->maxLength(255),
-                            ]),
-
-                        Section::make('SEO')
-                            ->columnSpanFull()
-                            ->schema([
-                                TextInput::make('meta_title')
-                                    ->label('Meta Title')
-                                    ->maxLength(255),
-
-                                Textarea::make('meta_description')
-                                    ->label('Meta Description')
-                                    ->rows(3),
-                            ]),
-
-                        Section::make('Settings')
-                            ->columnSpanFull()
-                            ->schema([
-                                Toggle::make('is_active')
-                                    ->label('Active')
-                                    ->default(true)
-                                    ->required(),
-
-                                Hidden::make('sort_order')
-                                    ->default(0),
                             ]),
                     ]),
             ]);

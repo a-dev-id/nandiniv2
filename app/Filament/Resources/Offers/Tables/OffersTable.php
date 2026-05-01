@@ -9,6 +9,7 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
@@ -25,10 +26,13 @@ class OffersTable
                     ->label($isReordering ? 'Done sorting' : 'Sort offers')
             )
             ->columns([
-                ImageColumn::make('card_image')
+                ImageColumn::make('preview_image')
                     ->label('Image')
                     ->disk('public')
-                    ->square(),
+                    ->square()
+                    ->getStateUsing(fn($record): ?string => $record->card_image
+                        ?: $record->hero_image
+                        ?: $record->hero_mobile_image),
 
                 TextColumn::make('title')
                     ->label('Offer')
@@ -68,9 +72,8 @@ class OffersTable
                     ->boolean()
                     ->sortable(),
 
-                IconColumn::make('is_active')
+                ToggleColumn::make('is_active')
                     ->label('Active')
-                    ->boolean()
                     ->sortable(),
 
                 TextColumn::make('valid_start_date')
@@ -84,11 +87,6 @@ class OffersTable
                     ->date('d M Y')
                     ->sortable()
                     ->placeholder('-'),
-
-                TextColumn::make('excerpt')
-                    ->label('Excerpt')
-                    ->limit(60)
-                    ->toggleable(),
 
                 TextColumn::make('button_label')
                     ->label('Button')
@@ -112,12 +110,6 @@ class OffersTable
                     ->numeric()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-
-                TextColumn::make('updated_at')
-                    ->label('Updated')
-                    ->dateTime('d M Y H:i')
-                    ->sortable()
-                    ->toggleable(),
 
                 TextColumn::make('created_at')
                     ->label('Created')

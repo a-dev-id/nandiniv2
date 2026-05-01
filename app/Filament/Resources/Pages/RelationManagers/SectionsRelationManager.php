@@ -19,6 +19,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -48,19 +49,19 @@ class SectionsRelationManager extends RelationManager
                     ->schema([
                         Select::make('section_key')
                             ->label('Section Type')
+                            ->required()
+                            ->native(false)
+                            ->live()
                             ->options([
-                                'intro' => 'Intro / Text Section',
-                                'split_media' => 'Split Media Section',
+                                'intro_text_section' => 'Intro / Text Section',
+                                'image_overlay_section' => 'Image Overlay Section',
+                                'split_media_section' => 'Split Media Section',
                                 'split_media_reverse' => 'Split Media Reverse',
-                                'two_column_text' => 'Two Column Text',
-                                'image_banner' => 'Image Banner',
-                                'three_images' => 'Three Images Section',
-                                'gallery' => 'Gallery Section',
-                                'cta_banner' => 'CTA Banner',
-                                'custom' => 'Custom Section',
+                                'three_images_section' => 'Three Images Section',
+                                'two_images_section' => 'Two Images Section',
+                                'two_images_reverse' => 'Two Images Reverse',
                             ])
-                            ->default('intro')
-                            ->required(),
+                            ->default('intro_text_section'),
 
                         TextInput::make('title')
                             ->maxLength(255),
@@ -94,6 +95,14 @@ class SectionsRelationManager extends RelationManager
                             ->columnSpanFull()
                             ->columns(2)
                             ->itemLabel(fn(array $state): string => $state['image_alt'] ?? $state['caption'] ?? 'Section Image')
+                            ->visible(fn(Get $get): bool => in_array($get('section_key'), [
+                                'image_overlay_section',
+                                'split_media_section',
+                                'split_media_reverse',
+                                'three_images_section',
+                                'two_images_section',
+                                'two_images_reverse',
+                            ], true))
                             ->schema([
                                 FileUpload::make('image')
                                     ->label('Desktop Image')
@@ -152,8 +161,7 @@ class SectionsRelationManager extends RelationManager
                                     ->maxLength(255)
                                     ->columnSpanFull(),
 
-                                Toggle::make('is_active')
-                                    ->label('Active')
+                                Hidden::make('is_active')
                                     ->default(true),
 
                                 Hidden::make('sort_order')
@@ -169,14 +177,57 @@ class SectionsRelationManager extends RelationManager
                     ->schema([
                         Section::make('Button')
                             ->columnSpanFull()
+                            ->visible(fn(Get $get): bool => in_array($get('section_key'), [
+                                'image_overlay_section',
+                                'split_media_section',
+                                'split_media_reverse',
+                                'three_images_section',
+                                'two_images_section',
+                                'two_images_reverse',
+                            ], true))
                             ->schema([
                                 TextInput::make('button_label')
                                     ->label('Button Label')
                                     ->maxLength(255),
 
+                                Select::make('button_link_type')
+                                    ->label('Button Link Type')
+                                    ->native(false)
+                                    ->live()
+                                    ->options([
+                                        'manual' => 'Manual Link',
+                                        'route' => 'Route',
+                                    ])
+                                    ->default('manual')
+                                    ->required(),
+
                                 TextInput::make('button_url')
-                                    ->label('Button URL')
-                                    ->maxLength(255),
+                                    ->label('Manual Button URL')
+                                    ->placeholder('Example: /offers or https://example.com')
+                                    ->maxLength(255)
+                                    ->visible(fn(Get $get): bool => $get('button_link_type') === 'manual'),
+
+                                TextInput::make('button_route')
+                                    ->label('Button Route')
+                                    ->placeholder('Example: offers.index')
+                                    ->maxLength(255)
+                                    ->visible(fn(Get $get): bool => $get('button_link_type') === 'route'),
+                            ]),
+
+                        Section::make('Layout')
+                            ->columnSpanFull()
+                            ->visible(fn(Get $get): bool => $get('section_key') === 'image_overlay_section')
+                            ->schema([
+                                Select::make('text_align')
+                                    ->label('Text Align')
+                                    ->native(false)
+                                    ->options([
+                                        'left' => 'Left',
+                                        'center' => 'Center',
+                                        'right' => 'Right',
+                                    ])
+                                    ->default('center')
+                                    ->required(),
                             ]),
 
                         Section::make('Settings')
@@ -210,36 +261,49 @@ class SectionsRelationManager extends RelationManager
                     ->label('Image')
                     ->disk('public')
                     ->square()
-                    ->getStateUsing(fn($record): ?string => $record->images()->orderBy('sort_order')->first()?->image),
+                    ->getStateUsing(fn($record): ?string => $record->images()
+                        ->where('is_active', true)
+                        ->orderBy('sort_order')
+                        ->first()?->image),
 
                 TextColumn::make('title')
                     ->label('Section')
                     ->searchable()
                     ->sortable()
                     ->weight('semibold')
+                    ->limit(45)
                     ->placeholder('Untitled section')
-                    ->description(fn($record): ?string => $record->subtitle),
+                    ->description(fn($record): ?string => Str::limit($record->subtitle ?? '', 50)),
 
                 TextColumn::make('section_key')
                     ->label('Type')
                     ->badge()
                     ->formatStateUsing(fn(?string $state): string => match ($state) {
-                        'intro' => 'Intro',
-                        'split_media' => 'Split Media',
+                        'intro_text_section' => 'Intro / Text',
+                        'image_overlay_section' => 'Image Overlay',
+                        'split_media_section' => 'Split Media',
                         'split_media_reverse' => 'Split Media Reverse',
-                        'two_column_text' => 'Two Column Text',
-                        'image_banner' => 'Image Banner',
-                        'three_images' => 'Three Images',
-                        'gallery' => 'Gallery',
-                        'cta_banner' => 'CTA Banner',
-                        'custom' => 'Custom',
+                        'three_images_section' => 'Three Images',
+                        'two_images_section' => 'Two Images',
+                        'two_images_reverse' => 'Two Images Reverse',
                         default => $state ? Str::headline($state) : '-',
+                    })
+                    ->color(fn(?string $state): string => match ($state) {
+                        'intro_text_section' => 'gray',
+                        'image_overlay_section' => 'info',
+                        'split_media_section' => 'success',
+                        'split_media_reverse' => 'warning',
+                        'three_images_section' => 'primary',
+                        'two_images_section' => 'success',
+                        'two_images_reverse' => 'warning',
+                        default => 'gray',
                     }),
 
-                TextColumn::make('images_count')
-                    ->label('Images')
-                    ->counts('images')
-                    ->sortable(),
+                TextColumn::make('text_align')
+                    ->label('Align')
+                    ->badge()
+                    ->formatStateUsing(fn(?string $state): string => $state ? Str::headline($state) : '-')
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('excerpt')
                     ->label('Excerpt')
@@ -256,18 +320,16 @@ class SectionsRelationManager extends RelationManager
                     ->numeric()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
+
+                TextColumn::make('updated_at')
+                    ->label('Updated')
+                    ->dateTime('d M Y H:i')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->label('New section')
-                    ->mutateDataUsing(function (array $data): array {
-                        $data['sort_order'] = ($this->getOwnerRecord()->sections()->max('sort_order') ?? 0) + 1;
-
-                        return $data;
-                    }),
+                    ->label('New section'),
             ])
             ->recordActions([
                 EditAction::make(),
@@ -280,21 +342,25 @@ class SectionsRelationManager extends RelationManager
             ]);
     }
 
-    private static function storeAsWebp(
+    protected static function storeAsWebp(
         TemporaryUploadedFile $file,
         string $directory,
         int $targetWidth,
         int $targetHeight,
     ): string {
-        $disk = Storage::disk('public');
-
-        $disk->makeDirectory($directory);
-
         $sourcePath = $file->getRealPath();
-        $mimeType = $file->getMimeType();
 
-        $sourceImage = match ($mimeType) {
-            'image/jpeg', 'image/jpg' => imagecreatefromjpeg($sourcePath),
+        $imageInfo = getimagesize($sourcePath);
+
+        if (! $imageInfo) {
+            return $file->store($directory, 'public');
+        }
+
+        [$originalWidth, $originalHeight] = $imageInfo;
+        $mime = $imageInfo['mime'] ?? null;
+
+        $sourceImage = match ($mime) {
+            'image/jpeg' => imagecreatefromjpeg($sourcePath),
             'image/png' => imagecreatefrompng($sourcePath),
             'image/webp' => imagecreatefromwebp($sourcePath),
             default => null,
@@ -304,34 +370,41 @@ class SectionsRelationManager extends RelationManager
             return $file->store($directory, 'public');
         }
 
-        if (in_array($mimeType, ['image/jpeg', 'image/jpg'], true) && function_exists('exif_read_data')) {
-            $sourceImage = self::fixImageOrientation($sourceImage, $sourcePath);
+        if ($mime === 'image/jpeg' && function_exists('exif_read_data')) {
+            $exif = @exif_read_data($sourcePath);
+
+            if (! empty($exif['Orientation'])) {
+                $sourceImage = match ((int) $exif['Orientation']) {
+                    3 => imagerotate($sourceImage, 180, 0),
+                    6 => imagerotate($sourceImage, -90, 0),
+                    8 => imagerotate($sourceImage, 90, 0),
+                    default => $sourceImage,
+                };
+
+                $originalWidth = imagesx($sourceImage);
+                $originalHeight = imagesy($sourceImage);
+            }
         }
 
-        $sourceWidth = imagesx($sourceImage);
-        $sourceHeight = imagesy($sourceImage);
-
-        $sourceRatio = $sourceWidth / $sourceHeight;
+        $sourceRatio = $originalWidth / $originalHeight;
         $targetRatio = $targetWidth / $targetHeight;
 
         if ($sourceRatio > $targetRatio) {
-            $cropWidth = (int) round($sourceHeight * $targetRatio);
-            $cropHeight = $sourceHeight;
+            $cropHeight = $originalHeight;
+            $cropWidth = (int) round($originalHeight * $targetRatio);
+            $cropX = (int) round(($originalWidth - $cropWidth) / 2);
+            $cropY = 0;
         } else {
-            $cropWidth = $sourceWidth;
-            $cropHeight = (int) round($sourceWidth / $targetRatio);
+            $cropWidth = $originalWidth;
+            $cropHeight = (int) round($originalWidth / $targetRatio);
+            $cropX = 0;
+            $cropY = (int) round(($originalHeight - $cropHeight) / 2);
         }
 
-        $cropX = (int) round(($sourceWidth - $cropWidth) / 2);
-        $cropY = (int) round(($sourceHeight - $cropHeight) / 2);
-
-        $finalImage = imagecreatetruecolor($targetWidth, $targetHeight);
-
-        imagealphablending($finalImage, false);
-        imagesavealpha($finalImage, true);
+        $targetImage = imagecreatetruecolor($targetWidth, $targetHeight);
 
         imagecopyresampled(
-            $finalImage,
+            $targetImage,
             $sourceImage,
             0,
             0,
@@ -343,30 +416,16 @@ class SectionsRelationManager extends RelationManager
             $cropHeight
         );
 
-        $path = $directory . '/' . Str::uuid() . '.webp';
-        $fullPath = $disk->path($path);
+        $filename = $directory . '/' . Str::uuid() . '.webp';
+        $storagePath = Storage::disk('public')->path($filename);
 
-        imagewebp($finalImage, $fullPath, 82);
+        Storage::disk('public')->makeDirectory($directory);
+
+        imagewebp($targetImage, $storagePath, 85);
 
         imagedestroy($sourceImage);
-        imagedestroy($finalImage);
+        imagedestroy($targetImage);
 
-        return $path;
-    }
-
-    private static function fixImageOrientation($image, string $sourcePath)
-    {
-        $exif = @exif_read_data($sourcePath);
-
-        if (! isset($exif['Orientation'])) {
-            return $image;
-        }
-
-        return match ((int) $exif['Orientation']) {
-            3 => imagerotate($image, 180, 0),
-            6 => imagerotate($image, -90, 0),
-            8 => imagerotate($image, 90, 0),
-            default => $image,
-        };
+        return $filename;
     }
 }

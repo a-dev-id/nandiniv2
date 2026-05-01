@@ -8,11 +8,10 @@
     @stack('meta')
 
     {{-- FAVICON --}}
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link href="https://nandinibali.com/images/favicon-njhg.png" type="image/x-icon" rel="icon">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    @livewireStyles
     @stack('css')
 
     {{-- slick carousel --}}
@@ -53,7 +52,7 @@
 
     {{ $slot }}
 
-    @livewireScripts
+    <x-layouts.footer />
 
     {{-- slick carousel --}}
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -255,7 +254,7 @@
             $el.slick({
                 slidesToShow: 3,
                 slidesToScroll: 1,
-                infinite: true,
+                infinite: false,
                 arrows: true,
                 prevArrow: $('.itemcarousel-prev'),
                 nextArrow: $('.itemcarousel-next'),

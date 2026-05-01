@@ -101,7 +101,7 @@
                         </button>
 
                         <div id="ocOffers" class="mt-4 hidden pl-4 space-y-3 text-left">
-                            <a href="{{-- route('offers.index') --}}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Offers</a>
+                            <a href="{{ route('offers.index') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Offers</a>
                             <a href="/experiences" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Experiences</a>
                         </div>
                     </div>

@@ -11,9 +11,9 @@ class OfferController extends Controller
     public function index(): View
     {
         $page = Page::query()
-            ->where('slug', 'offers')
+            ->where('id', 2)
             ->where('is_active', true)
-            ->first();
+            ->firstOrFail();
 
         $offers = Offer::query()
             ->published()
@@ -21,7 +21,7 @@ class OfferController extends Controller
             ->orderByDesc('valid_start_date')
             ->get();
 
-        return view('offers.index', [
+        return view('pages.offers.index', [
             'page' => $page,
             'offers' => $offers,
         ]);
@@ -39,7 +39,7 @@ class OfferController extends Controller
             ->limit(3)
             ->get();
 
-        return view('offers.show', [
+        return view('pages.offers.show', [
             'offer' => $offer,
             'relatedOffers' => $relatedOffers,
         ]);

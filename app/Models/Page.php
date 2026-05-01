@@ -8,17 +8,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Page extends Model
 {
     protected $fillable = [
+        'page_name',
         'title',
         'slug',
         'subtitle',
         'excerpt',
         'description',
-
         'hero_image',
         'hero_image_alt',
         'hero_mobile_image',
         'hero_mobile_image_alt',
-
         'meta_title',
         'meta_description',
         'is_active',

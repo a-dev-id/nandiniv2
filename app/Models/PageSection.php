@@ -15,8 +15,14 @@ class PageSection extends Model
         'subtitle',
         'excerpt',
         'description',
+
         'button_label',
+        'button_link_type',
         'button_url',
+        'button_route',
+
+        'text_align',
+
         'is_active',
         'sort_order',
     ];
