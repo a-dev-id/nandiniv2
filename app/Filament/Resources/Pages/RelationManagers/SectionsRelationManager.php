@@ -35,6 +35,15 @@ class SectionsRelationManager extends RelationManager
 
     protected static ?string $title = 'Page Sections';
 
+    private const MEDIA_SECTION_KEYS = [
+        'image_overlay_section',
+        'split_media_section',
+        'split_media_reverse',
+        'three_images_section',
+        'two_images_section',
+        'two_images_reverse',
+    ];
+
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -64,14 +73,20 @@ class SectionsRelationManager extends RelationManager
                             ->default('intro_text_section'),
 
                         TextInput::make('title')
+                            ->label('Title')
+                            ->placeholder('Section title')
                             ->maxLength(255),
 
                         TextInput::make('subtitle')
+                            ->label('Subtitle')
                             ->maxLength(255)
+                            ->visible(fn(Get $get): bool => in_array($get('section_key'), self::MEDIA_SECTION_KEYS, true))
                             ->columnSpanFull(),
 
                         Textarea::make('excerpt')
+                            ->label('Excerpt')
                             ->rows(3)
+                            ->visible(fn(Get $get): bool => in_array($get('section_key'), self::MEDIA_SECTION_KEYS, true))
                             ->columnSpanFull(),
 
                         RichEditor::make('description')
@@ -95,14 +110,7 @@ class SectionsRelationManager extends RelationManager
                             ->columnSpanFull()
                             ->columns(2)
                             ->itemLabel(fn(array $state): string => $state['image_alt'] ?? $state['caption'] ?? 'Section Image')
-                            ->visible(fn(Get $get): bool => in_array($get('section_key'), [
-                                'image_overlay_section',
-                                'split_media_section',
-                                'split_media_reverse',
-                                'three_images_section',
-                                'two_images_section',
-                                'two_images_reverse',
-                            ], true))
+                            ->visible(fn(Get $get): bool => in_array($get('section_key'), self::MEDIA_SECTION_KEYS, true))
                             ->schema([
                                 FileUpload::make('image')
                                     ->label('Desktop Image')
@@ -177,14 +185,7 @@ class SectionsRelationManager extends RelationManager
                     ->schema([
                         Section::make('Button')
                             ->columnSpanFull()
-                            ->visible(fn(Get $get): bool => in_array($get('section_key'), [
-                                'image_overlay_section',
-                                'split_media_section',
-                                'split_media_reverse',
-                                'three_images_section',
-                                'two_images_section',
-                                'two_images_reverse',
-                            ], true))
+                            ->visible(fn(Get $get): bool => in_array($get('section_key'), self::MEDIA_SECTION_KEYS, true))
                             ->schema([
                                 TextInput::make('button_label')
                                     ->label('Button Label')
@@ -279,7 +280,7 @@ class SectionsRelationManager extends RelationManager
                     ->label('Type')
                     ->badge()
                     ->formatStateUsing(fn(?string $state): string => match ($state) {
-                        'intro_text_section' => 'Intro / Text',
+                        'intro_text_section' => 'Intro Text',
                         'image_overlay_section' => 'Image Overlay',
                         'split_media_section' => 'Split Media',
                         'split_media_reverse' => 'Split Media Reverse',
