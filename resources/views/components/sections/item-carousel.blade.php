@@ -1,6 +1,7 @@
 @props([
 'items' => collect(),
 'wrapperClass' => '',
+'routeName' => null,
 ])
 
 <section class="pb-16 md:pb-28 {{ $wrapperClass }}">
@@ -14,7 +15,12 @@
                     @php
                     $image = $item->card_image ?? $item->hero_image ?? null;
                     $alt = $item->card_image_alt ?? $item->hero_image_alt ?? $item->title;
-                    $url = route('offers.show', $item->slug) ?? '#';
+
+                    $url = '#';
+
+                    if ($routeName && \Illuminate\Support\Facades\Route::has($routeName)) {
+                    $url = route($routeName, $item->slug);
+                    }
                     @endphp
 
                     <div class="aspect-square md:aspect-3/2 overflow-hidden bg-slate-100 group">

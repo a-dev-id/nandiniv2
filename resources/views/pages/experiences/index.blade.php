@@ -34,27 +34,9 @@ $metaImage = $page->hero_image ?? $page->hero_mobile_image ?? null;
 @endpush
 
 <x-layouts.app>
-    <x-heroes.video-hero video-id="eh5h5P6_3LQ" />
+    <x-heroes.image-hero :page="$page" />
 
-    <x-sections.video-text-section :page="$page" video-id="eh5h5P6_3LQ" />
+    <x-sections.page-description :page="$page" />
 
-    @foreach ($sections as $section)
-    @if ($section->section_key === 'image_overlay_section')
-    <x-sections.image-overlay-section :section="$section" />
-    @endif
-
-    @if ($section->section_key === 'split_media_section')
-    <x-sections.split-media-section :section="$section" :excerpt-only="false" image-span="8" text-span="4" />
-    @endif
-
-    @if ($section->section_key === 'split_media_reverse')
-    <x-sections.split-media-section :section="$section" :reverse="true" :excerpt-only="false" image-span="8" text-span="4" />
-    @endif
-
-    @if ($section->section_key === 'intro_text_section')
-    <x-sections.intro-text-section :section="$section" />
-
-    <x-sections.item-carousel :items="$experiences" route-name="holy-river.show" />
-    @endif
-    @endforeach
+    <x-sections.item-list model="experience" :items="$experiences" :with-filter="true" route-name="experiences.show" :hidden-categories="['holy-river']" />
 </x-layouts.app>

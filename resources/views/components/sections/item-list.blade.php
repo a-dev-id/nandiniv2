@@ -1,20 +1,98 @@
 @props([
 'model' => 'offer', // offer | experience
+'items' => null,
 'withFilter' => false,
 'limit' => 99,
+'routeName' => null,
+'hiddenCategories' => [],
 ])
 
 @php
 use App\Models\Offer;
 use App\Models\Experience;
+use Illuminate\Support\Facades\Route;
 
 $active = request('category', 'all');
+$hiddenCategories = collect($hiddenCategories)->filter()->values();
+
+if ($hiddenCategories->contains($active)) {
+$active = 'all';
+}
 
 $modelClass = match ($model) {
 'experience' => Experience::class,
 default => Offer::class,
 };
 
+/*
+|--------------------------------------------------------------------------
+| Use Passed Items If Available
+|--------------------------------------------------------------------------
+*/
+$providedItems = $items !== null ? collect($items) : null;
+
+/*
+|--------------------------------------------------------------------------
+| Dynamic Experience Filters
+|--------------------------------------------------------------------------
+*/
+$filters = [
+'all' => 'All',
+];
+
+if ($model === 'experience' && $withFilter) {
+if ($providedItems) {
+$experienceCategories = $providedItems
+->pluck('category')
+->filter()
+->reject(function ($category) use ($hiddenCategories) {
+return $hiddenCategories->contains($category->slug ?? null);
+})
+->unique('slug')
+->sortBy('sort_order');
+} else {
+$experienceCategories = Experience::query()
+->where('is_active', true)
+->whereHas('category', function ($query) use ($hiddenCategories) {
+if ($hiddenCategories->isNotEmpty()) {
+$query->whereNotIn('slug', $hiddenCategories->all());
+}
+})
+->with('category')
+->get()
+->pluck('category')
+->filter()
+->unique('slug')
+->sortBy('sort_order');
+}
+
+foreach ($experienceCategories as $category) {
+$filters[$category->slug] = $category->name
+?? $category->title
+?? str($category->slug)->replace('-', ' ')->title()->toString();
+}
+}
+
+/*
+|--------------------------------------------------------------------------
+| Main Items
+|--------------------------------------------------------------------------
+*/
+if ($providedItems) {
+$items = $providedItems
+->when($model === 'experience' && $hiddenCategories->isNotEmpty(), function ($collection) use ($hiddenCategories) {
+return $collection->reject(function ($item) use ($hiddenCategories) {
+return $item->category && $hiddenCategories->contains($item->category->slug);
+});
+})
+->when($model === 'experience' && $withFilter && $active !== 'all', function ($collection) use ($active) {
+return $collection->filter(function ($item) use ($active) {
+return $item->category && $item->category->slug === $active;
+});
+})
+->take($limit)
+->values();
+} else {
 $query = $modelClass::query();
 
 /*
@@ -25,7 +103,15 @@ $query = $modelClass::query();
 if ($modelClass === Offer::class) {
 $query->published();
 } else {
-$query->where('is_active', true);
+$query
+->where('is_active', true)
+->with('category');
+
+if ($hiddenCategories->isNotEmpty()) {
+$query->whereDoesntHave('category', function ($query) use ($hiddenCategories) {
+$query->whereIn('slug', $hiddenCategories->all());
+});
+}
 }
 
 /*
@@ -34,33 +120,28 @@ $query->where('is_active', true);
 |--------------------------------------------------------------------------
 */
 if ($model === 'experience' && $withFilter && $active !== 'all') {
-$query->where('category_slug', $active);
+$query->whereHas('category', function ($query) use ($active) {
+$query->where('slug', $active);
+});
 }
 
 $items = $query
+->orderByRaw('sort_order IS NULL, sort_order ASC')
 ->orderBy('sort_order')
 ->orderByDesc('id')
 ->limit($limit)
 ->get();
-
-$filters = [
-'all' => 'All',
-'romance' => 'Romance',
-'dining' => 'Dining',
-'wellness' => 'Wellness',
-'adventure' => 'Adventure',
-'activity-package' => 'Activity Package',
-];
+}
 @endphp
 
 <section class="pb-16 md:pb-28">
     <div class="mx-auto px-3 lg:px-16">
 
         {{-- FILTER --}}
-        @if ($withFilter)
+        @if ($withFilter && count($filters) > 1)
         <div class="flex flex-wrap justify-center gap-3 mb-12">
             @foreach ($filters as $key => $label)
-            <a href="{{ request()->fullUrlWithQuery(['category' => $key]) }}" class="px-5 py-2 text-xs sm:text-sm uppercase tracking-[0.20em] border transition
+            <a href="{{ $key === 'all' ? request()->url() : request()->fullUrlWithQuery(['category' => $key]) }}" class="px-5 py-2 text-xs sm:text-sm uppercase tracking-[0.20em] border transition
                             {{ $active === $key
                                 ? 'bg-[#A67C3D] text-white border-[#A67C3D]'
                                 : 'bg-white text-slate-800 border-black/15 hover:border-black/40' }}">
@@ -92,11 +173,11 @@ $filters = [
 
             $url = '#';
 
-            if ($model === 'offer' && Route::has('offers.show')) {
+            if ($routeName && Route::has($routeName)) {
+            $url = route($routeName, $item->slug);
+            } elseif ($model === 'offer' && Route::has('offers.show')) {
             $url = route('offers.show', $item->slug);
-            }
-
-            if ($model === 'experience' && Route::has('experiences.show')) {
+            } elseif ($model === 'experience' && Route::has('experiences.show')) {
             $url = route('experiences.show', $item->slug);
             }
             @endphp

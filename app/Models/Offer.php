@@ -83,7 +83,7 @@ class Offer extends Model
     public function getBookingUrlAttribute(): string
     {
         if ($this->booking_url_override) {
-            return $this->booking_url_override;
+            return html_entity_decode($this->booking_url_override, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         }
 
         $baseUrl = 'https://nandinijunglebyhanginggardens.reserve-online.net/';
@@ -98,12 +98,12 @@ class Offer extends Model
             'checkin' => $checkinDate->format('Y-m-d'),
         ];
 
-        if ($this->booking_rooms) {
-            $params['rooms'] = $this->booking_rooms;
-        }
-
         if ($this->booking_nights) {
             $params['nights'] = $this->booking_nights;
+        }
+
+        if ($this->booking_rooms) {
+            $params['rooms'] = $this->booking_rooms;
         }
 
         if ($this->booking_adults) {

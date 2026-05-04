@@ -220,6 +220,7 @@ class ExperienceForm
                                                 'per_couple' => 'Per Couple',
                                                 'per_car' => 'Per Car',
                                                 'per_booking' => 'Per Booking',
+                                                'single_ride' => 'Single Ride',
                                             ])
                                             ->default('per_person')
                                             ->required()

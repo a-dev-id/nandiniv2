@@ -32,7 +32,7 @@
 
     <x-sections.page-description :page="$page" />
 
-    <x-sections.item-carousel :items="$offers" />
+    <x-sections.item-carousel :items="$offers" route-name="offers.show" />
 
     @foreach ($sections as $section)
     @if ($section->section_key === 'image_overlay_section')

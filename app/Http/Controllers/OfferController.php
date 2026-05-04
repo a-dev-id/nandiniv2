@@ -31,15 +31,20 @@ class OfferController extends Controller
     {
         $this->abortIfOfferIsNotPublished($offer);
 
+        $page = Page::query()
+            ->where('id', 2)
+            ->where('is_active', true)
+            ->firstOrFail();
+
         $relatedOffers = Offer::query()
             ->published()
             ->whereKeyNot($offer->id)
             ->orderBy('sort_order')
             ->orderByDesc('valid_start_date')
-            ->limit(3)
             ->get();
 
         return view('pages.offers.show', [
+            'page' => $page,
             'offer' => $offer,
             'relatedOffers' => $relatedOffers,
         ]);

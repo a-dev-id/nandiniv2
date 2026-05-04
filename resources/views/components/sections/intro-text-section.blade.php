@@ -8,13 +8,13 @@
 
         {{-- Title --}}
         @if ($section->title)
-        <h1 class="text-lg sm:text-xl lg:text-2xl tracking-[0.25em] uppercase text-slate-800 font-medium">
+        <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 font-medium">
             {!! str_ireplace(
             ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
             '<br class="hidden md:block">',
             e($section->title)
             ) !!}
-        </h1>
+        </h2>
         @endif
 
         {{-- Description --}}

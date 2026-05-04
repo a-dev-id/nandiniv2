@@ -104,7 +104,7 @@ $metaImage = $experience->card_image
             </h1>
 
             @if (! empty($experience->subtitle))
-            <p class="text-lg md:text-xl text-slate-700 mb-8">
+            <p class="text-lg md:text-xl text-slate-700 mb-8 uppercase tracking-[0.15em]">
                 {{ $experience->subtitle }}
             </p>
             @endif
@@ -165,7 +165,7 @@ $metaImage = $experience->card_image
             @endif
 
             <div class="mb-8">
-                <x-buttons.link-button href="/holy-river" variant="solid">
+                <x-buttons.link-button href="/experiences" variant="solid">
                     Inquire Now
                 </x-buttons.link-button>
             </div>
@@ -180,7 +180,7 @@ $metaImage = $experience->card_image
             </h2>
         </div>
 
-        <x-sections.item-carousel :items="$relatedExperiences" route-name="holy-river.show" />
+        <x-sections.item-carousel :items="$relatedExperiences" route-name="experiences.show" />
     </section>
     @endif
 </x-layouts.app>
