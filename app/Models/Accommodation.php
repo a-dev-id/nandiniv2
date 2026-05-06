@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Accommodation extends Model
@@ -27,6 +28,7 @@ class Accommodation extends Model
         'occupancy',
         'bed_type',
         'view',
+        'accommodation_type',
 
         'button_label',
         'button_url',
@@ -58,17 +60,23 @@ class Accommodation extends Model
             ->where('is_active', true);
     }
 
-    public function features(): HasMany
+    public function features(): BelongsToMany
     {
-        return $this->hasMany(AccommodationFeature::class)
-            ->orderBy('sort_order')
-            ->orderBy('id');
+        return $this->belongsToMany(
+            AccommodationFeature::class,
+            'accommodation_accommodation_feature',
+            'accommodation_id',
+            'accommodation_feature_id'
+        )
+            ->where('accommodation_features.is_active', true)
+            ->orderBy('accommodation_features.sort_order')
+            ->orderBy('accommodation_features.label')
+            ->withTimestamps();
     }
 
-    public function activeFeatures(): HasMany
+    public function activeFeatures(): BelongsToMany
     {
-        return $this->features()
-            ->where('is_active', true);
+        return $this->features();
     }
 
     public function scopePublished(Builder $query): Builder
@@ -95,5 +103,20 @@ class Accommodation extends Model
         }
 
         return null;
+    }
+
+    public function getUrlPrefixAttribute(): string
+    {
+        return $this->accommodation_type === 'suite'
+            ? 'the-royal-suites'
+            : 'jungle-villas';
+    }
+
+    public function getShowUrlAttribute(): string
+    {
+        return route('accommodations.show', [
+            'type' => $this->url_prefix,
+            'accommodation' => $this->slug,
+        ]);
     }
 }

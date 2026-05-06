@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Accommodations\Schemas;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -67,6 +68,18 @@ class AccommodationsForm
                             ->columnSpanFull()
                             ->columns(2)
                             ->schema([
+                                Select::make('accommodation_type')
+                                    ->label('Accommodation Type')
+                                    ->options([
+                                        'villa' => 'Jungle Villa',
+                                        'suite' => 'Royal Suite',
+                                    ])
+                                    ->default('villa')
+                                    ->required()
+                                    ->native(false)
+                                    ->helperText('This controls the frontend URL prefix.')
+                                    ->columnSpanFull(),
+
                                 TextInput::make('size')
                                     ->label('Size')
                                     ->placeholder('48 sqm')

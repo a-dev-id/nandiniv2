@@ -18,16 +18,20 @@
 
                     $url = '#';
 
-                    if ($routeName && \Illuminate\Support\Facades\Route::has($routeName)) {
+                    if (! empty($item->show_url)) {
+                    $url = $item->show_url;
+                    } elseif ($routeName && \Illuminate\Support\Facades\Route::has($routeName)) {
                     $url = route($routeName, $item->slug);
                     }
                     @endphp
 
-                    <div class="aspect-square md:aspect-3/2 overflow-hidden bg-slate-100 group">
-                        @if ($image)
-                        <img src="{{ asset('storage/' . $image) }}" alt="{{ $alt }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" />
-                        @endif
-                    </div>
+                    <a href="{{ $url }}" class="block">
+                        <div class="aspect-square md:aspect-3/2 overflow-hidden bg-slate-100 group">
+                            @if ($image)
+                            <img src="{{ asset('storage/' . $image) }}" alt="{{ $alt }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" />
+                            @endif
+                        </div>
+                    </a>
 
                     <div class="pt-7 flex flex-col grow">
                         <h3 class="text-slate-800 uppercase tracking-[0.22em] text-lg sm:text-xl lg:text-2xl font-medium">

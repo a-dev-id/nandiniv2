@@ -3,14 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class AccommodationFeature extends Model
 {
     protected $fillable = [
-        'accommodation_id',
         'label',
-        'icon_key',
+        'icon_image',
         'is_active',
         'sort_order',
     ];
@@ -19,8 +18,13 @@ class AccommodationFeature extends Model
         'is_active' => 'boolean',
     ];
 
-    public function accommodation(): BelongsTo
+    public function accommodations(): BelongsToMany
     {
-        return $this->belongsTo(Accommodation::class);
+        return $this->belongsToMany(
+            Accommodation::class,
+            'accommodation_accommodation_feature',
+            'accommodation_feature_id',
+            'accommodation_id'
+        )->withTimestamps();
     }
 }

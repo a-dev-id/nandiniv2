@@ -6,6 +6,7 @@ use App\Filament\Resources\Accommodations\Pages\CreateAccommodations;
 use App\Filament\Resources\Accommodations\Pages\EditAccommodations;
 use App\Filament\Resources\Accommodations\Pages\ListAccommodations;
 use App\Filament\Resources\Accommodations\RelationManagers\ImagesRelationManager;
+use App\Filament\Resources\Accommodations\RelationManagers\FeaturesRelationManager;
 use App\Filament\Resources\Accommodations\Schemas\AccommodationsForm;
 use App\Filament\Resources\Accommodations\Tables\AccommodationsTable;
 use App\Models\Accommodation;
@@ -44,6 +45,7 @@ class AccommodationsResource extends Resource
     {
         return [
             ImagesRelationManager::class,
+            FeaturesRelationManager::class,
         ];
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccommodationController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\HolyRiverController;
 use App\Http\Controllers\HomeController;
@@ -8,6 +9,18 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
+
+/*
+|--------------------------------------------------------------------------
+| Accommodations
+|--------------------------------------------------------------------------
+*/
+Route::get('/the-royal-suites-jungle-villas', [AccommodationController::class, 'index'])
+    ->name('accommodations.index');
+
+Route::get('/{type}/{accommodation:slug}', [AccommodationController::class, 'show'])
+    ->whereIn('type', ['jungle-villa', 'the-royal-suite'])
+    ->name('accommodations.show');
 
 /*
 |--------------------------------------------------------------------------

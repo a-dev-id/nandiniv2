@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Accommodations\Tables;
+namespace App\Filament\Resources\AccommodationFeatures\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -10,7 +10,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class AccommodationsTable
+class AccommodationFeaturesTable
 {
     public static function configure(Table $table): Table
     {
@@ -18,23 +18,17 @@ class AccommodationsTable
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
             ->columns([
-                ImageColumn::make('card_image')
-                    ->label('Image')
+                ImageColumn::make('icon_image')
+                    ->label('Icon')
                     ->disk('public')
                     ->square()
-                    ->size(70),
+                    ->size(42),
 
-                TextColumn::make('title')
-                    ->label('Accommodation')
-                    ->description(fn($record): ?string => $record->subtitle ?: $record->slug)
+                TextColumn::make('label')
+                    ->label('Feature')
                     ->searchable()
                     ->sortable()
                     ->wrap(),
-
-                IconColumn::make('is_featured')
-                    ->label('Featured')
-                    ->boolean()
-                    ->sortable(),
 
                 IconColumn::make('is_active')
                     ->label('Active')
@@ -45,19 +39,6 @@ class AccommodationsTable
                     ->label('Sort')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-
-                TextColumn::make('meta_title')
-                    ->label('Meta Title')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->wrap(),
-
-                TextColumn::make('meta_description')
-                    ->label('Meta Description')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->limit(80)
-                    ->wrap(),
 
                 TextColumn::make('created_at')
                     ->label('Created')
@@ -70,9 +51,6 @@ class AccommodationsTable
                     ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
             ])
             ->recordActions([
                 EditAction::make(),
