@@ -53,14 +53,14 @@
                         <span class="hidden sm:inline">Book Now</span>
                     </button>
 
-                    {{-- Dropdown (matches screenshot layout) --}}
+                    {{-- Dropdown --}}
                     <div id="navBookMenu" class="absolute right-0 mt-2 w-52 bg-white border border-white shadow-xl hidden">
                         <a href="https://book-directonline.com/properties/nandinibalidirect?locale=en&currency=IDR" class="block text-center uppercase tracking-[0.2em] font-medium text-[12px] sm:text-[14px]
                                   px-6 py-4 bg-white text-slate-800 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white">
                             Book Direct
                         </a>
 
-                        <a href="/room-flight" class="block text-center uppercase tracking-[0.2em] font-medium text-[12px] sm:text-[14px]
+                        <a href="{{ url('/room-flight') }}" class="block text-center uppercase tracking-[0.2em] font-medium text-[12px] sm:text-[14px]
                                   px-6 py-4 bg-white text-slate-800 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white">
                             Room + Flight
                         </a>
@@ -97,7 +97,8 @@
             <div class="px-7 pb-8 grow overflow-y-auto">
                 <nav class="space-y-6 text-left">
                     <a href="{{ route('home') }}" class="block text-[16px] font-medium uppercase text-left">Home</a>
-                    <a href="/holy-river" class="block text-[16px] font-medium uppercase text-left">Holy River</a>
+
+                    <a href="{{ route('holy-river.index') }}" class="block text-[16px] font-medium uppercase text-left">Holy River</a>
 
                     {{-- Dropdown: Offers & Experiences --}}
                     <div>
@@ -110,11 +111,11 @@
 
                         <div id="ocOffers" class="mt-4 hidden pl-4 space-y-3 text-left">
                             <a href="{{ route('offers.index') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Offers</a>
-                            <a href="/experiences" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Experiences</a>
+                            <a href="{{ route('experiences.index') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Experiences</a>
                         </div>
                     </div>
 
-                    {{-- Dropdown: Villa --}}
+                    {{-- Dropdown: Accommodations --}}
                     <div>
                         <button type="button" class="w-full flex items-start justify-between gap-3 text-[16px] font-medium uppercase text-left" data-oc-toggle="#ocVillas">
                             <span class="leading-6 text-left">Accommodations</span>
@@ -124,12 +125,12 @@
                         </button>
 
                         <div id="ocVillas" class="mt-4 hidden pl-4 space-y-3 text-left">
-                            <a href="/suites" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">The Royal Suites</a>
-                            <a href="/villas" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Jungle Villas</a>
+                            <a href="{{ route('accommodations.suites') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">The Royal Suites</a>
+                            <a href="{{ route('accommodations.villas') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Jungle Villas</a>
                         </div>
                     </div>
 
-                    <a href="/the-little-things" class="block text-[16px] font-medium uppercase text-left">The Little Things</a>
+                    <a href="{{ url('/the-little-things') }}" class="block text-[16px] font-medium uppercase text-left">The Little Things</a>
 
                     {{-- Dropdown: More --}}
                     <div>
@@ -141,11 +142,11 @@
                         </button>
 
                         <div id="ocMore" class="mt-4 hidden pl-4 space-y-3 text-left">
-                            <a href="/honeymoon" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Honeymoon</a>
-                            <a href="/dining" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Dining</a>
-                            <a href="/spa-wellness" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Spa & Wellness</a>
-                            <a href="/contact" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Contact</a>
-                            <a href="/gallery" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Gallery</a>
+                            <a href="{{ url('/honeymoon') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Honeymoon</a>
+                            <a href="{{ url('/dining') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Dining</a>
+                            <a href="{{ url('/spa-wellness') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Spa & Wellness</a>
+                            <a href="{{ url('/contact') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Contact</a>
+                            <a href="{{ url('/gallery') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Gallery</a>
                         </div>
                     </div>
                 </nav>

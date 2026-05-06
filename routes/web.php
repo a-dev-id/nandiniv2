@@ -15,11 +15,22 @@ Route::get('/', [HomeController::class, 'index'])
 | Accommodations
 |--------------------------------------------------------------------------
 */
-Route::get('/the-royal-suites-jungle-villas', [AccommodationController::class, 'index'])
+Route::get('/the-royal-suites-and-jungle-villas', [AccommodationController::class, 'index'])
     ->name('accommodations.index');
 
+Route::get('/jungle-villas', [AccommodationController::class, 'villas'])
+    ->name('accommodations.villas');
+
+Route::get('/the-royal-suites', [AccommodationController::class, 'suites'])
+    ->name('accommodations.suites');
+
+Route::get('/the-royal-suite/presidential-royal-suite', [AccommodationController::class, 'presidentialRoyalSuite'])
+    ->name('accommodations.presidential-royal-suite.show');
+
+Route::redirect('/the-royal-suites/presidential-royal-suite', '/the-royal-suite/presidential-royal-suite', 301);
+
 Route::get('/{type}/{accommodation:slug}', [AccommodationController::class, 'show'])
-    ->whereIn('type', ['jungle-villa', 'the-royal-suite'])
+    ->whereIn('type', ['jungle-villas', 'the-royal-suites'])
     ->name('accommodations.show');
 
 /*

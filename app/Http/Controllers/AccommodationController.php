@@ -15,15 +15,7 @@ class AccommodationController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
-        $sections = $page->sections()
-            ->where('is_active', true)
-            ->with(['images' => function ($query) {
-                $query
-                    ->where('is_active', true)
-                    ->orderBy('sort_order');
-            }])
-            ->orderBy('sort_order')
-            ->get();
+        $sections = $this->getPageSections($page);
 
         $accommodationIds = [3, 4, 5, 6, 7];
 
@@ -44,11 +36,103 @@ class AccommodationController extends Controller
         ]);
     }
 
+    public function villas(): View
+    {
+        $page = Page::query()
+            ->where('slug', 'jungle-villas')
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $sections = $this->getPageSections($page);
+
+        $accommodations = Accommodation::query()
+            ->published()
+            ->where('accommodation_type', 'villa')
+            ->with([
+                'activeImages',
+                'features',
+            ])
+            ->orderBy('sort_order')
+            ->orderBy('title')
+            ->get();
+
+        return view('pages.accommodations.jungle-villas', [
+            'page' => $page,
+            'sections' => $sections,
+            'accommodations' => $accommodations,
+        ]);
+    }
+
+    public function suites(): View
+    {
+        $page = Page::query()
+            ->where('slug', 'the-royal-suites')
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $sections = $this->getPageSections($page);
+
+        $accommodations = Accommodation::query()
+            ->published()
+            ->where('accommodation_type', 'suite')
+            ->with([
+                'activeImages',
+                'features',
+            ])
+            ->orderBy('sort_order')
+            ->orderBy('title')
+            ->get();
+
+        return view('pages.accommodations.the-royal-suite', [
+            'page' => $page,
+            'sections' => $sections,
+            'accommodations' => $accommodations,
+        ]);
+    }
+
+    public function presidentialRoyalSuite(): View
+    {
+        $page = Page::query()
+            ->where('slug', 'presidential-royal-suite')
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $sections = $this->getPageSections($page);
+
+        $accommodation = Accommodation::query()
+            ->published()
+            ->where('slug', 'presidential-royal-suite')
+            ->with([
+                'activeImages',
+                'features',
+            ])
+            ->firstOrFail();
+
+        $relatedAccommodations = Accommodation::query()
+            ->published()
+            ->whereKeyNot($accommodation->id)
+            ->with([
+                'activeImages',
+                'features',
+            ])
+            ->inRandomOrder()
+            ->get();
+
+        return view('pages.accommodations.presidential-royal-suite', [
+            'page' => $page,
+            'sections' => $sections,
+            'accommodation' => $accommodation,
+            'relatedAccommodations' => $relatedAccommodations,
+        ]);
+    }
+
     public function show(string $type, Accommodation $accommodation): View
     {
         abort_unless($accommodation->is_active, 404);
 
         abort_unless($type === $accommodation->url_prefix, 404);
+
+        abort_if($accommodation->slug === 'presidential-royal-suite', 404);
 
         $accommodation->load([
             'activeImages',
@@ -62,12 +146,25 @@ class AccommodationController extends Controller
                 'activeImages',
                 'features',
             ])
-            ->limit(6)
+            ->inRandomOrder()
             ->get();
 
         return view('pages.accommodations.show', [
             'accommodation' => $accommodation,
             'relatedAccommodations' => $relatedAccommodations,
         ]);
+    }
+
+    private function getPageSections(Page $page)
+    {
+        return $page->sections()
+            ->where('is_active', true)
+            ->with(['images' => function ($query) {
+                $query
+                    ->where('is_active', true)
+                    ->orderBy('sort_order');
+            }])
+            ->orderBy('sort_order')
+            ->get();
     }
 }
