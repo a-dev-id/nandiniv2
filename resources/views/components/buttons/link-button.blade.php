@@ -5,7 +5,8 @@
 
 @php
 $variantClass = match ($variant) {
-'solid' => 'bg-[#B8945B] text-white hover:bg-[#a37e45]',
+'solid' => 'bg-[#B8945B] border border-[#B8945B] text-white hover:bg-[#a37e45] hover:border-[#a37e45]',
+'white-outline' => 'border border-white text-white hover:bg-white hover:border-white hover:text-[#2f2f2f]',
 default => 'border border-slate-700 text-slate-800 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white',
 };
 

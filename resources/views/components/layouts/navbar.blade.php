@@ -1,7 +1,4 @@
 <div>
-    <!-- It is never too late to be what you might have been. - George Eliot -->
-</div>
-<div>
     <nav id="mainNavbar" class="fixed inset-x-0 top-0 z-50 bg-black/35 backdrop-blur-md text-white transition-all duration-300">
         <div class="w-full px-4 sm:px-6 md:px-10 2xl:px-14 relative">
             <div id="navInner" class="flex items-center h-20 lg:h-28 transition-all duration-300">
@@ -44,26 +41,33 @@
                 </a>
 
                 {{-- RIGHT --}}
-                <div class="ml-auto relative">
-                    {{-- Trigger --}}
-                    <button id="navBookBtn" type="button" class="inline-flex items-center justify-center border transition duration-300 uppercase tracking-[0.2em]
+                <div class="ml-auto flex items-center gap-3 sm:gap-4">
+                    {{-- Member --}}
+                    <a id="navMemberBtn" href="{{ route('membership.index') }}" class="hidden sm:inline-flex items-center justify-center border transition duration-300 uppercase tracking-[0.2em]
                                text-[10px] sm:text-[16px] font-medium px-3 sm:px-6 lg:px-8 py-1.5 sm:py-2.5 lg:py-3
-                               bg-white border-white text-slate-800 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white">
-                        <span class="sm:hidden">Book</span>
-                        <span class="hidden sm:inline">Book Now</span>
-                    </button>
+                               bg-[#B8945B] border-[#B8945B] text-white hover:bg-[#a37e45] hover:border-[#a37e45]">
+                        Member
+                    </a>
 
-                    {{-- Dropdown --}}
-                    <div id="navBookMenu" class="absolute right-0 mt-2 w-52 bg-white border border-white shadow-xl hidden">
-                        <a href="https://book-directonline.com/properties/nandinibalidirect?locale=en&currency=IDR" class="block text-center uppercase tracking-[0.2em] font-medium text-[12px] sm:text-[14px]
-                                  px-6 py-4 bg-white text-slate-800 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white">
-                            Book Direct
-                        </a>
+                    {{-- Book --}}
+                    <div class="relative">
+                        <button id="navBookBtn" type="button" class="inline-flex items-center justify-center border transition duration-300 uppercase tracking-[0.2em]
+                                   text-[10px] sm:text-[16px] font-medium px-3 sm:px-6 lg:px-8 py-1.5 sm:py-2.5 lg:py-3
+                                   bg-white border-white text-slate-800 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white">
+                            <span class="sm:hidden">Book</span>
+                            <span class="hidden sm:inline">Book Now</span>
+                        </button>
 
-                        <a href="{{ url('/room-flight') }}" class="block text-center uppercase tracking-[0.2em] font-medium text-[12px] sm:text-[14px]
-                                  px-6 py-4 bg-white text-slate-800 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white">
-                            Room + Flight
-                        </a>
+                        {{-- Dropdown --}}
+                        <div id="navBookMenu" class="absolute right-0 mt-2 w-52 bg-white border border-white shadow-xl hidden">
+                            <a href="https://book-directonline.com/properties/nandinibalidirect?locale=en&currency=IDR" class="block text-center uppercase tracking-[0.2em] font-medium text-[12px] sm:text-[14px] px-6 py-4 bg-white text-slate-800 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white">
+                                Book Direct
+                            </a>
+
+                            <a href="{{ url('/room-flight') }}" class="block text-center uppercase tracking-[0.2em] font-medium text-[12px] sm:text-[14px] px-6 py-4 bg-white text-slate-800 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white">
+                                Room + Flight
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -149,6 +153,13 @@
                             <a href="{{ url('/gallery') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Gallery</a>
                         </div>
                     </div>
+
+                    {{-- Member Button --}}
+                    <a href="{{ route('membership.index') }}" class="mt-8 inline-flex w-full items-center justify-center border border-[#B8945B] bg-[#B8945B] px-7 py-3
+                               text-[13px] font-bold uppercase tracking-[0.22em] text-white transition duration-300
+                               hover:bg-[#a37e45] hover:border-[#a37e45]">
+                        Member
+                    </a>
                 </nav>
             </div>
 
@@ -184,4 +195,57 @@
             </div>
         </div>
     </aside>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navMemberBtn = document.getElementById('navMemberBtn');
+    
+            function updateMemberButtonOnScroll() {
+                if (!navMemberBtn) {
+                    return;
+                }
+    
+                const isScrolled = window.scrollY > 50;
+    
+                if (isScrolled) {
+                    navMemberBtn.classList.remove(
+                        'bg-[#B8945B]',
+                        'border-[#B8945B]',
+                        'text-white',
+                        'hover:bg-[#a37e45]',
+                        'hover:border-[#a37e45]'
+                    );
+    
+                    navMemberBtn.classList.add(
+                        'bg-transparent',
+                        'border-slate-950',
+                        'text-slate-950',
+                        'hover:bg-[#B8945B]',
+                        'hover:border-[#B8945B]',
+                        'hover:text-white'
+                    );
+                } else {
+                    navMemberBtn.classList.remove(
+                        'bg-transparent',
+                        'border-slate-950',
+                        'text-slate-950',
+                        'hover:bg-[#B8945B]',
+                        'hover:border-[#B8945B]',
+                        'hover:text-white'
+                    );
+    
+                    navMemberBtn.classList.add(
+                        'bg-[#B8945B]',
+                        'border-[#B8945B]',
+                        'text-white',
+                        'hover:bg-[#a37e45]',
+                        'hover:border-[#a37e45]'
+                    );
+                }
+            }
+    
+            updateMemberButtonOnScroll();
+            window.addEventListener('scroll', updateMemberButtonOnScroll);
+        });
+    </script>
 </div>
