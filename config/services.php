@@ -35,4 +35,15 @@ return [
         ],
     ],
 
+    'webhotelier' => [
+        // PUSH endpoint secret
+        'webhook_secret' => env('WEBHOTELIER_WEBHOOK_SECRET'),
+
+        // PULL backup credentials - fill after WebHotelier gives API access
+        'api_base_url' => env('WEBHOTELIER_API_BASE_URL', 'https://rest.reserve-online.net'),
+        'api_username' => env('WEBHOTELIER_API_USERNAME'),
+        'api_password' => env('WEBHOTELIER_API_PASSWORD'),
+        'property_code' => env('WEBHOTELIER_PROPERTY_CODE'),
+    ],
+
 ];
