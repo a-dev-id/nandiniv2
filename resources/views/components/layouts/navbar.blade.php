@@ -1,5 +1,5 @@
 <div>
-    <nav id="mainNavbar" class="fixed inset-x-0 top-0 z-50 bg-black/35 backdrop-blur-md text-white transition-all duration-300">
+    <nav id="mainNavbar" class="fixed inset-x-0 top-0 z-50 bg-black/35 text-white transition-all duration-300">
         <div class="w-full px-4 sm:px-6 md:px-10 2xl:px-14 relative">
             <div id="navInner" class="flex items-center h-20 lg:h-28 transition-all duration-300">
 

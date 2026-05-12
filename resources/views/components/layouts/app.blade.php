@@ -67,67 +67,67 @@
             const bookBtn = document.getElementById('navBookBtn');
             const navLeft = document.getElementById('navLeft');
             const navIcons = document.getElementById('navIcons');
-
+    
             if (!navbar || !logo || !inner) return;
-
+    
             function handleScroll() {
                 const scrolled = window.scrollY > 30;
-
+    
                 if (scrolled) {
                     navbar.classList.remove('bg-black/35', 'backdrop-blur-md', 'text-white');
                     navbar.classList.add('bg-white', 'text-slate-900', 'shadow');
-
+    
                     inner.classList.remove('lg:h-28');
                     inner.classList.add('lg:h-20');
-
+    
                     logo.classList.remove('lg:h-24', 'brightness-0', 'invert');
                     logo.classList.add('lg:h-16');
-
+    
                     if (navLeft) {
                         navLeft.classList.add('text-slate-900');
                         navLeft.classList.remove('text-white');
                     }
-
+    
                     if (navIcons) {
                         navIcons.classList.add('text-slate-900');
                     }
-
+    
                     if (bookBtn) {
                         bookBtn.classList.remove('bg-white', 'border-white', 'text-slate-900');
                         bookBtn.classList.add('bg-[#A67C3D]', 'border-[#A67C3D]', 'text-white');
                     }
                 } else {
-                    navbar.classList.remove('bg-white', 'text-slate-900', 'shadow');
-                    navbar.classList.add('bg-black/35', 'backdrop-blur-md', 'text-white');
-
+                    navbar.classList.remove('bg-white', 'text-slate-900', 'shadow', 'backdrop-blur-md');
+                    navbar.classList.add('bg-black/35', 'text-white');
+    
                     inner.classList.remove('lg:h-20');
                     inner.classList.add('lg:h-28');
-
+    
                     logo.classList.remove('lg:h-16');
                     logo.classList.add('lg:h-24', 'brightness-0', 'invert');
-
+    
                     if (navLeft) {
                         navLeft.classList.remove('text-slate-900');
                         navLeft.classList.add('text-white');
                     }
-
+    
                     if (navIcons) {
                         navIcons.classList.remove('text-slate-900');
                     }
-
+    
                     if (bookBtn) {
                         bookBtn.classList.remove('bg-[#A67C3D]', 'border-[#A67C3D]', 'text-white');
                         bookBtn.classList.add('bg-white', 'border-white', 'text-slate-900');
                     }
                 }
             }
-
+    
             handleScroll();
-
+    
             window.removeEventListener('scroll', handleScroll);
             window.addEventListener('scroll', handleScroll, { passive: true });
         }
-
+    
         document.addEventListener('DOMContentLoaded', initNavbarScroll);
         document.addEventListener('livewire:navigated', initNavbarScroll);
     </script>
