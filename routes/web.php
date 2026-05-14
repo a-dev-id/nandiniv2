@@ -7,6 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\OfferController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Cron\WebhotelierSyncController;
 
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
@@ -74,3 +75,7 @@ Route::get('/holy-river', [HolyRiverController::class, 'index'])
 
 Route::get('/holy-river/{experience:slug}', [HolyRiverController::class, 'show'])
     ->name('holy-river.show');
+
+
+Route::get('/cron/webhotelier/sync/{token}', WebhotelierSyncController::class)
+    ->name('cron.webhotelier.sync');

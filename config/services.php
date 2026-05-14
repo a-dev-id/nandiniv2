@@ -44,6 +44,9 @@ return [
         'api_username' => env('WEBHOTELIER_API_USERNAME'),
         'api_password' => env('WEBHOTELIER_API_PASSWORD'),
         'property_code' => env('WEBHOTELIER_PROPERTY_CODE'),
+
+        // Cron sync URL token
+        'sync_token' => env('WEBHOTELIER_SYNC_TOKEN'),
     ],
 
 ];

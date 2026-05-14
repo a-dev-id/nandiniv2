@@ -14,24 +14,60 @@ class WebhotelierReservationController extends Controller
 {
     public function store(Request $request, string $secret)
     {
-        if (! hash_equals((string) config('services.webhotelier.webhook_secret'), $secret)) {
-            return response('Unauthorized', 401);
-        }
-
-        if ($request->isMethod('GET')) {
-            return response('OK', 200);
-        }
-
         $rawBody = $request->getContent();
         $headers = $request->headers->all();
 
+        $payload = json_decode($rawBody, true);
+
+        if (! is_array($payload)) {
+            $payload = $request->all();
+        }
+
+        /*
+         * IMPORTANT:
+         * Log every request first.
+         * This lets us confirm whether WebHotelier is reaching this endpoint,
+         * even if the secret is wrong, the method is GET, or payload is invalid.
+         */
+        $log = WebhotelierWebhookLog::create([
+            'source' => 'webhotelier',
+            'event_type' => Arr::get($payload, 'type', $request->isMethod('GET') ? 'ping_or_get' : 'received'),
+            'property_code' => $request->header('x-wh-property'),
+            'reservation_id' => Arr::get($payload, 'id'),
+            'confirmation_code' => Arr::get($payload, 'id'),
+            'booking_status' => null,
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'headers' => $headers,
+            'raw_body' => $rawBody,
+            'payload' => is_array($payload) ? $payload : null,
+            'processing_status' => 'received',
+        ]);
+
+        if (! hash_equals((string) config('services.webhotelier.webhook_secret'), $secret)) {
+            $log->update([
+                'processing_status' => 'failed',
+                'processing_error' => 'Invalid webhook secret.',
+                'processed_at' => now(),
+            ]);
+
+            return response('Unauthorized', 401);
+        }
+
+        /*
+         * If WebHotelier sends GET, this is not PUSH booking data.
+         * But we still return OK so their endpoint check does not fail.
+         */
+        if ($request->isMethod('GET')) {
+            $log->update([
+                'processing_status' => 'get_ok',
+                'processed_at' => now(),
+            ]);
+
+            return response('OK', 200);
+        }
+
         try {
-            $payload = json_decode($rawBody, true);
-
-            if (! is_array($payload)) {
-                $payload = $request->all();
-            }
-
             $validator = Validator::make($payload, [
                 'id' => ['required'],
                 'type' => ['required', 'string'],
@@ -39,20 +75,11 @@ class WebhotelierReservationController extends Controller
             ]);
 
             if ($validator->fails()) {
-                WebhotelierWebhookLog::create([
-                    'source' => 'webhotelier',
+                $log->update([
                     'event_type' => 'invalid',
-                    'property_code' => $request->header('x-wh-property'),
-                    'reservation_id' => Arr::get($payload, 'id'),
-                    'confirmation_code' => Arr::get($payload, 'id'),
-                    'booking_status' => null,
-                    'method' => $request->method(),
-                    'ip_address' => $request->ip(),
-                    'headers' => $headers,
-                    'raw_body' => $rawBody,
-                    'payload' => $payload,
                     'processing_status' => 'failed',
                     'processing_error' => $validator->errors()->toJson(),
+                    'processed_at' => now(),
                 ]);
 
                 return response('INVALID PAYLOAD', 400);
@@ -62,22 +89,17 @@ class WebhotelierReservationController extends Controller
             $eventType = (string) Arr::get($payload, 'type');
             $data = Arr::get($payload, 'data', []);
 
-            $log = WebhotelierWebhookLog::create([
-                'source' => 'webhotelier',
+            $log->update([
                 'event_type' => $eventType,
                 'property_code' => $this->extractPropertyCode($data, $request),
                 'reservation_id' => $webhotelierId,
                 'confirmation_code' => $webhotelierId,
                 'booking_status' => $this->extractStatusCode($data),
-                'method' => $request->method(),
-                'ip_address' => $request->ip(),
-                'headers' => $headers,
-                'raw_body' => $rawBody,
                 'payload' => $payload,
                 'processing_status' => 'pending',
             ]);
 
-            $reservation = $this->upsertReservation(
+            $this->upsertReservation(
                 webhotelierId: $webhotelierId,
                 eventType: $eventType,
                 data: $data,
@@ -92,20 +114,10 @@ class WebhotelierReservationController extends Controller
 
             return response('OK', 200);
         } catch (Throwable $e) {
-            WebhotelierWebhookLog::create([
-                'source' => 'webhotelier',
-                'event_type' => 'error',
-                'property_code' => $request->header('x-wh-property'),
-                'reservation_id' => null,
-                'confirmation_code' => null,
-                'booking_status' => null,
-                'method' => $request->method(),
-                'ip_address' => $request->ip(),
-                'headers' => $headers,
-                'raw_body' => $rawBody,
-                'payload' => null,
+            $log->update([
                 'processing_status' => 'failed',
                 'processing_error' => $e->getMessage(),
+                'processed_at' => now(),
             ]);
 
             return response('ERROR', 500);
@@ -183,7 +195,8 @@ class WebhotelierReservationController extends Controller
 
     private function extractGuestEmail(array $data): ?string
     {
-        return Arr::get($data, 'customer.email')
+        return Arr::get($data, 'clientInfo.email')
+            ?? Arr::get($data, 'customer.email')
             ?? Arr::get($data, 'guest.email')
             ?? Arr::get($data, 'booker.email')
             ?? Arr::get($data, 'email')
@@ -192,7 +205,9 @@ class WebhotelierReservationController extends Controller
 
     private function extractGuestFirstName(array $data): ?string
     {
-        return Arr::get($data, 'customer.firstName')
+        return Arr::get($data, 'clientInfo.firstName')
+            ?? Arr::get($data, 'clientInfo.firstname')
+            ?? Arr::get($data, 'customer.firstName')
             ?? Arr::get($data, 'customer.firstname')
             ?? Arr::get($data, 'guest.firstName')
             ?? Arr::get($data, 'guest.firstname')
@@ -203,7 +218,9 @@ class WebhotelierReservationController extends Controller
 
     private function extractGuestLastName(array $data): ?string
     {
-        return Arr::get($data, 'customer.lastName')
+        return Arr::get($data, 'clientInfo.lastName')
+            ?? Arr::get($data, 'clientInfo.lastname')
+            ?? Arr::get($data, 'customer.lastName')
             ?? Arr::get($data, 'customer.lastname')
             ?? Arr::get($data, 'guest.lastName')
             ?? Arr::get($data, 'guest.lastname')
@@ -214,7 +231,9 @@ class WebhotelierReservationController extends Controller
 
     private function extractGuestPhone(array $data): ?string
     {
-        return Arr::get($data, 'customer.phone')
+        return Arr::get($data, 'clientInfo.phone')
+            ?? Arr::get($data, 'clientInfo.telephone')
+            ?? Arr::get($data, 'customer.phone')
             ?? Arr::get($data, 'guest.phone')
             ?? Arr::get($data, 'booker.phone')
             ?? Arr::get($data, 'phone')
