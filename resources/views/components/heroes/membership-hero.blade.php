@@ -47,6 +47,21 @@ $heroDescription = is_string($heroDescription) ? trim($heroDescription) : null;
 
 $heroDescriptionHasHtml = $heroDescription
 && $heroDescription !== strip_tags($heroDescription);
+
+$resolveButtonUrl = function ($manualUrl, string $routeName): string {
+$manualUrl = trim((string) $manualUrl);
+
+if ($manualUrl !== '' && $manualUrl !== '#') {
+return $manualUrl;
+}
+
+return \Illuminate\Support\Facades\Route::has($routeName)
+? route($routeName)
+: '#';
+};
+
+$primaryHref = $resolveButtonUrl($primaryUrl, 'membership.register');
+$secondaryHref = $resolveButtonUrl($secondaryUrl, 'membership.login');
 @endphp
 
 <header class="relative shadow-xl">
@@ -85,13 +100,13 @@ $heroDescriptionHasHtml = $heroDescription
 
                     <div class="mt-9 flex flex-wrap gap-5">
                         @if ($primaryLabel)
-                        <x-buttons.link-button :href="$primaryUrl" variant="solid">
+                        <x-buttons.link-button :href="$primaryHref" variant="solid">
                             {{ $primaryLabel }}
                         </x-buttons.link-button>
                         @endif
 
                         @if ($secondaryLabel)
-                        <x-buttons.link-button :href="$secondaryUrl" variant="white-outline">
+                        <x-buttons.link-button :href="$secondaryHref" variant="white-outline">
                             {{ $secondaryLabel }}
                         </x-buttons.link-button>
                         @endif

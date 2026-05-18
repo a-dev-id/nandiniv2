@@ -15,21 +15,13 @@
                     <div id="navIcons" class="hidden md:flex items-center gap-5">
                         <a href="tel:+623618983111" class="hover:opacity-100" aria-label="Call">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4">
-                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                <g id="SVGRepo_iconCarrier">
-                                    <path d="M3.51089 2L7.15002 2.13169C7.91653 2.15942 8.59676 2.64346 8.89053 3.3702L9.96656 6.03213C10.217 6.65159 10.1496 7.35837 9.78693 7.91634L8.40831 10.0375C9.22454 11.2096 11.4447 13.9558 13.7955 15.5633L15.5484 14.4845C15.9939 14.2103 16.5273 14.1289 17.0314 14.2581L20.5161 15.1517C21.4429 15.3894 22.0674 16.2782 21.9942 17.2552L21.7705 20.2385C21.6919 21.2854 20.8351 22.1069 19.818 21.9887C6.39245 20.4276 -1.48056 1.99997 3.51089 2Z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                </g>
+                                <path d="M3.51089 2L7.15002 2.13169C7.91653 2.15942 8.59676 2.64346 8.89053 3.3702L9.96656 6.03213C10.217 6.65159 10.1496 7.35837 9.78693 7.91634L8.40831 10.0375C9.22454 11.2096 11.4447 13.9558 13.7955 15.5633L15.5484 14.4845C15.9939 14.2103 16.5273 14.1289 17.0314 14.2581L20.5161 15.1517C21.4429 15.3894 22.0674 16.2782 21.9942 17.2552L21.7705 20.2385C21.6919 21.2854 20.8351 22.1069 19.818 21.9887C6.39245 20.4276 -1.48056 1.99997 3.51089 2Z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
                         </a>
 
                         <a href="mailto:reservation@nandinihanginggardens.com" class="hover:opacity-100" aria-label="Email">
                             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                <g id="SVGRepo_iconCarrier">
-                                    <path d="M3 8L8.44992 11.6333C9.73295 12.4886 10.3745 12.9163 11.0678 13.0825C11.6806 13.2293 12.3194 13.2293 12.9322 13.0825C13.6255 12.9163 14.2671 12.4886 15.5501 11.6333L21 8M6.2 19H17.8C18.9201 19 19.4802 19 19.908 18.782C20.2843 18.5903 20.5903 18.2843 20.782 17.908C21 17.4802 21 16.9201 21 15.8V8.2C21 7.0799 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V15.8C3 16.9201 3 17.4802 3.21799 17.908C3.40973 18.2843 3.71569 18.5903 4.09202 18.782C4.51984 19 5.07989 19 6.2 19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                                </g>
+                                <path d="M3 8L8.44992 11.6333C9.73295 12.4886 10.3745 12.9163 11.0678 13.0825C11.6806 13.2293 12.3194 13.2293 12.9322 13.0825C13.6255 12.9163 14.2671 12.4886 15.5501 11.6333L21 8M6.2 19H17.8C18.9201 19 19.4802 19 19.908 18.782C20.2843 18.5903 20.5903 18.2843 20.782 17.908C21 17.4802 21 16.9201 21 15.8V8.2C21 7.0799 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V15.8C3 16.9201 3 17.4802 3.21799 17.908C3.40973 18.2843 3.71569 18.5903 4.09202 18.782C4.51984 19 5.07989 19 6.2 19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
                         </a>
                     </div>
@@ -43,11 +35,11 @@
                 {{-- RIGHT --}}
                 <div class="ml-auto flex items-center gap-3 sm:gap-4">
                     {{-- Member --}}
-                    <a id="navMemberBtn" href="{{ route('membership.index') }}" class="hidden sm:inline-flex items-center justify-center border transition duration-300 uppercase tracking-[0.2em]
+                    <button id="navMemberBtn" type="button" data-open-membership-panel class="hidden sm:inline-flex items-center justify-center border transition duration-300 uppercase tracking-[0.2em]
                                text-[10px] sm:text-[16px] font-medium px-3 sm:px-6 lg:px-8 py-1.5 sm:py-2.5 lg:py-3
-                               bg-[#B8945B] border-[#B8945B] text-white hover:bg-[#a37e45] hover:border-[#a37e45]">
+                               bg-transparent border-white text-white hover:bg-white hover:border-white hover:text-slate-800">
                         INNER CIRCLE
-                    </a>
+                    </button>
 
                     {{-- Book --}}
                     <div class="relative">
@@ -76,10 +68,10 @@
     </nav>
 
     {{-- BACKDROP --}}
-    <div id="offcanvasBackdrop" class="fixed inset-0 z-60 bg-black/50 hidden"></div>
+    <div id="offcanvasBackdrop" class="fixed inset-0 z-[60] bg-black/50 hidden"></div>
 
     {{-- OFFCANVAS --}}
-    <aside id="offcanvasMenu" class="fixed top-0 left-0 z-70 h-dvh w-[86%] max-w-sm bg-white text-slate-800 shadow-2xl -translate-x-full will-change-transform transition-transform duration-300 ease-out">
+    <aside id="offcanvasMenu" class="fixed top-0 left-0 z-[70] h-dvh w-[86%] max-w-sm bg-white text-slate-800 shadow-2xl -translate-x-full will-change-transform transition-transform duration-300 ease-out">
         <div class="h-full flex flex-col">
 
             {{-- HEADER --}}
@@ -155,11 +147,11 @@
                     </div>
 
                     {{-- Member Button --}}
-                    <a href="{{ route('membership.index') }}" class="mt-8 inline-flex w-full items-center justify-center border border-[#B8945B] bg-[#B8945B] px-7 py-3
+                    {{-- <button type="button" data-open-membership-panel class="mt-8 inline-flex w-full items-center justify-center border border-[#B8945B] bg-[#B8945B] px-7 py-3
                                text-[13px] font-bold uppercase tracking-[0.22em] text-white transition duration-300
                                hover:bg-[#a37e45] hover:border-[#a37e45]">
-                        Member
-                    </a>
+                        INNER CIRCLE
+                    </button> --}}
                 </nav>
             </div>
 
@@ -196,26 +188,140 @@
         </div>
     </aside>
 
+    @php
+    $loginUrl = \Illuminate\Support\Facades\Route::has('membership.login')
+    ? route('membership.login')
+    : url('/membership/sign-in');
+
+    $registerUrl = \Illuminate\Support\Facades\Route::has('membership.register')
+    ? route('membership.register')
+    : url('/membership/join');
+
+    $dashboardUrl = \Illuminate\Support\Facades\Route::has('membership.dashboard')
+    ? route('membership.dashboard')
+    : url('/membership/dashboard');
+
+    $logoutUrl = \Illuminate\Support\Facades\Route::has('membership.logout')
+    ? route('membership.logout')
+    : url('/membership/logout');
+    @endphp
+
+    {{-- MEMBERSHIP RIGHT PANEL --}}
+    <aside id="membershipPanel" class="fixed top-0 right-0 z-[70] h-dvh w-[86%] max-w-sm bg-white text-slate-800 shadow-2xl translate-x-full will-change-transform transition-transform duration-300 ease-out">
+        <div class="h-full flex flex-col">
+
+            {{-- HEADER --}}
+            <div class="relative px-7 pt-8 pb-6">
+                <button id="btnCloseMembershipPanel" type="button" aria-label="Close membership panel" class="absolute left-5 top-5 text-slate-500 hover:text-slate-800">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
+                    </svg>
+                </button>
+
+                <div class="flex items-center justify-center">
+                    <img src="{{ asset('images/logo-njhg.png') }}" alt="Nandini Jungle by Hanging Gardens" class="w-52 h-auto" loading="lazy" />
+                </div>
+
+                <div class="mt-6 h-px bg-slate-300/70"></div>
+            </div>
+
+            {{-- LINKS --}}
+            <div class="px-7 pb-8 grow overflow-y-auto">
+                <nav class="space-y-6 text-left">
+                    <a href="{{ route('membership.index') }}" class="block text-[16px] font-medium uppercase text-left">
+                        About Inner Circle
+                    </a>
+
+                    <a href="{{ route('membership.index') }}" class="block text-[16px] font-medium uppercase text-left">
+                        Benefit
+                    </a>
+
+                    <a href="{{ route('membership.index') }}" class="block text-[16px] font-medium uppercase text-left">
+                        Redemption
+                    </a>
+
+                    <div class="pt-2">
+                        <div class="h-px bg-slate-300/70"></div>
+                    </div>
+
+                    @auth('member')
+                    <div class="grid grid-cols-1 gap-3 pt-1">
+                        <a href="{{ $dashboardUrl }}" class="inline-flex w-full items-center justify-center border border-[#B8945B] bg-[#B8945B] px-6 py-3
+                                           text-[13px] font-bold uppercase tracking-[0.22em] text-white transition duration-300
+                                           hover:bg-[#a37e45] hover:border-[#a37e45]">
+                            Dashboard
+                        </a>
+
+                        <form method="POST" action="{{ $logoutUrl }}" class="w-full">
+                            @csrf
+
+                            <button type="submit" class="inline-flex w-full items-center justify-center border border-slate-800 bg-transparent px-6 py-3
+                                               text-[13px] font-bold uppercase tracking-[0.22em] text-slate-800 transition duration-300
+                                               hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white">
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                    @else
+                    <div class="grid grid-cols-1 gap-3 pt-1">
+                        <a href="{{ $loginUrl }}" class="inline-flex w-full items-center justify-center border border-slate-800 bg-transparent px-6 py-3
+                                           text-[13px] font-bold uppercase tracking-[0.22em] text-slate-800 transition duration-300
+                                           hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white">
+                            Sign In
+                        </a>
+
+                        <a href="{{ $registerUrl }}" class="inline-flex w-full items-center justify-center border border-[#B8945B] bg-[#B8945B] px-6 py-3
+                                           text-[13px] font-bold uppercase tracking-[0.22em] text-white transition duration-300
+                                           hover:bg-[#a37e45] hover:border-[#a37e45]">
+                            Join Now
+                        </a>
+                    </div>
+                    @endauth
+                </nav>
+            </div>
+
+        </div>
+    </aside>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const navMemberBtn = document.getElementById('navMemberBtn');
-    
+
+            const btnMenu = document.getElementById('btnMenu');
+            const btnCloseMenu = document.getElementById('btnCloseMenu');
+            const offcanvasMenu = document.getElementById('offcanvasMenu');
+
+            const membershipPanel = document.getElementById('membershipPanel');
+            const btnCloseMembershipPanel = document.getElementById('btnCloseMembershipPanel');
+            const offcanvasBackdrop = document.getElementById('offcanvasBackdrop');
+            const openMembershipButtons = document.querySelectorAll('[data-open-membership-panel]');
+
             function updateMemberButtonOnScroll() {
                 if (!navMemberBtn) {
                     return;
                 }
-    
+
                 const isScrolled = window.scrollY > 50;
-    
+
+                navMemberBtn.classList.remove(
+                    'bg-[#B8945B]',
+                    'border-[#B8945B]',
+                    'text-white',
+                    'hover:bg-[#a37e45]',
+                    'hover:border-[#a37e45]',
+                    'bg-transparent',
+                    'border-white',
+                    'hover:bg-white',
+                    'hover:border-white',
+                    'hover:text-slate-800',
+                    'border-slate-950',
+                    'text-slate-950',
+                    'hover:bg-[#B8945B]',
+                    'hover:border-[#B8945B]',
+                    'hover:text-white'
+                );
+
                 if (isScrolled) {
-                    navMemberBtn.classList.remove(
-                        'bg-[#B8945B]',
-                        'border-[#B8945B]',
-                        'text-white',
-                        'hover:bg-[#a37e45]',
-                        'hover:border-[#a37e45]'
-                    );
-    
                     navMemberBtn.classList.add(
                         'bg-transparent',
                         'border-slate-950',
@@ -225,25 +331,146 @@
                         'hover:text-white'
                     );
                 } else {
-                    navMemberBtn.classList.remove(
-                        'bg-transparent',
-                        'border-slate-950',
-                        'text-slate-950',
-                        'hover:bg-[#B8945B]',
-                        'hover:border-[#B8945B]',
-                        'hover:text-white'
-                    );
-    
                     navMemberBtn.classList.add(
-                        'bg-[#B8945B]',
-                        'border-[#B8945B]',
+                        'bg-transparent',
+                        'border-white',
                         'text-white',
-                        'hover:bg-[#a37e45]',
-                        'hover:border-[#a37e45]'
+                        'hover:bg-white',
+                        'hover:border-white',
+                        'hover:text-slate-800'
                     );
                 }
             }
-    
+
+            function showOverlay() {
+                if (!offcanvasBackdrop) {
+                    return;
+                }
+
+                offcanvasBackdrop.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            }
+
+            function hideOverlay() {
+                if (!offcanvasBackdrop) {
+                    return;
+                }
+
+                offcanvasBackdrop.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+
+            function isLeftMenuOpen() {
+                return offcanvasMenu && !offcanvasMenu.classList.contains('-translate-x-full');
+            }
+
+            function isMembershipPanelOpen() {
+                return membershipPanel && !membershipPanel.classList.contains('translate-x-full');
+            }
+
+            function openLeftMenu(event) {
+                if (event) {
+                    event.preventDefault();
+                }
+
+                if (!offcanvasMenu) {
+                    return;
+                }
+
+                closeMembershipPanel(false);
+
+                offcanvasMenu.classList.remove('-translate-x-full');
+                showOverlay();
+            }
+
+            function closeLeftMenu(shouldHideOverlay = true) {
+                if (!offcanvasMenu) {
+                    return;
+                }
+
+                offcanvasMenu.classList.add('-translate-x-full');
+
+                if (shouldHideOverlay && !isMembershipPanelOpen()) {
+                    hideOverlay();
+                }
+            }
+
+            function openMembershipPanel(event) {
+                if (event) {
+                    event.preventDefault();
+                }
+
+                if (!membershipPanel) {
+                    return;
+                }
+
+                closeLeftMenu(false);
+
+                membershipPanel.classList.remove('translate-x-full');
+                showOverlay();
+            }
+
+            function closeMembershipPanel(shouldHideOverlay = true) {
+                if (!membershipPanel) {
+                    return;
+                }
+
+                membershipPanel.classList.add('translate-x-full');
+
+                if (shouldHideOverlay && !isLeftMenuOpen()) {
+                    hideOverlay();
+                }
+            }
+
+            if (btnMenu) {
+                btnMenu.addEventListener('click', openLeftMenu);
+            }
+
+            if (btnCloseMenu) {
+                btnCloseMenu.addEventListener('click', function () {
+                    closeLeftMenu();
+                });
+            }
+
+            openMembershipButtons.forEach(function (button) {
+                button.addEventListener('click', openMembershipPanel);
+            });
+
+            if (btnCloseMembershipPanel) {
+                btnCloseMembershipPanel.addEventListener('click', function () {
+                    closeMembershipPanel();
+                });
+            }
+
+            if (offcanvasBackdrop) {
+                offcanvasBackdrop.addEventListener('click', function () {
+                    closeLeftMenu(false);
+                    closeMembershipPanel(false);
+                    hideOverlay();
+                });
+            }
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    closeLeftMenu(false);
+                    closeMembershipPanel(false);
+                    hideOverlay();
+                }
+            });
+
+            document.querySelectorAll('[data-oc-toggle]').forEach(function (toggle) {
+                toggle.addEventListener('click', function () {
+                    const targetSelector = toggle.getAttribute('data-oc-toggle');
+                    const target = document.querySelector(targetSelector);
+
+                    if (!target) {
+                        return;
+                    }
+
+                    target.classList.toggle('hidden');
+                });
+            });
+
             updateMemberButtonOnScroll();
             window.addEventListener('scroll', updateMemberButtonOnScroll);
         });
