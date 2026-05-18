@@ -21,6 +21,9 @@ class PageSection extends Model
         'button_url',
         'button_route',
 
+        'items',
+        'background_color',
+
         'text_align',
 
         'is_active',
@@ -29,7 +32,8 @@ class PageSection extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
-        'sort_order' => 'integer',
+        'has_dark_overlay' => 'boolean',
+        'items' => 'array',
     ];
 
     public function page(): BelongsTo

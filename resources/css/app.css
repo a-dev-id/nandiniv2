@@ -28,7 +28,8 @@
     h3,
     h4,
     h5,
-    h6 {
+    h6,
+    th {
         font-family: var(--font-unna);
         letter-spacing: 0.15em !important;
         font-weight: 600 !important;

@@ -44,6 +44,14 @@ class SectionsRelationManager extends RelationManager
         'two_images_reverse',
     ];
 
+    private const ITEM_SECTION_KEYS = [
+        'how_it_works_section',
+        'member_benefits_section',
+        'membership_tier_section',
+        'membership_use_points_section',
+        'membership_faq_section',
+    ];
+
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -63,6 +71,11 @@ class SectionsRelationManager extends RelationManager
                             ->live()
                             ->options([
                                 'intro_text_section' => 'Intro / Text Section',
+                                'how_it_works_section' => 'How It Works Section',
+                                'member_benefits_section' => 'Member Benefits Table',
+                                'membership_tier_section' => 'Membership Tier Section',
+                                'membership_use_points_section' => 'Use Your Points Section',
+                                'membership_faq_section' => 'Membership FAQ Section',
                                 'image_overlay_section' => 'Image Overlay Section',
                                 'split_media_section' => 'Split Media Section',
                                 'split_media_reverse' => 'Split Media Reverse',
@@ -79,14 +92,16 @@ class SectionsRelationManager extends RelationManager
 
                         TextInput::make('subtitle')
                             ->label('Subtitle')
-                            ->maxLength(255)
-                            ->visible(fn(Get $get): bool => in_array($get('section_key'), self::MEDIA_SECTION_KEYS, true))
-                            ->columnSpanFull(),
+                            ->placeholder('Section subtitle')
+                            ->maxLength(255),
 
                         Textarea::make('excerpt')
-                            ->label('Excerpt')
+                            ->label(fn(Get $get): string => $get('section_key') === 'member_benefits_section'
+                                ? 'Tier Recognition Text'
+                                : 'Excerpt')
                             ->rows(3)
-                            ->visible(fn(Get $get): bool => in_array($get('section_key'), self::MEDIA_SECTION_KEYS, true))
+                            ->visible(fn(Get $get): bool => in_array($get('section_key'), self::MEDIA_SECTION_KEYS, true)
+                                || $get('section_key') === 'member_benefits_section')
                             ->columnSpanFull(),
 
                         RichEditor::make('description')
@@ -99,6 +114,231 @@ class SectionsRelationManager extends RelationManager
                                 ['undo', 'redo'],
                             ])
                             ->columnSpanFull(),
+
+                        Repeater::make('items')
+                            ->label(fn(Get $get): string => match ($get('section_key')) {
+                                'member_benefits_section' => 'Member Benefit Rows',
+                                'membership_tier_section' => 'Membership Tier Rows',
+                                'membership_use_points_section' => 'Use Your Points Cards',
+                                'membership_faq_section' => 'FAQ Rows',
+                                default => 'How It Works Items',
+                            })
+                            ->visible(fn(Get $get): bool => in_array($get('section_key'), self::ITEM_SECTION_KEYS, true))
+                            ->columnSpanFull()
+                            ->columns(4)
+                            ->defaultItems(fn(Get $get): int => match ($get('section_key')) {
+                                'member_benefits_section' => 3,
+                                'membership_tier_section' => 4,
+                                'membership_use_points_section' => 3,
+                                'membership_faq_section' => 5,
+                                default => 4,
+                            })
+                            ->minItems(1)
+                            ->maxItems(50)
+                            ->reorderable()
+                            ->collapsible()
+                            ->cloneable()
+                            ->itemLabel(function (array $state, Get $get): string {
+                                if ($get('section_key') === 'member_benefits_section') {
+                                    return $state['benefit'] ?? 'Benefit Row';
+                                }
+
+                                if ($get('section_key') === 'membership_tier_section') {
+                                    $tierName = $state['tier_name'] ?? 'Tier';
+                                    $circleName = $state['circle_name'] ?? 'Circle';
+
+                                    return trim($tierName . ' - ' . $circleName, ' -');
+                                }
+
+                                if ($get('section_key') === 'membership_use_points_section') {
+                                    return $state['title'] ?? 'Use Your Points Card';
+                                }
+
+                                if ($get('section_key') === 'membership_faq_section') {
+                                    return $state['question'] ?? 'FAQ Row';
+                                }
+
+                                return $state['title'] ?? 'How It Works Item';
+                            })
+                            ->addActionLabel(fn(Get $get): string => match ($get('section_key')) {
+                                'member_benefits_section' => 'Add benefit row',
+                                'membership_tier_section' => 'Add tier row',
+                                'membership_use_points_section' => 'Add card',
+                                'membership_faq_section' => 'Add FAQ',
+                                default => 'Add item',
+                            })
+                            ->schema([
+                                FileUpload::make('image')
+                                    ->label('Card Image')
+                                    ->disk('public')
+                                    ->directory('membership/use-points')
+                                    ->visibility('public')
+                                    ->image()
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                    ->imagePreviewHeight('160')
+                                    ->panelAspectRatio('16:10')
+                                    ->panelLayout('integrated')
+                                    ->openable()
+                                    ->downloadable()
+                                    ->saveUploadedFileUsing(
+                                        fn(TemporaryUploadedFile $file): string => self::storeAsWebp(
+                                            file: $file,
+                                            directory: 'membership/use-points',
+                                            targetWidth: 1200,
+                                            targetHeight: 750,
+                                        )
+                                    )
+                                    ->visible(fn(Get $get): bool => $get('../../section_key') === 'membership_use_points_section')
+                                    ->columnSpanFull(),
+
+                                Select::make('icon')
+                                    ->label('Icon')
+                                    ->native(false)
+                                    ->options([
+                                        'home' => 'Home / Hotel Stay',
+                                        'cup' => 'Cup / Food & Beverages',
+                                        'heart' => 'Heart / Spa & Wellness',
+                                        'user' => 'User',
+                                        'book' => 'Book',
+                                        'arrow-up' => 'Arrow Up',
+                                        'gift' => 'Gift',
+                                        'star' => 'Star',
+                                        'sparkles' => 'Sparkles',
+                                    ])
+                                    ->default('user')
+                                    ->required(fn(Get $get): bool => $get('../../section_key') === 'how_it_works_section')
+                                    ->visible(fn(Get $get): bool => $get('../../section_key') === 'how_it_works_section'),
+
+                                TextInput::make('title')
+                                    ->label('Title')
+                                    ->placeholder(fn(Get $get): string => $get('../../section_key') === 'membership_use_points_section'
+                                        ? 'Riverside Sanctuary Spa'
+                                        : 'JOIN FOR FREE')
+                                    ->maxLength(255)
+                                    ->required(fn(Get $get): bool => in_array($get('../../section_key'), [
+                                        'how_it_works_section',
+                                        'membership_use_points_section',
+                                    ], true))
+                                    ->visible(fn(Get $get): bool => in_array($get('../../section_key'), [
+                                        'how_it_works_section',
+                                        'membership_use_points_section',
+                                    ], true))
+                                    ->columnSpan(fn(Get $get): int => $get('../../section_key') === 'membership_use_points_section' ? 2 : 1),
+
+                                TextInput::make('points_label')
+                                    ->label('Points Label')
+                                    ->placeholder('528 Points')
+                                    ->maxLength(255)
+                                    ->visible(fn(Get $get): bool => $get('../../section_key') === 'membership_use_points_section'),
+
+                                TextInput::make('button_label')
+                                    ->label('Button Label')
+                                    ->placeholder('Redeem')
+                                    ->maxLength(255)
+                                    ->visible(fn(Get $get): bool => $get('../../section_key') === 'membership_use_points_section'),
+
+                                TextInput::make('button_url')
+                                    ->label('Button URL')
+                                    ->placeholder('#')
+                                    ->maxLength(255)
+                                    ->visible(fn(Get $get): bool => $get('../../section_key') === 'membership_use_points_section'),
+
+                                Textarea::make('description')
+                                    ->label(fn(Get $get): string => match ($get('../../section_key')) {
+                                        'membership_tier_section' => 'Tier Description',
+                                        'membership_use_points_section' => 'Card Description',
+                                        default => 'Description',
+                                    })
+                                    ->placeholder(fn(Get $get): string => match ($get('../../section_key')) {
+                                        'membership_tier_section' => 'Describe this membership tier.',
+                                        'membership_use_points_section' => 'Indulge in the ultimate riverside retreat by the sacred Ayung River.',
+                                        default => 'Join the program by signing up through our loyalty website.',
+                                    })
+                                    ->rows(3)
+                                    ->columnSpanFull()
+                                    ->visible(fn(Get $get): bool => in_array($get('../../section_key'), [
+                                        'how_it_works_section',
+                                        'membership_tier_section',
+                                        'membership_use_points_section',
+                                    ], true)),
+
+                                TextInput::make('question')
+                                    ->label('Question')
+                                    ->placeholder('How do I register?')
+                                    ->maxLength(255)
+                                    ->required(fn(Get $get): bool => $get('../../section_key') === 'membership_faq_section')
+                                    ->visible(fn(Get $get): bool => $get('../../section_key') === 'membership_faq_section')
+                                    ->columnSpanFull(),
+
+                                Textarea::make('answer')
+                                    ->label('Answer')
+                                    ->placeholder('Write the answer for this FAQ.')
+                                    ->rows(4)
+                                    ->required(fn(Get $get): bool => $get('../../section_key') === 'membership_faq_section')
+                                    ->visible(fn(Get $get): bool => $get('../../section_key') === 'membership_faq_section')
+                                    ->columnSpanFull(),
+
+                                Select::make('card_design')
+                                    ->label('Card Design')
+                                    ->native(false)
+                                    ->options([
+                                        'bronze' => 'Bronze Card',
+                                        'silver' => 'Silver Card',
+                                        'gold' => 'Gold Card',
+                                        'platinum' => 'Platinum Card',
+                                    ])
+                                    ->default('bronze')
+                                    ->required(fn(Get $get): bool => $get('../../section_key') === 'membership_tier_section')
+                                    ->visible(fn(Get $get): bool => $get('../../section_key') === 'membership_tier_section'),
+
+                                TextInput::make('tier_name')
+                                    ->label('Tier Name')
+                                    ->placeholder('Bronze')
+                                    ->maxLength(255)
+                                    ->required(fn(Get $get): bool => $get('../../section_key') === 'membership_tier_section')
+                                    ->visible(fn(Get $get): bool => $get('../../section_key') === 'membership_tier_section'),
+
+                                TextInput::make('circle_name')
+                                    ->label('Circle Name')
+                                    ->placeholder('Dana')
+                                    ->maxLength(255)
+                                    ->required(fn(Get $get): bool => $get('../../section_key') === 'membership_tier_section')
+                                    ->visible(fn(Get $get): bool => $get('../../section_key') === 'membership_tier_section'),
+
+                                TextInput::make('circle_meaning')
+                                    ->label('Circle Meaning')
+                                    ->placeholder('Generosity')
+                                    ->maxLength(255)
+                                    ->visible(fn(Get $get): bool => $get('../../section_key') === 'membership_tier_section'),
+
+                                TextInput::make('benefit')
+                                    ->label('Benefit')
+                                    ->placeholder('Extra savings on rooms')
+                                    ->maxLength(255)
+                                    ->required(fn(Get $get): bool => $get('../../section_key') === 'member_benefits_section')
+                                    ->visible(fn(Get $get): bool => $get('../../section_key') === 'member_benefits_section')
+                                    ->columnSpanFull(),
+
+                                TextInput::make('bronze')
+                                    ->label('Bronze')
+                                    ->placeholder('✓ / - / 5%')
+                                    ->visible(fn(Get $get): bool => $get('../../section_key') === 'member_benefits_section'),
+
+                                TextInput::make('silver')
+                                    ->label('Silver')
+                                    ->placeholder('✓ / - / 5%')
+                                    ->visible(fn(Get $get): bool => $get('../../section_key') === 'member_benefits_section'),
+
+                                TextInput::make('gold')
+                                    ->label('Gold')
+                                    ->placeholder('✓ / - / 10%')
+                                    ->visible(fn(Get $get): bool => $get('../../section_key') === 'member_benefits_section'),
+
+                                TextInput::make('platinum')
+                                    ->label('Platinum')
+                                    ->placeholder('✓ / - / 15%')
+                                    ->visible(fn(Get $get): bool => $get('../../section_key') === 'member_benefits_section'),
+                            ]),
 
                         Repeater::make('images')
                             ->label('Section Images')
@@ -185,7 +425,8 @@ class SectionsRelationManager extends RelationManager
                     ->schema([
                         Section::make('Button')
                             ->columnSpanFull()
-                            ->visible(fn(Get $get): bool => in_array($get('section_key'), self::MEDIA_SECTION_KEYS, true))
+                            ->visible(fn(Get $get): bool => in_array($get('section_key'), self::MEDIA_SECTION_KEYS, true)
+                                || $get('section_key') === 'member_benefits_section')
                             ->schema([
                                 TextInput::make('button_label')
                                     ->label('Button Label')
@@ -217,11 +458,25 @@ class SectionsRelationManager extends RelationManager
 
                         Section::make('Layout')
                             ->columnSpanFull()
-                            ->visible(fn(Get $get): bool => $get('section_key') === 'image_overlay_section')
+                            ->visible(fn(Get $get): bool => in_array($get('section_key'), [
+                                'intro_text_section',
+                                'image_overlay_section',
+                                'how_it_works_section',
+                                'membership_tier_section',
+                                'membership_use_points_section',
+                                'membership_faq_section',
+                            ], true))
                             ->schema([
                                 Select::make('text_align')
                                     ->label('Text Align')
                                     ->native(false)
+                                    ->visible(fn(Get $get): bool => in_array($get('section_key'), [
+                                        'intro_text_section',
+                                        'image_overlay_section',
+                                        'membership_tier_section',
+                                        'membership_use_points_section',
+                                        'membership_faq_section',
+                                    ], true))
                                     ->options([
                                         'left' => 'Left',
                                         'center' => 'Center',
@@ -229,6 +484,25 @@ class SectionsRelationManager extends RelationManager
                                     ])
                                     ->default('center')
                                     ->required(),
+
+                                Select::make('background_color')
+                                    ->label('Background Color')
+                                    ->native(false)
+                                    ->visible(fn(Get $get): bool => in_array($get('section_key'), [
+                                        'intro_text_section',
+                                        'how_it_works_section',
+                                        'membership_tier_section',
+                                        'membership_use_points_section',
+                                        'membership_faq_section',
+                                    ], true))
+                                    ->options([
+                                        'white' => 'White',
+                                        'soft_gray' => 'Soft Gray',
+                                        'warm_ivory' => 'Warm Ivory',
+                                        'light_gold' => 'Light Gold',
+                                        'dark_navy' => 'Dark Navy',
+                                    ])
+                                    ->default('white'),
                             ]),
 
                         Section::make('Settings')
@@ -281,6 +555,11 @@ class SectionsRelationManager extends RelationManager
                     ->badge()
                     ->formatStateUsing(fn(?string $state): string => match ($state) {
                         'intro_text_section' => 'Intro Text',
+                        'how_it_works_section' => 'How It Works',
+                        'member_benefits_section' => 'Member Benefits',
+                        'membership_tier_section' => 'Membership Tiers',
+                        'membership_use_points_section' => 'Use Your Points',
+                        'membership_faq_section' => 'Membership FAQ',
                         'image_overlay_section' => 'Image Overlay',
                         'split_media_section' => 'Split Media',
                         'split_media_reverse' => 'Split Media Reverse',
@@ -291,6 +570,11 @@ class SectionsRelationManager extends RelationManager
                     })
                     ->color(fn(?string $state): string => match ($state) {
                         'intro_text_section' => 'gray',
+                        'how_it_works_section' => 'primary',
+                        'member_benefits_section' => 'primary',
+                        'membership_tier_section' => 'warning',
+                        'membership_use_points_section' => 'success',
+                        'membership_faq_section' => 'info',
                         'image_overlay_section' => 'info',
                         'split_media_section' => 'success',
                         'split_media_reverse' => 'warning',
@@ -304,6 +588,12 @@ class SectionsRelationManager extends RelationManager
                     ->label('Align')
                     ->badge()
                     ->formatStateUsing(fn(?string $state): string => $state ? Str::headline($state) : '-')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('background_color')
+                    ->label('Background')
+                    ->badge()
+                    ->formatStateUsing(fn(?string $state): string => $state ? Str::headline(str_replace('_', ' ', $state)) : '-')
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('excerpt')

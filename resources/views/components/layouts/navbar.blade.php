@@ -46,7 +46,7 @@
                     <a id="navMemberBtn" href="{{ route('membership.index') }}" class="hidden sm:inline-flex items-center justify-center border transition duration-300 uppercase tracking-[0.2em]
                                text-[10px] sm:text-[16px] font-medium px-3 sm:px-6 lg:px-8 py-1.5 sm:py-2.5 lg:py-3
                                bg-[#B8945B] border-[#B8945B] text-white hover:bg-[#a37e45] hover:border-[#a37e45]">
-                        Member
+                        INNER CIRCLE
                     </a>
 
                     {{-- Book --}}

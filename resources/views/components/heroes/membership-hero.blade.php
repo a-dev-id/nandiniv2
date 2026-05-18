@@ -43,7 +43,10 @@ $heroDescription = $description
 ?: $subtitle
 ?: ($page->excerpt ?? 'Earn and redeem points that take you everywhere you want to go.');
 
-$heroDescription = trim(strip_tags($heroDescription));
+$heroDescription = is_string($heroDescription) ? trim($heroDescription) : null;
+
+$heroDescriptionHasHtml = $heroDescription
+&& $heroDescription !== strip_tags($heroDescription);
 @endphp
 
 <header class="relative shadow-xl">
@@ -60,23 +63,27 @@ $heroDescription = trim(strip_tags($heroDescription));
 
         {{-- Overlay --}}
         <div class="absolute inset-0 bg-black/25"></div>
-        <div class="absolute inset-0 bg-linear-to-r from-black/55 via-black/20 to-transparent"></div>
+        <div class="absolute inset-0 bg-linear-to-r from-black/60 via-black/25 to-transparent"></div>
 
         {{-- Content --}}
         <div class="absolute inset-0 flex items-center">
-            <div class="w-full px-6 md:px-12 lg:px-[70px]">
-                <div class="max-w-2xl text-white">
-                    <h1 class="text-[32px] sm:text-[38px] md:text-[44px] uppercase tracking-[0.18em] leading-tight">
+            <div class="w-full px-6 pt-20 pb-12 md:px-12 lg:px-[70px] lg:pt-24 lg:pb-16">
+                <div class="max-w-3xl text-white">
+                    @if ($heroDescription)
+                    <div class="mb-4 max-w-xl text-base md:text-lg font-light leading-[1.65] text-white/95 [&_p]:mb-1.5 [&_p:last-child]:mb-0">
+                        @if ($heroDescriptionHasHtml)
+                        {!! $heroDescription !!}
+                        @else
+                        {!! nl2br(e($heroDescription)) !!}
+                        @endif
+                    </div>
+                    @endif
+
+                    <h1 class="max-w-3xl text-[34px] sm:text-[42px] md:text-[50px] uppercase tracking-[0.18em] leading-[1.15]">
                         {{ $heroTitle }}
                     </h1>
 
-                    @if ($heroDescription)
-                    <p class="mt-2 max-w-xl text-sm md:text-base font-light leading-relaxed text-white/95">
-                        {{ $heroDescription }}
-                    </p>
-                    @endif
-
-                    <div class="mt-10 flex flex-wrap gap-5">
+                    <div class="mt-9 flex flex-wrap gap-5">
                         @if ($primaryLabel)
                         <x-buttons.link-button :href="$primaryUrl" variant="solid">
                             {{ $primaryLabel }}

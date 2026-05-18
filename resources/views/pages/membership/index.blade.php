@@ -31,10 +31,53 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
 
 <x-layouts.app>
     <x-heroes.membership-hero :page="$page" primary-label="Join Now" primary-url="#" secondary-label="Sign In" secondary-url="#" />
-    <x-sections.membership-how-it-works />
-    <x-sections.membership-benefits button-label="Explore Benefits" button-url="#" />
-    <x-sections.membership-earn-points />
-    <x-sections.membership-use-points />
+
+    @forelse ($sections as $section)
+    @switch($section->section_key)
+
+    @case('intro_text_section')
+    <x-sections.intro-text-section :section="$section" />
+    @break
+
+    @case('how_it_works_section')
+    <x-sections.how-it-works-section :section="$section" />
+    @break
+
+    @case('member_benefits_section')
+    <x-sections.member-benefits-section :section="$section" />
+    @break
+
+    @case('membership_tier_section')
+    <x-sections.membership-tier-section :section="$section" />
+    @break
+
+    @case('membership_use_points_section')
+    <x-sections.membership-use-points-section :section="$section" />
+    @break
+
+    @case('membership_faq_section')
     <x-sections.membership-join-today image="images/membership/join-today.webp" mobile-image="images/membership/join-today-mobile.webp" primary-label="Join Now" primary-url="#" secondary-label="Sign In" secondary-url="#" />
-    <x-sections.membership-faqs contact-label="Contact" contact-url="#" />
+
+    <x-sections.membership-faq-section :section="$section" contact-label="Contact" contact-url="#" />
+    @break
+
+    @case('image_overlay_section')
+    <x-sections.image-overlay-section :section="$section" />
+    @break
+
+    @default
+    @if (app()->environment('local'))
+    <div class="px-6 py-4 text-red-600">
+        Unknown section key: {{ $section->section_key }}
+    </div>
+    @endif
+
+    @endswitch
+    @empty
+    @if (app()->environment('local'))
+    <div class="px-6 py-4 text-red-600">
+        No active page sections found for this page.
+    </div>
+    @endif
+    @endforelse
 </x-layouts.app>
