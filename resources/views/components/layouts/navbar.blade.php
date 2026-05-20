@@ -71,11 +71,11 @@
     <div id="offcanvasBackdrop" class="fixed inset-0 z-[60] bg-black/50 hidden"></div>
 
     {{-- OFFCANVAS --}}
-    <aside id="offcanvasMenu" class="fixed top-0 left-0 z-[70] h-dvh w-[86%] max-w-sm bg-white text-slate-800 shadow-2xl -translate-x-full will-change-transform transition-transform duration-300 ease-out">
+    <aside id="offcanvasMenu" class="fixed top-0 left-0 z-[70] h-dvh w-[78vw] max-w-[330px] bg-white text-slate-800 shadow-2xl -translate-x-full will-change-transform transition-transform duration-300 ease-out overflow-hidden">
         <div class="h-full flex flex-col">
 
             {{-- HEADER --}}
-            <div class="relative px-7 pt-8 pb-6">
+            <div class="relative px-7 pt-8 pb-6 shrink-0">
                 <button id="btnCloseMenu" type="button" aria-label="Close menu" class="absolute right-5 top-5 text-slate-500 hover:text-slate-800">
                     <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
@@ -90,59 +90,95 @@
             </div>
 
             {{-- LINKS --}}
-            <div class="px-7 pb-8 grow overflow-y-auto">
-                <nav class="space-y-6 text-left">
-                    <a href="{{ route('home') }}" class="block text-[16px] font-medium uppercase text-left">Home</a>
+            <div class="px-7 pb-8 grow overflow-y-auto min-h-0">
+                <nav class="space-y-5 text-left">
+                    <a href="{{ route('home') }}" class="block text-[16px] leading-6 font-medium uppercase text-left">
+                        Home
+                    </a>
 
-                    <a href="{{ route('holy-river.index') }}" class="block text-[16px] font-medium uppercase text-left">Holy River</a>
+                    <a href="{{ route('holy-river.index') }}" class="block text-[16px] leading-6 font-medium uppercase text-left">
+                        Holy River
+                    </a>
 
                     {{-- Dropdown: Offers & Experiences --}}
                     <div>
-                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[16px] font-medium uppercase text-left" data-oc-toggle="#ocOffers">
+                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[16px] leading-6 font-medium uppercase text-left" data-oc-toggle="ocOffers" aria-expanded="false">
                             <span class="leading-6 text-left">Offers &amp; Experiences</span>
-                            <svg class="h-4 w-4 text-slate-500 shrink-0 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg data-oc-icon class="h-4 w-4 text-slate-500 shrink-0 mt-1 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" d="M6 9l6 6 6-6" />
                             </svg>
                         </button>
 
-                        <div id="ocOffers" class="mt-4 hidden pl-4 space-y-3 text-left">
-                            <a href="{{ route('offers.index') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Offers</a>
-                            <a href="{{ route('experiences.index') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Experiences</a>
+                        <div id="ocOffers" data-oc-panel class="overflow-hidden text-left transition-all duration-300 ease-out" style="max-height: 0px; opacity: 0;">
+                            <div class="pt-6 pb-5 ml-7 space-y-5">
+                                <a href="{{ route('offers.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    Offers
+                                </a>
+
+                                <a href="{{ route('experiences.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    Experiences
+                                </a>
+                            </div>
                         </div>
                     </div>
 
                     {{-- Dropdown: Accommodations --}}
                     <div>
-                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[16px] font-medium uppercase text-left" data-oc-toggle="#ocVillas">
+                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[16px] leading-6 font-medium uppercase text-left" data-oc-toggle="ocVillas" aria-expanded="false">
                             <span class="leading-6 text-left">Accommodations</span>
-                            <svg class="h-4 w-4 text-slate-500 shrink-0 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg data-oc-icon class="h-4 w-4 text-slate-500 shrink-0 mt-1 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" d="M6 9l6 6 6-6" />
                             </svg>
                         </button>
 
-                        <div id="ocVillas" class="mt-4 hidden pl-4 space-y-3 text-left">
-                            <a href="{{ route('accommodations.suites') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">The Royal Suites</a>
-                            <a href="{{ route('accommodations.villas') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Jungle Villas</a>
+                        <div id="ocVillas" data-oc-panel class="overflow-hidden text-left transition-all duration-300 ease-out" style="max-height: 0px; opacity: 0;">
+                            <div class="pt-6 pb-5 ml-7 space-y-5">
+                                <a href="{{ route('accommodations.suites') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    The Royal Suites
+                                </a>
+
+                                <a href="{{ route('accommodations.villas') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    Jungle Villas
+                                </a>
+                            </div>
                         </div>
                     </div>
 
-                    <a href="{{ url('/the-little-things') }}" class="block text-[16px] font-medium uppercase text-left">The Little Things</a>
+                    <a href="{{ url('/the-little-things') }}" class="block text-[16px] leading-6 font-medium uppercase text-left">
+                        The Little Things
+                    </a>
 
                     {{-- Dropdown: More --}}
                     <div>
-                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[16px] font-medium uppercase text-left" data-oc-toggle="#ocMore">
+                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[16px] leading-6 font-medium uppercase text-left" data-oc-toggle="ocMore" aria-expanded="false">
                             <span class="leading-6 text-left">More</span>
-                            <svg class="h-4 w-4 text-slate-500 shrink-0 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg data-oc-icon class="h-4 w-4 text-slate-500 shrink-0 mt-1 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" d="M6 9l6 6 6-6" />
                             </svg>
                         </button>
 
-                        <div id="ocMore" class="mt-4 hidden pl-4 space-y-3 text-left">
-                            <a href="{{ url('/honeymoon') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Honeymoon</a>
-                            <a href="{{ url('/dining') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Dining</a>
-                            <a href="{{ url('/spa-wellness') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Spa & Wellness</a>
-                            <a href="{{ url('/contact') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Contact</a>
-                            <a href="{{ url('/gallery') }}" class="block text-[14px] uppercase font-medium text-slate-700 hover:text-slate-800 text-left">Gallery</a>
+                        <div id="ocMore" data-oc-panel class="overflow-hidden text-left transition-all duration-300 ease-out" style="max-height: 0px; opacity: 0;">
+                            <div class="pt-6 pb-5 ml-7 space-y-5">
+                                <a href="{{ url('/honeymoon') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    Honeymoon
+                                </a>
+
+                                <a href="{{ url('/dining') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    Dining
+                                </a>
+
+                                <a href="{{ url('/spa-wellness') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    Spa &amp; Wellness
+                                </a>
+
+                                <a href="{{ url('/contact') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    Contact
+                                </a>
+
+                                <a href="{{ url('/gallery') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    Gallery
+                                </a>
+                            </div>
                         </div>
                     </div>
 
@@ -156,7 +192,7 @@
             </div>
 
             {{-- FOOTER --}}
-            <div class="px-7 pb-8">
+            <div class="px-7 pb-8 shrink-0">
                 <div class="h-px bg-slate-300/70 mb-6"></div>
 
                 <div class="flex items-center gap-4">
@@ -422,6 +458,32 @@
                 }
             }
 
+            function closeDropdown(toggle, panel) {
+                panel.dataset.open = 'false';
+                panel.style.maxHeight = '0px';
+                panel.style.opacity = '0';
+
+                toggle.setAttribute('aria-expanded', 'false');
+
+                const icon = toggle.querySelector('[data-oc-icon]');
+                if (icon) {
+                    icon.classList.remove('rotate-180');
+                }
+            }
+
+            function openDropdown(toggle, panel) {
+                panel.dataset.open = 'true';
+                panel.style.maxHeight = panel.scrollHeight + 'px';
+                panel.style.opacity = '1';
+
+                toggle.setAttribute('aria-expanded', 'true');
+
+                const icon = toggle.querySelector('[data-oc-icon]');
+                if (icon) {
+                    icon.classList.add('rotate-180');
+                }
+            }
+
             if (btnMenu) {
                 btnMenu.addEventListener('click', openLeftMenu);
             }
@@ -460,14 +522,28 @@
 
             document.querySelectorAll('[data-oc-toggle]').forEach(function (toggle) {
                 toggle.addEventListener('click', function () {
-                    const targetSelector = toggle.getAttribute('data-oc-toggle');
-                    const target = document.querySelector(targetSelector);
+                    const targetId = toggle.getAttribute('data-oc-toggle');
+                    const panel = document.getElementById(targetId);
 
-                    if (!target) {
+                    if (!panel) {
                         return;
                     }
 
-                    target.classList.toggle('hidden');
+                    const isOpen = panel.dataset.open === 'true';
+
+                    if (isOpen) {
+                        closeDropdown(toggle, panel);
+                    } else {
+                        openDropdown(toggle, panel);
+                    }
+                });
+            });
+
+            window.addEventListener('resize', function () {
+                document.querySelectorAll('[data-oc-panel]').forEach(function (panel) {
+                    if (panel.dataset.open === 'true') {
+                        panel.style.maxHeight = panel.scrollHeight + 'px';
+                    }
                 });
             });
 

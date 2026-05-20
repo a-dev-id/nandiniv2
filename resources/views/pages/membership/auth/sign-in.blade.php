@@ -1,9 +1,13 @@
 @push('meta')
 @php
-$metaTitle = $page->meta_title ?: $page->title;
+$metaTitle = $page->meta_title ?: ($page->title ?: 'Sign In');
 
 $metaDescription = $page->meta_description
-?: \Illuminate\Support\Str::limit(strip_tags($page->description ?: $page->excerpt ?: ''), 160, '');
+?: \Illuminate\Support\Str::limit(
+strip_tags($page->description ?: $page->excerpt ?: 'Access your membership dashboard, view your rewards, and continue your journey with Nandini Inner Circle.'),
+160,
+''
+);
 @endphp
 
 <title>{{ $metaTitle }}</title>
@@ -13,9 +17,6 @@ $metaDescription = $page->meta_description
 @php
 $desktopImage = $page->hero_image ?: $page->hero_mobile_image;
 $mobileImage = $page->hero_mobile_image ?: $page->hero_image;
-
-$desktopImageUrl = $desktopImage ? asset('storage/' . $desktopImage) : '';
-$mobileImageUrl = $mobileImage ? asset('storage/' . $mobileImage) : '';
 
 $imageAlt = $page->hero_image_alt
 ?: $page->hero_mobile_image_alt
@@ -33,20 +34,8 @@ $descriptionHasHtml = is_string($description) && $description !== strip_tags($de
 @endphp
 
 <x-layouts.app>
-    {{-- HERO IMAGE ONLY --}}
-    <header class="relative shadow-xl">
-        <div class="relative w-full h-[48vh] min-h-[360px] md:h-[58vh] lg:h-[62vh] overflow-hidden bg-slate-100">
-            @if ($desktopImageUrl || $mobileImageUrl)
-            <picture class="block h-full w-full">
-                @if ($mobileImageUrl)
-                <source media="(max-width: 767px)" srcset="{{ $mobileImageUrl }}">
-                @endif
-
-                <img src="{{ $desktopImageUrl ?: $mobileImageUrl }}" alt="{{ $imageAlt }}" class="absolute inset-0 h-full w-full object-cover object-center" loading="eager">
-            </picture>
-            @endif
-        </div>
-    </header>
+    {{-- HERO --}}
+    <x-heroes.image-hero :image="$desktopImage" :mobile-image="$mobileImage" :alt-text="$imageAlt" height="h-[48vh] min-h-[360px] md:h-[58vh] lg:h-[62vh]" />
 
     {{-- SIGN IN SECTION --}}
     <section class="w-full bg-[#F7F7F7] py-16 md:py-24 lg:py-28">

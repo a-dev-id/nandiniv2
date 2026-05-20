@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
@@ -9,9 +10,14 @@ use RuntimeException;
 class WebhotelierPullService
 {
     protected string $baseUrl;
+
     protected ?string $username;
+
     protected ?string $password;
+
     protected ?string $propertyCode;
+
+    protected int $timeout;
 
     public function __construct()
     {
@@ -19,6 +25,7 @@ class WebhotelierPullService
         $this->username = config('services.webhotelier.api_username');
         $this->password = config('services.webhotelier.api_password');
         $this->propertyCode = config('services.webhotelier.property_code');
+        $this->timeout = (int) config('services.webhotelier.timeout', 30);
     }
 
     public function isConfigured(): bool
@@ -36,6 +43,7 @@ class WebhotelierPullService
             'username_set' => filled($this->username),
             'password_set' => filled($this->password),
             'property_code' => $this->propertyCode,
+            'timeout' => $this->timeout,
             'is_configured' => $this->isConfigured(),
         ];
     }
@@ -44,7 +52,7 @@ class WebhotelierPullService
     {
         $this->ensureConfigured();
 
-        return $this->propertyCode;
+        return (string) $this->propertyCode;
     }
 
     public function get(string $endpoint, array $query = []): array
@@ -57,38 +65,57 @@ class WebhotelierPullService
         return $this->handleResponse($response);
     }
 
-    public function post(string $endpoint, array $payload = []): array
-    {
-        $this->ensureConfigured();
+    /*
+    |--------------------------------------------------------------------------
+    | WebHotelier PULL Flow
+    |--------------------------------------------------------------------------
+    | 1. List pending bookings: /reservation/new
+    | 2. Retrieve booking:      /reservation/{res_id}
+    | 3. Mark as synced:       /reservation/sync/{res_id}
+    */
 
-        $response = $this->request()
-            ->post($this->url($endpoint), $payload);
-
-        return $this->handleResponse($response);
-    }
-
-    public function getPendingReservations(): array
+    public function listPendingBookings(): array
     {
         return $this->get('/reservation/new');
     }
 
+    public function getPendingReservations(): array
+    {
+        return $this->listPendingBookings();
+    }
+
+    public function retrieveBooking(int|string $reservationId): array
+    {
+        $reservationId = $this->cleanReservationId($reservationId);
+
+        return $this->get('/reservation/' . rawurlencode($reservationId));
+    }
+
     public function getReservation(int|string $reservationId): array
     {
-        return $this->get('/reservation/' . $reservationId);
+        return $this->retrieveBooking($reservationId);
+    }
+
+    public function markBookingAsSynced(int|string $reservationId): array
+    {
+        $reservationId = $this->cleanReservationId($reservationId);
+
+        return $this->get('/reservation/sync/' . rawurlencode($reservationId));
     }
 
     public function markReservationAsSynced(int|string $reservationId): array
     {
-        return $this->post('/reservation/sync/' . $reservationId);
+        return $this->markBookingAsSynced($reservationId);
     }
 
-    protected function request()
+    protected function request(): PendingRequest
     {
-        return Http::withBasicAuth($this->username, $this->password)
+        return Http::withBasicAuth((string) $this->username, (string) $this->password)
             ->acceptJson()
             ->asJson()
-            ->timeout(30)
-            ->retry(2, 1000);
+            ->timeout($this->timeout)
+            ->connectTimeout(10)
+            ->retry(2, 1000, null, false);
     }
 
     protected function url(string $endpoint): string
@@ -102,11 +129,19 @@ class WebhotelierPullService
             return $response->json() ?? [];
         }
 
+        $body = $response->json();
+
+        if (! is_array($body)) {
+            $body = [
+                'raw_body' => $response->body(),
+            ];
+        }
+
         throw new RuntimeException(
             'WebHotelier API request failed. Status: '
                 . $response->status()
                 . '. Body: '
-                . $response->body()
+                . json_encode($body, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
         );
     }
 
@@ -115,5 +150,16 @@ class WebhotelierPullService
         if (! $this->isConfigured()) {
             throw new RuntimeException('WebHotelier API is not fully configured. Please check .env and config/services.php.');
         }
+    }
+
+    protected function cleanReservationId(int|string $reservationId): string
+    {
+        $reservationId = trim((string) $reservationId);
+
+        if ($reservationId === '') {
+            throw new RuntimeException('WebHotelier reservation ID is empty.');
+        }
+
+        return $reservationId;
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MembershipAuthController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\OfferController;
+use App\Services\WebhotelierPullService;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])
@@ -109,5 +110,117 @@ Route::get('/holy-river', [HolyRiverController::class, 'index'])
 Route::get('/holy-river/{experience:slug}', [HolyRiverController::class, 'show'])
     ->name('holy-river.show');
 
+/*
+|--------------------------------------------------------------------------
+| Temporary WebHotelier PULL Tests
+|--------------------------------------------------------------------------
+| Remove these routes after the PULL flow is confirmed.
+*/
+
+/*
+| Step 1:
+| Test /reservation/new
+*/
+Route::get('/test-webhotelier-pending/{token}', function (string $token, WebhotelierPullService $service) {
+    abort_unless(
+        hash_equals((string) config('services.webhotelier.sync_token'), $token),
+        403
+    );
+
+    try {
+        return response()->json([
+            'success' => true,
+            'step' => '01_list_pending_bookings',
+            'endpoint' => '/reservation/new',
+            'config' => $service->configStatus(),
+            'response' => $service->listPendingBookings(),
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'success' => false,
+            'step' => '01_list_pending_bookings',
+            'endpoint' => '/reservation/new',
+            'config' => $service->configStatus(),
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+})->name('test.webhotelier.pending');
+
+/*
+| Step 2:
+| Test /reservation/{res_id}
+| This only retrieves booking detail.
+| It does NOT mark the booking as synced.
+*/
+Route::get('/test-webhotelier-reservation/{token}/{reservationId}', function (
+    string $token,
+    string $reservationId,
+    WebhotelierPullService $service
+) {
+    abort_unless(
+        hash_equals((string) config('services.webhotelier.sync_token'), $token),
+        403
+    );
+
+    try {
+        return response()->json([
+            'success' => true,
+            'step' => '02_retrieve_booking',
+            'endpoint' => '/reservation/' . $reservationId,
+            'reservation_id' => $reservationId,
+            'response' => $service->retrieveBooking($reservationId),
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'success' => false,
+            'step' => '02_retrieve_booking',
+            'endpoint' => '/reservation/' . $reservationId,
+            'reservation_id' => $reservationId,
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+})->name('test.webhotelier.reservation');
+
+/*
+| Step 4:
+| Test /reservation/sync/{res_id}
+| WARNING:
+| This removes the reservation from WebHotelier pending sync queue.
+| Use this only after the reservation is already saved in local database.
+*/
+Route::get('/test-webhotelier-mark-synced/{token}/{reservationId}', function (
+    string $token,
+    string $reservationId,
+    WebhotelierPullService $service
+) {
+    abort_unless(
+        hash_equals((string) config('services.webhotelier.sync_token'), $token),
+        403
+    );
+
+    try {
+        return response()->json([
+            'success' => true,
+            'step' => '04_mark_booking_as_synced',
+            'endpoint' => '/reservation/sync/' . $reservationId,
+            'reservation_id' => $reservationId,
+            'response' => $service->markBookingAsSynced($reservationId),
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'success' => false,
+            'step' => '04_mark_booking_as_synced',
+            'endpoint' => '/reservation/sync/' . $reservationId,
+            'reservation_id' => $reservationId,
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+})->name('test.webhotelier.mark-synced');
+
+/*
+|--------------------------------------------------------------------------
+| Cron
+|--------------------------------------------------------------------------
+*/
 Route::get('/cron/webhotelier/sync/{token}', WebhotelierSyncController::class)
     ->name('cron.webhotelier.sync');
