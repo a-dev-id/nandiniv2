@@ -34,6 +34,10 @@ Route::get('/membership', [MembershipController::class, 'index'])
     ->name('membership.index');
 
 Route::prefix('membership')->name('membership.')->group(function () {
+    Route::get('/verify-email/{member}/{hash}', [MembershipAuthController::class, 'verifyEmail'])
+        ->middleware('signed')
+        ->name('verify.email');
+
     Route::middleware('guest:member')->group(function () {
         Route::get('/sign-in', [MembershipAuthController::class, 'showLoginForm'])
             ->name('login');
@@ -43,9 +47,18 @@ Route::prefix('membership')->name('membership.')->group(function () {
 
         Route::get('/join', [MembershipAuthController::class, 'showRegisterForm'])
             ->name('register');
+
+        Route::post('/join', [MembershipAuthController::class, 'register'])
+            ->name('register.submit');
     });
 
     Route::middleware('auth:member')->group(function () {
+        Route::get('/change-password', [MembershipAuthController::class, 'showChangePasswordForm'])
+            ->name('password.change');
+
+        Route::post('/change-password', [MembershipAuthController::class, 'updatePassword'])
+            ->name('password.update');
+
         Route::get('/dashboard', [MembershipAuthController::class, 'dashboard'])
             ->name('dashboard');
 

@@ -15,9 +15,6 @@ strip_tags($page->description ?: $page->excerpt ?: 'Access your membership dashb
 @endpush
 
 @php
-$desktopImage = $page->hero_image ?: $page->hero_mobile_image;
-$mobileImage = $page->hero_mobile_image ?: $page->hero_image;
-
 $imageAlt = $page->hero_image_alt
 ?: $page->hero_mobile_image_alt
 ?: $page->title
@@ -35,7 +32,7 @@ $descriptionHasHtml = is_string($description) && $description !== strip_tags($de
 
 <x-layouts.app>
     {{-- HERO --}}
-    <x-heroes.image-hero :image="$desktopImage" :mobile-image="$mobileImage" :alt-text="$imageAlt" height="h-[48vh] min-h-[360px] md:h-[58vh] lg:h-[62vh]" />
+    <x-heroes.image-hero :page="$page" :alt-text="$imageAlt" />
 
     {{-- SIGN IN SECTION --}}
     <section class="w-full bg-[#F7F7F7] py-16 md:py-24 lg:py-28">
@@ -77,13 +74,37 @@ $descriptionHasHtml = is_string($description) && $description !== strip_tags($de
                 <div class="lg:col-span-7">
                     <div class="mx-auto w-full max-w-[560px] bg-white px-6 py-8 shadow-xl sm:px-8 md:px-10 md:py-10 lg:px-12">
 
+                        @if (session('status'))
+                        <div class="mb-6 border border-green-200 bg-green-50 px-4 py-3 text-[14px] leading-6 text-green-700">
+                            {{ session('status') }}
+                        </div>
+                        @endif
+
+                        @if ($errors->any())
+                        <div class="mb-6 border border-red-200 bg-red-50 px-4 py-3 text-[14px] leading-6 text-red-700">
+                            <p class="font-semibold">
+                                Please check the following:
+                            </p>
+
+                            <ul class="mt-2 list-disc space-y-1 pl-5">
+                                @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
+
                         <form method="POST" action="{{ route('membership.login.submit') }}" class="space-y-6">
                             @csrf
+
+                            {{-- <p class="text-[13px] leading-6 text-slate-500">
+                                <span class="text-red-600">*</span> Required fields
+                            </p> --}}
 
                             {{-- Email --}}
                             <div>
                                 <label for="email" class="mb-3 block text-xs sm:text-sm uppercase tracking-[0.18em] text-slate-500">
-                                    Email Address
+                                    Email Address {{--<span class="text-red-600">*</span>--}}
                                 </label>
 
                                 <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="email" class="w-full border border-slate-300 bg-white px-4 py-3 text-[15px] leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D]">
@@ -98,16 +119,38 @@ $descriptionHasHtml = is_string($description) && $description !== strip_tags($de
                             {{-- Password --}}
                             <div>
                                 <label for="password" class="mb-3 block text-xs sm:text-sm uppercase tracking-[0.18em] text-slate-500">
-                                    Password
+                                    Password {{--<span class="text-red-600">*</span>--}}
                                 </label>
 
-                                <input id="password" type="password" name="password" required autocomplete="current-password" class="w-full border border-slate-300 bg-white px-4 py-3 text-[15px] leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D]">
+                                <div class="relative">
+                                    <input id="password" type="password" name="password" required autocomplete="current-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-[15px] leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D]">
+
+                                    <button type="button" data-toggle-password="password" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#A67C3D]" aria-label="Show password">
+                                        {{-- Eye Open --}}
+                                        <svg data-eye-open class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12Z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                        </svg>
+
+                                        {{-- Eye Closed --}}
+                                        <svg data-eye-closed class="hidden h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3l18 18" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.58 10.58A2 2 0 0 0 12 14a2 2 0 0 0 1.42-.58" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.88 4.74A9.44 9.44 0 0 1 12 4.5c6 0 9.75 7.5 9.75 7.5a17.47 17.47 0 0 1-2.16 3.19" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6.61 6.61C3.78 8.49 2.25 12 2.25 12s3.75 7.5 9.75 7.5a9.7 9.7 0 0 0 4.39-1.04" />
+                                        </svg>
+                                    </button>
+                                </div>
 
                                 @error('password')
                                 <p class="mt-2 text-[14px] leading-6 text-red-600">
                                     {{ $message }}
                                 </p>
                                 @enderror
+
+                                <p class="mt-3 text-[13px] leading-6 text-slate-500">
+                                    If your account was created automatically from a booking, please use your booking number as your temporary password.
+                                </p>
                             </div>
 
                             {{-- Remember --}}
@@ -138,4 +181,34 @@ $descriptionHasHtml = is_string($description) && $description !== strip_tags($de
             </div>
         </div>
     </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleButtons = document.querySelectorAll('[data-toggle-password]');
+
+            toggleButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const inputId = button.getAttribute('data-toggle-password');
+                    const input = document.getElementById(inputId);
+
+                    if (!input) {
+                        return;
+                    }
+
+                    const eyeOpen = button.querySelector('[data-eye-open]');
+                    const eyeClosed = button.querySelector('[data-eye-closed]');
+                    const isHidden = input.type === 'password';
+
+                    input.type = isHidden ? 'text' : 'password';
+
+                    if (eyeOpen && eyeClosed) {
+                        eyeOpen.classList.toggle('hidden', isHidden);
+                        eyeClosed.classList.toggle('hidden', !isHidden);
+                    }
+
+                    button.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+                });
+            });
+        });
+    </script>
 </x-layouts.app>

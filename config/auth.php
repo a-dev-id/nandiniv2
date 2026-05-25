@@ -45,7 +45,7 @@ return [
 
         'member' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'members',
         ],
     ],
 
@@ -70,6 +70,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', User::class),
+        ],
+
+        'members' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Member::class,
         ],
 
         // 'users' => [
