@@ -34,7 +34,7 @@
 
                 {{-- RIGHT --}}
                 <div class="ml-auto flex items-center gap-3 sm:gap-4">
-                    {{-- Member --}}
+                    {{-- Member: desktop/tablet only --}}
                     <button id="navMemberBtn" type="button" data-open-membership-panel class="hidden sm:inline-flex items-center justify-center border transition duration-300 uppercase tracking-[0.2em]
                                text-[10px] sm:text-[16px] font-medium px-3 sm:px-6 lg:px-8 py-1.5 sm:py-2.5 lg:py-3
                                bg-transparent border-white text-white hover:bg-white hover:border-white hover:text-slate-800">
@@ -69,6 +69,24 @@
 
     {{-- BACKDROP --}}
     <div id="offcanvasBackdrop" class="fixed inset-0 z-[60] bg-black/50 hidden"></div>
+
+    @php
+    $loginUrl = \Illuminate\Support\Facades\Route::has('membership.login')
+    ? route('membership.login')
+    : url('/membership/sign-in');
+
+    $registerUrl = \Illuminate\Support\Facades\Route::has('membership.register')
+    ? route('membership.register')
+    : url('/membership/join');
+
+    $dashboardUrl = \Illuminate\Support\Facades\Route::has('membership.dashboard')
+    ? route('membership.dashboard')
+    : url('/membership/dashboard');
+
+    $logoutUrl = \Illuminate\Support\Facades\Route::has('membership.logout')
+    ? route('membership.logout')
+    : url('/membership/logout');
+    @endphp
 
     {{-- OFFCANVAS --}}
     <aside id="offcanvasMenu" class="fixed top-0 left-0 z-[70] h-dvh w-[78vw] max-w-[330px] bg-white text-slate-800 shadow-2xl -translate-x-full will-change-transform transition-transform duration-300 ease-out overflow-hidden">
@@ -182,12 +200,54 @@
                         </div>
                     </div>
 
-                    {{-- Member Button --}}
-                    {{-- <button type="button" data-open-membership-panel class="mt-8 inline-flex w-full items-center justify-center border border-[#B8945B] bg-[#B8945B] px-7 py-3
-                               text-[13px] font-bold uppercase tracking-[0.22em] text-white transition duration-300
-                               hover:bg-[#a37e45] hover:border-[#a37e45]">
-                        INNER CIRCLE
-                    </button> --}}
+                    {{-- Dropdown: Inner Circle - Mobile only --}}
+                    <div class="sm:hidden">
+                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[16px] leading-6 font-medium uppercase text-left" data-oc-toggle="ocMembership" aria-expanded="false">
+                            <span class="leading-6 text-left">Inner Circle</span>
+                            <svg data-oc-icon class="h-4 w-4 text-slate-500 shrink-0 mt-1 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
+
+                        <div id="ocMembership" data-oc-panel class="overflow-hidden text-left transition-all duration-300 ease-out" style="max-height: 0px; opacity: 0;">
+                            <div class="pt-6 pb-5 ml-7 space-y-5">
+                                <a href="{{ route('membership.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    About Inner Circle
+                                </a>
+
+                                <a href="{{ route('membership.benefits') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    Benefits
+                                </a>
+
+                                <a href="{{ route('membership.privilege-redemption') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    Redemption
+                                </a>
+
+                                @auth('member')
+                                <a href="{{ $dashboardUrl }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    Dashboard
+                                </a>
+
+                                <form method="POST" action="{{ $logoutUrl }}">
+                                    @csrf
+
+                                    <button type="submit" class="block w-full text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                        Logout
+                                    </button>
+                                </form>
+                                @else
+                                <a href="{{ $loginUrl }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    Sign In
+                                </a>
+
+                                <a href="{{ $registerUrl }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    Join Now
+                                </a>
+                                @endauth
+                            </div>
+                        </div>
+                    </div>
+
                 </nav>
             </div>
 
@@ -224,24 +284,6 @@
         </div>
     </aside>
 
-    @php
-    $loginUrl = \Illuminate\Support\Facades\Route::has('membership.login')
-    ? route('membership.login')
-    : url('/membership/sign-in');
-
-    $registerUrl = \Illuminate\Support\Facades\Route::has('membership.register')
-    ? route('membership.register')
-    : url('/membership/join');
-
-    $dashboardUrl = \Illuminate\Support\Facades\Route::has('membership.dashboard')
-    ? route('membership.dashboard')
-    : url('/membership/dashboard');
-
-    $logoutUrl = \Illuminate\Support\Facades\Route::has('membership.logout')
-    ? route('membership.logout')
-    : url('/membership/logout');
-    @endphp
-
     {{-- MEMBERSHIP RIGHT PANEL --}}
     <aside id="membershipPanel" class="fixed top-0 right-0 z-[70] h-dvh w-[86%] max-w-sm bg-white text-slate-800 shadow-2xl translate-x-full will-change-transform transition-transform duration-300 ease-out">
         <div class="h-full flex flex-col">
@@ -268,11 +310,11 @@
                         About Inner Circle
                     </a>
 
-                    <a href="{{ route('membership.index') }}" class="block text-[16px] font-medium uppercase text-left">
-                        Benefit
+                    <a href="{{ route('membership.benefits') }}" class="block text-[16px] font-medium uppercase text-left">
+                        Benefits
                     </a>
 
-                    <a href="{{ route('membership.index') }}" class="block text-[16px] font-medium uppercase text-left">
+                    <a href="{{ route('membership.privilege-redemption') }}" class="block text-[16px] font-medium uppercase text-left">
                         Redemption
                     </a>
 

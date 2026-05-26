@@ -108,7 +108,7 @@ class SectionsRelationManager extends RelationManager
                             ->label('Description')
                             ->toolbarButtons([
                                 ['bold', 'italic', 'underline', 'strike', 'link'],
-                                ['h2', 'h3'],
+                                ['h1', 'h2', 'h3'],
                                 ['bulletList', 'orderedList'],
                                 ['blockquote'],
                                 ['undo', 'redo'],

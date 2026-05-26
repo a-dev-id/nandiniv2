@@ -8,6 +8,9 @@
 'description' => null,
 'subtitle' => null,
 
+'showContent' => false,
+'showOverlay' => false,
+
 'primaryLabel' => 'Join Now',
 'primaryUrl' => '#',
 
@@ -19,6 +22,9 @@
 $desktopImageSrc = '';
 $mobileImageSrc = '';
 $alt = $altText;
+
+$showContent = filter_var($showContent, FILTER_VALIDATE_BOOLEAN);
+$showOverlay = filter_var($showOverlay, FILTER_VALIDATE_BOOLEAN);
 
 if ($page && ($page->hero_image || $page->hero_mobile_image)) {
 $desktopImage = $page->hero_image ?: $page->hero_mobile_image;
@@ -76,11 +82,12 @@ $secondaryHref = $resolveButtonUrl($secondaryUrl, 'membership.login');
         </picture>
         @endif
 
-        {{-- Overlay --}}
+        @if ($showOverlay)
         <div class="absolute inset-0 bg-black/25"></div>
         <div class="absolute inset-0 bg-linear-to-r from-black/60 via-black/25 to-transparent"></div>
+        @endif
 
-        {{-- Content --}}
+        @if ($showContent)
         <div class="absolute inset-0 flex items-center">
             <div class="w-full px-6 pt-20 pb-12 md:px-12 lg:px-[70px] lg:pt-24 lg:pb-16">
                 <div class="max-w-3xl text-white">
@@ -114,5 +121,6 @@ $secondaryHref = $resolveButtonUrl($secondaryUrl, 'membership.login');
                 </div>
             </div>
         </div>
+        @endif
     </div>
 </header>

@@ -30,39 +30,13 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
 @endpush
 
 <x-layouts.app>
-    <x-heroes.membership-hero :page="$page" primary-label="Join Now" primary-url="#" secondary-label="Sign In" secondary-url="#" :show-content="true" :show-overlay="true" />
+    <x-heroes.membership-hero :page="$page" :show-content="false" :show-overlay="false" />
 
     @forelse ($sections as $section)
     @switch($section->section_key)
 
     @case('intro_text_section')
     <x-sections.intro-text-section :section="$section" />
-    @break
-
-    @case('how_it_works_section')
-    <x-sections.how-it-works-section :section="$section" />
-    @break
-
-    @case('member_benefits_section')
-    <x-sections.member-benefits-section :section="$section" />
-    @break
-
-    @case('membership_tier_section')
-    <x-sections.membership-tier-section :section="$section" />
-    @break
-
-    @case('membership_use_points_section')
-    <x-sections.membership-use-points-section :section="$section" :rewards="$rewards" />
-    @break
-
-    @case('membership_faq_section')
-    <x-sections.membership-join-today image="images/membership/join-today.webp" mobile-image="images/membership/join-today-mobile.webp" primary-label="Join Now" primary-url="#" secondary-label="Sign In" secondary-url="#" />
-
-    <x-sections.membership-faq-section :section="$section" contact-label="Contact" contact-url="#" />
-    @break
-
-    @case('image_overlay_section')
-    <x-sections.image-overlay-section :section="$section" />
     @break
 
     @default

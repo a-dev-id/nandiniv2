@@ -60,7 +60,7 @@ Example: the description below "How It Works".
 */
 $sectionSpacingClass = ($hasTitle || $hasSubtitle)
 ? 'py-14 md:py-20'
-: 'pt-0 pb-14 md:pb-20';
+: 'pt-10 pb-14 md:pb-10';
 @endphp
 
 <section class="{{ $sectionSpacingClass }} px-6 {{ $backgroundClass }}">
@@ -90,8 +90,58 @@ $sectionSpacingClass = ($hasTitle || $hasSubtitle)
 
         {{-- Description --}}
         @if ($hasDescription)
-        <div class="{{ ($hasTitle || $hasSubtitle) ? 'mt-8' : '' }} {{ $descriptionWidthClass }} text-[15px] leading-7 {{ $descriptionColorClass }} {{ $descriptionMarginClass }} {{ $descriptionAlignClass }}">
-            {!! $description !!}
+        <div class="{{ $descriptionMarginClass }} {{ $descriptionWidthClass }} {{ $descriptionAlignClass }} {{ $descriptionColorClass }} pt-8 md:pt-10">
+            <div class="
+                    [&_h1]:text-2xl
+                    sm:[&_h1]:text-3xl
+                    md:[&_h1]:text-4xl
+                    [&_h1]:leading-snug
+                    [&_h1]:tracking-[0.15em]
+                    md:[&_h1]:tracking-[0.25em]
+                    [&_h1]:uppercase
+                    [&_h1]:text-slate-800
+                    [&_h1]:mb-6
+                    md:[&_h1]:mb-8
+                    [&_h1]:font-medium
+
+                    [&_h2]:mb-5
+                    [&_h2]:text-[28px]
+                    [&_h2]:font-semibold
+                    [&_h2]:leading-tight
+                    [&_h2]:tracking-normal
+                    [&_h2]:normal-case
+                    [&_h2]:text-slate-800
+
+                    [&_h3]:mb-4
+                    [&_h3]:text-xl
+                    [&_h3]:font-semibold
+                    [&_h3]:leading-snug
+                    [&_h3]:text-slate-800
+
+                    [&_p]:mb-2
+                    [&_p]:text-base
+                    [&_p]:leading-7
+
+                    [&_ul]:mb-5
+                    [&_ul]:list-disc
+                    [&_ul]:pl-6
+
+                    [&_ol]:mb-5
+                    [&_ol]:list-decimal
+                    [&_ol]:pl-6
+
+                    [&_li]:mb-2
+                    [&_li]:text-base
+                    [&_li]:leading-7
+
+                    [&_ul_ul]:mt-2
+                    [&_ul_ul]:list-disc
+                    [&_ul_ul]:pl-6
+
+                    [&_strong]:font-semibold
+                ">
+                {!! $description !!}
+            </div>
         </div>
         @endif
 

@@ -54,13 +54,6 @@ $location = $member?->country ?: '-';
 
 $memberPoints = (int) ($member?->points ?? 0);
 
-/*
-|--------------------------------------------------------------------------
-| Important:
-| Tier is calculated directly from points.
-| This makes testing easier because changing points will update the card tier.
-|--------------------------------------------------------------------------
-*/
 $memberTier = strtolower((string) \App\Models\Member::getTierByPoints($memberPoints));
 
 $validTiers = ['bronze', 'silver', 'gold', 'platinum'];
@@ -178,16 +171,6 @@ return strtoupper((string) $date);
 }
 };
 
-/*
-|--------------------------------------------------------------------------
-| Activity History
-|--------------------------------------------------------------------------
-| This will use controller variables if available:
-| $activityHistories, $membershipHistories, $pointHistories, or $rewardHistories.
-|
-| If none exist, it will show demo rows so the section layout is visible.
-|--------------------------------------------------------------------------
-*/
 $activityHistories = collect(
 $activityHistories
 ?? $membershipHistories
@@ -232,16 +215,76 @@ $activityHistories = collect([
 ],
 ]);
 }
+
+$dashboardRewards = collect($rewards ?? []);
+
+if ($dashboardRewards->isEmpty()) {
+try {
+$dashboardRewards = \App\Models\Reward::query()
+->with('category')
+->where('is_active', true)
+->inRandomOrder()
+->limit(9)
+->get();
+} catch (\Throwable $e) {
+$dashboardRewards = collect();
+}
+} else {
+$dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
+}
 @endphp
 
 <x-layouts.app>
     <x-heroes.image-hero :page="$page" />
 
+    <style>
+        .dashboard-reward-carousel-section .slick-list {
+            padding-top: 4px !important;
+            padding-bottom: 46px !important;
+        }
+
+        .dashboard-reward-carousel-section .slick-track {
+            display: flex !important;
+        }
+
+        .dashboard-reward-carousel-section .slick-slide {
+            height: auto !important;
+        }
+
+        .dashboard-reward-carousel-section .slick-slide>div {
+            height: 100%;
+        }
+
+        .dashboard-reward-carousel-section .dashboard-reward-card-article {
+            height: 100%;
+            padding-bottom: 8px;
+        }
+
+        .dashboard-reward-carousel-section .dashboard-reward-card {
+            height: 100%;
+            min-height: 540px;
+        }
+
+        .dashboard-reward-carousel-section .dashboard-reward-card-body {
+            min-height: 285px;
+        }
+
+        @media (max-width: 767px) {
+            .dashboard-reward-carousel-section .dashboard-reward-card {
+                min-height: auto;
+            }
+
+            .dashboard-reward-carousel-section .dashboard-reward-card-body {
+                min-height: auto;
+            }
+        }
+
+    </style>
+
     {{-- MEMBER DETAIL --}}
     <section class="bg-white px-6 py-10 md:py-14 lg:py-16">
         <div class="mx-auto w-full max-w-6xl">
 
-            {{-- SECTION TITLE --}}
             <div class="mx-auto max-w-3xl text-center">
                 <h1 class="text-2xl sm:text-3xl md:text-4xl leading-snug tracking-[0.14em] md:tracking-[0.20em] uppercase text-slate-800 font-medium">
                     Member Detail
@@ -252,10 +295,8 @@ $activityHistories = collect([
                 </p>
             </div>
 
-            {{-- CONTENT --}}
             <div class="mt-8 md:mt-10 grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-8">
 
-                {{-- PROFILE PHOTO --}}
                 <div class="lg:col-span-3">
                     <div class="mx-auto flex aspect-[4/5] w-full max-w-[170px] items-center justify-center overflow-hidden rounded-[16px] bg-[#F7F7F7] shadow-md lg:mx-0">
                         @if ($profilePhotoUrl)
@@ -268,7 +309,6 @@ $activityHistories = collect([
                     </div>
                 </div>
 
-                {{-- MEMBER INFO --}}
                 <div class="text-center lg:col-span-4 lg:text-left">
                     <h2 class="text-lg sm:text-xl lg:text-[22px] leading-snug tracking-[0.20em] uppercase text-slate-800 font-medium">
                         {{ $memberName }}
@@ -297,31 +337,26 @@ $activityHistories = collect([
                     </div>
                 </div>
 
-                {{-- MEMBER CARD --}}
                 <div class="lg:col-span-5">
                     <div class="mx-auto w-full max-w-[390px]">
 
-                        {{-- CURRENT CARD --}}
                         <div class="relative overflow-hidden rounded-[20px] shadow-lg">
                             <img src="{{ $currentCardImage }}" alt="{{ $tierNameMap[$memberTier] ?? 'Membership Card' }} {{ $tierLabelMap[$memberTier] ?? '' }} Card" class="block w-full" loading="lazy">
 
                             <div class="pointer-events-none absolute inset-0 text-white">
 
-                                {{-- POINTS --}}
                                 <div class="absolute bottom-[14%] left-[8%] max-w-[43%]">
                                     <p class="text-[14px] sm:text-[17px] md:text-[19px] font-bold uppercase leading-none tracking-[0.02em] drop-shadow-md">
                                         {{ number_format($memberPoints) }} POINT
                                     </p>
                                 </div>
 
-                                {{-- TIER --}}
                                 <div class="absolute bottom-[23%] right-[8%] max-w-[48%] text-right">
                                     <p class="text-[16px] sm:text-[19px] md:text-[22px] font-semibold uppercase leading-none tracking-[0.14em] drop-shadow-md">
                                         {{ $tierLabelMap[$memberTier] ?? 'Bronze' }}
                                     </p>
                                 </div>
 
-                                {{-- MEMBER ID --}}
                                 <div class="absolute bottom-[8.5%] right-[26%] text-center">
                                     <p class="text-[5.5px] sm:text-[6.5px] md:text-[7.5px] font-bold uppercase leading-tight tracking-[0.18em] text-white/95 drop-shadow">
                                         Member ID
@@ -332,7 +367,6 @@ $activityHistories = collect([
                                     </p>
                                 </div>
 
-                                {{-- VALID TILL --}}
                                 <div class="absolute bottom-[8.5%] right-[8%] text-center">
                                     <p class="text-[5.5px] sm:text-[6.5px] md:text-[7.5px] font-bold uppercase leading-tight tracking-[0.18em] text-white/95 drop-shadow">
                                         Valid Till
@@ -345,7 +379,6 @@ $activityHistories = collect([
                             </div>
                         </div>
 
-                        {{-- NEXT TIER --}}
                         <div class="mt-4 grid grid-cols-1 items-center gap-3 sm:grid-cols-[1fr_110px]">
                             @if ($nextTier && $pointsToNextTier !== null)
                             <div class="rounded-lg bg-[#F1F1F1] px-5 py-3 text-center">
@@ -387,7 +420,6 @@ $activityHistories = collect([
     <section class="bg-[#F1F1F1] px-6 py-10 md:py-12 lg:py-14">
         <div class="mx-auto w-full max-w-5xl">
 
-            {{-- HISTORY HEADER --}}
             <div class="mb-10 text-center">
                 <h2 class="text-3xl sm:text-4xl md:text-[44px] leading-none tracking-[0.18em] uppercase text-black font-medium">
                     History
@@ -501,4 +533,183 @@ $activityHistories = collect([
             </div>
         </div>
     </section>
+
+    {{-- RANDOM REWARDS SLIDER --}}
+    @if ($dashboardRewards->isNotEmpty())
+    <section class="dashboard-reward-carousel-section bg-white px-6 py-10 md:py-14 lg:py-16" data-dashboard-reward-carousel-section>
+        <div class="mx-auto w-full">
+            <div class="mb-8 md:mb-10 text-center">
+                <h2 class="text-3xl sm:text-4xl md:text-[44px] leading-none tracking-[0.18em] uppercase text-black font-medium">
+                    Rewards
+                </h2>
+
+                <p class="mt-3 text-[14px] sm:text-[15px] leading-relaxed text-black">
+                    Explore selected rewards available for your Inner Circle points.
+                </p>
+            </div>
+
+            <div class="relative">
+                <div class="dashboard-reward-carousel" data-total="{{ $dashboardRewards->count() }}">
+                    @foreach ($dashboardRewards as $reward)
+                    @php
+                    $rewardTitle = $reward->title ?? $reward->name ?? 'Reward';
+
+                    $imageRaw = $reward->card_image
+                    ?? $reward->hero_image
+                    ?? $reward->image
+                    ?? null;
+
+                    $image = $resolveImage($imageRaw);
+
+                    $alt = $reward->card_image_alt
+                    ?? $reward->hero_image_alt
+                    ?? $reward->image_alt
+                    ?? $rewardTitle;
+
+                    $rewardDescription = trim((string) (
+                    $reward->description
+                    ?? $reward->excerpt
+                    ?? ''
+                    ));
+
+                    $points = $reward->points_required
+                    ?? $reward->points
+                    ?? $reward->point_cost
+                    ?? 0;
+
+                    $pointsLabel = trim((string) ($reward->points_label ?? ''));
+
+                    $rewardUrl = \Illuminate\Support\Facades\Route::has('membership.privilege-redemption')
+                    ? route('membership.privilege-redemption')
+                    : url('/membership/privilege-redemption');
+                    @endphp
+
+                    <article class="dashboard-reward-card-article px-3 w-full flex">
+                        <div class="dashboard-reward-card group bg-white shadow-xl flex flex-col w-full">
+                            <div class="aspect-[4/3] overflow-hidden bg-slate-100">
+                                @if ($image)
+                                <img src="{{ $image }}" alt="{{ $alt }}" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy">
+                                @else
+                                <div class="flex h-full w-full items-center justify-center bg-[#F7F7F7]">
+                                    <span class="text-5xl font-medium uppercase tracking-[0.12em] text-[#916B2C]">
+                                        {{ strtoupper(mb_substr($rewardTitle, 0, 1)) }}
+                                    </span>
+                                </div>
+                                @endif
+                            </div>
+
+                            <div class="dashboard-reward-card-body p-7 flex flex-col grow">
+                                <h3 class="text-slate-950 uppercase tracking-[0.18em] text-xl md:text-2xl leading-snug font-medium">
+                                    {{ $rewardTitle }}
+                                </h3>
+
+                                @if ($rewardDescription)
+                                <p class="mt-5 text-slate-900 text-[15px] leading-relaxed">
+                                    {{ \Illuminate\Support\Str::limit(strip_tags($rewardDescription), 145) }}
+                                </p>
+                                @endif
+
+                                <div class="mt-auto pt-12 flex items-center justify-between gap-5">
+                                    <p class="text-sm uppercase text-slate-950">
+                                        @if ($pointsLabel)
+                                        {{ $pointsLabel }}
+                                        @else
+                                        {{ number_format((float) $points, 0) }} Points
+                                        @endif
+                                    </p>
+
+                                    <a href="{{ $rewardUrl }}" class="inline-flex min-w-[125px] items-center justify-center border border-slate-950 px-6 py-3 text-sm uppercase text-slate-950 hover:bg-slate-950 hover:text-white transition">
+                                        Redeem
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                    @endforeach
+                </div>
+
+                <button type="button" class="dashboard-reward-carousel-prev absolute left-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-black text-white md:h-12 md:w-12" aria-label="Previous reward">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="h-4 w-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+                    </svg>
+                </button>
+
+                <button type="button" class="dashboard-reward-carousel-next absolute right-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-black text-white md:h-12 md:w-12" aria-label="Next reward">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="h-4 w-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </section>
+    @endif
+
+
+
+    <script>
+        function initDashboardRewardCarousel(attempt = 0) {
+            if (!window.jQuery || !jQuery.fn || !jQuery.fn.slick) {
+                if (attempt < 30) {
+                    setTimeout(function () {
+                        initDashboardRewardCarousel(attempt + 1);
+                    }, 150);
+                }
+
+                return;
+            }
+
+            const $carousel = jQuery('.dashboard-reward-carousel');
+
+            if (!$carousel.length || $carousel.hasClass('slick-initialized')) {
+                return;
+            }
+
+            const total = parseInt($carousel.attr('data-total') || '0', 10);
+
+            if (total <= 0) {
+                return;
+            }
+
+            const desktopSlides = Math.min(total, 3);
+            const tabletSlides = Math.min(total, 2);
+            const mobileSlides = 1;
+
+            $carousel.slick({
+                slidesToShow: desktopSlides,
+                slidesToScroll: 1,
+                arrows: total > 1,
+                infinite: total > desktopSlides,
+                prevArrow: jQuery('.dashboard-reward-carousel-prev'),
+                nextArrow: jQuery('.dashboard-reward-carousel-next'),
+                responsive: [
+                    {
+                        breakpoint: 1024,
+                        settings: {
+                            slidesToShow: tabletSlides,
+                            infinite: total > tabletSlides,
+                        },
+                    },
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            slidesToShow: mobileSlides,
+                            infinite: total > mobileSlides,
+                        },
+                    },
+                ],
+            });
+
+            if (total <= 1) {
+                jQuery('.dashboard-reward-carousel-prev, .dashboard-reward-carousel-next').addClass('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initDashboardRewardCarousel();
+        });
+
+        window.addEventListener('load', function () {
+            initDashboardRewardCarousel();
+        });
+    </script>
 </x-layouts.app>

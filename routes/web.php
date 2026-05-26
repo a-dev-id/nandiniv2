@@ -34,6 +34,12 @@ Route::get('/membership', [MembershipController::class, 'index'])
     ->name('membership.index');
 
 Route::prefix('membership')->name('membership.')->group(function () {
+    Route::get('/benefits', [MembershipController::class, 'benefits'])
+        ->name('benefits');
+
+    Route::get('/privilege-redemption', [MembershipController::class, 'privilegeRedemption'])
+        ->name('privilege-redemption');
+
     Route::get('/verify-email/{member}/{hash}', [MembershipAuthController::class, 'verifyEmail'])
         ->middleware('signed')
         ->name('verify.email');

@@ -2,6 +2,7 @@
 
 @props([
 'section' => null,
+'rewards' => collect(),
 ])
 
 @php
@@ -42,40 +43,6 @@ $descriptionColorClass = $backgroundColor === 'dark_navy'
 $viewMoreLabel = trim((string) ($section?->button_label ?? 'View More'));
 $viewMoreUrl = trim((string) ($section?->button_url ?? '#')) ?: '#';
 
-$defaultItems = [
-[
-'title' => 'Riverside Sanctuary Spa',
-'description' => 'Indulge in the ultimate riverside retreat by the sacred Ayung River.',
-'points_label' => '528 Points',
-'button_label' => 'Redeem',
-'button_url' => '#',
-'image' => 'images/membership/use-points-spa.webp',
-],
-[
-'title' => 'Room Upgrade On Us',
-'description' => 'Enjoy more space, stunning views, and the serene atmosphere of Nandini Jungle — thoughtfully extended as our gift to you.',
-'points_label' => '428 Points / Night',
-'button_label' => 'Redeem',
-'button_url' => '#',
-'image' => 'images/membership/use-points-room.webp',
-],
-[
-'title' => 'Luxe High Tea',
-'description' => 'Relish a refined afternoon with our Luxe High Tea amidst the verdant jungles of Ubud.',
-'points_label' => '320 Points',
-'button_label' => 'Redeem',
-'button_url' => '#',
-'image' => 'images/membership/use-points-tea.webp',
-],
-];
-
-$sectionItems = collect($section?->items ?? [])
-->filter(fn ($item) => filled($item['title'] ?? null) || filled($item['description'] ?? null))
-->values()
-->all();
-
-$items = count($sectionItems) > 0 ? $sectionItems : $defaultItems;
-
 $resolveImage = function (?string $image): ?string {
 $image = trim((string) $image);
 
@@ -93,6 +60,101 @@ return asset(ltrim($image, '/'));
 
 return asset('storage/' . ltrim($image, '/'));
 };
+
+$formatPoints = function ($reward): string {
+$pointsLabel = trim((string) data_get($reward, 'points_label', ''));
+
+if ($pointsLabel !== '') {
+return $pointsLabel;
+}
+
+$pointsRequired = data_get($reward, 'points_required');
+
+if ($pointsRequired === null || $pointsRequired === '') {
+return '';
+}
+
+return number_format((int) $pointsRequired) . ' POINTS';
+};
+
+$rewardItems = collect($rewards ?? [])
+->map(function ($reward) use ($formatPoints) {
+$rewardTitle = trim((string) data_get($reward, 'title', ''));
+
+$rewardDescription = trim((string) data_get($reward, 'excerpt', ''));
+
+if ($rewardDescription === '') {
+$rewardDescription = trim(strip_tags((string) data_get($reward, 'description', '')));
+}
+
+$categoryName = trim((string) (
+data_get($reward, 'category.name')
+?: data_get($reward, 'category.title')
+?: data_get($reward, 'category.label')
+?: ''
+));
+
+$buttonLabel = trim((string) data_get($reward, 'button_label', ''));
+
+if ($buttonLabel === '') {
+$buttonLabel = 'Redeem';
+}
+
+$buttonUrl = trim((string) data_get($reward, 'button_url', ''));
+
+if ($buttonUrl === '') {
+$buttonUrl = '#';
+}
+
+return [
+'title' => $rewardTitle,
+'description' => $rewardDescription,
+'points_label' => $formatPoints($reward),
+'button_label' => $buttonLabel,
+'button_url' => $buttonUrl,
+'image' => data_get($reward, 'image') ?: '',
+'image_alt' => data_get($reward, 'image_alt') ?: $rewardTitle,
+'category' => $categoryName,
+];
+})
+->filter(fn ($item) => filled($item['title'] ?? null))
+->values()
+->all();
+
+$defaultItems = [
+[
+'title' => 'Riverside Sanctuary Spa',
+'description' => 'Indulge in the ultimate riverside retreat by the sacred Ayung River.',
+'points_label' => '528 POINTS',
+'button_label' => 'Redeem',
+'button_url' => '#',
+'image' => 'images/membership/use-points-spa.webp',
+'image_alt' => 'Riverside Sanctuary Spa',
+'category' => 'Spa',
+],
+[
+'title' => 'Room Upgrade On Us',
+'description' => 'Enjoy more space, stunning views, and the serene atmosphere of Nandini Jungle — thoughtfully extended as our gift to you.',
+'points_label' => '428 POINTS / NIGHT',
+'button_label' => 'Redeem',
+'button_url' => '#',
+'image' => 'images/membership/use-points-room.webp',
+'image_alt' => 'Room Upgrade On Us',
+'category' => 'Room',
+],
+[
+'title' => 'Luxe High Tea',
+'description' => 'Relish a refined afternoon with our Luxe High Tea amidst the verdant jungles of Ubud.',
+'points_label' => '320 POINTS',
+'button_label' => 'Redeem',
+'button_url' => '#',
+'image' => 'images/membership/use-points-tea.webp',
+'image_alt' => 'Luxe High Tea',
+'category' => 'Dining',
+],
+];
+
+$items = count($rewardItems) > 0 ? $rewardItems : $defaultItems;
 @endphp
 
 <section class="{{ $backgroundClass }} px-6 py-14 md:py-20">
@@ -133,16 +195,24 @@ return asset('storage/' . ltrim($image, '/'));
             $pointsLabel = trim((string) ($item['points_label'] ?? ''));
             $buttonLabel = trim((string) ($item['button_label'] ?? 'Redeem'));
             $buttonUrl = trim((string) ($item['button_url'] ?? '#')) ?: '#';
+            $categoryLabel = trim((string) ($item['category'] ?? ''));
+            $imageAlt = trim((string) ($item['image_alt'] ?? $itemTitle));
             @endphp
 
             <article class="group flex h-full flex-col bg-white shadow-xl shadow-black/10 ring-1 ring-black/5">
                 @if ($imageUrl)
                 <div class="aspect-square overflow-hidden bg-slate-100 md:aspect-[4/3]">
-                    <img src="{{ $imageUrl }}" alt="{{ $itemTitle }}" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy">
+                    <img src="{{ $imageUrl }}" alt="{{ $imageAlt ?: $itemTitle }}" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy">
                 </div>
                 @endif
 
                 <div class="flex flex-1 flex-col px-7 py-8">
+                    @if ($categoryLabel)
+                    <p class="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-[#b28a4a]">
+                        {{ $categoryLabel }}
+                    </p>
+                    @endif
+
                     @if ($itemTitle)
                     <h3 class="text-xl leading-snug tracking-[0.18em] md:tracking-[0.22em] uppercase font-semibold text-slate-900">
                         {{ $itemTitle }}
