@@ -77,10 +77,36 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
     </style>
 
     @php
+    $currentMember = auth('member')->user();
+
     $rewardGroups = $rewards
     ->filter(fn ($reward) => $reward->category)
     ->groupBy(fn ($reward) => $reward->category->id);
     @endphp
+
+    @if (session('success') || session('error') || $errors->any())
+    <section class="bg-white pt-10 px-6 md:px-12 lg:px-[70px]">
+        <div class="mx-auto w-full">
+            @if (session('success'))
+            <div class="border border-green-700 bg-green-50 px-5 py-4 text-sm text-green-900">
+                {{ session('success') }}
+            </div>
+            @endif
+
+            @if (session('error'))
+            <div class="border border-red-700 bg-red-50 px-5 py-4 text-sm text-red-900">
+                {{ session('error') }}
+            </div>
+            @endif
+
+            @if ($errors->any())
+            <div class="border border-red-700 bg-red-50 px-5 py-4 text-sm text-red-900">
+                {{ $errors->first() }}
+            </div>
+            @endif
+        </div>
+    </section>
+    @endif
 
     @foreach ($rewardGroups as $categoryRewards)
     @php
@@ -129,6 +155,8 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
                 ?? $reward->point_cost
                 ?? 0;
 
+                $points = (int) $points;
+
                 $pointsLabel = trim((string) ($reward->points_label ?? ''));
 
                 $rewardDescription = trim((string) (
@@ -140,8 +168,17 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
                 $rewardDescriptionHasHtml = $rewardDescription
                 && $rewardDescription !== strip_tags($rewardDescription);
 
-                $redeemUrl = \Illuminate\Support\Facades\Route::has('membership.login')
+                $memberCanRedeem = $currentMember
+                && $reward->is_active
+                && $points > 0
+                && (int) $currentMember->points >= $points;
+
+                $redeemLoginUrl = \Illuminate\Support\Facades\Route::has('membership.login')
                 ? route('membership.login')
+                : '#';
+
+                $redeemPostUrl = \Illuminate\Support\Facades\Route::has('membership.rewards.redeem')
+                ? route('membership.rewards.redeem', $reward)
                 : '#';
                 @endphp
 
@@ -180,18 +217,42 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
                             </div>
                             @endif
 
-                            <div class="mt-auto pt-12 flex items-center justify-between gap-5">
-                                <p class="text-sm uppercase text-slate-950">
-                                    @if ($pointsLabel)
-                                    {{ $pointsLabel }}
-                                    @else
-                                    {{ number_format((float) $points, 0) }} Points
-                                    @endif
-                                </p>
+                            <div class="mt-auto pt-12">
+                                <div class="flex items-center justify-between gap-5">
+                                    <p class="text-sm uppercase text-slate-950">
+                                        @if ($pointsLabel)
+                                        {{ $pointsLabel }}
+                                        @else
+                                        {{ number_format((float) $points, 0) }} Points
+                                        @endif
+                                    </p>
 
-                                <a href="{{ $redeemUrl }}" class="inline-flex min-w-[125px] items-center justify-center border border-slate-950 px-6 py-3 text-sm uppercase text-slate-950 hover:bg-slate-950 hover:text-white transition">
-                                    Redeem
-                                </a>
+                                    @if ($currentMember)
+                                    @if ($memberCanRedeem)
+                                    <form method="POST" action="{{ $redeemPostUrl }}">
+                                        @csrf
+
+                                        <button type="submit" class="inline-flex min-w-[125px] items-center justify-center border border-slate-950 px-6 py-3 text-sm uppercase text-slate-950 hover:bg-slate-950 hover:text-white transition">
+                                            Redeem
+                                        </button>
+                                    </form>
+                                    @else
+                                    <button type="button" disabled class="inline-flex min-w-[125px] items-center justify-center border border-slate-300 bg-slate-100 px-6 py-3 text-sm uppercase text-slate-400 cursor-not-allowed">
+                                        Not Enough
+                                    </button>
+                                    @endif
+                                    @else
+                                    <a href="{{ $redeemLoginUrl }}" class="inline-flex min-w-[125px] items-center justify-center border border-slate-950 px-6 py-3 text-sm uppercase text-slate-950 hover:bg-slate-950 hover:text-white transition">
+                                        Redeem
+                                    </a>
+                                    @endif
+                                </div>
+
+                                @if ($currentMember && ! $memberCanRedeem)
+                                <p class="mt-3 text-xs leading-relaxed text-slate-500">
+                                    You need {{ number_format(max($points - (int) $currentMember->points, 0), 0) }} more points to redeem this reward.
+                                </p>
+                                @endif
                             </div>
                         </div>
                     </div>

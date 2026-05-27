@@ -1,12 +1,16 @@
 <?php
 
+use App\Http\Controllers\HoneymoonController;
+use App\Http\Controllers\LittleThingsController;
 use App\Http\Controllers\AccommodationController;
 use App\Http\Controllers\Cron\WebhotelierSyncController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\HolyRiverController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MemberRewardRedemptionController;
 use App\Http\Controllers\MembershipAuthController;
 use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\MembershipProfileController;
 use App\Http\Controllers\OfferController;
 use App\Services\WebhotelierPullService;
 use Illuminate\Support\Facades\Route;
@@ -14,13 +18,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
 
-/*
-|--------------------------------------------------------------------------
-| Auth Redirect Fallback
-|--------------------------------------------------------------------------
-| Laravel's auth middleware expects a route named "login".
-| We redirect it to the member sign-in page.
-*/
 Route::get('/login', function () {
     return redirect()->route('membership.login');
 })->name('login');
@@ -67,6 +64,18 @@ Route::prefix('membership')->name('membership.')->group(function () {
 
         Route::get('/dashboard', [MembershipAuthController::class, 'dashboard'])
             ->name('dashboard');
+
+        Route::get('/profile/edit', [MembershipProfileController::class, 'edit'])
+            ->name('profile.edit');
+
+        Route::put('/profile', [MembershipProfileController::class, 'update'])
+            ->name('profile.update');
+
+        Route::get('/rewards/redemptions/{redemption}/thank-you', [MemberRewardRedemptionController::class, 'thankYou'])
+            ->name('rewards.thank-you');
+
+        Route::post('/rewards/{reward}/redeem', [MemberRewardRedemptionController::class, 'store'])
+            ->name('rewards.redeem');
 
         Route::post('/logout', [MembershipAuthController::class, 'logout'])
             ->name('logout');
@@ -131,14 +140,26 @@ Route::get('/holy-river/{experience:slug}', [HolyRiverController::class, 'show']
 
 /*
 |--------------------------------------------------------------------------
-| Temporary WebHotelier PULL Tests
+| Little Things
 |--------------------------------------------------------------------------
-| Remove these routes after the PULL flow is confirmed.
 */
+Route::get('/the-little-things', [LittleThingsController::class, 'index'])
+    ->name('little-things.index');
 
 /*
-| Step 1:
-| Test /reservation/new
+|--------------------------------------------------------------------------
+| Honeymoon
+|--------------------------------------------------------------------------
+*/
+Route::get('/honeymoon', [HoneymoonController::class, 'index'])
+    ->name('honeymoon.index');
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Temporary WebHotelier PULL Tests
+|--------------------------------------------------------------------------
 */
 Route::get('/test-webhotelier-pending/{token}', function (string $token, WebhotelierPullService $service) {
     abort_unless(
@@ -165,12 +186,6 @@ Route::get('/test-webhotelier-pending/{token}', function (string $token, Webhote
     }
 })->name('test.webhotelier.pending');
 
-/*
-| Step 2:
-| Test /reservation/{res_id}
-| This only retrieves booking detail.
-| It does NOT mark the booking as synced.
-*/
 Route::get('/test-webhotelier-reservation/{token}/{reservationId}', function (
     string $token,
     string $reservationId,
@@ -200,13 +215,6 @@ Route::get('/test-webhotelier-reservation/{token}/{reservationId}', function (
     }
 })->name('test.webhotelier.reservation');
 
-/*
-| Step 4:
-| Test /reservation/sync/{res_id}
-| WARNING:
-| This removes the reservation from WebHotelier pending sync queue.
-| Use this only after the reservation is already saved in local database.
-*/
 Route::get('/test-webhotelier-mark-synced/{token}/{reservationId}', function (
     string $token,
     string $reservationId,

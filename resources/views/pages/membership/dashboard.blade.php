@@ -180,23 +180,65 @@ $activityHistories
 );
 
 try {
-if ($activityHistories->isEmpty() && $member && method_exists($member, 'pointTransactions')) {
-$activityHistories = $member->pointTransactions()->latest()->take(10)->get();
+if ($activityHistories->isEmpty() && $member) {
+$mergedHistories = collect();
+
+if (method_exists($member, 'rewardRedemptions')) {
+$rewardRedemptions = $member->rewardRedemptions()
+->with('reward')
+->latest()
+->take(30)
+->get();
+
+$mergedHistories = $mergedHistories->merge($rewardRedemptions);
 }
 
-if ($activityHistories->isEmpty() && $member && method_exists($member, 'rewardTransactions')) {
-$activityHistories = $member->rewardTransactions()->latest()->take(10)->get();
+if (method_exists($member, 'pointTransactions')) {
+$pointTransactions = $member->pointTransactions()
+->where('type', '!=', 'redeem')
+->latest()
+->take(30)
+->get();
+
+$mergedHistories = $mergedHistories->merge($pointTransactions);
 }
 
-if ($activityHistories->isEmpty() && $member && method_exists($member, 'rewardRedemptions')) {
-$activityHistories = $member->rewardRedemptions()->latest()->take(10)->get();
+if (method_exists($member, 'rewardTransactions')) {
+$rewardTransactions = $member->rewardTransactions()
+->latest()
+->take(30)
+->get();
+
+$mergedHistories = $mergedHistories->merge($rewardTransactions);
+}
+
+$activityHistories = $mergedHistories
+->sortByDesc(function ($item) {
+try {
+return $item->created_at
+? \Carbon\Carbon::parse($item->created_at)->timestamp
+: 0;
+} catch (\Throwable $e) {
+return 0;
+}
+})
+->take(30)
+->values();
 }
 } catch (\Throwable $e) {
 $activityHistories = collect();
 }
 
-if ($activityHistories->isEmpty()) {
+if ($activityHistories->isEmpty() && app()->environment('local')) {
 $activityHistories = collect([
+[
+'title' => 'Manual Point Top Up',
+'description' => 'Manual point top up for testing.',
+'status' => 'earned',
+'date' => now(),
+'points' => 500,
+'image' => null,
+],
 [
 'title' => 'Balinese Blessing Purification',
 'description' => "Surrender to the embrace of Bali's healing waters with a sacred purification ritual led by a Balinese priest.",
@@ -204,17 +246,14 @@ $activityHistories = collect([
 'date' => '2026-01-27',
 'points' => -400,
 'image' => null,
-],
-[
-'title' => 'Stay Longer Save More',
-'description' => 'Stay a minimum of 5 nights and enjoy exclusive savings designed for extended escapes.',
-'status' => 'purchased',
-'date' => '2026-01-18',
-'points' => 400,
-'image' => null,
+'redemption_code' => 'RDM-TEST-CODE',
+'expires_at' => '2026-02-26',
 ],
 ]);
 }
+
+$historyDisplayLimit = 3;
+$hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
 
 $dashboardRewards = collect($rewards ?? []);
 
@@ -335,6 +374,12 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                             <span>: {{ $location }}</span>
                         </div>
                     </div>
+
+                    <div class="mt-6 flex justify-center lg:justify-start">
+                        <a href="{{ \Illuminate\Support\Facades\Route::has('membership.profile.edit') ? route('membership.profile.edit') : '#' }}" class="inline-flex min-w-[170px] items-center justify-center border border-[#916B2C] bg-[#916B2C] px-6 py-3 text-xs uppercase tracking-[0.16em] text-white hover:bg-white hover:text-[#916B2C] transition">
+                            Edit Profile
+                        </a>
+                    </div>
                 </div>
 
                 <div class="lg:col-span-5">
@@ -418,7 +463,7 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
 
     {{-- ACTIVITY HISTORY --}}
     <section class="bg-[#F1F1F1] px-6 py-10 md:py-12 lg:py-14">
-        <div class="mx-auto w-full max-w-5xl">
+        <div class="mx-auto w-full max-w-7xl">
 
             <div class="mb-10 text-center">
                 <h2 class="text-3xl sm:text-4xl md:text-[44px] leading-none tracking-[0.18em] uppercase text-black font-medium">
@@ -431,9 +476,21 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
             </div>
 
             <div class="divide-y divide-black/45 border-t border-b border-black/45">
-                @foreach ($activityHistories as $activity)
+                @foreach ($activityHistories as $historyIndex => $activity)
                 @php
+                if (is_object($activity) && method_exists($activity, 'loadMissing')) {
+                try {
+                $activity->loadMissing('reward');
+                } catch (\Throwable $e) {
+                //
+                }
+                }
+
+                $isRewardRedemption = is_a($activity, \App\Models\MemberRewardRedemption::class);
+                $isPointTransaction = is_a($activity, \App\Models\MemberPointTransaction::class);
+
                 $title = $getHistoryValue($activity, [
+                'reward_name',
                 'title',
                 'name',
                 'reward.title',
@@ -441,7 +498,25 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                 'offer.title',
                 'offer.name',
                 'description_title',
-                ], 'Membership Activity');
+                ], null);
+
+                $statusRaw = strtolower((string) $getHistoryValue($activity, [
+                'status',
+                'type',
+                'transaction_type',
+                'activity_type',
+                ], ''));
+
+                if (! $title && $isPointTransaction) {
+                $title = match ($statusRaw) {
+                'earn' => 'Points Added',
+                'adjustment' => 'Point Adjustment',
+                'redeem' => 'Points Redeemed',
+                default => 'Point Transaction',
+                };
+                }
+
+                $title = $title ?: 'Membership Activity';
 
                 $description = $getHistoryValue($activity, [
                 'description',
@@ -454,28 +529,45 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                 'remark',
                 ], '');
 
-                $statusRaw = strtolower((string) $getHistoryValue($activity, [
-                'status',
-                'type',
-                'transaction_type',
-                'activity_type',
-                ], ''));
+                $redemptionCode = $getHistoryValue($activity, [
+                'redemption_code',
+                'redeem_code',
+                'code',
+                ], null);
+
+                $validUntilRaw = $getHistoryValue($activity, [
+                'expires_at',
+                'valid_until',
+                'valid_date',
+                'expired_at',
+                'reward.expires_at',
+                ], null);
+
+                $validUntil = $formatHistoryDate($validUntilRaw);
+                $hasValidUntil = $validUntil !== '-';
 
                 $pointsRaw = $getHistoryValue($activity, [
                 'points',
                 'point',
                 'points_change',
                 'point_change',
+                'points_used',
                 'amount',
                 'reward.points',
+                'reward.points_required',
                 'offer.points',
                 ], 0);
 
                 $pointsNumber = (int) preg_replace('/[^-\d]/', '', (string) $pointsRaw);
 
+                if ($isRewardRedemption) {
+                $pointsNumber = -abs((int) $getHistoryValue($activity, ['points_used'], $pointsNumber));
+                }
+
                 if ($statusRaw === '') {
-                $statusRaw = $pointsNumber < 0 ? 'redeemed' : 'purchased' ; } $statusLabel=strtoupper(str_replace(['_', '-' ], ' ' , $statusRaw)); $statusClass=match ($statusRaw) { 'redeemed' , 'redeem' , 'used' , 'deducted'=> 'bg-[#FF3B3B] text-white',
-                    'purchased', 'purchase', 'earned', 'paid', 'completed' => 'bg-[#32C85A] text-white',
+                $statusRaw = $pointsNumber < 0 ? 'redeemed' : 'earned' ; } if ($statusRaw==='earn' ) { $statusRaw='earned' ; } if ($isRewardRedemption && $statusRaw==='pending' ) { $statusRaw='redeemed' ; } $statusLabel=strtoupper(str_replace(['_', '-' ], ' ' , $statusRaw)); $statusClass=match ($statusRaw) { 'pending' , 'redeemed' , 'redeem' , 'used' , 'deducted'=> 'bg-[#FF3B3B] text-white',
+                    'earned', 'earn', 'purchased', 'purchase', 'paid', 'completed' => 'bg-[#32C85A] text-white',
+                    'adjustment' => 'bg-[#916B2C] text-white',
                     default => 'bg-[#916B2C] text-white',
                     };
 
@@ -484,11 +576,15 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                     'activity_date',
                     'transaction_date',
                     'redeemed_at',
+                    'used_at',
                     'purchased_at',
                     'created_at',
                     ], null));
 
-                    $pointDisplay = ($pointsNumber > 0 ? '+' : ($pointsNumber < 0 ? '-' : '' )) . number_format(abs($pointsNumber)) . ' POINT' ; $image=$resolveImage($getHistoryValue($activity, [ 'image' , 'photo' , 'thumbnail' , 'card_image' , 'reward.image' , 'reward.photo' , 'reward.thumbnail' , 'reward.card_image' , 'offer.image' , 'offer.photo' , 'offer.thumbnail' , 'offer.card_image' , ], null)); @endphp <article class="grid grid-cols-1 gap-5 py-7 md:grid-cols-[250px_1fr] md:gap-12 md:py-8">
+                    $pointDisplay = ($pointsNumber > 0 ? '+' : ($pointsNumber < 0 ? '-' : '' )) . number_format(abs($pointsNumber)) . ' POINT' ; $image=$resolveImage($getHistoryValue($activity, [ 'image' , 'photo' , 'thumbnail' , 'card_image' , 'hero_image' , 'reward.image' , 'reward.photo' , 'reward.thumbnail' , 'reward.card_image' , 'reward.hero_image' , 'offer.image' , 'offer.photo' , 'offer.thumbnail' , 'offer.card_image' , 'offer.hero_image' , ], null)); @endphp <article class="grid grid-cols-1 gap-5 py-7 md:grid-cols-[250px_1fr] md:gap-12 md:py-8 {{ $historyIndex >= $historyDisplayLimit ? 'hidden' : '' }}" @if ($historyIndex>= $historyDisplayLimit)
+                        data-history-extra
+                        @endif
+                        >
                         <div class="w-full">
                             @if ($image)
                             <img src="{{ $image }}" alt="{{ $title }}" class="h-[155px] w-full object-cover md:h-[135px]" loading="lazy">
@@ -508,8 +604,28 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
 
                             @if ($description)
                             <p class="mt-3 text-[14px] sm:text-[15px] leading-relaxed text-black">
-                                {{ strip_tags($description) }}
+                                {{ \Illuminate\Support\Str::limit(strip_tags($description), 180) }}
                             </p>
+                            @endif
+
+                            @if ($redemptionCode || $hasValidUntil)
+                            <div class="mt-4 flex flex-wrap gap-3">
+                                @if ($redemptionCode)
+                                <div class="inline-flex w-fit border border-black/40 bg-white px-4 py-2">
+                                    <p class="text-[12px] sm:text-[13px] font-bold uppercase leading-none tracking-[0.14em] text-black">
+                                        Code: {{ $redemptionCode }}
+                                    </p>
+                                </div>
+                                @endif
+
+                                @if ($hasValidUntil)
+                                <div class="inline-flex w-fit border border-[#916B2C]/60 bg-white px-4 py-2">
+                                    <p class="text-[12px] sm:text-[13px] font-bold uppercase leading-none tracking-[0.14em] text-[#916B2C]">
+                                        Valid Until: {{ $validUntil }}
+                                    </p>
+                                </div>
+                                @endif
+                            </div>
                             @endif
 
                             <div class="mt-7 grid grid-cols-1 items-center gap-4 text-[14px] sm:grid-cols-[150px_160px_1fr] md:mt-9">
@@ -531,6 +647,14 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                         </article>
                         @endforeach
             </div>
+
+            @if ($hasMoreHistories)
+            <div class="mt-10 text-center">
+                <button type="button" data-history-view-more class="inline-flex min-w-[170px] items-center justify-center border border-[#916B2C] bg-[#916B2C] px-7 py-4 text-sm uppercase tracking-[0.14em] text-white hover:bg-white hover:text-[#916B2C] transition">
+                    View More
+                </button>
+            </div>
+            @endif
         </div>
     </section>
 
@@ -572,16 +696,26 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                     ?? ''
                     ));
 
-                    $points = $reward->points_required
+                    $points = (int) (
+                    $reward->points_required
                     ?? $reward->points
                     ?? $reward->point_cost
-                    ?? 0;
+                    ?? 0
+                    );
 
                     $pointsLabel = trim((string) ($reward->points_label ?? ''));
 
-                    $rewardUrl = \Illuminate\Support\Facades\Route::has('membership.privilege-redemption')
-                    ? route('membership.privilege-redemption')
-                    : url('/membership/privilege-redemption');
+                    $memberCanRedeem = $member
+                    && $reward->is_active
+                    && $points > 0
+                    && (int) $member->points >= $points
+                    && \Illuminate\Support\Facades\Route::has('membership.rewards.redeem');
+
+                    $redeemPostUrl = \Illuminate\Support\Facades\Route::has('membership.rewards.redeem')
+                    ? route('membership.rewards.redeem', $reward)
+                    : '#';
+
+                    $pointsNeeded = max($points - (int) ($member?->points ?? 0), 0);
                     @endphp
 
                     <article class="dashboard-reward-card-article px-3 w-full flex">
@@ -609,18 +743,36 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                                 </p>
                                 @endif
 
-                                <div class="mt-auto pt-12 flex items-center justify-between gap-5">
-                                    <p class="text-sm uppercase text-slate-950">
-                                        @if ($pointsLabel)
-                                        {{ $pointsLabel }}
-                                        @else
-                                        {{ number_format((float) $points, 0) }} Points
-                                        @endif
-                                    </p>
+                                <div class="mt-auto pt-12">
+                                    <div class="flex items-center justify-between gap-5">
+                                        <p class="text-sm uppercase text-slate-950">
+                                            @if ($pointsLabel)
+                                            {{ $pointsLabel }}
+                                            @else
+                                            {{ number_format((float) $points, 0) }} Points
+                                            @endif
+                                        </p>
 
-                                    <a href="{{ $rewardUrl }}" class="inline-flex min-w-[125px] items-center justify-center border border-slate-950 px-6 py-3 text-sm uppercase text-slate-950 hover:bg-slate-950 hover:text-white transition">
-                                        Redeem
-                                    </a>
+                                        @if ($memberCanRedeem)
+                                        <form method="POST" action="{{ $redeemPostUrl }}">
+                                            @csrf
+
+                                            <button type="submit" class="inline-flex min-w-[125px] items-center justify-center border border-slate-950 px-6 py-3 text-sm uppercase text-slate-950 hover:bg-slate-950 hover:text-white transition">
+                                                Redeem
+                                            </button>
+                                        </form>
+                                        @else
+                                        <button type="button" disabled class="inline-flex min-w-[125px] items-center justify-center border border-slate-300 bg-slate-100 px-6 py-3 text-sm uppercase text-slate-400 cursor-not-allowed">
+                                            Not Enough
+                                        </button>
+                                        @endif
+                                    </div>
+
+                                    @if (! $memberCanRedeem && $pointsNeeded > 0)
+                                    <p class="mt-3 text-xs leading-relaxed text-slate-500">
+                                        You need {{ number_format($pointsNeeded, 0) }} more points.
+                                    </p>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -643,8 +795,6 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
         </div>
     </section>
     @endif
-
-
 
     <script>
         function initDashboardRewardCarousel(attempt = 0) {
@@ -704,12 +854,32 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
             }
         }
 
+        function initHistoryViewMore() {
+            const button = document.querySelector('[data-history-view-more]');
+
+            if (!button || button.dataset.initialized === 'true') {
+                return;
+            }
+
+            button.dataset.initialized = 'true';
+
+            button.addEventListener('click', function () {
+                document.querySelectorAll('[data-history-extra]').forEach(function (item) {
+                    item.classList.remove('hidden');
+                });
+
+                button.classList.add('hidden');
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             initDashboardRewardCarousel();
+            initHistoryViewMore();
         });
 
         window.addEventListener('load', function () {
             initDashboardRewardCarousel();
+            initHistoryViewMore();
         });
     </script>
 </x-layouts.app>

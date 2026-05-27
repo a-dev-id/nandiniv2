@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Reward extends Model
@@ -49,11 +50,36 @@ class Reward extends Model
         return $this->belongsTo(RewardCategory::class, 'reward_category_id');
     }
 
+    public function redemptions(): HasMany
+    {
+        return $this->hasMany(MemberRewardRedemption::class);
+    }
+
     public function scopeActive(Builder $query): Builder
     {
         return $query
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->orderBy('id');
+    }
+
+    public function canBeRedeemedBy(Member $member): bool
+    {
+        return $this->is_active
+            && $this->points_required > 0
+            && $member->canRedeemPoints((int) $this->points_required);
+    }
+
+    public function getPointsLabelAttribute(?string $value): string
+    {
+        if (filled($value)) {
+            return $value;
+        }
+
+        if ((int) $this->points_required > 0) {
+            return number_format((int) $this->points_required) . ' POINTS';
+        }
+
+        return '0 POINTS';
     }
 }
