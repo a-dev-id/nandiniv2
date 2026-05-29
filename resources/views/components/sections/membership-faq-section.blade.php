@@ -37,7 +37,7 @@ $titleColorClass = $backgroundColor === 'dark_navy'
 
 $descriptionColorClass = $backgroundColor === 'dark_navy'
 ? 'text-white/85'
-: 'text-slate-700';
+: 'text-gray-600';
 
 $borderColorClass = $backgroundColor === 'dark_navy'
 ? 'border-white/30'
@@ -49,7 +49,7 @@ $questionColorClass = $backgroundColor === 'dark_navy'
 
 $answerColorClass = $backgroundColor === 'dark_navy'
 ? 'text-white/80'
-: 'text-slate-700';
+: 'text-gray-600';
 
 $iconLineClass = $backgroundColor === 'dark_navy'
 ? 'bg-white'
@@ -122,7 +122,7 @@ $faqs = count($sectionItems) > 0 ? $sectionItems : $defaultItems;
             @endif
 
             @if ($hasTitle)
-            <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase font-medium {{ $titleColorClass }}">
+            <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase font-medium {{ $titleColorClass }}">
                 {!! str_ireplace(
                 ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
                 '<br class="hidden md:block">',
@@ -132,7 +132,7 @@ $faqs = count($sectionItems) > 0 ? $sectionItems : $defaultItems;
             @endif
 
             @if ($hasDescription)
-            <div class="mt-8 max-w-[420px] text-[15px] leading-7 {{ $descriptionColorClass }} {{ $textAlign === 'center' ? 'mx-auto' : '' }} {{ $textAlign === 'right' ? 'ml-auto' : '' }}">
+            <div class="mt-8 text-[15px] sm:text-base leading-relaxed max-w-2xl sm:max-w-3xl md:max-w-5xl {{ $descriptionColorClass }} {{ $textAlign === 'center' ? 'mx-auto' : '' }} {{ $textAlign === 'right' ? 'ml-auto' : '' }}">
                 {!! $description !!}
             </div>
             @endif
@@ -166,7 +166,7 @@ $faqs = count($sectionItems) > 0 ? $sectionItems : $defaultItems;
 
                 @if ($answer)
                 <div id="{{ $itemId }}" x-show="open" x-collapse class="px-6 pb-6">
-                    <div class="max-w-3xl text-[15px] leading-7 {{ $answerColorClass }}">
+                    <div class="max-w-3xl text-[15px] sm:text-base leading-relaxed {{ $answerColorClass }}">
                         {!! nl2br(e($answer)) !!}
                     </div>
                 </div>

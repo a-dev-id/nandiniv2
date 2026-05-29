@@ -55,18 +55,18 @@ $metaImage = $accommodation->hero_image
     {{-- Intro --}}
     <section class="py-14 md:py-20 px-6 text-center bg-white">
         <div class="max-w-5xl mx-auto">
-            <h1 class="text-2xl sm:text-3xl md:text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 mb-6 md:mb-8 font-medium">
+            <h1 class="text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 mb-6 md:mb-8 font-medium">
                 {{ $accommodation->title }}
             </h1>
 
             @if ($accommodation->excerpt)
-            <p class="max-w-4xl mx-auto text-[15px] md:text-base leading-7 text-slate-700">
+            <p class="text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                 {{ $accommodation->excerpt }}
             </p>
             @endif
 
             @if ($accommodation->description)
-            <div class="mt-8 max-w-4xl mx-auto text-[15px] md:text-base leading-7 text-slate-700
+            <div class="text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto
                     [&_p]:mb-5
                     [&_p:last-child]:mb-0
                     [&_ul]:list-disc
@@ -88,9 +88,9 @@ $metaImage = $accommodation->hero_image
 
     {{-- Related Accommodations --}}
     @if ($relatedAccommodations->isNotEmpty())
-    <section class="pt-10 md:pt-18 bg-white">
+    <section class="pt-14 md:pt-20 bg-white">
         <div class="px-6 mb-10 text-center">
-            <h2 class="text-xl sm:text-2xl md:text-3xl tracking-[0.18em] uppercase text-slate-800 font-medium">
+            <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
                 You May Also Like
             </h2>
         </div>

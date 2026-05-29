@@ -61,9 +61,9 @@
     @endforeach
 
     @if ($relatedAccommodations->isNotEmpty())
-    <section class="pt-10 md:pt-18 bg-white">
+    <section class="pt-14 md:pt-20 bg-white">
         <div class="px-6 mb-10 text-center">
-            <h2 class="text-xl sm:text-2xl md:text-3xl tracking-[0.18em] uppercase text-slate-800 font-medium">
+            <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
                 You May Also Like
             </h2>
         </div>

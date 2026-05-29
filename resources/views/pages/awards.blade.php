@@ -69,7 +69,7 @@
             @endphp
 
             <article class="border-b border-slate-200 py-10 md:py-12">
-                <h2 class="mb-8 text-xl sm:text-2xl font-medium uppercase tracking-[0.06em] text-slate-800">
+                <h2 class="mb-8 text-2xl sm:text-3xl md:text-3xl leading-snug font-medium uppercase tracking-[0.12em] text-slate-800">
                     {{ $award->title }}
                 </h2>
 

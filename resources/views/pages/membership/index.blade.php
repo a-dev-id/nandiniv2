@@ -56,9 +56,9 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
     @break
 
     @case('membership_faq_section')
-    <x-sections.membership-join-today image="images/membership/join-today.webp" mobile-image="images/membership/join-today-mobile.webp" primary-label="Join Now" primary-url="#" secondary-label="Sign In" secondary-url="#" />
+    <x-sections.membership-join-today image="images/membership/join-today.webp" mobile-image="images/membership/join-today-mobile.webp" primary-label="Join Now" primary-url="http://localhost:8000/membership/join" secondary-label="Sign In" secondary-url="http://localhost:8000/membership/sign-in" />
 
-    <x-sections.membership-faq-section :section="$section" contact-label="Contact" contact-url="#" />
+    <x-sections.membership-faq-section :section="$section" contact-label="Contact" contact-url="https://wa.me/6281236871170" />
     @break
 
     @case('image_overlay_section')

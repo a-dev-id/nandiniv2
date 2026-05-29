@@ -48,7 +48,7 @@ $displayButtonLink = $section?->button_url;
 @endphp
 
 @if ($section)
-<section class="py-20 md:py-28 overflow-x-hidden">
+<section class="py-14 md:py-28 overflow-x-hidden">
 
     {{-- WIDE WRAPPER --}}
     <div class="w-[96%] md:w-[94%] mx-auto">
@@ -111,13 +111,13 @@ $displayButtonLink = $section?->button_url;
     <div class="text-center mt-10 md:mt-16 max-w-3xl mx-auto px-6">
 
         @if ($displayTitle)
-        <h2 class="tracking-[0.25em] text-slate-800 uppercase mb-6 text-lg sm:text-xl lg:text-2xl font-medium">
+        <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] text-slate-800 uppercase mb-6 font-medium">
             {{ $displayTitle }}
         </h2>
         @endif
 
         @if ($displayDescription)
-        <div class="text-[15px] sm:text-base leading-relaxed text-slate-800">
+        <div class="text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
             {!! $displayDescription !!}
         </div>
         @endif

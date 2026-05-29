@@ -22,8 +22,8 @@ default => 'text-center',
 };
 
 $descriptionWidthClass = match ($textAlign) {
-'left' => 'max-w-[1040px]',
-default => 'max-w-[760px]',
+'left' => 'max-w-2xl sm:max-w-3xl md:max-w-5xl',
+default => 'max-w-2xl sm:max-w-3xl md:max-w-5xl',
 };
 
 $backgroundColor = $section?->background_color ?: 'soft_gray';
@@ -42,7 +42,7 @@ $titleColorClass = $backgroundColor === 'dark_navy'
 
 $descriptionColorClass = $backgroundColor === 'dark_navy'
 ? 'text-white/85'
-: 'text-slate-700';
+: 'text-gray-600';
 
 $cardMap = [
 'bronze' => asset('images/membership/dana.jpeg'),
@@ -104,7 +104,7 @@ $tiers = count($sectionItems) > 0 ? $sectionItems : $defaultTiers;
         @endif
 
         @if ($hasTitle)
-        <h2 class="text-center text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase font-medium {{ $titleColorClass }}">
+        <h2 class="text-center text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase font-medium {{ $titleColorClass }}">
             {!! str_ireplace(
             ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
             '<br class="hidden md:block">',
@@ -114,7 +114,7 @@ $tiers = count($sectionItems) > 0 ? $sectionItems : $defaultTiers;
         @endif
 
         @if ($hasDescription)
-        <div class="{{ ($hasTitle || $hasSubtitle) ? 'mt-8' : '' }} mx-auto {{ $descriptionWidthClass }} text-[15px] leading-7 {{ $descriptionColorClass }} {{ $descriptionAlignClass }}">
+        <div class="{{ ($hasTitle || $hasSubtitle) ? 'mt-8' : '' }} mx-auto {{ $descriptionWidthClass }} text-[15px] sm:text-base leading-relaxed {{ $descriptionColorClass }} {{ $descriptionAlignClass }}">
             {!! $description !!}
         </div>
         @endif
@@ -148,13 +148,13 @@ $tiers = count($sectionItems) > 0 ? $sectionItems : $defaultTiers;
                             </p>
                             @endif
 
-                            <h3 class="text-lg text-slate-800">
+                            <h3 class="text-xl sm:text-2xl md:text-2xl leading-snug text-slate-800">
                                 @if ($circleName)
                                 <span class="font-semibold uppercase">{{ $circleName }}</span>
                                 @endif
 
                                 @if ($circleMeaning)
-                                <span class="font-normal text-slate-700">
+                                <span class="font-normal text-gray-600">
                                     ({{ $circleMeaning }})
                                 </span>
                                 @endif
@@ -163,7 +163,7 @@ $tiers = count($sectionItems) > 0 ? $sectionItems : $defaultTiers;
                     </div>
 
                     @if ($tierDescription)
-                    <div class="text-[15px] leading-7 text-slate-700">
+                    <div class="text-[15px] sm:text-base leading-relaxed text-gray-600">
                         {!! nl2br(e($tierDescription)) !!}
                     </div>
                     @endif

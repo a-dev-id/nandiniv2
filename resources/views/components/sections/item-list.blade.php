@@ -32,6 +32,7 @@ $buttonText = in_array($model, ['blog', 'news'], true) ? 'READ MORE' : 'DISCOVER
 
 $isPaginated = $items instanceof \Illuminate\Contracts\Pagination\Paginator;
 $paginator = $isPaginated ? $items : null;
+$showMoreStep = 9;
 
 /*
 |--------------------------------------------------------------------------
@@ -203,10 +204,15 @@ $items = $query
 ->limit($limit)
 ->get();
 }
+
+$useShowMore = $model === 'experience'
+&& $withFilter
+&& $active === 'all'
+&& $items->count() > $showMoreStep;
 @endphp
 
 <section class="pb-16 md:pb-28">
-    <div class="mx-auto px-3 lg:px-16">
+    <div class="mx-auto px-3 lg:px-16" @if ($useShowMore) x-data="{ visibleCount: {{ $showMoreStep }} }" @endif>
 
         {{-- FILTER --}}
         @if ($withFilter && count($filters) > 1)
@@ -267,7 +273,7 @@ $items = $query
             }
             @endphp
 
-            <article class="flex">
+            <article class="flex" @if ($useShowMore) x-show="{{ $loop->index }} < visibleCount" @endif>
                 <div class="flex h-full w-full flex-col">
 
                     @if ($model === 'gallery')
@@ -298,17 +304,17 @@ $items = $query
                     </a>
 
                     <div class="flex grow flex-col pt-7">
-                        <h3 class="text-lg font-medium uppercase tracking-[0.22em] text-slate-800 sm:text-xl lg:text-2xl">
+                        <h3 class="text-xl sm:text-2xl md:text-2xl leading-snug font-medium uppercase tracking-[0.15em] text-slate-800">
                             {{ $item->title }}
                         </h3>
 
                         @if (! empty($item->excerpt))
-                        <p class="mt-3 grow text-[15px] leading-relaxed text-slate-700">
+                        <p class="mt-3 grow text-[15px] sm:text-base leading-relaxed text-gray-600">
                             {{ $item->excerpt }}
                         </p>
                         @endif
 
-                        <div class="mt-7 flex justify-end">
+                        <div class="mt-7 flex {{ in_array($model, ['offer', 'experience'], true) ? 'justify-start' : 'justify-end' }}">
                             <a href="{{ $url }}" class="text-[14px] font-bold uppercase tracking-[0.25em] text-slate-800 hover:underline">
                                 {{ $buttonText }}
                             </a>
@@ -326,6 +332,14 @@ $items = $query
             </div>
             @endforelse
         </div>
+
+        @if ($useShowMore)
+        <div class="mt-14 flex justify-center">
+            <button type="button" x-show="visibleCount < {{ $items->count() }}" @click="visibleCount += {{ $showMoreStep }}" class="inline-flex items-center justify-center border border-slate-900 px-7 py-3 text-xs font-semibold uppercase tracking-[0.22em] text-slate-900 transition hover:border-[#A67C3D] hover:bg-[#A67C3D] hover:text-white">
+                Show More
+            </button>
+        </div>
+        @endif
 
         @if ($paginator && $paginator->hasPages())
         <div class="mt-14">

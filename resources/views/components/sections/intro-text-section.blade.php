@@ -51,7 +51,7 @@ $titleColorClass = $backgroundColor === 'dark_navy'
 
 $descriptionColorClass = $backgroundColor === 'dark_navy'
 ? 'text-white/85'
-: 'text-slate-700';
+: 'text-gray-600';
 
 /*
 If this intro section has no title/subtitle,
@@ -79,7 +79,7 @@ $sectionSpacingClass = ($hasTitle || $hasSubtitle)
 
         {{-- Title --}}
         @if ($hasTitle)
-        <h2 class="text-center text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase font-medium {{ $titleColorClass }}">
+        <h2 class="text-center text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase font-medium {{ $titleColorClass }}">
             {!! str_ireplace(
             ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
             '<br class="hidden md:block">',
@@ -92,9 +92,9 @@ $sectionSpacingClass = ($hasTitle || $hasSubtitle)
         @if ($hasDescription)
         <div class="{{ $descriptionMarginClass }} {{ $descriptionWidthClass }} {{ $descriptionAlignClass }} {{ $descriptionColorClass }} pt-8 md:pt-10">
             <div class="
-                    [&_h1]:text-2xl
-                    sm:[&_h1]:text-3xl
-                    md:[&_h1]:text-4xl
+                    [&_h1]:text-4xl
+                    
+                    
                     [&_h1]:leading-snug
                     [&_h1]:tracking-[0.15em]
                     md:[&_h1]:tracking-[0.25em]
@@ -105,22 +105,27 @@ $sectionSpacingClass = ($hasTitle || $hasSubtitle)
                     [&_h1]:font-medium
 
                     [&_h2]:mb-5
-                    [&_h2]:text-[28px]
-                    [&_h2]:font-semibold
-                    [&_h2]:leading-tight
-                    [&_h2]:tracking-normal
-                    [&_h2]:normal-case
+                    [&_h2]:text-2xl
+                    sm:[&_h2]:text-3xl
+                    md:[&_h2]:text-3xl
+                    [&_h2]:font-medium
+                    [&_h2]:leading-snug
+                    [&_h2]:tracking-[0.15em]
+                    md:[&_h2]:tracking-[0.22em]
+                    [&_h2]:uppercase
                     [&_h2]:text-slate-800
 
                     [&_h3]:mb-4
                     [&_h3]:text-xl
+                    sm:[&_h3]:text-2xl
+                    md:[&_h3]:text-2xl
                     [&_h3]:font-semibold
                     [&_h3]:leading-snug
                     [&_h3]:text-slate-800
 
                     [&_p]:mb-2
-                    [&_p]:text-base
-                    [&_p]:leading-7
+                    [&_p]:text-[15px] sm:[&_p]:text-base
+                    [&_p]:leading-relaxed
 
                     [&_ul]:mb-5
                     [&_ul]:list-disc

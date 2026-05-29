@@ -19,11 +19,11 @@ default => 'bg-white',
 
 $titleColorClass = $backgroundColor === 'dark_navy'
 ? 'text-white'
-: 'text-slate-900';
+: 'text-slate-800';
 
 $descriptionColorClass = $backgroundColor === 'dark_navy'
 ? 'text-white/85'
-: 'text-slate-700';
+: 'text-gray-600';
 
 $gridClass = match (true) {
 $itemCount >= 4 => 'max-w-7xl lg:grid-cols-4',
@@ -73,7 +73,7 @@ $icons = [
 ];
 @endphp
 
-<section class="py-16 md:py-24 px-6 {{ $backgroundClass }}">
+<section class="py-14 md:py-20 px-6 {{ $backgroundClass }}">
     <div class="mx-auto max-w-7xl text-center">
 
         @if ($section->subtitle)
@@ -83,13 +83,13 @@ $icons = [
         @endif
 
         @if ($section->title)
-        <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.18em] md:tracking-[0.25em] uppercase font-medium {{ $titleColorClass }}">
+        <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase font-medium {{ $titleColorClass }}">
             {{ $section->title }}
         </h2>
         @endif
 
         @if ($section->description)
-        <div class="mt-5 max-w-3xl mx-auto text-[15px] md:text-base leading-8 {{ $descriptionColorClass }}">
+        <div class="mt-5 text-[15px] sm:text-base leading-relaxed max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto {{ $descriptionColorClass }}">
             {!! $section->description !!}
         </div>
         @endif
@@ -110,13 +110,13 @@ $icons = [
                 </div>
 
                 @if (! empty($item['title']))
-                <h3 class="text-xl md:text-2xl tracking-[0.18em] uppercase font-medium leading-snug {{ $titleColorClass }}">
+                <h3 class="text-xl sm:text-2xl md:text-2xl tracking-[0.15em] uppercase font-medium leading-snug {{ $titleColorClass }}">
                     {{ $item['title'] }}
                 </h3>
                 @endif
 
                 @if (! empty($item['description']))
-                <p class="mt-4 max-w-xs text-[15px] leading-7 {{ $descriptionColorClass }}">
+                <p class="mt-4 max-w-xs text-[15px] sm:text-base leading-relaxed {{ $descriptionColorClass }}">
                     {{ $item['description'] }}
                 </p>
                 @endif

@@ -105,7 +105,7 @@ $finalPrimaryUrl = $sectionButtonUrl ?: $primaryUrl;
         <div class="absolute inset-0 flex items-center justify-start px-6 md:px-12 lg:px-[90px]">
             <div class="max-w-3xl text-left text-white">
                 @if ($resolvedTitle)
-                <h2 class="font-serif text-2xl font-medium uppercase leading-snug tracking-[0.15em] text-white sm:text-3xl md:text-4xl md:tracking-[0.25em]">
+                <h2 class="text-2xl sm:text-3xl md:text-3xl font-medium uppercase leading-snug tracking-[0.15em] md:tracking-[0.22em] text-white">
                     {!! str_ireplace(
                     ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;', "\n"],
                     '<br>',

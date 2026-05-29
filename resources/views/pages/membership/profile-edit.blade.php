@@ -34,24 +34,24 @@ $metaImage = $page?->hero_image ?: $page?->hero_mobile_image ?: null;
     <x-heroes.image-hero :page="$page" />
     <x-sections.page-description :page="$page" />
     @else
-    <section class="bg-white px-6 pt-16 md:px-12 lg:px-[70px]">
+    <section class="bg-white px-6 pt-14 md:px-12 md:pt-20 lg:px-[70px]">
         <div class="mx-auto w-full max-w-4xl text-center">
             <p class="text-sm uppercase tracking-[0.25em] text-[#916B2C]">
                 Inner Circle
             </p>
 
-            <h1 class="mt-4 text-3xl md:text-5xl uppercase tracking-[0.18em] text-slate-950 font-medium leading-tight">
+            <h1 class="mt-4 text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 mb-6 md:mb-8 font-medium">
                 Edit Profile
             </h1>
 
-            <p class="mt-5 text-base leading-relaxed text-slate-600">
+            <p class="mt-5 text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                 Update your member information below.
             </p>
         </div>
     </section>
     @endif
 
-    <section class="bg-white px-6 pb-16 md:px-12 lg:px-[70px]">
+    <section class="bg-white px-6 pb-14 md:px-12 md:pb-20 lg:px-[70px]">
         <div class="mx-auto w-full max-w-4xl">
             @if (session('success'))
             <div class="border border-green-700 bg-green-50 px-5 py-4 text-sm text-green-900">

@@ -137,7 +137,7 @@ default => 'justify-center',
             <div class="{{ $innerWidthClass }}">
 
                 @if ($resolvedTitleText !== '')
-                <h2 class="text-white uppercase tracking-[0.25em] text-lg sm:text-xl lg:text-2xl font-medium">
+                <h2 class="text-white uppercase text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.20em] font-medium">
                     {{ $resolvedTitleText }}
                 </h2>
                 @endif

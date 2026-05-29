@@ -80,7 +80,7 @@ $metaImage = $offer->hero_image
     {{-- Offer Content --}}
     <section class="py-14 md:py-20 px-6">
         <div class="max-w-4xl mx-auto text-center">
-            <h1 class="text-2xl sm:text-3xl md:text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 mb-6 font-medium">
+            <h1 class="text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 mb-6 md:mb-8 font-medium">
                 {{ $offer->title }}
             </h1>
 
@@ -109,7 +109,7 @@ $metaImage = $offer->hero_image
             @endif
 
             @if (! empty($offer->description))
-            <div class="prose prose-slate max-w-none mx-auto text-slate-800 leading-relaxed
+            <div class="prose prose-slate text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto
                 [&_p]:mb-1
                 [&_p]:min-h-6
                 [&_p:last-child]:mb-0
@@ -120,16 +120,16 @@ $metaImage = $offer->hero_image
                 [&_li]:mb-1
                 [&_h2]:mt-10
                 [&_h2]:mb-4
-                [&_h2]:text-xl
+                [&_h2]:text-xl sm:[&_h2]:text-2xl md:[&_h2]:text-[28px]
                 [&_h2]:font-semibold
                 [&_h3]:mt-8
                 [&_h3]:mb-3
-                [&_h3]:text-lg
+                [&_h3]:text-lg sm:[&_h3]:text-xl
                 [&_h3]:font-semibold">
                 {!! $offer->description !!}
             </div>
             @elseif (! empty($offer->excerpt))
-            <p class="text-slate-800 leading-relaxed">
+            <p class="text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                 {{ $offer->excerpt }}
             </p>
             @endif
@@ -146,9 +146,9 @@ $metaImage = $offer->hero_image
 
     {{-- Related Offers --}}
     @if ($relatedOffers->isNotEmpty())
-    <section class="pt-10 md:pt-18">
+    <section class="pt-14 md:pt-20">
         <div class="px-6 mb-10 text-center">
-            <h2 class="text-xl sm:text-2xl md:text-3xl tracking-[0.18em] uppercase text-slate-800 font-medium">
+            <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
                 Other Offers
             </h2>
         </div>

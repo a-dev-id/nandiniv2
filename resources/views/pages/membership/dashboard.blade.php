@@ -321,15 +321,15 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
     </style>
 
     {{-- MEMBER DETAIL --}}
-    <section class="bg-white px-6 py-10 md:py-14 lg:py-16">
+    <section class="bg-white px-6 py-14 md:py-20">
         <div class="mx-auto w-full max-w-6xl">
 
             <div class="mx-auto max-w-3xl text-center">
-                <h1 class="text-2xl sm:text-3xl md:text-4xl leading-snug tracking-[0.14em] md:tracking-[0.20em] uppercase text-slate-800 font-medium">
+                <h1 class="text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 mb-6 md:mb-8 font-medium">
                     Member Detail
                 </h1>
 
-                <p class="mt-3 text-[14px] sm:text-[15px] leading-relaxed text-gray-600">
+                <p class="mt-3 text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                     Access your exclusive member privileges.
                 </p>
             </div>
@@ -349,11 +349,11 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                 </div>
 
                 <div class="text-center lg:col-span-4 lg:text-left">
-                    <h2 class="text-lg sm:text-xl lg:text-[22px] leading-snug tracking-[0.20em] uppercase text-slate-800 font-medium">
+                    <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.20em] uppercase text-slate-800 font-medium">
                         {{ $memberName }}
                     </h2>
 
-                    <div class="mt-5 mx-auto max-w-[340px] space-y-2 text-[13px] sm:text-[14px] leading-6 text-slate-700 lg:mx-0">
+                    <div class="mt-5 mx-auto max-w-[340px] space-y-2 text-[13px] sm:text-[14px] leading-6 text-gray-600 lg:mx-0">
                         <div class="grid grid-cols-[88px_1fr] gap-1 text-left">
                             <span>Member ID</span>
                             <span>: {{ $memberId }}</span>
@@ -462,15 +462,15 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
     </section>
 
     {{-- ACTIVITY HISTORY --}}
-    <section class="bg-[#F1F1F1] px-6 py-10 md:py-12 lg:py-14">
+    <section class="bg-[#F1F1F1] px-6 py-14 md:py-20">
         <div class="mx-auto w-full max-w-7xl">
 
             <div class="mb-10 text-center">
-                <h2 class="text-3xl sm:text-4xl md:text-[44px] leading-none tracking-[0.18em] uppercase text-black font-medium">
+                <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
                     History
                 </h2>
 
-                <p class="mt-3 text-[14px] sm:text-[15px] leading-relaxed text-black">
+                <p class="mt-3 text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                     Your member activity history.
                 </p>
             </div>
@@ -598,12 +598,12 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                         </div>
 
                         <div class="flex min-w-0 flex-col justify-center">
-                            <h3 class="text-xl sm:text-2xl leading-snug tracking-[0.16em] uppercase text-black font-medium">
+                            <h3 class="text-xl sm:text-2xl md:text-2xl leading-snug tracking-[0.15em] uppercase text-slate-800 font-medium">
                                 {{ $title }}
                             </h3>
 
                             @if ($description)
-                            <p class="mt-3 text-[14px] sm:text-[15px] leading-relaxed text-black">
+                            <p class="mt-3 text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl">
                                 {{ \Illuminate\Support\Str::limit(strip_tags($description), 180) }}
                             </p>
                             @endif
@@ -612,7 +612,7 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                             <div class="mt-4 flex flex-wrap gap-3">
                                 @if ($redemptionCode)
                                 <div class="inline-flex w-fit border border-black/40 bg-white px-4 py-2">
-                                    <p class="text-[12px] sm:text-[13px] font-bold uppercase leading-none tracking-[0.14em] text-black">
+                                    <p class="text-[12px] sm:text-[13px] font-bold uppercase leading-none tracking-[0.14em] text-slate-800">
                                         Code: {{ $redemptionCode }}
                                     </p>
                                 </div>
@@ -635,11 +635,11 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                                     </span>
                                 </div>
 
-                                <p class="text-[15px] font-bold uppercase leading-none tracking-[0.18em] text-black">
+                                <p class="text-[15px] font-bold uppercase leading-none tracking-[0.18em] text-slate-800">
                                     {{ $date }}
                                 </p>
 
-                                <p class="text-[15px] font-bold uppercase leading-none tracking-[0.18em] text-black">
+                                <p class="text-[15px] font-bold uppercase leading-none tracking-[0.18em] text-slate-800">
                                     {{ $pointDisplay }}
                                 </p>
                             </div>
@@ -660,14 +660,14 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
 
     {{-- RANDOM REWARDS SLIDER --}}
     @if ($dashboardRewards->isNotEmpty())
-    <section class="dashboard-reward-carousel-section bg-white px-6 py-10 md:py-14 lg:py-16" data-dashboard-reward-carousel-section>
+    <section class="dashboard-reward-carousel-section bg-white px-6 py-14 md:py-20" data-dashboard-reward-carousel-section>
         <div class="mx-auto w-full">
             <div class="mb-8 md:mb-10 text-center">
-                <h2 class="text-3xl sm:text-4xl md:text-[44px] leading-none tracking-[0.18em] uppercase text-black font-medium">
+                <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
                     Rewards
                 </h2>
 
-                <p class="mt-3 text-[14px] sm:text-[15px] leading-relaxed text-black">
+                <p class="mt-3 text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                     Explore selected rewards available for your Inner Circle points.
                 </p>
             </div>
@@ -733,12 +733,12 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                             </div>
 
                             <div class="dashboard-reward-card-body p-7 flex flex-col grow">
-                                <h3 class="text-slate-950 uppercase tracking-[0.18em] text-xl md:text-2xl leading-snug font-medium">
+                                <h3 class="text-slate-800 uppercase tracking-[0.15em] text-xl sm:text-2xl md:text-2xl leading-snug font-medium">
                                     {{ $rewardTitle }}
                                 </h3>
 
                                 @if ($rewardDescription)
-                                <p class="mt-5 text-slate-900 text-[15px] leading-relaxed">
+                                <p class="mt-5 text-[15px] sm:text-base leading-relaxed text-gray-600">
                                     {{ \Illuminate\Support\Str::limit(strip_tags($rewardDescription), 145) }}
                                 </p>
                                 @endif

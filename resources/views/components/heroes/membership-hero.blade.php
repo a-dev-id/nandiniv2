@@ -101,7 +101,7 @@ $secondaryHref = $resolveButtonUrl($secondaryUrl, 'membership.login');
                     </div>
                     @endif
 
-                    <h1 class="max-w-3xl text-[34px] sm:text-[42px] md:text-[50px] uppercase tracking-[0.18em] leading-[1.15]">
+                    <h1 class="text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-white mb-6 md:mb-8 font-medium">
                         {{ $heroTitle }}
                     </h1>
 

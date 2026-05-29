@@ -1,4 +1,4 @@
-<footer class="bg-black text-white">
+<footer class="bg-black text-white" x-data="{ gdsOpen: false }" @keydown.escape.window="gdsOpen = false">
     <div class="mx-auto w-11/12 2xl:w-9/12">
 
         {{-- TOP --}}
@@ -84,9 +84,13 @@
                                 Sustainability
                             </a>
                         </li>
-                        <li><a href="/careers" class="hover:underline">Careers</a></li>
+                        {{-- <li><a href="/careers" class="hover:underline">Careers</a></li> --}}
                         <li><a href="/faq" class="hover:underline">FAQ</a></li>
-                        <li><a href="/gds-code" class="hover:underline">GDS Code</a></li>
+                        <li>
+                            <button type="button" class="text-left hover:underline" @click="gdsOpen = true">
+                                GDS Code
+                            </button>
+                        </li>
                         <li><a href="/bali-jungle-resort-ubud" class="hover:underline">Bali Jungle Resort<br>Ubud</a></li>
                     </ul>
                 </div>
@@ -189,7 +193,9 @@
                         </a>
                         <a href="/careers" class="hover:underline">Careers</a>
                         <a href="/faq" class="hover:underline">FAQ</a>
-                        <a href="/gds-code" class="hover:underline">GDS Code</a>
+                        <button type="button" class="hover:underline" @click="gdsOpen = true">
+                            GDS Code
+                        </button>
                         <a href="/bali-jungle-resort-ubud" class="hover:underline">Bali Jungle Resort Ubud</a>
                     </div>
                 </div>
@@ -244,6 +250,64 @@
             <div class="text-sm text-white/80 md:text-right">
                 Copyright © {{ date('Y') }} Nandini Jungle by Hanging Gardens.
             </div>
+        </div>
+    </div>
+
+    <div
+        x-cloak
+        x-show="gdsOpen"
+        x-transition.opacity
+        class="fixed inset-0 z-[90] flex items-start justify-center bg-slate-950/45 px-6 py-8 sm:py-12"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="gds-code-title"
+    >
+        <div class="absolute inset-0" @click="gdsOpen = false"></div>
+
+        <div
+            x-show="gdsOpen"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 translate-y-3"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 translate-y-3"
+            class="relative w-full max-w-[448px] rounded-md bg-white px-8 py-8 text-slate-950 shadow-2xl sm:px-10"
+        >
+            <button
+                type="button"
+                class="absolute right-4 top-4 flex h-8 w-8 items-center justify-center text-slate-400 transition hover:text-slate-900"
+                aria-label="Close GDS code popup"
+                @click="gdsOpen = false"
+            >
+                <span class="block h-px w-5 rotate-45 bg-current"></span>
+                <span class="absolute block h-px w-5 -rotate-45 bg-current"></span>
+            </button>
+
+            <div id="gds-code-title" class="font-serif text-2xl font-normal leading-snug tracking-normal text-slate-950">
+                GDS Code
+            </div>
+
+            <p class="mt-4 text-[15px] leading-relaxed text-slate-900">
+                Enhancing the distribution to provide flexible and innovative hospitality solutions at a competitive price-point, Nandini Jungle by Hanging Gardens is pleased to announce the launch of our company-wide GDS code.
+            </p>
+
+            <dl class="mt-8 grid grid-cols-[100px_1fr] gap-x-3 gap-y-2 text-[15px] leading-relaxed text-slate-900">
+                <dt>Amadeus</dt>
+                <dd>: GD DPSNJH</dd>
+
+                <dt>Sabre</dt>
+                <dd>: GD 82513</dd>
+
+                <dt>Galileo/Apollo</dt>
+                <dd>: GD 36890</dd>
+
+                <dt>Worldspan</dt>
+                <dd>: GD DPSNJ</dd>
+
+                <dt>DHISCO</dt>
+                <dd>: GD 47291</dd>
+            </dl>
         </div>
     </div>
 </footer>

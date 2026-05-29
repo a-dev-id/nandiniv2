@@ -37,12 +37,12 @@
                     </a>
 
                     <div class="pt-7 flex flex-col grow">
-                        <h3 class="text-slate-800 uppercase tracking-[0.22em] text-lg sm:text-xl lg:text-2xl font-medium">
+                        <h3 class="text-slate-800 uppercase tracking-[0.15em] text-xl sm:text-2xl md:text-2xl leading-snug font-medium">
                             {{ $item->title }}
                         </h3>
 
                         @if ($summary)
-                        <p class="mt-3 text-slate-800 text-[15px] leading-relaxed grow">
+                        <p class="mt-3 text-gray-600 text-[15px] sm:text-base leading-relaxed grow">
                             {{ $summary }}
                         </p>
                         @endif

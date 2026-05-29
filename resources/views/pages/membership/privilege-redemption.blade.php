@@ -85,7 +85,7 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
     @endphp
 
     @if (session('success') || session('error') || $errors->any())
-    <section class="bg-white pt-10 px-6 md:px-12 lg:px-[70px]">
+    <section class="bg-white px-6 py-14 md:px-12 md:py-20 lg:px-[70px]">
         <div class="mx-auto w-full">
             @if (session('success'))
             <div class="border border-green-700 bg-green-50 px-5 py-4 text-sm text-green-900">
@@ -124,12 +124,12 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
     <section class="py-14 md:py-20 bg-white membership-reward-carousel-section" data-reward-carousel-section>
         <div class="mx-auto w-full px-6 md:px-12 lg:px-[70px]">
             <div class="mb-8 md:mb-10 text-center">
-                <h2 class="text-3xl sm:text-4xl md:text-5xl leading-snug tracking-[0.18em] md:tracking-[0.25em] uppercase text-slate-950 font-medium">
+                <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
                     {{ $categoryTitle }}
                 </h2>
 
                 @if ($categoryDescription)
-                <p class="mt-2 text-base md:text-lg leading-relaxed text-slate-800">
+                <p class="mt-3 text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                     {{ $categoryDescription }}
                 </p>
                 @endif
@@ -191,15 +191,16 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
                         </div>
 
                         <div class="reward-card-body p-7 flex flex-col grow">
-                            <h3 class="text-slate-950 uppercase tracking-[0.18em] text-xl md:text-2xl leading-snug font-medium">
+                            <h3 class="text-slate-800 uppercase tracking-[0.15em] text-xl sm:text-2xl md:text-2xl leading-snug font-medium">
                                 {{ $reward->title }}
                             </h3>
 
                             @if ($rewardDescription)
                             <div class="
                                 mt-5
-                                text-slate-900
+                                text-gray-600
                                 text-[15px]
+                                sm:text-base
                                 leading-relaxed
                                 [&_p]:mb-3
                                 [&_p:last-child]:mb-0

@@ -59,11 +59,9 @@ $firstImage = $galleryImages->first();
             {{-- Features --}}
             <div class="lg:col-span-5 {{ $gridOrderFeatures }}">
                 <div class="px-4 sm:px-8 md:px-10 lg:px-12">
-                    <h2 class="text-2xl sm:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
+                    <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
                         Features
                     </h2>
-
-                    <div class="mt-5 h-px w-24 bg-slate-500/70"></div>
 
                     @if ($features->isNotEmpty())
                     <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">

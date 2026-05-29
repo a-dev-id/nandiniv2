@@ -5,7 +5,7 @@
 <section class="bg-slate-100 px-6 py-14 md:py-20">
     <div class="mx-auto max-w-[1500px]">
         <div class="mx-auto max-w-3xl text-center md:max-w-5xl">
-            <h2 class="mb-12 font-serif text-2xl font-medium uppercase leading-snug tracking-[0.15em] text-slate-800 sm:text-3xl md:mb-16 md:text-4xl md:tracking-[0.25em]">
+            <h2 class="mb-12 text-2xl sm:text-3xl md:text-3xl font-medium uppercase leading-snug tracking-[0.15em] md:tracking-[0.22em] text-slate-800 md:mb-16">
                 {{ $title }}
             </h2>
         </div>
@@ -21,7 +21,7 @@
                     </svg>
                 </div>
 
-                <h3 class="font-serif text-xl uppercase tracking-[0.18em] text-slate-950 md:text-2xl">
+                <h3 class="text-xl sm:text-2xl md:text-2xl uppercase tracking-[0.15em] text-slate-800 leading-snug">
                     Hotel Stay
                 </h3>
 
@@ -40,7 +40,7 @@
                     </svg>
                 </div>
 
-                <h3 class="font-serif text-xl uppercase tracking-[0.18em] text-slate-950 md:text-2xl">
+                <h3 class="text-xl sm:text-2xl md:text-2xl uppercase tracking-[0.15em] text-slate-800 leading-snug">
                     Food &amp; Beverages
                 </h3>
 
@@ -57,7 +57,7 @@
                     </svg>
                 </div>
 
-                <h3 class="font-serif text-xl uppercase tracking-[0.18em] text-slate-950 md:text-2xl">
+                <h3 class="text-xl sm:text-2xl md:text-2xl uppercase tracking-[0.15em] text-slate-800 leading-snug">
                     Spa &amp; Wellness
                 </h3>
 

@@ -1,12 +1,15 @@
 <?php
 
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\AwardController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\WeddingController;
 use App\Http\Controllers\SpaController;
+use App\Http\Controllers\SustainabilityController;
 use App\Http\Controllers\DiningController;
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\HoneymoonController;
 use App\Http\Controllers\LittleThingsController;
 use App\Http\Controllers\AccommodationController;
@@ -193,6 +196,14 @@ Route::get('/wedding', [WeddingController::class, 'index'])
 
 /*
 |--------------------------------------------------------------------------
+| Sustainability
+|--------------------------------------------------------------------------
+*/
+Route::get('/sustainability', [SustainabilityController::class, 'index'])
+    ->name('sustainability.index');
+
+/*
+|--------------------------------------------------------------------------
 | About Us
 |--------------------------------------------------------------------------
 */
@@ -225,6 +236,22 @@ Route::get('/awards', [AwardController::class, 'index'])
 */
 Route::get('/gallery', [GalleryController::class, 'index'])
     ->name('gallery.index');
+
+/*
+|--------------------------------------------------------------------------
+| FAQ
+|--------------------------------------------------------------------------
+*/
+Route::get('/faq', [FaqController::class, 'index'])
+    ->name('faq.index');
+
+/*
+|--------------------------------------------------------------------------
+| Contact Us
+|--------------------------------------------------------------------------
+*/
+Route::get('/contact-us', [ContactController::class, 'index'])
+    ->name('contact.index');
 
 /*
 |--------------------------------------------------------------------------

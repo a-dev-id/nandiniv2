@@ -62,10 +62,10 @@ $buttons = [
 @endphp
 
 <section class="bg-[#F3F4F5] px-6 py-14 md:px-12 md:py-16 lg:px-[70px]">
-    <div class="mx-auto grid max-w-7xl gap-12 md:grid-cols-3 md:gap-16">
+    <div class="mx-auto grid max-w-7xl gap-12 lg:grid-cols-3 lg:gap-16">
         {{-- Restaurant Information --}}
-        <div>
-            <h2 class="mb-6 text-md font-medium uppercase tracking-[0.12em] text-slate-900">
+        <div class="text-center">
+            <h2 class="mb-6 text-2xl sm:text-3xl md:text-3xl leading-snug font-medium uppercase tracking-[0.12em] text-slate-900">
                 Restaurant Information
             </h2>
 
@@ -75,12 +75,12 @@ $buttons = [
         </div>
 
         {{-- Additional Information --}}
-        <div>
-            <h2 class="mb-6 text-md font-medium uppercase tracking-[0.12em] text-slate-900">
+        <div class="text-center">
+            <h2 class="mb-6 text-2xl sm:text-3xl md:text-3xl leading-snug font-medium uppercase tracking-[0.12em] text-slate-900">
                 Additional Information
             </h2>
 
-            <div class="space-y-3">
+            <div class="mx-auto max-w-[250px] space-y-3">
                 @foreach ($buttons as $index => $button)
                 @php
                 $label = $button['label'] ?? null;
@@ -97,8 +97,8 @@ $buttons = [
         </div>
 
         {{-- Reservations --}}
-        <div>
-            <h2 class="mb-6 text-md font-medium uppercase tracking-[0.12em] text-slate-900">
+        <div class="text-center">
+            <h2 class="mb-6 text-2xl sm:text-3xl md:text-3xl leading-snug font-medium uppercase tracking-[0.12em] text-slate-900">
                 Reservations
             </h2>
 

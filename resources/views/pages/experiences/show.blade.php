@@ -99,7 +99,7 @@ $metaImage = $experience->card_image
 
     <section class="py-14 md:py-20 px-6">
         <div class="max-w-4xl mx-auto text-center">
-            <h1 class="text-2xl sm:text-3xl md:text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 mb-6 font-medium">
+            <h1 class="text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 mb-6 md:mb-8 font-medium">
                 {{ $experience->title }}
             </h1>
 
@@ -110,11 +110,11 @@ $metaImage = $experience->card_image
             @endif
 
             @if (! empty($experience->description))
-            <div class="prose prose-slate max-w-none mx-auto text-slate-800 leading-relaxed">
+            <div class="prose prose-slate text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                 {!! $experience->description !!}
             </div>
             @elseif (! empty($experience->excerpt))
-            <p class="text-slate-800 leading-relaxed">
+            <p class="text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                 {{ $experience->excerpt }}
             </p>
             @endif
@@ -173,9 +173,9 @@ $metaImage = $experience->card_image
     </section>
 
     @if ($relatedExperiences->isNotEmpty())
-    <section class="pt-10 md:pt-18">
+    <section class="pt-14 md:pt-20">
         <div class="px-6 mb-10 text-center">
-            <h2 class="text-xl sm:text-2xl md:text-3xl tracking-[0.18em] uppercase text-slate-800 font-medium">
+            <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
                 Other Experiences
             </h2>
         </div>

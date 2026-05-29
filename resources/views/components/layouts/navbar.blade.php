@@ -162,7 +162,7 @@
                         </div>
                     </div>
 
-                    <a href="{{ url('/the-little-things') }}" class="block text-[16px] leading-6 font-medium uppercase text-left">
+                    <a href="{{ route('little-things.index') }}" class="block text-[16px] leading-6 font-medium uppercase text-left">
                         The Little Things
                     </a>
 
@@ -181,36 +181,44 @@
                                     Honeymoon
                                 </a>
 
-                                <a href="{{ url('/dining') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('dining.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
                                     Dining
                                 </a>
 
-                                <a href="{{ url('/spa-wellness') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('spa.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
                                     Spa &amp; Wellness
                                 </a>
 
-                                <a href="{{ url('/wedding') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('wedding.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
                                     Wedding
                                 </a>
 
-                                <a href="{{ url('/about-us') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('about-us.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
                                     About Us
                                 </a>
 
-                                <a href="{{ url('/blog-news') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('blog.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
                                     Blog & News
                                 </a>
 
-                                <a href="{{ url('/awards') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('awards.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
                                     Awards
                                 </a>
 
-                                <a href="{{ url('/contact') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('contact.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
                                     Contact
                                 </a>
 
-                                <a href="{{ url('/gallery') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('gallery.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
                                     Gallery
+                                </a>
+
+                                <a href="{{ route('faq.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    FAQ
+                                </a>
+
+                                <a href="{{ route('sustainability.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    Sustainability
                                 </a>
                             </div>
                         </div>

@@ -19,7 +19,7 @@ return $value;
 $isCheck = fn ($value): bool => in_array(trim((string) $value), ['✓', 'check', 'yes', 'true', '1'], true);
 @endphp
 
-<section class="py-16 md:py-24 px-6 bg-white">
+<section class="py-14 md:py-20 px-6 bg-white">
     <div class="max-w-[1500px] mx-auto">
 
         {{-- Header --}}
@@ -31,13 +31,13 @@ $isCheck = fn ($value): bool => in_array(trim((string) $value), ['✓', 'check',
             @endif
 
             @if ($section->title)
-            <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.18em] md:tracking-[0.25em] uppercase text-slate-900 font-medium">
+            <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
                 {{ $section->title }}
             </h2>
             @endif
 
             @if ($section->description)
-            <div class="mt-5 max-w-3xl mx-auto text-[14px] md:text-[15px] leading-7 text-slate-700">
+            <div class="mt-5 text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                 {!! $section->description !!}
             </div>
             @endif
@@ -91,7 +91,7 @@ $isCheck = fn ($value): bool => in_array(trim((string) $value), ['✓', 'check',
                     @endforeach
                 </tbody>
             </table>
-            <div class="mt-4 text-sm italic text-slate-600">
+            <div class="mt-4 text-[15px] sm:text-base leading-relaxed italic text-gray-600">
                 <i>{{ $section->excerpt }}</i>
             </div>
         </div>

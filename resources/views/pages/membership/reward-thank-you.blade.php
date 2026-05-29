@@ -34,7 +34,7 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
 
     <x-sections.page-description :page="$page" />
 
-    <section class="bg-white px-6 pb-20 md:px-12 lg:px-[70px]">
+    <section class="bg-white px-6 pb-14 md:px-12 md:pb-20 lg:px-[70px]">
         <div class="mx-auto w-full max-w-3xl text-center">
             <div class="border border-slate-200 bg-slate-50 px-6 py-8">
                 <p class="text-sm uppercase tracking-[0.18em] text-slate-500">

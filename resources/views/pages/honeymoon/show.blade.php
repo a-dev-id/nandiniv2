@@ -47,7 +47,7 @@
 
     <section class="bg-white px-6 py-14 md:py-20 md:px-12 lg:px-[70px]">
         <div class="mx-auto max-w-5xl text-center">
-            <h1 class="text-2xl sm:text-3xl md:text-5xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 font-medium">
+            <h1 class="text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 mb-6 md:mb-8 font-medium">
                 {{ $offer->title }}
             </h1>
 
@@ -77,7 +77,7 @@
     <section class="bg-[#F7F7F7] px-6 py-14 md:py-20 md:px-12 lg:px-[70px]">
         <div class="mx-auto w-full">
             <div class="mb-10 text-center">
-                <h2 class="text-2xl sm:text-3xl md:text-4xl leading-snug tracking-[0.18em] uppercase text-slate-800 font-medium">
+                <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
                     Related Honeymoon Offers
                 </h2>
             </div>
@@ -98,7 +98,7 @@
                         </div>
 
                         <div class="p-7">
-                            <h3 class="text-xl uppercase tracking-[0.18em] leading-snug text-slate-950 font-medium">
+                            <h3 class="text-xl sm:text-2xl md:text-2xl leading-snug tracking-[0.15em] uppercase text-slate-950 font-medium">
                                 {{ $relatedOffer->title }}
                             </h3>
 

@@ -13,13 +13,11 @@
                         Nandini Inner Circle
                     </p>
 
-                    <h1 class="mt-4 font-serif text-[34px] uppercase leading-[1.15] tracking-[0.18em] text-slate-900 sm:text-[42px]">
+                    <h1 class="mt-4 text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 mb-6 md:mb-8 font-medium">
                         Change Password
                     </h1>
 
-                    <div class="mx-auto mt-5 h-px w-20 bg-slate-400/70"></div>
-
-                    <p class="mx-auto mt-6 max-w-md text-[15px] leading-7 text-slate-700">
+                    <p class="text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                         Your account was created automatically from your booking. Please change your temporary password before continuing.
                     </p>
                 </div>

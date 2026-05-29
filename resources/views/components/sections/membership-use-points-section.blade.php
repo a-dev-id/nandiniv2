@@ -38,7 +38,7 @@ $titleColorClass = $backgroundColor === 'dark_navy'
 
 $descriptionColorClass = $backgroundColor === 'dark_navy'
 ? 'text-white/85'
-: 'text-slate-700';
+: 'text-gray-600';
 
 $viewMoreLabel = trim((string) ($section?->button_label ?? 'View More'));
 $viewMoreUrl = trim((string) ($section?->button_url ?? '#')) ?: '#';
@@ -171,7 +171,7 @@ $items = count($rewardItems) > 0 ? $rewardItems : $defaultItems;
         @endif
 
         @if ($hasTitle)
-        <h2 class="text-center text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase font-medium {{ $titleColorClass }}">
+        <h2 class="text-center text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase font-medium {{ $titleColorClass }}">
             {!! str_ireplace(
             ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
             '<br class="hidden md:block">',
@@ -181,7 +181,7 @@ $items = count($rewardItems) > 0 ? $rewardItems : $defaultItems;
         @endif
 
         @if ($hasDescription)
-        <div class="mx-auto mt-8 max-w-[920px] text-[15px] leading-7 {{ $descriptionColorClass }} {{ $descriptionAlignClass }}">
+        <div class="mt-8 text-[15px] sm:text-base leading-relaxed max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto {{ $descriptionColorClass }} {{ $descriptionAlignClass }}">
             {!! $description !!}
         </div>
         @endif
@@ -214,13 +214,13 @@ $items = count($rewardItems) > 0 ? $rewardItems : $defaultItems;
                     @endif
 
                     @if ($itemTitle)
-                    <h3 class="text-xl leading-snug tracking-[0.18em] md:tracking-[0.22em] uppercase font-semibold text-slate-900">
+                    <h3 class="text-xl sm:text-2xl md:text-2xl leading-snug tracking-[0.15em] uppercase font-semibold text-slate-800">
                         {{ $itemTitle }}
                     </h3>
                     @endif
 
                     @if ($itemDescription)
-                    <div class="mt-5 grow text-[15px] leading-7 text-slate-700">
+                    <div class="mt-5 grow text-[15px] sm:text-base leading-relaxed text-gray-600">
                         {!! nl2br(e($itemDescription)) !!}
                     </div>
                     @endif

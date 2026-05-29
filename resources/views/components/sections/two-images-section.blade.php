@@ -109,15 +109,13 @@ $displayButtonLink = $section?->button_url;
                     <div class="text-center">
 
                         @if ($title)
-                        <h2 class="text-lg sm:text-xl lg:text-2xl tracking-[0.25em] uppercase text-slate-800 font-medium">
+                        <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.20em] uppercase text-slate-800 font-medium">
                             {{ $title }}
                         </h2>
                         @endif
 
-                        <div class="mt-4 h-px w-20 bg-slate-400/70 mx-auto"></div>
-
                         @if ($description)
-                        <div class="mt-6 max-w-md text-[15px] leading-7 text-slate-700 mx-auto">
+                        <div class="mt-6 text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                             {!! $description !!}
                         </div>
                         @endif
