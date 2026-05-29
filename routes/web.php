@@ -1,5 +1,12 @@
 <?php
 
+use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\AwardController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\AboutUsController;
+use App\Http\Controllers\WeddingController;
+use App\Http\Controllers\SpaController;
+use App\Http\Controllers\DiningController;
 use App\Http\Controllers\HoneymoonController;
 use App\Http\Controllers\LittleThingsController;
 use App\Http\Controllers\AccommodationController;
@@ -154,7 +161,70 @@ Route::get('/the-little-things', [LittleThingsController::class, 'index'])
 Route::get('/honeymoon', [HoneymoonController::class, 'index'])
     ->name('honeymoon.index');
 
+Route::get('/honeymoon/{slug}', [HoneymoonController::class, 'show'])
+    ->name('honeymoon.show');
 
+/*
+|--------------------------------------------------------------------------
+| Dining
+|--------------------------------------------------------------------------
+*/
+Route::get('/dining', [DiningController::class, 'index'])
+    ->name('dining.index');
+
+/*
+|--------------------------------------------------------------------------
+| Spa
+|--------------------------------------------------------------------------
+*/
+Route::get('/spa-wellness', [SpaController::class, 'index'])
+    ->name('spa.index');
+
+Route::get('/spa-wellness/{slug}', [SpaController::class, 'show'])
+    ->name('spa.show');
+
+/*
+|--------------------------------------------------------------------------
+| Wedding
+|--------------------------------------------------------------------------
+*/
+Route::get('/wedding', [WeddingController::class, 'index'])
+    ->name('wedding.index');
+
+/*
+|--------------------------------------------------------------------------
+| About Us
+|--------------------------------------------------------------------------
+*/
+Route::get('/about-us', [AboutUsController::class, 'index'])
+    ->name('about-us.index');
+
+/*
+|--------------------------------------------------------------------------
+| Blog & News
+|--------------------------------------------------------------------------
+*/
+Route::get('/blog-news', [BlogController::class, 'index'])
+    ->name('blog.index');
+
+Route::get('/blog-news/{slug}', [BlogController::class, 'show'])
+    ->name('blog.show');
+
+/*
+|--------------------------------------------------------------------------
+| Awards
+|--------------------------------------------------------------------------
+*/
+Route::get('/awards', [AwardController::class, 'index'])
+    ->name('awards.index');
+
+/*
+|--------------------------------------------------------------------------
+| Gallery
+|--------------------------------------------------------------------------
+*/
+Route::get('/gallery', [GalleryController::class, 'index'])
+    ->name('gallery.index');
 
 /*
 |--------------------------------------------------------------------------

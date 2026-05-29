@@ -58,7 +58,7 @@
             @endif
 
             @if ($offer->description)
-            <div class="mt-8 text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-4xl mx-auto [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2">
+            <div class="mt-8 text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-4xl mx-auto [&_p]:mb-4 [&_ul]:pl-6 [&_li]:mb-1">
                 {!! $offer->description !!}
             </div>
             @endif

@@ -189,6 +189,22 @@
                                     Spa &amp; Wellness
                                 </a>
 
+                                <a href="{{ url('/wedding') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    Wedding
+                                </a>
+
+                                <a href="{{ url('/about-us') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    About Us
+                                </a>
+
+                                <a href="{{ url('/blog-news') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    Blog & News
+                                </a>
+
+                                <a href="{{ url('/awards') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                    Awards
+                                </a>
+
                                 <a href="{{ url('/contact') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
                                     Contact
                                 </a>

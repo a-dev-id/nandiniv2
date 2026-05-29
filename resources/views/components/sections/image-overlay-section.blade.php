@@ -32,10 +32,23 @@ return $raw;
 return asset('storage/' . $raw);
 };
 
+$cleanText = function (?string $value): string {
+$text = html_entity_decode(strip_tags((string) $value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+$text = str_replace("\xc2\xa0", ' ', $text);
+$text = preg_replace('/\s+/', ' ', $text);
+
+return trim((string) $text);
+};
+
 $resolvedTitle = $section?->title ?? '';
 $resolvedSubtitle = $section?->subtitle ?? '';
 $resolvedExcerpt = $section?->excerpt ?? '';
 $resolvedDescription = $section?->description ?? '';
+
+$resolvedTitleText = $cleanText($resolvedTitle);
+$resolvedSubtitleText = $cleanText($resolvedSubtitle);
+$resolvedExcerptText = $cleanText($resolvedExcerpt);
+$resolvedDescriptionText = $cleanText($resolvedDescription);
 
 $sectionImage = $section?->images?->first();
 
@@ -50,7 +63,7 @@ $resolvedMobileImage = $resolveImage($mobileRawImage ?: $desktopRawImage);
 
 $resolvedAlt = $sectionImage?->image_alt
 ?: $sectionImage?->mobile_image_alt
-?: $resolvedTitle
+?: $resolvedTitleText
 ?: 'Section image';
 
 $buttonLabel = $section?->button_label ?? null;
@@ -123,26 +136,34 @@ default => 'justify-center',
         <div class="absolute inset-0 flex {{ $contentAlignClass }} px-2 lg:px-6">
             <div class="{{ $innerWidthClass }}">
 
-                @if ($resolvedTitle)
+                @if ($resolvedTitleText !== '')
                 <h2 class="text-white uppercase tracking-[0.25em] text-lg sm:text-xl lg:text-2xl font-medium">
-                    {{ $resolvedTitle }}
+                    {{ $resolvedTitleText }}
                 </h2>
                 @endif
 
-                @if ($resolvedSubtitle)
+                @if ($resolvedSubtitleText !== '')
                 <p class="mt-3 text-white/90 uppercase tracking-[0.18em] text-xs sm:text-sm">
-                    {{ $resolvedSubtitle }}
+                    {{ $resolvedSubtitleText }}
                 </p>
                 @endif
 
-                @if ($resolvedExcerpt)
+                @if ($resolvedExcerptText !== '')
                 <p class="mt-4 text-white/90 text-[15px] sm:text-base leading-relaxed max-w-2xl {{ $textAlignClass }}">
-                    {{ $resolvedExcerpt }}
+                    {{ $resolvedExcerptText }}
                 </p>
                 @endif
 
-                @if ($resolvedDescription)
-                <div class="mt-4 text-white/90 text-[15px] sm:text-base leading-relaxed max-w-2xl {{ $textAlignClass }}">
+                @if ($resolvedDescriptionText !== '')
+                <div class="mt-4 text-white/90 text-[15px] sm:text-base leading-relaxed max-w-2xl {{ $textAlignClass }}
+                    [&_p]:mb-2
+                    [&_p:last-child]:mb-0
+                    [&_strong]:font-semibold
+                    [&_ul]:list-none
+                    [&_ul]:pl-0
+                    [&_ol]:list-none
+                    [&_ol]:pl-0
+                    [&_li]:mb-1">
                     {!! $resolvedDescription !!}
                 </div>
                 @endif

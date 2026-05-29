@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Offer;
+use App\Models\Honeymoon;
 use App\Models\Page;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
@@ -18,14 +18,21 @@ class HoneymoonController extends Controller
 
         $sections = $this->getPageSections($page);
 
-        $offers = Offer::query()
-            ->published()
+        $honeymoons = Honeymoon::query()
+            ->where('is_active', true)
             ->where(function ($query) {
+                $today = today()->toDateString();
+
                 $query
-                    ->where('title', 'like', '%honeymoon%')
-                    ->orWhere('slug', 'like', '%honeymoon%')
-                    ->orWhere('excerpt', 'like', '%honeymoon%')
-                    ->orWhere('description', 'like', '%honeymoon%');
+                    ->whereNull('valid_start_date')
+                    ->orWhereDate('valid_start_date', '<=', $today);
+            })
+            ->where(function ($query) {
+                $today = today()->toDateString();
+
+                $query
+                    ->whereNull('valid_end_date')
+                    ->orWhereDate('valid_end_date', '>=', $today);
             })
             ->orderBy('sort_order')
             ->orderByDesc('valid_start_date')
@@ -34,13 +41,22 @@ class HoneymoonController extends Controller
         return view('pages.honeymoon.index', [
             'page' => $page,
             'sections' => $sections,
-            'offers' => $offers,
+
+            // Main variable
+            'honeymoons' => $honeymoons,
+
+            // Keep this if your current blade still uses $offers
+            'offers' => $honeymoons,
         ]);
     }
 
-    public function show(Offer $offer): View
+    public function show(string $slug): View
     {
-        $this->abortIfOfferIsNotPublished($offer);
+        $honeymoon = Honeymoon::query()
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        $this->abortIfHoneymoonIsNotPublished($honeymoon);
 
         $page = Page::query()
             ->where('id', 7)
@@ -49,15 +65,22 @@ class HoneymoonController extends Controller
 
         $sections = $this->getPageSections($page);
 
-        $relatedOffers = Offer::query()
-            ->published()
-            ->whereKeyNot($offer->id)
+        $relatedHoneymoons = Honeymoon::query()
+            ->where('is_active', true)
+            ->whereKeyNot($honeymoon->id)
             ->where(function ($query) {
+                $today = today()->toDateString();
+
                 $query
-                    ->where('title', 'like', '%honeymoon%')
-                    ->orWhere('slug', 'like', '%honeymoon%')
-                    ->orWhere('excerpt', 'like', '%honeymoon%')
-                    ->orWhere('description', 'like', '%honeymoon%');
+                    ->whereNull('valid_start_date')
+                    ->orWhereDate('valid_start_date', '<=', $today);
+            })
+            ->where(function ($query) {
+                $today = today()->toDateString();
+
+                $query
+                    ->whereNull('valid_end_date')
+                    ->orWhereDate('valid_end_date', '>=', $today);
             })
             ->orderBy('sort_order')
             ->orderByDesc('valid_start_date')
@@ -66,8 +89,14 @@ class HoneymoonController extends Controller
         return view('pages.honeymoon.show', [
             'page' => $page,
             'sections' => $sections,
-            'offer' => $offer,
-            'relatedOffers' => $relatedOffers,
+
+            // Main variable
+            'honeymoon' => $honeymoon,
+            'relatedHoneymoons' => $relatedHoneymoons,
+
+            // Keep these if your current blade still uses offer variables
+            'offer' => $honeymoon,
+            'relatedOffers' => $relatedHoneymoons,
         ]);
     }
 
@@ -84,26 +113,14 @@ class HoneymoonController extends Controller
             ->get();
     }
 
-    protected function abortIfOfferIsNotPublished(Offer $offer): void
+    protected function abortIfHoneymoonIsNotPublished(Honeymoon $honeymoon): void
     {
         $today = today();
 
-        $title = strtolower((string) $offer->title);
-        $slug = strtolower((string) $offer->slug);
-        $excerpt = strtolower((string) $offer->excerpt);
-        $description = strtolower(strip_tags((string) $offer->description));
-
-        $isHoneymoonOffer =
-            str_contains($title, 'honeymoon')
-            || str_contains($slug, 'honeymoon')
-            || str_contains($excerpt, 'honeymoon')
-            || str_contains($description, 'honeymoon');
-
         $isPublished =
-            $offer->is_active
-            && (blank($offer->valid_start_date) || $offer->valid_start_date->lte($today))
-            && (blank($offer->valid_end_date) || $offer->valid_end_date->gte($today))
-            && $isHoneymoonOffer;
+            $honeymoon->is_active
+            && (blank($honeymoon->valid_start_date) || $honeymoon->valid_start_date->lte($today))
+            && (blank($honeymoon->valid_end_date) || $honeymoon->valid_end_date->gte($today));
 
         abort_unless($isPublished, 404);
     }

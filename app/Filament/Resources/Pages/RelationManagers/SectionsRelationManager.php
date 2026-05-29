@@ -20,6 +20,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -50,6 +51,8 @@ class SectionsRelationManager extends RelationManager
         'membership_tier_section',
         'membership_use_points_section',
         'membership_faq_section',
+        'dining_information_section',
+        'spa_information_section',
     ];
 
     public function form(Schema $schema): Schema
@@ -76,6 +79,8 @@ class SectionsRelationManager extends RelationManager
                                 'membership_tier_section' => 'Membership Tier Section',
                                 'membership_use_points_section' => 'Use Your Points Section',
                                 'membership_faq_section' => 'Membership FAQ Section',
+                                'dining_information_section' => 'Dining Information Section',
+                                'spa_information_section' => 'Spa Information Section',
                                 'image_overlay_section' => 'Image Overlay Section',
                                 'split_media_section' => 'Split Media Section',
                                 'split_media_reverse' => 'Split Media Reverse',
@@ -83,7 +88,76 @@ class SectionsRelationManager extends RelationManager
                                 'two_images_section' => 'Two Images Section',
                                 'two_images_reverse' => 'Two Images Reverse',
                             ])
-                            ->default('intro_text_section'),
+                            ->default('intro_text_section')
+                            ->afterStateUpdated(function (?string $state, Set $set, Get $get): void {
+                                if (! in_array($state, ['dining_information_section', 'spa_information_section'], true)) {
+                                    return;
+                                }
+
+                                if ($state === 'dining_information_section') {
+                                    if (blank($get('description'))) {
+                                        $set('description', '<p><strong>Cuisine:</strong><br>Western and Indonesian</p><p><strong>Opening times:</strong><br>Breakfast: 07:00 am to 10:30 am<br>Lunch: 12:00 pm to 03:00 pm<br>Dinner: 06:30 pm to 10:30 pm</p>');
+                                    }
+
+                                    if (blank($get('excerpt'))) {
+                                        $set('excerpt', '<p><strong>Contact Us:</strong><br>+62 812-3687-1170<br>(Whatsapp Enabled)</p><p><strong>Email Us:</strong><br>reservation@nandinibali.com</p>');
+                                    }
+
+                                    if (blank($get('items'))) {
+                                        $set('items', [
+                                            [
+                                                'label' => 'Reserve Now',
+                                                'url' => '#',
+                                            ],
+                                            [
+                                                'label' => 'View Menu',
+                                                'url' => '#',
+                                            ],
+                                            [
+                                                'label' => 'Premium Menu',
+                                                'url' => '#',
+                                            ],
+                                            [
+                                                'label' => 'Beverage List',
+                                                'url' => '#',
+                                            ],
+                                        ]);
+                                    }
+
+                                    return;
+                                }
+
+                                if ($state === 'spa_information_section') {
+                                    if (blank($get('description'))) {
+                                        $set('description', '<p><strong>Spa:</strong><br>Traditional Balinese wellness and spa treatments</p><p><strong>Opening times:</strong><br>Daily: 09:00 am to 09:00 pm</p>');
+                                    }
+
+                                    if (blank($get('excerpt'))) {
+                                        $set('excerpt', '<p><strong>Contact Us:</strong><br>+62 812-3687-1170<br>(Whatsapp Enabled)</p><p><strong>Email Us:</strong><br>reservation@nandinibali.com</p>');
+                                    }
+
+                                    if (blank($get('items'))) {
+                                        $set('items', [
+                                            [
+                                                'label' => 'Reserve Now',
+                                                'url' => '#',
+                                            ],
+                                            [
+                                                'label' => 'View Spa Menu',
+                                                'url' => '#',
+                                            ],
+                                            [
+                                                'label' => 'Treatment List',
+                                                'url' => '#',
+                                            ],
+                                            [
+                                                'label' => 'Spa Packages',
+                                                'url' => '#',
+                                            ],
+                                        ]);
+                                    }
+                                }
+                            }),
 
                         TextInput::make('title')
                             ->label('Title')
@@ -95,17 +169,31 @@ class SectionsRelationManager extends RelationManager
                             ->placeholder('Section subtitle')
                             ->maxLength(255),
 
-                        Textarea::make('excerpt')
-                            ->label(fn(Get $get): string => $get('section_key') === 'member_benefits_section'
-                                ? 'Tier Recognition Text'
-                                : 'Excerpt')
-                            ->rows(3)
+                        RichEditor::make('excerpt')
+                            ->label(fn(Get $get): string => match ($get('section_key')) {
+                                'member_benefits_section' => 'Tier Recognition Text',
+                                'dining_information_section', 'spa_information_section' => 'Reservations',
+                                default => 'Excerpt',
+                            })
+                            ->toolbarButtons([
+                                ['bold', 'italic', 'underline', 'strike', 'link'],
+                                ['bulletList', 'orderedList'],
+                                ['undo', 'redo'],
+                            ])
                             ->visible(fn(Get $get): bool => in_array($get('section_key'), self::MEDIA_SECTION_KEYS, true)
-                                || $get('section_key') === 'member_benefits_section')
+                                || in_array($get('section_key'), [
+                                    'member_benefits_section',
+                                    'dining_information_section',
+                                    'spa_information_section',
+                                ], true))
                             ->columnSpanFull(),
 
                         RichEditor::make('description')
-                            ->label('Description')
+                            ->label(fn(Get $get): string => match ($get('section_key')) {
+                                'dining_information_section' => 'Restaurant Information',
+                                'spa_information_section' => 'Spa Information',
+                                default => 'Description',
+                            })
                             ->toolbarButtons([
                                 ['bold', 'italic', 'underline', 'strike', 'link'],
                                 ['h1', 'h2', 'h3'],
@@ -121,6 +209,7 @@ class SectionsRelationManager extends RelationManager
                                 'membership_tier_section' => 'Membership Tier Rows',
                                 'membership_use_points_section' => 'Use Your Points Cards',
                                 'membership_faq_section' => 'FAQ Rows',
+                                'dining_information_section', 'spa_information_section' => 'Additional Information Buttons',
                                 default => 'How It Works Items',
                             })
                             ->visible(fn(Get $get): bool => in_array($get('section_key'), self::ITEM_SECTION_KEYS, true))
@@ -131,10 +220,14 @@ class SectionsRelationManager extends RelationManager
                                 'membership_tier_section' => 4,
                                 'membership_use_points_section' => 3,
                                 'membership_faq_section' => 5,
+                                'dining_information_section', 'spa_information_section' => 4,
                                 default => 4,
                             })
                             ->minItems(1)
-                            ->maxItems(50)
+                            ->maxItems(fn(Get $get): int => in_array($get('section_key'), [
+                                'dining_information_section',
+                                'spa_information_section',
+                            ], true) ? 10 : 50)
                             ->reorderable()
                             ->collapsible()
                             ->cloneable()
@@ -158,6 +251,10 @@ class SectionsRelationManager extends RelationManager
                                     return $state['question'] ?? 'FAQ Row';
                                 }
 
+                                if (in_array($get('section_key'), ['dining_information_section', 'spa_information_section'], true)) {
+                                    return $state['label'] ?? 'Button';
+                                }
+
                                 return $state['title'] ?? 'How It Works Item';
                             })
                             ->addActionLabel(fn(Get $get): string => match ($get('section_key')) {
@@ -165,9 +262,36 @@ class SectionsRelationManager extends RelationManager
                                 'membership_tier_section' => 'Add tier row',
                                 'membership_use_points_section' => 'Add card',
                                 'membership_faq_section' => 'Add FAQ',
+                                'dining_information_section', 'spa_information_section' => 'Add button',
                                 default => 'Add item',
                             })
                             ->schema([
+                                TextInput::make('label')
+                                    ->label('Button Label')
+                                    ->default('Reserve Now')
+                                    ->maxLength(255)
+                                    ->required(fn(Get $get): bool => in_array($get('../../section_key'), [
+                                        'dining_information_section',
+                                        'spa_information_section',
+                                    ], true))
+                                    ->visible(fn(Get $get): bool => in_array($get('../../section_key'), [
+                                        'dining_information_section',
+                                        'spa_information_section',
+                                    ], true)),
+
+                                TextInput::make('url')
+                                    ->label('Button Link')
+                                    ->default('#')
+                                    ->maxLength(255)
+                                    ->required(fn(Get $get): bool => in_array($get('../../section_key'), [
+                                        'dining_information_section',
+                                        'spa_information_section',
+                                    ], true))
+                                    ->visible(fn(Get $get): bool => in_array($get('../../section_key'), [
+                                        'dining_information_section',
+                                        'spa_information_section',
+                                    ], true)),
+
                                 FileUpload::make('image')
                                     ->label('Card Image')
                                     ->disk('public')
@@ -560,6 +684,8 @@ class SectionsRelationManager extends RelationManager
                         'membership_tier_section' => 'Membership Tiers',
                         'membership_use_points_section' => 'Use Your Points',
                         'membership_faq_section' => 'Membership FAQ',
+                        'dining_information_section' => 'Dining Information',
+                        'spa_information_section' => 'Spa Information',
                         'image_overlay_section' => 'Image Overlay',
                         'split_media_section' => 'Split Media',
                         'split_media_reverse' => 'Split Media Reverse',
@@ -575,6 +701,8 @@ class SectionsRelationManager extends RelationManager
                         'membership_tier_section' => 'warning',
                         'membership_use_points_section' => 'success',
                         'membership_faq_section' => 'info',
+                        'dining_information_section' => 'success',
+                        'spa_information_section' => 'warning',
                         'image_overlay_section' => 'info',
                         'split_media_section' => 'success',
                         'split_media_reverse' => 'warning',

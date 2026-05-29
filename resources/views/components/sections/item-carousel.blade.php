@@ -23,6 +23,9 @@
                     } elseif ($routeName && \Illuminate\Support\Facades\Route::has($routeName)) {
                     $url = route($routeName, $item->slug);
                     }
+
+                    $summary = $item->excerpt ?: $item->description;
+                    $summary = trim(strip_tags((string) $summary));
                     @endphp
 
                     <a href="{{ $url }}" class="block">
@@ -38,9 +41,9 @@
                             {{ $item->title }}
                         </h3>
 
-                        @if (! empty($item->excerpt))
+                        @if ($summary)
                         <p class="mt-3 text-slate-800 text-[15px] leading-relaxed grow">
-                            {{ $item->excerpt }}
+                            {{ $summary }}
                         </p>
                         @endif
 

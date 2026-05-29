@@ -50,9 +50,9 @@
                 <div class="lg:col-span-2">
                     <h3 class="text-sm tracking-[0.22em] lg:text-lg uppercase mb-4">About</h3>
                     <ul class="space-y-3 text-sm text-white/90">
-                        <li><a href="/about" class="hover:underline">About Us</a></li>
-                        <li><a href="/blog" class="hover:underline">Blog &amp; News</a></li>
-                        <li><a href="/awards" class="hover:underline">Awards</a></li>
+                        <li><a href="{{ route('about-us.index') }}" class="hover:underline">About Us</a></li>
+                        <li><a href="{{ route('blog.index') }}" class="hover:underline">Blog &amp; News</a></li>
+                        <li><a href="{{ route('awards.index') }}" class="hover:underline">Awards</a></li>
                         <li><a href="/gallery" class="hover:underline">Gallery</a></li>
                         <li><a href="/press" class="hover:underline">Press Room</a></li>
                         <li><a href="/contact" class="hover:underline">Contact Us</a></li>

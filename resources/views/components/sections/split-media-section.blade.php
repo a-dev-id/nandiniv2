@@ -35,6 +35,14 @@ return $raw;
 return asset('storage/' . $raw);
 };
 
+$cleanText = function (?string $value): string {
+$text = html_entity_decode(strip_tags((string) $value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+$text = str_replace("\xc2\xa0", ' ', $text);
+$text = preg_replace('/\s+/', ' ', $text);
+
+return trim((string) $text);
+};
+
 $imageSpan = max(1, min(12, (int) $imageSpan));
 $textSpan = max(1, min(12, (int) $textSpan));
 
@@ -85,6 +93,11 @@ $subtitle = $section?->subtitle ?? '';
 $excerpt = $section?->excerpt ?? '';
 $description = $section?->description ?? '';
 
+$titleText = $cleanText($title);
+$subtitleText = $cleanText($subtitle);
+$excerptText = $cleanText($excerpt);
+$descriptionText = $cleanText($description);
+
 $sectionImage = $section?->images?->first();
 
 $desktopRawImage = $sectionImage?->image ?? '';
@@ -98,7 +111,7 @@ $mobileImageUrl = $resolveImage($mobileRawImage ?: $desktopRawImage);
 
 $imageAlt = $sectionImage?->image_alt
 ?: $sectionImage?->mobile_image_alt
-?: $title
+?: $titleText
 ?: 'Section image';
 
 $buttonLabel = $section?->button_label ?: 'DISCOVER';
@@ -136,27 +149,29 @@ $buttonUrl = $section?->button_url;
                 <div class="h-full flex flex-col justify-center px-4 sm:px-8 md:px-10 lg:px-12 md:py-14">
                     <div class="text-center">
 
-                        @if ($title)
+                        @if ($titleText !== '')
                         <h2 class="text-lg sm:text-xl lg:text-2xl tracking-[0.25em] uppercase text-slate-800 font-medium">
-                            {{ $title }}
+                            {{ $titleText }}
                         </h2>
                         @endif
 
-                        @if ($subtitle)
+                        @if ($subtitleText !== '')
                         <p class="mt-3 text-xs sm:text-sm uppercase tracking-[0.18em] text-slate-500">
-                            {{ $subtitle }}
+                            {{ $subtitleText }}
                         </p>
                         @endif
 
+                        @if ($titleText !== '' || $subtitleText !== '' || $excerptText !== '' || $descriptionText !== '')
                         <div class="mt-4 h-px w-20 bg-slate-400/70 mx-auto"></div>
+                        @endif
 
-                        @if ($excerpt)
+                        @if ($excerptText !== '')
                         <p class="mt-6 max-w-md text-[15px] leading-7 text-slate-700 mx-auto">
-                            {{ $excerpt }}
+                            {{ $excerptText }}
                         </p>
                         @endif
 
-                        @if (! $excerptOnly && $description)
+                        @if (! $excerptOnly && $descriptionText !== '')
                         <div class="mt-6 max-w-md text-[15px] leading-7 text-slate-700 mx-auto prose prose-slate prose-p:my-0 prose-ul:my-2 prose-ol:my-2">
                             {!! $description !!}
                         </div>
