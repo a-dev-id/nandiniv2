@@ -41,6 +41,8 @@
     $address = 'Banjar Susut, Desa Buahan, Payangan, Bali 80571, Indonesia';
     @endphp
 
+    <x-heroes.image-hero :page="$page" />
+
     <section class="px-6 py-14 md:py-20">
         <div class="mx-auto max-w-6xl text-center">
             <h1 class="text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 mb-6 md:mb-8 font-medium">
@@ -117,7 +119,7 @@
     </section>
 
     <section class="w-full">
-        <iframe title="Nandini Jungle by Hanging Gardens Location" src="https://www.google.com/maps?q=Nandini%20Jungle%20by%20Hanging%20Gardens%2C%20Banjar%20Susut%2C%20Desa%20Buahan%2C%20Payangan%2C%20Bali%2080571%2C%20Indonesia&output=embed" class="h-[420px] w-full border-0 md:h-[520px]" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen>
+        <iframe title="Nandini Jungle by Hanging Gardens Location" src="https://www.google.com/maps?q=Nandini%20Jungle%20by%20Hanging%20Gardens%2C%20Banjar%20Susut%2C%20Desa%20Buahan%2C%20Payangan%2C%20Bali%2080571%2C%20Indonesia&t=k&output=embed" class="h-[420px] w-full border-0 md:h-[520px]" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen>
         </iframe>
     </section>
 </x-layouts.app>

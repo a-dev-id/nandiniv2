@@ -17,6 +17,7 @@ use App\Http\Controllers\Cron\WebhotelierSyncController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\HolyRiverController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\MemberRewardRedemptionController;
 use App\Http\Controllers\MembershipAuthController;
 use App\Http\Controllers\MembershipController;
@@ -252,6 +253,10 @@ Route::get('/faq', [FaqController::class, 'index'])
 */
 Route::get('/contact-us', [ContactController::class, 'index'])
     ->name('contact.index');
+
+Route::post('/inquiries', [InquiryController::class, 'store'])
+    ->middleware('throttle:6,1')
+    ->name('inquiries.store');
 
 /*
 |--------------------------------------------------------------------------

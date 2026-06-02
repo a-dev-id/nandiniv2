@@ -165,7 +165,7 @@ $metaImage = $experience->card_image
             @endif
 
             <div class="mb-8">
-                <x-buttons.link-button href="/experiences" variant="solid">
+                <x-buttons.link-button href="#" variant="solid">
                     Inquire Now
                 </x-buttons.link-button>
             </div>

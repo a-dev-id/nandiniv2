@@ -34,5 +34,32 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
 
     <x-sections.page-description :page="$page" />
 
+    <section class="bg-white px-6 pb-16 md:pb-24">
+        <div class="mx-auto grid max-w-6xl grid-cols-1 gap-5 md:grid-cols-2">
+            <div class="aspect-video overflow-hidden bg-black">
+                <iframe
+                    class="h-full w-full"
+                    src="https://www.youtube.com/embed/BdVcsMHRi5o"
+                    title="The Big Bloom"
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <div class="aspect-video overflow-hidden bg-black">
+                <iframe
+                    class="h-full w-full"
+                    src="https://www.youtube.com/embed/Znvc4anarMc"
+                    title="International Flower Competition"
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </section>
 
 </x-layouts.app>

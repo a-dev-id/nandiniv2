@@ -58,6 +58,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 NavigationGroup::make()
+                    ->label('Booking'),
+
+                NavigationGroup::make()
                     ->label('General'),
 
                 NavigationGroup::make()

@@ -31,6 +31,13 @@ class AccommodationsTable
                     ->sortable()
                     ->wrap(),
 
+                TextColumn::make('villa_code')
+                    ->label('Villa Code')
+                    ->searchable()
+                    ->sortable()
+                    ->badge()
+                    ->placeholder('-'),
+
                 IconColumn::make('is_featured')
                     ->label('Featured')
                     ->boolean()

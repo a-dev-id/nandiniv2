@@ -80,25 +80,11 @@ class AccommodationsForm
                                     ->helperText('This controls the frontend URL prefix.')
                                     ->columnSpanFull(),
 
-                                TextInput::make('size')
-                                    ->label('Size')
-                                    ->placeholder('48 sqm')
-                                    ->maxLength(255),
-
-                                TextInput::make('occupancy')
-                                    ->label('Occupancy')
-                                    ->placeholder('2 Adults 1 Child')
-                                    ->maxLength(255),
-
-                                TextInput::make('bed_type')
-                                    ->label('Bed Type')
-                                    ->placeholder('King size bed')
-                                    ->maxLength(255),
-
-                                TextInput::make('view')
-                                    ->label('View')
-                                    ->placeholder('Panoramic Jungle View')
-                                    ->maxLength(255),
+                                TextInput::make('villa_code')
+                                    ->label('Villa Code')
+                                    ->placeholder('Example: PVV')
+                                    ->maxLength(20)
+                                    ->columnSpanFull(),
                             ]),
 
                         Section::make('Booking Button')

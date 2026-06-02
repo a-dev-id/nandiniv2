@@ -1,0 +1,114 @@
+<?php
+
+namespace App\Filament\Resources\MiniPopups\Schemas;
+
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+
+class MiniPopupForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->columns(12)
+            ->components([
+                Grid::make()
+                    ->columnSpan([
+                        'default' => 12,
+                        'lg' => 8,
+                    ])
+                    ->schema([
+                        Section::make('Popup Content')
+                            ->columnSpanFull()
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('title')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->columnSpanFull(),
+
+                                TextInput::make('subtitle')
+                                    ->maxLength(255)
+                                    ->columnSpanFull(),
+
+                                RichEditor::make('description')
+                                    ->label('Description')
+                                    ->toolbarButtons([
+                                        ['bold', 'italic', 'underline', 'strike', 'link'],
+                                        ['bulletList', 'orderedList'],
+                                        ['undo', 'redo'],
+                                    ])
+                                    ->columnSpanFull(),
+
+                                TextInput::make('button_label')
+                                    ->label('Button Label')
+                                    ->placeholder('Example: More Details')
+                                    ->maxLength(255),
+
+                                Select::make('button_link_type')
+                                    ->label('Button Link Type')
+                                    ->native(false)
+                                    ->live()
+                                    ->options([
+                                        'manual' => 'Manual Link',
+                                        'route' => 'Laravel Route',
+                                    ])
+                                    ->default('manual')
+                                    ->required(),
+
+                                TextInput::make('button_url')
+                                    ->label('Manual Button URL')
+                                    ->placeholder('Example: /offers or https://example.com')
+                                    ->maxLength(255)
+                                    ->visible(fn (Get $get): bool => $get('button_link_type') === 'manual'),
+
+                                TextInput::make('button_route')
+                                    ->label('Button Route Name')
+                                    ->placeholder('Example: offers.index')
+                                    ->maxLength(255)
+                                    ->visible(fn (Get $get): bool => $get('button_link_type') === 'route'),
+                            ]),
+                    ]),
+
+                Grid::make()
+                    ->columnSpan([
+                        'default' => 12,
+                        'lg' => 4,
+                    ])
+                    ->schema([
+                        Section::make('Settings')
+                            ->columnSpanFull()
+                            ->schema([
+                                FileUpload::make('image')
+                                    ->label('Popup Image')
+                                    ->disk('public')
+                                    ->directory('mini-popups')
+                                    ->visibility('public')
+                                    ->image()
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                    ->imagePreviewHeight('180')
+                                    ->panelAspectRatio('4:5')
+                                    ->panelLayout('integrated')
+                                    ->openable()
+                                    ->downloadable(),
+
+                                TextInput::make('image_alt')
+                                    ->label('Image Alt Text')
+                                    ->maxLength(255),
+
+                                Toggle::make('is_active')
+                                    ->label('Active')
+                                    ->default(true)
+                                    ->required(),
+                            ]),
+                    ]),
+            ]);
+    }
+}

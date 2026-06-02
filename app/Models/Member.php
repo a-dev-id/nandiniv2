@@ -124,6 +124,16 @@ class Member extends Authenticatable
         };
     }
 
+    public static function getMaximumPointsForTier(string $tier): ?int
+    {
+        return match ($tier) {
+            self::TIER_BRONZE => 400,
+            self::TIER_SILVER => 800,
+            self::TIER_GOLD => 1200,
+            default => null,
+        };
+    }
+
     public static function getDowngradedTier(string $tier): string
     {
         return match ($tier) {
@@ -144,8 +154,12 @@ class Member extends Authenticatable
             return false;
         }
 
+        $currentPoints = (int) $this->points;
         $newTier = self::getDowngradedTier($this->tier ?? self::TIER_BRONZE);
-        $newPoints = self::getMinimumPointsForTier($newTier);
+        $newTierMaximumPoints = self::getMaximumPointsForTier($newTier);
+        $newPoints = $newTierMaximumPoints === null
+            ? $currentPoints
+            : min($currentPoints, $newTierMaximumPoints);
 
         $this->forceFill([
             'tier' => $newTier,
@@ -155,13 +169,17 @@ class Member extends Authenticatable
             'last_tier_downgraded_at' => now(),
         ])->save();
 
-        $this->pointTransactions()->create([
-            'type' => self::POINT_TYPE_ADJUSTMENT,
-            'points' => $newPoints,
-            'description' => 'Yearly tier downgrade point adjustment',
-            'reference_type' => 'member',
-            'reference_id' => $this->id,
-        ]);
+        $pointsAdjustment = $newPoints - $currentPoints;
+
+        if ($pointsAdjustment !== 0) {
+            $this->pointTransactions()->create([
+                'type' => self::POINT_TYPE_ADJUSTMENT,
+                'points' => $pointsAdjustment,
+                'description' => 'Yearly tier downgrade point adjustment',
+                'reference_type' => 'member',
+                'reference_id' => $this->id,
+            ]);
+        }
 
         return true;
     }
@@ -219,7 +237,11 @@ class Member extends Authenticatable
             ]);
 
             $this->points = (int) $this->points + $points;
-            $this->syncTierFromPoints();
+
+            if ($type !== self::POINT_TYPE_REDEEM) {
+                $this->syncTierFromPoints();
+            }
+
             $this->save();
 
             return $transaction;

@@ -40,8 +40,6 @@ $memberName = $member?->name ?: $member?->full_name ?: 'Inner Circle Member';
 $memberEmail = $member?->email ?: '-';
 $memberInitial = strtoupper(mb_substr($memberName, 0, 1));
 
-$memberId = str_pad((string) ($member?->id ?? 0), 8, '0', STR_PAD_LEFT);
-
 $createdDate = $member?->created_at
 ? $member->created_at->format('d F Y')
 : '-';
@@ -54,7 +52,7 @@ $location = $member?->country ?: '-';
 
 $memberPoints = (int) ($member?->points ?? 0);
 
-$memberTier = strtolower((string) \App\Models\Member::getTierByPoints($memberPoints));
+$memberTier = strtolower((string) ($member?->tier ?? \App\Models\Member::getTierByPoints($memberPoints)));
 
 $validTiers = ['bronze', 'silver', 'gold', 'platinum'];
 
@@ -355,11 +353,6 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
 
                     <div class="mt-5 mx-auto max-w-[340px] space-y-2 text-[13px] sm:text-[14px] leading-6 text-gray-600 lg:mx-0">
                         <div class="grid grid-cols-[88px_1fr] gap-1 text-left">
-                            <span>Member ID</span>
-                            <span>: {{ $memberId }}</span>
-                        </div>
-
-                        <div class="grid grid-cols-[88px_1fr] gap-1 text-left">
                             <span>Email</span>
                             <span class="break-all">: {{ $memberEmail }}</span>
                         </div>
@@ -399,16 +392,6 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                                 <div class="absolute bottom-[23%] right-[8%] max-w-[48%] text-right">
                                     <p class="text-[16px] sm:text-[19px] md:text-[22px] font-semibold uppercase leading-none tracking-[0.14em] drop-shadow-md">
                                         {{ $tierLabelMap[$memberTier] ?? 'Bronze' }}
-                                    </p>
-                                </div>
-
-                                <div class="absolute bottom-[8.5%] right-[26%] text-center">
-                                    <p class="text-[5.5px] sm:text-[6.5px] md:text-[7.5px] font-bold uppercase leading-tight tracking-[0.18em] text-white/95 drop-shadow">
-                                        Member ID
-                                    </p>
-
-                                    <p class="mt-0.5 text-[5.5px] sm:text-[6.5px] md:text-[7.5px] font-bold uppercase leading-tight tracking-[0.14em] text-white/95 drop-shadow">
-                                        {{ $memberId }}
                                     </p>
                                 </div>
 
@@ -581,15 +564,15 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                     'created_at',
                     ], null));
 
-                    $pointDisplay = ($pointsNumber > 0 ? '+' : ($pointsNumber < 0 ? '-' : '' )) . number_format(abs($pointsNumber)) . ' POINT' ; $image=$resolveImage($getHistoryValue($activity, [ 'image' , 'photo' , 'thumbnail' , 'card_image' , 'hero_image' , 'reward.image' , 'reward.photo' , 'reward.thumbnail' , 'reward.card_image' , 'reward.hero_image' , 'offer.image' , 'offer.photo' , 'offer.thumbnail' , 'offer.card_image' , 'offer.hero_image' , ], null)); @endphp <article class="grid grid-cols-1 gap-5 py-7 md:grid-cols-[250px_1fr] md:gap-12 md:py-8 {{ $historyIndex >= $historyDisplayLimit ? 'hidden' : '' }}" @if ($historyIndex>= $historyDisplayLimit)
+                    $pointDisplay = ($pointsNumber > 0 ? '+' : ($pointsNumber < 0 ? '-' : '' )) . number_format(abs($pointsNumber)) . ' POINT' ; $image=$resolveImage($getHistoryValue($activity, [ 'image' , 'photo' , 'thumbnail' , 'card_image' , 'hero_image' , 'reward.image' , 'reward.photo' , 'reward.thumbnail' , 'reward.card_image' , 'reward.hero_image' , 'offer.image' , 'offer.photo' , 'offer.thumbnail' , 'offer.card_image' , 'offer.hero_image' , ], null)); @endphp <article class="grid grid-cols-1 gap-5 py-7 md:grid-cols-[170px_1fr] md:gap-12 md:py-8 {{ $historyIndex >= $historyDisplayLimit ? 'hidden' : '' }}" @if ($historyIndex>= $historyDisplayLimit)
                         data-history-extra
                         @endif
                         >
                         <div class="w-full">
                             @if ($image)
-                            <img src="{{ $image }}" alt="{{ $title }}" class="h-[155px] w-full object-cover md:h-[135px]" loading="lazy">
+                            <img src="{{ $image }}" alt="{{ $title }}" class="aspect-square w-full max-w-[170px] object-cover" loading="lazy">
                             @else
-                            <div class="flex h-[155px] w-full items-center justify-center bg-white md:h-[135px]">
+                            <div class="flex aspect-square w-full max-w-[170px] items-center justify-center bg-white">
                                 <span class="text-4xl font-medium uppercase tracking-[0.12em] text-[#916B2C]">
                                     {{ strtoupper(mb_substr($title, 0, 1)) }}
                                 </span>

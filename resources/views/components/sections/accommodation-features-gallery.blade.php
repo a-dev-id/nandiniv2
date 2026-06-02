@@ -49,6 +49,10 @@ $gridOrderGallery = $reverse
 : 'order-1 lg:order-2';
 
 $firstImage = $galleryImages->first();
+
+$directBookingUrl = filled($accommodation?->villa_code)
+? 'https://nandinijunglebyhanginggardens.reserve-online.net/?room=' . urlencode($accommodation->villa_code)
+: null;
 @endphp
 
 @if ($accommodation)
@@ -79,11 +83,19 @@ $firstImage = $galleryImages->first();
                     </div>
                     @endif
 
-                    @if ($accommodation->booking_url)
-                    <div class="mt-10">
-                        <x-buttons.link-button :href="$accommodation->booking_url" target="_blank" rel="noopener">
-                            {{ $accommodation->button_label ?: 'Book Now' }}
+                    @if ($directBookingUrl || $accommodation->booking_url)
+                    <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                        @if ($directBookingUrl)
+                        <x-buttons.link-button :href="$directBookingUrl" variant="solid">
+                            Book Now
                         </x-buttons.link-button>
+                        @endif
+
+                        @if ($accommodation->booking_url)
+                        <x-buttons.link-button :href="$accommodation->booking_url">
+                            {{ $accommodation->button_label ?: 'Room + Flight' }}
+                        </x-buttons.link-button>
+                        @endif
                     </div>
                     @endif
                 </div>

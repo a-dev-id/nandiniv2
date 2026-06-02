@@ -27,7 +27,10 @@ class RewardRedemptionService
         }
 
         return DB::transaction(function () use ($member, $reward, $pointsRequired, $notes) {
-            $member->refresh();
+            $member = Member::query()
+                ->whereKey($member->getKey())
+                ->lockForUpdate()
+                ->firstOrFail();
 
             if (! $member->canRedeemPoints($pointsRequired)) {
                 throw new InvalidArgumentException('Member does not have enough points.');

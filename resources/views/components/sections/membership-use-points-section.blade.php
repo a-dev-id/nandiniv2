@@ -41,7 +41,17 @@ $descriptionColorClass = $backgroundColor === 'dark_navy'
 : 'text-gray-600';
 
 $viewMoreLabel = trim((string) ($section?->button_label ?? 'View More'));
-$viewMoreUrl = trim((string) ($section?->button_url ?? '#')) ?: '#';
+$viewMoreUrl = \Illuminate\Support\Facades\Route::has('membership.privilege-redemption')
+? route('membership.privilege-redemption')
+: url('/membership/privilege-redemption');
+$memberIsLoggedIn = auth('member')->check();
+$membershipLoginUrl = \Illuminate\Support\Facades\Route::has('membership.login')
+? route('membership.login')
+: url('/membership/sign-in');
+
+$resolveMemberLink = function (string $url) use ($memberIsLoggedIn, $membershipLoginUrl): string {
+return (! $memberIsLoggedIn && $url === '#') ? $membershipLoginUrl : $url;
+};
 
 $resolveImage = function (?string $image): ?string {
 $image = trim((string) $image);
@@ -195,6 +205,7 @@ $items = count($rewardItems) > 0 ? $rewardItems : $defaultItems;
             $pointsLabel = trim((string) ($item['points_label'] ?? ''));
             $buttonLabel = trim((string) ($item['button_label'] ?? 'Redeem'));
             $buttonUrl = trim((string) ($item['button_url'] ?? '#')) ?: '#';
+            $buttonUrl = $resolveMemberLink($buttonUrl);
             $categoryLabel = trim((string) ($item['category'] ?? ''));
             $imageAlt = trim((string) ($item['image_alt'] ?? $itemTitle));
             @endphp

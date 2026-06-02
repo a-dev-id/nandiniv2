@@ -29,6 +29,7 @@ class Accommodation extends Model
         'bed_type',
         'view',
         'accommodation_type',
+        'villa_code',
 
         'button_label',
         'button_url',

@@ -52,11 +52,11 @@
 
                         {{-- Dropdown --}}
                         <div id="navBookMenu" class="absolute right-0 mt-2 w-52 bg-white border border-white shadow-xl hidden">
-                            <a href="https://book-directonline.com/properties/nandinibalidirect?locale=en&currency=IDR" class="block text-center uppercase tracking-[0.2em] font-medium text-[12px] sm:text-[14px] px-6 py-4 bg-white text-slate-800 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white">
+                            <a href="https://nandinijunglebyhanginggardens.reserve-online.net/?checkin=today" class="block text-center uppercase tracking-[0.2em] font-medium text-[12px] sm:text-[14px] px-6 py-4 bg-white text-slate-800 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white">
                                 Book Direct
                             </a>
 
-                            <a href="{{ url('/room-flight') }}" class="block text-center uppercase tracking-[0.2em] font-medium text-[12px] sm:text-[14px] px-6 py-4 bg-white text-slate-800 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white">
+                            <a href="https://ovs.tour-list.com/DPSearch/?HotelCode=nandinihgs" class="block text-center uppercase tracking-[0.2em] font-medium text-[12px] sm:text-[14px] px-6 py-4 bg-white text-slate-800 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white">
                                 Room + Flight
                             </a>
                         </div>
@@ -86,6 +86,13 @@
     $logoutUrl = \Illuminate\Support\Facades\Route::has('membership.logout')
     ? route('membership.logout')
     : url('/membership/logout');
+
+    $socialLinks = [
+    'instagram' => 'https://www.instagram.com/nandinijungleresort/',
+    'facebook' => 'https://www.facebook.com/nandinijungleresort/',
+    'youtube' => 'https://www.youtube.com/@NandiniJunglebyHangingGardens',
+    'tripadvisor' => 'https://www.tripadvisor.com/Hotel_Review-g21379722-d603743-Reviews-Nandini_Jungle_By_Hanging_Gardens-Buahan_Payangan_Gianyar_Regency_Bali.html',
+    ];
     @endphp
 
     {{-- OFFCANVAS --}}
@@ -280,25 +287,25 @@
                 <div class="h-px bg-slate-300/70 mb-6"></div>
 
                 <div class="flex items-center gap-4">
-                    <a href="#" aria-label="Instagram" class="hover:opacity-80">
+                    <a href="{{ $socialLinks['instagram'] }}" target="_blank" rel="noopener" aria-label="Instagram" class="hover:opacity-80">
                         <svg class="w-6 h-6 fill-black" viewBox="0 0 24 24">
                             <path d="M7.75 2C4.574 2 2 4.574 2 7.75v8.5C2 19.426 4.574 22 7.75 22h8.5C19.426 22 22 19.426 22 16.25v-8.5C22 4.574 19.426 2 16.25 2h-8.5zm0 2h8.5C18.321 4 20 5.679 20 7.75v8.5c0 2.071-1.679 3.75-3.75 3.75h-8.5C5.679 20 4 18.321 4 16.25v-8.5C4 5.679 5.679 4 7.75 4zm4.25 2.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zm0 2a3.5 3.5 0 110 7 3.5 3.5 0 010-7zm4.75-.75a1 1 0 100 2 1 1 0 000-2z" />
                         </svg>
                     </a>
 
-                    <a href="#" aria-label="Facebook" class="hover:opacity-80">
+                    <a href="{{ $socialLinks['facebook'] }}" target="_blank" rel="noopener" aria-label="Facebook" class="hover:opacity-80">
                         <svg class="w-6 h-6 fill-black" viewBox="0 0 24 24">
                             <path d="M22 12a10 10 0 10-11.5 9.875V15.5H8.5V12h2V9.75C10.5 7.57 11.93 6 14.5 6c1.22 0 2.5.22 2.5.22v2.75H15.6c-1.38 0-1.8.86-1.8 1.74V12h3.06l-.49 3.5H13.8v6.375A10 10 0 0022 12z" />
                         </svg>
                     </a>
 
-                    <a href="#" aria-label="YouTube" class="hover:opacity-80">
+                    <a href="{{ $socialLinks['youtube'] }}" target="_blank" rel="noopener" aria-label="YouTube" class="hover:opacity-80">
                         <svg class="w-6 h-6 fill-black" viewBox="0 0 24 24">
                             <path d="M23.498 6.186a2.997 2.997 0 00-2.11-2.12C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.388.566a2.997 2.997 0 00-2.11 2.12C0 8.075 0 12 0 12s0 3.925.502 5.814a2.997 2.997 0 002.11 2.12C4.5 20.5 12 20.5 12 20.5s7.5 0 9.388-.566a2.997 2.997 0 002.11-2.12C24 15.925 24 12 24 12s0-3.925-.502-5.814zM9.75 15.568V8.432L15.818 12 9.75 15.568z" />
                         </svg>
                     </a>
 
-                    <a href="#" aria-label="Tripadvisor" class="hover:opacity-80">
+                    <a href="{{ $socialLinks['tripadvisor'] }}" target="_blank" rel="noopener" aria-label="Tripadvisor" class="hover:opacity-80">
                         <svg class="w-6 h-6 fill-black" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <path d="M20 6.009h-2.829C15.211 4.675 12.813 4 10 4s-5.212.675-7.171 2.009H0c.428.42.827 1.34.993 2.04A4.954 4.954 0 0 0 0 11.008c0 2.757 2.243 5 5 5a4.97 4.97 0 0 0 3.423-1.375L10 17l1.577-2.366A4.97 4.97 0 0 0 15 16.01c2.757 0 5-2.243 5-5 0-1.112-.377-2.13-.993-2.96.166-.7.565-1.62.993-2.04zm-15 8.4c-1.875 0-3.4-1.525-3.4-3.4s1.525-3.4 3.4-3.4 3.4 1.525 3.4 3.4-1.525 3.4-3.4 3.4zm5-3.4a5.008 5.008 0 0 0-4.009-4.9C7.195 5.704 8.53 5.5 10 5.5s2.805.204 4.009.61A5.008 5.008 0 0 0 10 11.008zm5 3.4c-1.875 0-3.4-1.525-3.4-3.4s1.525-3.4 3.4-3.4 3.4 1.525 3.4 3.4-1.525 3.4-3.4 3.4zM5 8.86c-1.185 0-2.15.964-2.15 2.15s.965 2.15 2.15 2.15 2.15-.964 2.15-2.15-.965-2.15-2.15-2.15zm0 2.791a.65.65 0 1 1 0-1.3.65.65 0 0 1 0 1.3zm10-2.791c-1.185 0-2.15.964-2.15 2.15s.965 2.15 2.15 2.15 2.15-.964 2.15-2.15-.965-2.15-2.15-2.15zm0 2.791a.65.65 0 1 1 0-1.3.65.65 0 0 1 0 1.3z" />
                         </svg>

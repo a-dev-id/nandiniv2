@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Cron;
 
 use App\Http\Controllers\Controller;
-use App\Models\Member;
 use App\Models\WebhotelierReservation;
+use App\Services\MemberAutoJoinService;
 use App\Services\WebhotelierPullService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
@@ -224,127 +224,8 @@ class WebhotelierSyncController extends Controller
 
     protected function autoJoinMemberFromReservation(int|string $reservationId, array $data): array
     {
-        $clientInfo = Arr::get($data, 'clientInfo', []);
-
-        $email = strtolower(trim((string) Arr::get($clientInfo, 'email')));
-
-        if ($email === '') {
-            return [
-                'created' => false,
-                'skipped' => true,
-                'reason' => 'Guest email is missing.',
-            ];
-        }
-
-        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return [
-                'created' => false,
-                'skipped' => true,
-                'reason' => 'Guest email is invalid.',
-                'email' => $email,
-            ];
-        }
-
-        $statusCode = strtolower(trim((string) Arr::get($data, 'statusCode')));
-
-        if (in_array($statusCode, [
-            'cancel',
-            'canceled',
-            'cancelled',
-            'cancelled_by_guest',
-            'canceled_by_guest',
-        ], true)) {
-            return [
-                'created' => false,
-                'skipped' => true,
-                'reason' => 'Reservation is cancelled.',
-                'email' => $email,
-            ];
-        }
-
-        $existingMember = Member::query()
-            ->where('email', $email)
-            ->first();
-
-        if ($existingMember) {
-            return [
-                'created' => false,
-                'skipped' => true,
-                'reason' => 'Member already exists.',
-                'member_id' => $existingMember->id,
-                'email' => $email,
-            ];
-        }
-
-        $firstName = trim((string) (
-            Arr::get($clientInfo, 'firstName')
-            ?: Arr::get($clientInfo, 'first_name')
-        ));
-
-        $lastName = trim((string) (
-            Arr::get($clientInfo, 'lastName')
-            ?: Arr::get($clientInfo, 'last_name')
-        ));
-
-        $fullName = trim($firstName . ' ' . $lastName);
-
-        if ($fullName === '') {
-            $fullName = $email;
-        }
-
-        $phoneNumber = Arr::get($clientInfo, 'phone')
-            ?: Arr::get($clientInfo, 'telephone')
-            ?: Arr::get($clientInfo, 'tel');
-
-        $country = Arr::get($clientInfo, 'country')
-            ?: Arr::get($clientInfo, 'countryName')
-            ?: Arr::get($clientInfo, 'country_name');
-
-        $address = Arr::get($clientInfo, 'address')
-            ?: Arr::get($clientInfo, 'street')
-            ?: null;
-
-        $bookingNumber = trim((string) (
-            Arr::get($data, 'bookingNumber')
-            ?: Arr::get($data, 'booking_number')
-            ?: Arr::get($data, 'confirmationCode')
-            ?: Arr::get($data, 'confirmation_code')
-            ?: Arr::get($data, 'id')
-            ?: $reservationId
-        ));
-
-        $member = Member::create([
-            'first_name' => $firstName !== '' ? $firstName : null,
-            'last_name' => $lastName !== '' ? $lastName : null,
-            'name' => $fullName,
-            'email' => $email,
-            'phone_number' => $phoneNumber ?: null,
-            'country' => $country ?: null,
-            'address' => $address ?: null,
-
-            'password' => $bookingNumber,
-            'must_change_password' => true,
-
-            'member_source' => Member::SOURCE_AUTO_JOIN,
-
-            'tier' => Member::TIER_BRONZE,
-            'points' => 0,
-            'membership_started_at' => now(),
-            'membership_expires_at' => now()->addYear(),
-
-            'marketing_consent' => false,
-        ]);
-
-        return [
-            'created' => true,
-            'skipped' => false,
-            'reason' => 'Member auto joined from WebHotelier booking.',
-            'member_id' => $member->id,
-            'email' => $email,
-            'member_source' => Member::SOURCE_AUTO_JOIN,
-            'must_change_password' => true,
-            'temporary_password_source' => 'booking_number',
-        ];
+        return app(MemberAutoJoinService::class)
+            ->autoJoinFromWebhotelierReservation($reservationId, $data);
     }
 
     protected function safeCreatePullLog(

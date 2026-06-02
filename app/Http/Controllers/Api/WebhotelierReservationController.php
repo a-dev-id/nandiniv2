@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\WebhotelierReservation;
 use App\Models\WebhotelierWebhookLog;
+use App\Services\MemberAutoJoinService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
@@ -106,6 +107,9 @@ class WebhotelierReservationController extends Controller
                 request: $request,
                 logId: $log->id
             );
+
+            app(MemberAutoJoinService::class)
+                ->autoJoinFromWebhotelierReservation($webhotelierId, $data);
 
             $log->update([
                 'processing_status' => 'stored',
