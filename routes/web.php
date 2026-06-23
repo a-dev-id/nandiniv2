@@ -13,11 +13,16 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\HoneymoonController;
 use App\Http\Controllers\LittleThingsController;
 use App\Http\Controllers\AccommodationController;
+use App\Http\Controllers\Cron\BookingSyncController;
+use App\Http\Controllers\Cron\MembershipLifecycleController;
+use App\Http\Controllers\Cron\TestWelcomeEmailController;
 use App\Http\Controllers\Cron\WebhotelierSyncController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\HolyRiverController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InquiryController;
+use App\Http\Controllers\MailTestController;
+use App\Http\Controllers\MemberEmailPreviewController;
 use App\Http\Controllers\MemberRewardRedemptionController;
 use App\Http\Controllers\MembershipAuthController;
 use App\Http\Controllers\MembershipController;
@@ -30,6 +35,10 @@ Route::get('/', [HomeController::class, 'index'])
     ->name('home');
 
 Route::get('/login', function () {
+    if (config('features.disable_membership_feature')) {
+        return redirect()->route('home');
+    }
+
     return redirect()->route('membership.login');
 })->name('login');
 
@@ -39,9 +48,10 @@ Route::get('/login', function () {
 |--------------------------------------------------------------------------
 */
 Route::get('/membership', [MembershipController::class, 'index'])
+    ->middleware('membership.enabled')
     ->name('membership.index');
 
-Route::prefix('membership')->name('membership.')->group(function () {
+Route::prefix('membership')->name('membership.')->middleware('membership.enabled')->group(function () {
     Route::get('/benefits', [MembershipController::class, 'benefits'])
         ->name('benefits');
 
@@ -58,6 +68,26 @@ Route::prefix('membership')->name('membership.')->group(function () {
 
         Route::post('/sign-in', [MembershipAuthController::class, 'login'])
             ->name('login.submit');
+
+        Route::get('/sign-in/{provider}', [MembershipAuthController::class, 'redirectToSocialProvider'])
+            ->whereIn('provider', ['google'])
+            ->name('social.redirect');
+
+        Route::get('/sign-in/{provider}/callback', [MembershipAuthController::class, 'handleSocialProviderCallback'])
+            ->whereIn('provider', ['google'])
+            ->name('social.callback');
+
+        Route::get('/forgot-password', [MembershipAuthController::class, 'showForgotPasswordForm'])
+            ->name('password.request');
+
+        Route::post('/forgot-password', [MembershipAuthController::class, 'sendResetLinkEmail'])
+            ->name('password.email');
+
+        Route::get('/reset-password/{token}', [MembershipAuthController::class, 'showResetPasswordForm'])
+            ->name('password.reset');
+
+        Route::post('/reset-password', [MembershipAuthController::class, 'resetPassword'])
+            ->name('password.store');
 
         Route::get('/join', [MembershipAuthController::class, 'showRegisterForm'])
             ->name('register');
@@ -134,6 +164,10 @@ Route::get('/offer/{offer:slug}', [OfferController::class, 'show'])
 */
 Route::get('/experiences', [ExperienceController::class, 'index'])
     ->name('experiences.index');
+
+Route::get('/experiences/{categorySlug}', [ExperienceController::class, 'index'])
+    ->where('categorySlug', '[A-Za-z0-9\-]+')
+    ->name('experiences.category');
 
 Route::get('/experience/{experience:slug}', [ExperienceController::class, 'show'])
     ->name('experiences.show');
@@ -258,6 +292,12 @@ Route::post('/inquiries', [InquiryController::class, 'store'])
     ->middleware('throttle:6,1')
     ->name('inquiries.store');
 
+Route::get('/test-mail/{token}', MailTestController::class)
+    ->name('test-mail');
+
+Route::get('/member-email-preview/{token}/{template?}', MemberEmailPreviewController::class)
+    ->name('member-email-preview.show');
+
 /*
 |--------------------------------------------------------------------------
 | Temporary WebHotelier PULL Tests
@@ -353,3 +393,12 @@ Route::get('/test-webhotelier-mark-synced/{token}/{reservationId}', function (
 */
 Route::get('/cron/webhotelier/sync/{token}', WebhotelierSyncController::class)
     ->name('cron.webhotelier.sync');
+
+Route::get('/cron/bookings/sync/{token}', BookingSyncController::class)
+    ->name('cron.bookings.sync');
+
+Route::get('/cron/members/lifecycle/{token}', MembershipLifecycleController::class)
+    ->name('cron.members.lifecycle');
+
+Route::get('/cron/members/test-welcome-email/{token}', TestWelcomeEmailController::class)
+    ->name('cron.members.test-welcome-email');

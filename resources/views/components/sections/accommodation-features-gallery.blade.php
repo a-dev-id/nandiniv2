@@ -50,9 +50,19 @@ $gridOrderGallery = $reverse
 
 $firstImage = $galleryImages->first();
 
-$directBookingUrl = filled($accommodation?->villa_code)
-? 'https://nandinijunglebyhanginggardens.reserve-online.net/?room=' . urlencode($accommodation->villa_code)
-: null;
+$thumbnailImages = $galleryImages;
+
+if ($galleryImages->count() > 1 && $galleryImages->count() < 6) {
+    $thumbnailImages = collect();
+
+    while ($thumbnailImages->count() < 6) {
+        $thumbnailImages = $thumbnailImages->merge($galleryImages);
+    }
+
+    $thumbnailImages = $thumbnailImages->take(6)->values();
+}
+
+$directBookingUrl = $accommodation?->booking_url;
 @endphp
 
 @if ($accommodation)
@@ -63,7 +73,7 @@ $directBookingUrl = filled($accommodation?->villa_code)
             {{-- Features --}}
             <div class="lg:col-span-5 {{ $gridOrderFeatures }}">
                 <div class="px-4 sm:px-8 md:px-10 lg:px-12">
-                    <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
+                    <h2 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3">
                         Features
                     </h2>
 
@@ -75,7 +85,7 @@ $directBookingUrl = filled($accommodation?->villa_code)
                             <img src="{{ asset('storage/' . $feature->icon_image) }}" alt="{{ $feature->label }}" class="w-6 h-6 object-contain shrink-0 brightness-0 opacity-80" loading="lazy">
                             @endif
 
-                            <span class="text-[15px] leading-6 text-slate-700">
+                            <span class="text-sm leading-6 text-slate-700">
                                 {{ $feature->label }}
                             </span>
                         </div>
@@ -83,19 +93,11 @@ $directBookingUrl = filled($accommodation?->villa_code)
                     </div>
                     @endif
 
-                    @if ($directBookingUrl || $accommodation->booking_url)
+                    @if ($directBookingUrl)
                     <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                        @if ($directBookingUrl)
                         <x-buttons.link-button :href="$directBookingUrl" variant="solid">
                             Book Now
                         </x-buttons.link-button>
-                        @endif
-
-                        @if ($accommodation->booking_url)
-                        <x-buttons.link-button :href="$accommodation->booking_url">
-                            {{ $accommodation->button_label ?: 'Room + Flight' }}
-                        </x-buttons.link-button>
-                        @endif
                     </div>
                     @endif
                 </div>
@@ -110,24 +112,24 @@ $directBookingUrl = filled($accommodation?->villa_code)
                         <img data-main-image src="{{ $firstImage['src'] }}" alt="{{ $firstImage['alt'] }}" class="w-full h-full object-cover transition-opacity duration-300" loading="lazy">
                     </div>
 
-                    @if ($galleryImages->count() > 1)
+                    @if ($thumbnailImages->count() > 1)
                     {{-- Thumbnail Slider --}}
-                    <div class="relative mt-5 px-10">
-                        <button type="button" data-gallery-prev class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-black text-white flex items-center justify-center hover:bg-[#B8945B] transition" aria-label="Previous image">
+                    <div class="relative mt-2 px-10">
+                        <button type="button" data-gallery-prev class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-black text-white flex items-center justify-center hover:bg-[#B8945B] transition tracking-[0.08em] font-medium" aria-label="Previous image">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                             </svg>
                         </button>
 
                         <div data-thumbnail-track class="flex gap-3 overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                            @foreach ($galleryImages as $index => $image)
-                            <button type="button" data-gallery-thumb data-index="{{ $index }}" data-src="{{ $image['src'] }}" data-alt="{{ $image['alt'] }}" class="shrink-0 w-24 sm:w-28 md:w-32 aspect-[4/3] overflow-hidden bg-slate-100 border {{ $index === 0 ? 'border-slate-800' : 'border-transparent' }}" aria-label="Show image {{ $index + 1 }}">
+                            @foreach ($thumbnailImages as $index => $image)
+                            <button type="button" data-gallery-thumb data-index="{{ $index }}" data-src="{{ $image['src'] }}" data-alt="{{ $image['alt'] }}" class="shrink-0 w-24 sm:w-28 md:w-32 aspect-[4/3] overflow-hidden bg-slate-100 border {{ $index === 0 ? 'border-slate-800' : 'border-transparent' }} tracking-[0.08em] font-medium" aria-label="Show image {{ $index + 1 }}">
                                 <img src="{{ $image['src'] }}" alt="{{ $image['alt'] }}" class="w-full h-full object-cover" loading="lazy">
                             </button>
                             @endforeach
                         </div>
 
-                        <button type="button" data-gallery-next class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-black text-white flex items-center justify-center hover:bg-[#B8945B] transition" aria-label="Next image">
+                        <button type="button" data-gallery-next class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-black text-white flex items-center justify-center hover:bg-[#B8945B] transition tracking-[0.08em] font-medium" aria-label="Next image">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                             </svg>

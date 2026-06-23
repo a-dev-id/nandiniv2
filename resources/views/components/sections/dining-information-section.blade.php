@@ -65,32 +65,39 @@ $buttons = [
     <div class="mx-auto grid max-w-7xl gap-12 lg:grid-cols-3 lg:gap-16">
         {{-- Restaurant Information --}}
         <div class="text-center">
-            <h2 class="mb-6 text-2xl sm:text-3xl md:text-3xl leading-snug font-medium uppercase tracking-[0.12em] text-slate-900">
+            <h2 class="text-xl leading-snug font-medium uppercase text-slate-700 mb-3">
                 Restaurant Information
             </h2>
 
-            <div class="text-sm leading-relaxed text-slate-700 [&_p]:mb-2 [&_strong]:font-semibold [&_strong]:text-slate-800 [&_ul]:list-none [&_ul]:pl-0 [&_ol]:list-none [&_ol]:pl-0 [&_li]:mb-1">
+            <div class="text-sm leading-relaxed text-slate-700 [&_p]:mb-2 [&_strong]:font-semibold [&_ul]:list-none [&_ul]:pl-0 [&_ol]:list-none [&_ol]:pl-0 [&_li]:mb-1">
                 {!! $restaurantInformation !!}
             </div>
         </div>
 
         {{-- Additional Information --}}
         <div class="text-center">
-            <h2 class="mb-6 text-2xl sm:text-3xl md:text-3xl leading-snug font-medium uppercase tracking-[0.12em] text-slate-900">
+            <h2 class="text-xl leading-snug font-medium uppercase text-slate-700 mb-3">
                 Additional Information
             </h2>
 
             <div class="mx-auto max-w-[250px] space-y-3">
-                @foreach ($buttons as $index => $button)
+                @foreach ($buttons as $button)
                 @php
                 $label = $button['label'] ?? null;
-                $url = $button['url'] ?? '#';
+                $url = \App\Support\MemberBookingVoucher::appendToUrl($button['url'] ?? '#');
+                $isExternalUrl = str_starts_with($url, 'http');
                 @endphp
 
                 @if ($label)
-                <a href="{{ $url }}" @if (str_starts_with($url, 'http' )) target="_blank" rel="noopener" @endif class="flex h-[50px] w-full items-center justify-center border border-black px-6 text-[11px] font-bold uppercase tracking-[0.14em] transition {{ $index === 0 ? 'bg-black text-white hover:bg-transparent hover:text-black' : 'bg-transparent text-black hover:bg-black hover:text-white' }}">
+                @if ($isExternalUrl)
+                <x-buttons.link-button :href="$url" variant="solid" class="h-[50px] w-full min-w-0 px-4 text-center" target="_blank" rel="noopener">
                     {{ $label }}
-                </a>
+                </x-buttons.link-button>
+                @else
+                <x-buttons.link-button :href="$url" variant="solid" class="h-[50px] w-full min-w-0 px-4 text-center">
+                    {{ $label }}
+                </x-buttons.link-button>
+                @endif
                 @endif
                 @endforeach
             </div>
@@ -98,11 +105,11 @@ $buttons = [
 
         {{-- Reservations --}}
         <div class="text-center">
-            <h2 class="mb-6 text-2xl sm:text-3xl md:text-3xl leading-snug font-medium uppercase tracking-[0.12em] text-slate-900">
+            <h2 class="text-xl leading-snug font-medium uppercase text-slate-700 mb-3">
                 Reservations
             </h2>
 
-            <div class="text-sm leading-relaxed text-slate-700 [&_p]:mb-2 [&_strong]:font-semibold [&_strong]:text-slate-800 [&_a]:hover:text-[#916B2C] [&_ul]:list-none [&_ul]:pl-0 [&_ol]:list-none [&_ol]:pl-0 [&_li]:mb-1">
+            <div class="text-sm leading-relaxed text-slate-700 [&_p]:mb-2 [&_strong]:font-semibold [&_a]:hover:text-[#916B2C] [&_ul]:list-none [&_ul]:pl-0 [&_ol]:list-none [&_ol]:pl-0 [&_li]:mb-1">
                 {!! $reservationsInformation !!}
             </div>
         </div>

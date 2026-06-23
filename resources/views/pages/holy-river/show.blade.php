@@ -92,14 +92,14 @@ $metaImage = $experience->card_image
             <source media="(max-width: 767px)" srcset="{{ asset('storage/' . $heroMobileImage) }}">
             @endif
 
-            <img src="{{ asset('storage/' . $heroImage) }}" alt="{{ $heroAlt }}" class="w-full h-[65vh] md:h-[85vh] object-cover object-center">
+            <img src="{{ asset('storage/' . $heroImage) }}" alt="{{ $heroAlt }}" class="w-full h-[65vh] md:h-[85vh] object-cover object-center" width="1920" height="1080" loading="eager" fetchpriority="high" decoding="async">
         </picture>
     </section>
     @endif
 
     <section class="py-14 md:py-20 px-6">
         <div class="max-w-4xl mx-auto text-center">
-            <h1 class="text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 mb-6 md:mb-8 font-medium">
+            <h1 class="text-2xl leading-snug uppercase text-slate-700 font-medium mb-3">
                 {{ $experience->title }}
             </h1>
 
@@ -110,22 +110,22 @@ $metaImage = $experience->card_image
             @endif
 
             @if (! empty($experience->description))
-            <div class="prose prose-slate text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+            <div class="prose prose-slate text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                 {!! $experience->description !!}
             </div>
             @elseif (! empty($experience->excerpt))
-            <p class="text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+            <p class="text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                 {{ $experience->excerpt }}
             </p>
             @endif
 
             @if ($prices->isNotEmpty())
-            <div class="my-10 text-center text-slate-800">
-                <p class="text-[15px] leading-relaxed">
+            <div class="my-10 text-center text-slate-700">
+                <p class="text-sm leading-relaxed">
                     Start from
                 </p>
 
-                <div class="mt-3 space-y-6">
+                <div class="mt-2 space-y-6">
                     @foreach ($prices as $price)
                     @php
                     $amount = $price->price ?? $price->amount ?? $price->unit_price ?? null;
@@ -137,17 +137,17 @@ $metaImage = $experience->card_image
                     @if ($amount)
                     <div>
                         @if (! empty($price->label))
-                        <p class="text-[15px] leading-relaxed font-medium">
+                        <p class="text-sm leading-relaxed font-medium">
                             {{ $price->label }}
                         </p>
                         @endif
 
-                        <p class="mt-1 text-lg md:text-xl font-bold tracking-wide">
+                        <p class="mt-1 text-lg md:text-xl font-bold">
                             {{ $currency }} {{ number_format((float) $amount, 0, '.', ',') }}{{ $priceSuffix }}
                         </p>
 
                         @if ($unitLabel)
-                        <p class="mt-1 text-[15px] leading-relaxed">
+                        <p class="mt-1 text-sm leading-relaxed">
                             {{ $unitLabel }}
                         </p>
                         @endif
@@ -175,7 +175,7 @@ $metaImage = $experience->card_image
     @if ($relatedExperiences->isNotEmpty())
     <section class="pt-14 md:pt-20">
         <div class="px-6 mb-10 text-center">
-            <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
+            <h2 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3">
                 Other Experiences
             </h2>
         </div>

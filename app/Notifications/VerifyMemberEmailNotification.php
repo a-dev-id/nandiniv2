@@ -36,6 +36,7 @@ class VerifyMemberEmailNotification extends Notification
 
         return (new MailMessage)
             ->subject('Verify Your Nandini Inner Circle Email')
+            ->bcc($this->guestBcc())
             ->view('emails.membership.verify-email', [
                 'member' => $this->member,
                 'verificationUrl' => $verificationUrl,
@@ -45,5 +46,15 @@ class VerifyMemberEmailNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function guestBcc(): array
+    {
+        $bcc = trim((string) config('mail.guest_bcc'));
+
+        return $bcc === '' ? [] : [$bcc];
     }
 }

@@ -39,6 +39,10 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
     <x-sections.intro-text-section :section="$section" />
     @break
 
+    @case('contained_image_section')
+    <x-sections.contained-image-section :section="$section" />
+    @break
+
     @default
     @if (app()->environment('local'))
     <div class="px-6 py-4 text-red-600">

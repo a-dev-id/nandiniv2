@@ -78,7 +78,7 @@ $secondaryHref = $resolveButtonUrl($secondaryUrl, 'membership.login');
             <source media="(max-width: 767px)" srcset="{{ $mobileImageSrc }}">
             @endif
 
-            <img src="{{ $desktopImageSrc ?: $mobileImageSrc }}" alt="{{ $alt }}" class="absolute inset-0 w-full h-full object-cover object-center" loading="lazy" />
+            <img src="{{ $desktopImageSrc ?: $mobileImageSrc }}" alt="{{ $alt }}" class="absolute inset-0 w-full h-full object-cover object-center" width="1920" height="1080" loading="eager" fetchpriority="high" decoding="async" />
         </picture>
         @endif
 
@@ -101,7 +101,7 @@ $secondaryHref = $resolveButtonUrl($secondaryUrl, 'membership.login');
                     </div>
                     @endif
 
-                    <h1 class="text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-white mb-6 md:mb-8 font-medium">
+                    <h1 class="text-2xl leading-snug uppercase text-white font-medium mb-3">
                         {{ $heroTitle }}
                     </h1>
 

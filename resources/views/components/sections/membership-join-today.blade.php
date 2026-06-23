@@ -1,7 +1,7 @@
 @props([
 'section' => null,
 'title' => 'Not A Member Yet? Join Today',
-'description' => 'Earn and redeem points that take you everywhere you want to go.',
+'description' => '',
 'image' => '',
 'mobileImage' => '',
 'altText' => 'Nandini Rewards Membership',
@@ -40,6 +40,10 @@ if (str_starts_with($raw, '/')) {
 return $raw;
 }
 
+if (! file_exists(public_path($raw))) {
+return '';
+}
+
 return asset($raw);
 };
 
@@ -52,8 +56,8 @@ $mobileRawImage = $sectionImage?->mobile_image
 ?: $mobileImage
 ?: $image;
 
-$resolvedDesktopImage = $resolveImage($desktopRawImage ?: $mobileRawImage);
-$resolvedMobileImage = $resolveImage($mobileRawImage ?: $desktopRawImage);
+$resolvedDesktopImage = $resolveImage($desktopRawImage) ?: $resolveImage($mobileRawImage);
+$resolvedMobileImage = $resolveImage($mobileRawImage) ?: $resolvedDesktopImage;
 
 $resolvedTitle = $section?->title ?: $title;
 
@@ -105,7 +109,7 @@ $finalPrimaryUrl = $sectionButtonUrl ?: $primaryUrl;
         <div class="absolute inset-0 flex items-center justify-start px-6 md:px-12 lg:px-[90px]">
             <div class="max-w-3xl text-left text-white">
                 @if ($resolvedTitle)
-                <h2 class="text-2xl sm:text-3xl md:text-3xl font-medium uppercase leading-snug tracking-[0.15em] md:tracking-[0.22em] text-white">
+                <h2 class="text-xl font-medium uppercase leading-snug text-white mb-3">
                     {!! str_ireplace(
                     ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;', "\n"],
                     '<br>',
@@ -115,7 +119,7 @@ $finalPrimaryUrl = $sectionButtonUrl ?: $primaryUrl;
                 @endif
 
                 @if ($resolvedDescription)
-                <p class="mt-3 max-w-2xl text-[15px] leading-relaxed text-white/90 sm:text-base">
+                <p class="mt-2 max-w-2xl text-sm leading-relaxed text-white/90">
                     {{ $resolvedDescription }}
                 </p>
                 @endif

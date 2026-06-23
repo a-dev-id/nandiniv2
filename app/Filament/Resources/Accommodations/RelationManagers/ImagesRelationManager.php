@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Accommodations\RelationManagers;
 
+use App\Support\FilamentWebpUpload;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -12,6 +13,7 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
@@ -50,13 +52,22 @@ class ImagesRelationManager extends RelationManager
                     ->openable()
                     ->downloadable()
                     ->saveUploadedFileUsing(
-                        fn(TemporaryUploadedFile $file): string => self::storeAsWebp(
+                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                             file: $file,
                             directory: 'accommodations/gallery',
                             targetWidth: 1200,
                             targetHeight: 900,
+                            fileName: $get('image_file_name'),
                         )
                     )
+                    ->columnSpanFull(),
+
+                TextInput::make('image_file_name')
+                    ->label('Image File Name')
+                    ->placeholder('example-gallery-image')
+                    ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
+                    ->maxLength(120)
+                    ->dehydrated(false)
                     ->columnSpanFull(),
 
                 TextInput::make('image_alt')

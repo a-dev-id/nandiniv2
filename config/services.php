@@ -35,6 +35,12 @@ return [
         ],
     ],
 
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
+    ],
+
     'webhotelier' => [
         // PUSH endpoint secret
         'webhook_secret' => env('WEBHOTELIER_WEBHOOK_SECRET'),
@@ -48,5 +54,24 @@ return [
         // Cron sync URL token
         'sync_token' => env('WEBHOTELIER_SYNC_TOKEN'),
     ],
+
+    'membership_api' => [
+        'url' => env('MEMBERSHIP_API_URL', 'https://membership.nandiniapps.cloud'),
+        'token' => env('MEMBERSHIP_API_TOKEN'),
+        'booking_sync_cron_token' => env('BOOKING_SYNC_CRON_TOKEN'),
+        'timeout' => env('MEMBERSHIP_API_TIMEOUT', 20),
+    ],
+
+    'membership' => [
+        'lifecycle_cron_token' => env('MEMBERSHIP_LIFECYCLE_CRON_TOKEN'),
+    ],
+
+    'welcome_email' => [
+        'test_mode' => env('WELCOME_EMAIL_TEST_MODE', true),
+        'test_recipient' => env('WELCOME_EMAIL_TEST_RECIPIENT'),
+        'test_token' => env('WELCOME_EMAIL_TEST_TOKEN'),
+    ],
+
+    'mail_test_token' => env('MAIL_TEST_TOKEN'),
 
 ];

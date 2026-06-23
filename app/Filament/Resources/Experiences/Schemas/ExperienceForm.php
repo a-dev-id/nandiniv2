@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Experiences\Schemas;
 
+use App\Support\FilamentWebpUpload;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
@@ -12,6 +13,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Storage;
@@ -87,13 +89,21 @@ class ExperienceForm
                                     ->openable()
                                     ->downloadable()
                                     ->saveUploadedFileUsing(
-                                        fn(TemporaryUploadedFile $file): string => self::storeAsWebp(
+                                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                                             file: $file,
                                             directory: 'experience-categories',
                                             targetWidth: 1200,
                                             targetHeight: 800,
+                                            fileName: $get('category_image_file_name'),
                                         )
                                     ),
+
+                                TextInput::make('category_image_file_name')
+                                    ->label('Category Image File Name')
+                                    ->placeholder('example-category-image')
+                                    ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
+                                    ->maxLength(120)
+                                    ->dehydrated(false),
 
                                 TextInput::make('image_alt')
                                     ->label('Category Image Alt Text')
@@ -308,13 +318,21 @@ class ExperienceForm
                                     ->openable()
                                     ->downloadable()
                                     ->saveUploadedFileUsing(
-                                        fn(TemporaryUploadedFile $file): string => self::storeAsWebp(
+                                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                                             file: $file,
                                             directory: 'experiences/main',
                                             targetWidth: 1600,
                                             targetHeight: 900,
+                                            fileName: $get('image_file_name'),
                                         )
                                     ),
+
+                                TextInput::make('image_file_name')
+                                    ->label('Main Image File Name')
+                                    ->placeholder('example-main-image')
+                                    ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
+                                    ->maxLength(120)
+                                    ->dehydrated(false),
 
                                 TextInput::make('image_alt')
                                     ->label('Main Image Alt Text')
@@ -339,13 +357,21 @@ class ExperienceForm
                                     ->openable()
                                     ->downloadable()
                                     ->saveUploadedFileUsing(
-                                        fn(TemporaryUploadedFile $file): string => self::storeAsWebp(
+                                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                                             file: $file,
                                             directory: 'experiences/cards',
                                             targetWidth: 1200,
                                             targetHeight: 800,
+                                            fileName: $get('card_image_file_name'),
                                         )
                                     ),
+
+                                TextInput::make('card_image_file_name')
+                                    ->label('Card Image File Name')
+                                    ->placeholder('example-card-image')
+                                    ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
+                                    ->maxLength(120)
+                                    ->dehydrated(false),
 
                                 TextInput::make('card_image_alt')
                                     ->label('Card Image Alt Text')

@@ -1,20 +1,45 @@
 @props([
 'items' => collect(),
 'wrapperClass' => '',
+'bottomPaddingClass' => 'pb-16 md:pb-28',
+'innerPaddingClass' => 'lg:px-16',
+'itemPaddingClass' => 'px-3',
+'previousButtonClass' => 'left-2 lg:left-10',
+'nextButtonClass' => 'right-2 lg:right-10',
+'buttonPositionClass' => 'top-1/2',
+'buttonAlignClass' => 'justify-start',
+'showReserveButton' => true,
 'routeName' => null,
+'variant' => 'cards',
 ])
 
-<section class="pb-16 md:pb-28 {{ $wrapperClass }}">
-    <div class="mx-auto lg:px-16 relative">
+@once
+@push('css')
+<style>
+    .item-carousel-description-collapsed {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+    }
+
+</style>
+@endpush
+@endonce
+
+<section class="{{ $bottomPaddingClass }} {{ $wrapperClass }}">
+    <div class="item-carousel-wrap mx-auto {{ $innerPaddingClass }} relative">
 
         <div class="itemcarousel-slick">
             @foreach ($items as $item)
-            <article class="px-3 h-full w-full flex">
+            <article class="{{ $itemPaddingClass }} h-full w-full flex">
                 <div class="flex flex-col h-full w-full">
 
                     @php
-                    $image = $item->card_image ?? $item->hero_image ?? null;
-                    $alt = $item->card_image_alt ?? $item->hero_image_alt ?? $item->title;
+                    $title = $item->title ?? $item->name ?? '';
+                    $sectionImage = $item->images?->first();
+                    $image = $item->card_image ?? $item->hero_image ?? $item->image ?? $sectionImage?->image ?? null;
+                    $alt = $item->card_image_alt ?? $item->hero_image_alt ?? $item->image_alt ?? $sectionImage?->image_alt ?? ($title ?: 'Gallery image');
 
                     $url = '#';
 
@@ -24,46 +49,76 @@
                     $url = route($routeName, $item->slug);
                     }
 
-                    $summary = $item->excerpt ?: $item->description;
-                    $summary = trim(strip_tags((string) $summary));
+                    $excerptSummary = html_entity_decode(strip_tags((string) ($item->excerpt ?? '')), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                    $descriptionSummary = html_entity_decode(strip_tags((string) ($item->description ?? '')), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                    $summary = trim($excerptSummary) !== '' ? $excerptSummary : $descriptionSummary;
+                    $summary = trim((string) preg_replace('/\s+/', ' ', $summary));
+                    $shortSummary = \Illuminate\Support\Str::words(
+                    preg_replace('/\.{3,}/', '', $summary) ?: $summary,
+                    24,
+                    '...'
+                    );
+
+                    $reserveUrl = ! empty($item->booking_url)
+                    ? \App\Support\MemberBookingVoucher::appendToUrl($item->booking_url)
+                    : null;
                     @endphp
 
+                    @if ($variant === 'gallery')
+                    <div class="group aspect-square md:aspect-[4/3] overflow-hidden bg-slate-100">
+                        @if ($image)
+                        <img src="{{ asset('storage/' . $image) }}" alt="{{ $alt }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" />
+                        @endif
+                    </div>
+                    @else
                     <a href="{{ $url }}" class="block">
-                        <div class="aspect-square md:aspect-3/2 overflow-hidden bg-slate-100 group">
+                        <div class="aspect-square md:aspect-4/3 overflow-hidden bg-slate-100 group">
                             @if ($image)
                             <img src="{{ asset('storage/' . $image) }}" alt="{{ $alt }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" />
                             @endif
                         </div>
                     </a>
 
-                    <div class="pt-7 flex flex-col grow">
-                        <h3 class="text-slate-800 uppercase tracking-[0.15em] text-xl sm:text-2xl md:text-2xl leading-snug font-medium">
-                            {{ $item->title }}
+                    <div class="flex flex-col grow border border-slate-200 border-t-0 bg-white px-6 py-6 sm:px-7">
+                        <h3 class="text-lg font-semibold leading-snug text-slate-700 uppercase mb-3">
+                            <a href="{{ $url }}" class="transition hover:text-[#A67C3D]">
+                                {{ $title }}
+                            </a>
                         </h3>
 
                         @if ($summary)
-                        <p class="mt-3 text-gray-600 text-[15px] sm:text-base leading-relaxed grow">
-                            {{ $summary }}
+                        <p x-data="{ expanded: false }" x-bind:aria-expanded="expanded.toString()" role="button" tabindex="0" class="mt-2 grow cursor-pointer text-sm leading-relaxed text-slate-600" @click="expanded = ! expanded" @keydown.enter.prevent="expanded = ! expanded" @keydown.space.prevent="expanded = ! expanded">
+                            <span x-show="! expanded">{{ $shortSummary }}</span>
+                            <span x-show="expanded">{{ $summary }}</span>
                         </p>
                         @endif
 
-                        <a href="{{ $url }}" class="mt-6 uppercase tracking-[0.25em] text-[14px] text-slate-800 hover:underline font-bold">
-                            DISCOVER
-                        </a>
+                        <div class="mt-9 flex flex-wrap items-center {{ $buttonAlignClass }} gap-4">
+                            <a href="{{ $url }}" class="inline-flex min-w-[120px] items-center justify-center border border-slate-700 px-4 py-2.5 text-sm font-medium uppercase text-slate-700 transition hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em]">
+                                Explore More
+                            </a>
+
+                            @if ($showReserveButton && $reserveUrl)
+                            <a href="{{ $reserveUrl }}" class="inline-flex min-w-[120px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-sm font-medium uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em]">
+                                Reserve
+                            </a>
+                            @endif
+                        </div>
                     </div>
+                    @endif
 
                 </div>
             </article>
             @endforeach
         </div>
 
-        <button type="button" class="itemcarousel-prev absolute left-2 lg:left-8 top-[30%] md:top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black text-white flex items-center justify-center z-10" aria-label="Previous">
+        <button type="button" class="itemcarousel-prev absolute {{ $previousButtonClass }} {{ $buttonPositionClass }} -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-[#A67C3D] text-white flex items-center justify-center z-10 transition hover:bg-[#B8945B] tracking-[0.08em] font-medium" aria-label="Previous">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
             </svg>
         </button>
 
-        <button type="button" class="itemcarousel-next absolute right-2 lg:right-8 top-[30%] md:top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black text-white flex items-center justify-center z-10" aria-label="Next">
+        <button type="button" class="itemcarousel-next absolute {{ $nextButtonClass }} {{ $buttonPositionClass }} -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-[#A67C3D] text-white flex items-center justify-center z-10 transition hover:bg-[#B8945B] tracking-[0.08em] font-medium" aria-label="Next">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
             </svg>

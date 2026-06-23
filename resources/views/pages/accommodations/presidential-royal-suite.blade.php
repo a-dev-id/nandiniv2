@@ -39,6 +39,10 @@
     <x-sections.image-overlay-section :section="$section" />
     @endif
 
+    @if ($section->section_key === 'contained_image_section')
+    <x-sections.contained-image-section :section="$section" />
+    @endif
+
     @if ($section->section_key === 'split_media_section')
     <x-sections.split-media-section :section="$section" :excerpt-only="false" image-span="8" text-span="4" />
     @endif
@@ -63,7 +67,7 @@
     @if ($relatedAccommodations->isNotEmpty())
     <section class="pt-14 md:pt-20 bg-white">
         <div class="px-6 mb-10 text-center">
-            <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
+            <h2 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3">
                 You May Also Like
             </h2>
         </div>

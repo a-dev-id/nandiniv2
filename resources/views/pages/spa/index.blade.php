@@ -37,61 +37,13 @@
     <x-sections.spa-information-section :section="$section" />
 
     @if ($spas->isNotEmpty())
-    <h2 class="text-center text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase font-medium mt-20">
+    <h2 class="text-xl text-center leading-snug uppercase font-medium mt-20 mb-3">
         Sacred Jungle Wellness Journey
     </h2>
 
     {{-- Description --}}
     <div class="pt-8 md:pt-8 mx-auto max-w-[950px] text-center text-gray-600">
-        <div class="
-                        [&_h1]:text-4xl
-                        
-                        
-                        [&_h1]:leading-snug
-                        [&_h1]:tracking-[0.15em]
-                        md:[&_h1]:tracking-[0.25em]
-                        [&_h1]:uppercase
-                        [&_h1]:text-slate-800
-                        [&_h1]:mb-6
-                        md:[&_h1]:mb-8
-                        [&_h1]:font-medium
-    
-                        [&_h2]:mb-5
-                        [&_h2]:text-[28px]
-                        [&_h2]:font-semibold
-                        [&_h2]:leading-tight
-                        [&_h2]:tracking-normal
-                        [&_h2]:normal-case
-                        [&_h2]:text-slate-800
-    
-                        [&_h3]:mb-4
-                        [&_h3]:text-xl
-                        [&_h3]:font-semibold
-                        [&_h3]:leading-snug
-                        [&_h3]:text-slate-800
-    
-                        [&_p]:mb-2
-                        [&_p]:text-base
-                        [&_p]:leading-7
-    
-                        [&_ul]:mb-5
-                        [&_ul]:list-disc
-                        [&_ul]:pl-6
-    
-                        [&_ol]:mb-5
-                        [&_ol]:list-decimal
-                        [&_ol]:pl-6
-    
-                        [&_li]:mb-2
-                        [&_li]:text-base
-                        [&_li]:leading-7
-    
-                        [&_ul_ul]:mt-2
-                        [&_ul_ul]:list-disc
-                        [&_ul_ul]:pl-6
-    
-                        [&_strong]:font-semibold
-                    ">
+        <div class="[&_h1]:text-2xl [&_h1]:leading-snug [&_h1]:uppercase text-slate-700 [&_h1]:mb-3 [&_h2]:mb-3 [&_h3]:mb-3 [&_h1]:font-medium [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:leading-tight [&_h2]:normal-case [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:leading-snug [&_p]:mb-2 [&_p]:text-base [&_p]:leading-7 [&_ul]:mb-5 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_li]:text-base [&_li]:leading-7 [&_ul_ul]:mt-2 [&_ul_ul]:list-disc [&_ul_ul]:pl-6 [&_strong]:font-semibold">
             Reconnect with your inner rhythm where nature meets ancient wisdom.The Sacred Jungle Wellness Journey is a transformative spa experience rooted in traditional Balinese healing. Surrounded by pristine rainforest, this holistic retreat combines restorative massages, purifying botanical treatments, and sacred water rituals to melt away stress, detoxify the body, and restore deep mental clarity.
         </div>
     </div>
@@ -102,6 +54,10 @@
 
     @if ($section->section_key === 'image_overlay_section')
     <x-sections.image-overlay-section :section="$section" />
+    @endif
+
+    @if ($section->section_key === 'contained_image_section')
+    <x-sections.contained-image-section :section="$section" />
     @endif
 
     @if ($section->section_key === 'split_media_section')

@@ -47,7 +47,7 @@ default => 'bg-white',
 
 $titleColorClass = $backgroundColor === 'dark_navy'
 ? 'text-white'
-: 'text-slate-800';
+: 'text-slate-700';
 
 $descriptionColorClass = $backgroundColor === 'dark_navy'
 ? 'text-white/85'
@@ -60,7 +60,7 @@ Example: the description below "How It Works".
 */
 $sectionSpacingClass = ($hasTitle || $hasSubtitle)
 ? 'py-14 md:py-20'
-: 'pt-10 pb-14 md:pb-10';
+: 'pt-0 pb-14 md:pb-10';
 @endphp
 
 <section class="{{ $sectionSpacingClass }} px-6 {{ $backgroundClass }}">
@@ -68,7 +68,7 @@ $sectionSpacingClass = ($hasTitle || $hasSubtitle)
 
         {{-- Subtitle --}}
         @if ($hasSubtitle)
-        <p class="mb-4 text-center text-sm md:text-base leading-relaxed tracking-[0.18em] uppercase text-[#b28a4a] font-medium">
+        <p class="mb-4 text-center text-sm md:text-base leading-relaxed uppercase text-[#b28a4a] font-medium">
             {!! str_ireplace(
             ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
             '<br class="hidden md:block">',
@@ -79,7 +79,7 @@ $sectionSpacingClass = ($hasTitle || $hasSubtitle)
 
         {{-- Title --}}
         @if ($hasTitle)
-        <h2 class="text-center text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase font-medium {{ $titleColorClass }}">
+        <h2 class="text-xl text-center leading-snug uppercase font-medium {{ $titleColorClass }} mb-3">
             {!! str_ireplace(
             ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
             '<br class="hidden md:block">',
@@ -91,60 +91,7 @@ $sectionSpacingClass = ($hasTitle || $hasSubtitle)
         {{-- Description --}}
         @if ($hasDescription)
         <div class="{{ $descriptionMarginClass }} {{ $descriptionWidthClass }} {{ $descriptionAlignClass }} {{ $descriptionColorClass }} pt-8 md:pt-10">
-            <div class="
-                    [&_h1]:text-4xl
-                    
-                    
-                    [&_h1]:leading-snug
-                    [&_h1]:tracking-[0.15em]
-                    md:[&_h1]:tracking-[0.25em]
-                    [&_h1]:uppercase
-                    [&_h1]:text-slate-800
-                    [&_h1]:mb-6
-                    md:[&_h1]:mb-8
-                    [&_h1]:font-medium
-
-                    [&_h2]:mb-5
-                    [&_h2]:text-2xl
-                    sm:[&_h2]:text-3xl
-                    md:[&_h2]:text-3xl
-                    [&_h2]:font-medium
-                    [&_h2]:leading-snug
-                    [&_h2]:tracking-[0.15em]
-                    md:[&_h2]:tracking-[0.22em]
-                    [&_h2]:uppercase
-                    [&_h2]:text-slate-800
-
-                    [&_h3]:mb-4
-                    [&_h3]:text-xl
-                    sm:[&_h3]:text-2xl
-                    md:[&_h3]:text-2xl
-                    [&_h3]:font-semibold
-                    [&_h3]:leading-snug
-                    [&_h3]:text-slate-800
-
-                    [&_p]:mb-2
-                    [&_p]:text-[15px] sm:[&_p]:text-base
-                    [&_p]:leading-relaxed
-
-                    [&_ul]:mb-5
-                    [&_ul]:list-disc
-                    [&_ul]:pl-6
-
-                    [&_ol]:mb-5
-                    [&_ol]:list-decimal
-                    [&_ol]:pl-6
-
-                    [&_li]:mb-2
-                    [&_li]:text-base
-                    [&_li]:leading-7
-
-                    [&_ul_ul]:mt-2
-                    [&_ul_ul]:list-disc
-                    [&_ul_ul]:pl-6
-
-                    [&_strong]:font-semibold
-                ">
+            <div class="[&_h1]:text-2xl [&_h1]:leading-snug [&_h1]:uppercase text-slate-700 [&_h1]:mb-3 [&_h2]:mb-3 [&_h3]:mb-3 [&_h1]:font-medium [&_h2]:text-xl [&_h2]:font-medium [&_h2]:leading-snug [&_h2]:uppercase [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:leading-snug [&_p]:mb-2 text-sm [&_p]:leading-relaxed [&_ul]:mb-5 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_li]:text-sm [&_li]:leading-7 [&_ul_ul]:mt-2 [&_ul_ul]:list-disc [&_ul_ul]:pl-6 [&_strong]:font-semibold">
                 {!! $description !!}
             </div>
         </div>

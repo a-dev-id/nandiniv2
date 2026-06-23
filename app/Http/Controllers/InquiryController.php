@@ -73,11 +73,17 @@ class InquiryController extends Controller
                 'sourceUrl' => $sourceUrl,
                 'requiresLateStart' => $this->requiresLateStart((string) $inquiry->inquiry_title),
             ], function ($message) use ($recipient, $data, $name, $inquiry) {
+                $bcc = trim((string) config('mail.guest_bcc'));
+
                 $message
                     ->to($data['email'], $name)
                     ->cc($recipient)
                     ->replyTo($recipient, 'Nandini Reservations')
                     ->subject('Your Inquiry: ' . $inquiry->inquiry_title);
+
+                if ($bcc !== '') {
+                    $message->bcc($bcc);
+                }
             });
 
             $inquiry->update([

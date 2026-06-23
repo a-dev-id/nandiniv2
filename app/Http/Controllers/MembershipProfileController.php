@@ -6,6 +6,7 @@ use App\Models\Member;
 use App\Models\Page;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -48,27 +49,37 @@ class MembershipProfileController extends Controller
         $validated = $request->validate([
             'first_name' => ['nullable', 'string', 'max:100'],
             'last_name' => ['nullable', 'string', 'max:100'],
-            'name' => ['nullable', 'string', 'max:150'],
-            'phone_number' => ['nullable', 'string', 'max:50'],
+            'phone_code' => ['nullable', 'string', 'max:10'],
+            'phone' => ['nullable', 'string', 'max:40'],
             'date_of_birth' => ['nullable', 'date', 'before:today'],
             'country' => ['nullable', 'string', 'max:100'],
             'address' => ['nullable', 'string', 'max:1000'],
             'profile_photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'current_password' => ['nullable', 'required_with:password', 'string'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
+
+        if (filled($validated['password'] ?? null) && filled($member->password)) {
+            if (! Hash::check((string) ($validated['current_password'] ?? ''), (string) $member->password)) {
+                return back()
+                    ->withInput($request->except(['current_password', 'password', 'password_confirmation']))
+                    ->withErrors([
+                        'current_password' => 'The current password is incorrect.',
+                    ]);
+            }
+        }
 
         $firstName = trim((string) ($validated['first_name'] ?? ''));
         $lastName = trim((string) ($validated['last_name'] ?? ''));
-        $name = trim((string) ($validated['name'] ?? ''));
-
-        if ($name === '') {
-            $name = trim($firstName . ' ' . $lastName);
-        }
+        $name = trim($firstName . ' ' . $lastName);
 
         $data = [
             'first_name' => $firstName !== '' ? $firstName : null,
             'last_name' => $lastName !== '' ? $lastName : null,
             'name' => $name !== '' ? $name : $member->name,
-            'phone_number' => $validated['phone_number'] ?? null,
+            'phone_number' => filled($validated['phone'] ?? null)
+                ? trim((string) ($validated['phone_code'] ?? '') . ' ' . (string) ($validated['phone'] ?? ''))
+                : null,
             'date_of_birth' => $validated['date_of_birth'] ?? null,
             'country' => $validated['country'] ?? null,
             'address' => $validated['address'] ?? null,
@@ -89,6 +100,11 @@ class MembershipProfileController extends Controller
             ) {
                 Storage::disk('public')->delete($oldPhoto);
             }
+        }
+
+        if (filled($validated['password'] ?? null)) {
+            $data['password'] = $validated['password'];
+            $data['must_change_password'] = false;
         }
 
         $member->forceFill($data)->save();

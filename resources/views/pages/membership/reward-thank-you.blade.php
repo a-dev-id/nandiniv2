@@ -37,17 +37,17 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
     <section class="bg-white px-6 pb-14 md:px-12 md:pb-20 lg:px-[70px]">
         <div class="mx-auto w-full max-w-3xl text-center">
             <div class="border border-slate-200 bg-slate-50 px-6 py-8">
-                <p class="text-sm uppercase tracking-[0.18em] text-slate-500">
+                <p class="text-sm uppercase text-slate-500">
                     Redemption Code
                 </p>
 
-                <p class="mt-4 text-2xl md:text-3xl font-semibold tracking-[0.12em] text-slate-950">
+                <p class="mt-2 text-2xl md:text-3xl font-semibold text-slate-950">
                     {{ $redemption->redemption_code }}
                 </p>
 
                 <div class="mt-8 grid gap-5 text-left md:grid-cols-2">
                     <div class="border border-slate-200 bg-white px-5 py-5">
-                        <p class="text-xs uppercase tracking-[0.16em] text-slate-500">
+                        <p class="text-sm uppercase text-slate-500">
                             Reward
                         </p>
 
@@ -57,7 +57,7 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
                     </div>
 
                     <div class="border border-slate-200 bg-white px-5 py-5">
-                        <p class="text-xs uppercase tracking-[0.16em] text-slate-500">
+                        <p class="text-sm uppercase text-slate-500">
                             Points Used
                         </p>
 
@@ -68,8 +68,8 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
                 </div>
 
                 @if ($redemption->expires_at)
-                <div class="mt-5 border border-slate-200 bg-white px-5 py-5 text-left">
-                    <p class="text-xs uppercase tracking-[0.16em] text-slate-500">
+                <div class="mt-2 border border-slate-200 bg-white px-5 py-5 text-left">
+                    <p class="text-sm uppercase text-slate-500">
                         Valid Until
                     </p>
 
@@ -79,17 +79,33 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
                 </div>
                 @endif
 
-                <p class="mt-6 text-sm leading-relaxed text-slate-600">
+                <p class="mt-2 text-sm leading-relaxed text-slate-600">
                     Please save this code and show it to our team when claiming your reward.
                 </p>
+
+                <div class="mt-2 border border-[#eee8df] bg-white px-5 py-5 text-left">
+                    <p class="text-sm font-semibold uppercase text-[#A67C3D]">
+                        Terms & Conditions
+                    </p>
+
+                    <ul class="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-slate-600">
+                        <li>Experience redemption is subject to availability on the preferred date and time</li>
+                        <li>The voucher is valid for one month from the date of redemption</li>
+                        <li>This voucher cannot be used in conjunction with any other offers, promotions, or discounts</li>
+                        <li>To enjoy your experience, please present your unique voucher code to our team upon redemption</li>
+                        <li>Any voucher not utilized before its expiry date will be considered void and cannot be reinstated</li>
+                        <li>Unused experiences, whether in full or in part, are non-refundable and non-transferable for credit</li>
+                        <li>Vouchers hold no cash value and cannot be exchanged for cash or monetary compensation</li>
+                    </ul>
+                </div>
             </div>
 
             <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="{{ route('membership.dashboard') }}" class="inline-flex w-full sm:w-auto min-w-[190px] items-center justify-center border border-[#b1823b] bg-[#b1823b] px-7 py-4 text-sm uppercase tracking-[0.14em] text-white hover:bg-white hover:text-[#b1823b] transition">
+                <a href="{{ route('membership.dashboard') }}" class="inline-flex w-full sm:w-auto min-w-[150px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-5 py-2.5 text-sm uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium">
                     Go to Dashboard
                 </a>
 
-                <a href="{{ route('membership.privilege-redemption') }}" class="inline-flex w-full sm:w-auto min-w-[190px] items-center justify-center border border-slate-950 px-7 py-4 text-sm uppercase tracking-[0.14em] text-slate-950 hover:border-[#b1823b] hover:bg-[#b1823b] hover:text-white transition">
+                <a href="{{ route('membership.privilege-redemption') }}" class="inline-flex w-full sm:w-auto min-w-[150px] items-center justify-center border border-slate-950 px-5 py-2.5 text-sm uppercase text-slate-950 transition hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em] font-medium">
                     Redeem More Points
                 </a>
             </div>

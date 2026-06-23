@@ -124,12 +124,12 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
     <section class="py-14 md:py-20 bg-white membership-reward-carousel-section" data-reward-carousel-section>
         <div class="mx-auto w-full px-6 md:px-12 lg:px-[70px]">
             <div class="mb-8 md:mb-10 text-center">
-                <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
+                <h2 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3">
                     {{ $categoryTitle }}
                 </h2>
 
                 @if ($categoryDescription)
-                <p class="mt-3 text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+                <p class="mt-2 text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                     {{ $categoryDescription }}
                 </p>
                 @endif
@@ -191,25 +191,12 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
                         </div>
 
                         <div class="reward-card-body p-7 flex flex-col grow">
-                            <h3 class="text-slate-800 uppercase tracking-[0.15em] text-xl sm:text-2xl md:text-2xl leading-snug font-medium">
+                            <h3 class="text-lg text-slate-700 uppercase leading-snug font-medium mb-3">
                                 {{ $reward->title }}
                             </h3>
 
                             @if ($rewardDescription)
-                            <div class="
-                                mt-5
-                                text-gray-600
-                                text-[15px]
-                                sm:text-base
-                                leading-relaxed
-                                [&_p]:mb-3
-                                [&_p:last-child]:mb-0
-                                [&_strong]:font-semibold
-                                [&_ul]:list-disc
-                                [&_ul]:pl-5
-                                [&_ul]:mt-3
-                                [&_li]:mb-1
-                            ">
+                            <div class="mt-2 text-gray-600 text-sm leading-relaxed [&_p]:mb-3 [&_p:last-child]:mb-0 [&_strong]:font-semibold [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mb-1">
                                 @if ($rewardDescriptionHasHtml)
                                 {!! $rewardDescription !!}
                                 @else
@@ -230,27 +217,30 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
 
                                     @if ($currentMember)
                                     @if ($memberCanRedeem)
-                                    <form method="POST" action="{{ $redeemPostUrl }}">
-                                        @csrf
-
-                                        <button type="submit" class="inline-flex min-w-[125px] items-center justify-center border border-slate-950 px-6 py-3 text-sm uppercase text-slate-950 hover:bg-slate-950 hover:text-white transition">
-                                            Redeem
-                                        </button>
-                                    </form>
+                                    <button
+                                        type="button"
+                                        data-reward-redeem-button
+                                        data-redeem-action="{{ $redeemPostUrl }}"
+                                        data-reward-title="{{ e($reward->title) }}"
+                                        data-reward-points="{{ number_format((float) $points, 0) }}"
+                                        class="inline-flex min-w-[125px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-6 py-3 text-sm uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B]"
+                                    >
+                                        Redeem
+                                    </button>
                                     @else
-                                    <button type="button" disabled class="inline-flex min-w-[125px] items-center justify-center border border-slate-300 bg-slate-100 px-6 py-3 text-sm uppercase text-slate-400 cursor-not-allowed">
+                                    <button type="button" disabled class="inline-flex min-w-[115px] items-center justify-center border border-slate-300 bg-slate-100 px-4 py-2.5 text-sm uppercase text-slate-400 cursor-not-allowed tracking-[0.08em] font-medium">
                                         Not Enough
                                     </button>
                                     @endif
                                     @else
-                                    <a href="{{ $redeemLoginUrl }}" class="inline-flex min-w-[125px] items-center justify-center border border-slate-950 px-6 py-3 text-sm uppercase text-slate-950 hover:bg-slate-950 hover:text-white transition">
+                                    <a href="{{ $redeemLoginUrl }}" class="inline-flex min-w-[115px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-sm uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium">
                                         Redeem
                                     </a>
                                     @endif
                                 </div>
 
                                 @if ($currentMember && ! $memberCanRedeem)
-                                <p class="mt-3 text-xs leading-relaxed text-slate-500">
+                                <p class="mt-2 text-sm leading-relaxed text-slate-500">
                                     You need {{ number_format(max($points - (int) $currentMember->points, 0), 0) }} more points to redeem this reward.
                                 </p>
                                 @endif
@@ -261,13 +251,13 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
                 @endforeach
             </div>
 
-            <button type="button" class="reward-carousel-prev absolute left-3 md:left-8 lg:left-[45px] top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black text-white flex items-center justify-center z-10" aria-label="Previous">
+            <button type="button" class="reward-carousel-prev absolute left-3 md:left-8 lg:left-[45px] top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black text-white flex items-center justify-center z-10 tracking-[0.08em] font-medium" aria-label="Previous">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
                 </svg>
             </button>
 
-            <button type="button" class="reward-carousel-next absolute right-3 md:right-8 lg:right-[45px] top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black text-white flex items-center justify-center z-10" aria-label="Next">
+            <button type="button" class="reward-carousel-next absolute right-3 md:right-8 lg:right-[45px] top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black text-white flex items-center justify-center z-10 tracking-[0.08em] font-medium" aria-label="Next">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
                 </svg>

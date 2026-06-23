@@ -4,6 +4,7 @@
 'withFilter' => false,
 'limit' => 99,
 'routeName' => null,
+'activeCategory' => null,
 'hiddenCategories' => [],
 ])
 
@@ -14,7 +15,7 @@ use App\Models\BlogNews;
 use App\Models\Gallery;
 use Illuminate\Support\Facades\Route;
 
-$active = request('category', 'all');
+$active = $activeCategory ?: request()->route('categorySlug') ?: request('category', 'all');
 $hiddenCategories = collect($hiddenCategories)->filter()->values();
 
 if ($hiddenCategories->contains($active)) {
@@ -53,6 +54,14 @@ $filters = [
 ];
 
 if ($model === 'experience' && $withFilter) {
+$experienceCategoryLabels = [
+'jungle-romance' => 'Romance',
+'signature-dining-experiences' => 'Dining',
+'jungle-wellness-spa-rituals' => 'Wellness',
+'ubud-jungle-adventures' => 'Adventure',
+'curated-experience-packages' => 'Activity Package',
+];
+
 if ($providedItems) {
 $experienceCategories = $providedItems
 ->pluck('category')
@@ -79,7 +88,8 @@ $query->whereNotIn('slug', $hiddenCategories->all());
 }
 
 foreach ($experienceCategories as $category) {
-$filters[$category->slug] = $category->name
+$filters[$category->slug] = $experienceCategoryLabels[$category->slug]
+?? $category->name
 ?? $category->title
 ?? str($category->slug)->replace('-', ' ')->title()->toString();
 }
@@ -211,17 +221,40 @@ $useShowMore = $model === 'experience'
 && $items->count() > $showMoreStep;
 @endphp
 
+@once
+@push('css')
+<style>
+    .offer-card-description-collapsed {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+    }
+
+</style>
+@endpush
+@endonce
+
 <section class="pb-16 md:pb-28">
     <div class="mx-auto px-3 lg:px-16" @if ($useShowMore) x-data="{ visibleCount: {{ $showMoreStep }} }" @endif>
 
         {{-- FILTER --}}
         @if ($withFilter && count($filters) > 1)
-        <div class="mb-12 flex flex-wrap justify-center gap-3">
+        <div class="mb-10 flex flex-wrap justify-center gap-2.5">
             @foreach ($filters as $key => $label)
-            <a href="{{ $key === 'all' ? request()->url() : request()->fullUrlWithQuery(['category' => $key]) }}" class="border px-5 py-2 text-xs uppercase tracking-[0.20em] transition sm:text-sm
-                {{ $active === $key
-                    ? 'border-[#A67C3D] bg-[#A67C3D] text-white'
-                    : 'border-black/15 bg-white text-slate-800 hover:border-black/40' }}">
+            @php
+            $filterUrl = $key === 'all'
+            ? request()->url()
+            : request()->fullUrlWithQuery(['category' => $key]);
+
+            if ($model === 'experience') {
+            $filterUrl = $key === 'all'
+            ? route('experiences.index')
+            : route('experiences.category', ['categorySlug' => $key]);
+            }
+            @endphp
+
+            <a href="{{ $filterUrl }}" class="border px-3 py-1.5 text-xs uppercase transition sm:text-sm {{ $active === $key ? 'border-[#A67C3D] bg-[#A67C3D] text-white' : 'border-black/15 bg-white text-slate-700 hover:border-black/40' }} tracking-[0.08em] font-medium">
                 {{ $label }}
             </a>
             @endforeach
@@ -271,10 +304,20 @@ $useShowMore = $model === 'experience'
             } elseif ($model === 'news' && Route::has('news.show')) {
             $url = route('news.show', $item->slug);
             }
+
+            $reserveUrl = $model === 'offer'
+            ? \App\Support\MemberBookingVoucher::appendToUrl($item->booking_url)
+            : null;
+
+            $shortExcerpt = \Illuminate\Support\Str::words(
+            preg_replace('/\.{3,}/', '', (string) $item->excerpt) ?: (string) $item->excerpt,
+            24,
+            '...'
+            );
             @endphp
 
             <article class="flex" @if ($useShowMore) x-show="{{ $loop->index }} < visibleCount" @endif>
-                <div class="flex h-full w-full flex-col">
+                <div class="flex h-full w-full flex-col {{ $model === 'offer' ? 'border border-slate-200 bg-white' : '' }}">
 
                     @if ($model === 'gallery')
                     <div class="aspect-square overflow-hidden bg-slate-100 md:aspect-3/2">
@@ -303,23 +346,52 @@ $useShowMore = $model === 'experience'
                         </div>
                     </a>
 
+                    @if ($model === 'offer')
+                    <div class="flex grow flex-col px-6 py-6 sm:px-7">
+                        <h3 class="text-lg font-semibold leading-snug text-slate-700 mb-3">
+                            <a href="{{ $url }}" class="transition hover:text-[#A67C3D] uppercase">
+                                {{ $item->title }}
+                            </a>
+                        </h3>
+
+                        @if (! empty($item->excerpt))
+                        <p x-data="{ expanded: false }" x-bind:aria-expanded="expanded.toString()" role="button" tabindex="0" class="mt-2 grow cursor-pointer text-sm leading-relaxed text-slate-600" @click="expanded = ! expanded" @keydown.enter.prevent="expanded = ! expanded" @keydown.space.prevent="expanded = ! expanded">
+                            <span x-show="! expanded">{{ $shortExcerpt }}</span>
+                            <span x-show="expanded">{{ $item->excerpt }}</span>
+                        </p>
+                        @endif
+
+                        <div class="mt-9 flex flex-wrap items-center justify-start gap-4">
+                            <a href="{{ $url }}" class="inline-flex min-w-[120px] items-center justify-center border border-slate-700 px-4 py-2.5 text-sm font-medium uppercase text-slate-700 transition hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em]">
+                                Explore More
+                            </a>
+
+                            @if ($reserveUrl)
+                            <a href="{{ $reserveUrl }}" class="inline-flex min-w-[120px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-sm font-medium uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em]">
+                                Reserve
+                            </a>
+                            @endif
+                        </div>
+                    </div>
+                    @else
                     <div class="flex grow flex-col pt-7">
-                        <h3 class="text-xl sm:text-2xl md:text-2xl leading-snug font-medium uppercase tracking-[0.15em] text-slate-800">
+                        <h3 class="text-lg leading-snug font-medium uppercase text-slate-700 mb-3">
                             {{ $item->title }}
                         </h3>
 
                         @if (! empty($item->excerpt))
-                        <p class="mt-3 grow text-[15px] sm:text-base leading-relaxed text-gray-600">
+                        <p class="mt-2 grow text-sm leading-relaxed text-gray-600">
                             {{ $item->excerpt }}
                         </p>
                         @endif
 
                         <div class="mt-7 flex {{ in_array($model, ['offer', 'experience'], true) ? 'justify-start' : 'justify-end' }}">
-                            <a href="{{ $url }}" class="text-[14px] font-bold uppercase tracking-[0.25em] text-slate-800 hover:underline">
+                            <a href="{{ $url }}" class="text-[14px] font-medium uppercase text-slate-700 hover:underline tracking-[0.08em]">
                                 {{ $buttonText }}
                             </a>
                         </div>
                     </div>
+                    @endif
                     @endif
 
                 </div>
@@ -335,7 +407,7 @@ $useShowMore = $model === 'experience'
 
         @if ($useShowMore)
         <div class="mt-14 flex justify-center">
-            <button type="button" x-show="visibleCount < {{ $items->count() }}" @click="visibleCount += {{ $showMoreStep }}" class="inline-flex items-center justify-center border border-slate-900 px-7 py-3 text-xs font-semibold uppercase tracking-[0.22em] text-slate-900 transition hover:border-[#A67C3D] hover:bg-[#A67C3D] hover:text-white">
+            <button type="button" x-show="visibleCount < {{ $items->count() }}" @click="visibleCount += {{ $showMoreStep }}" class="inline-flex items-center justify-center border border-slate-900 px-7 py-3 text-sm font-semibold uppercase text-slate-700 transition hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white">
                 Show More
             </button>
         </div>

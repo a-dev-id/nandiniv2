@@ -95,12 +95,8 @@ class Accommodation extends Model
 
     public function getBookingUrlAttribute(): ?string
     {
-        if (! empty($this->booking_url_override)) {
-            return $this->booking_url_override;
-        }
-
-        if (! empty($this->button_url)) {
-            return $this->button_url;
+        if (! empty($this->villa_code)) {
+            return 'https://nandinijunglebyhanginggardens.reserve-online.net/?room=' . urlencode($this->villa_code);
         }
 
         return null;

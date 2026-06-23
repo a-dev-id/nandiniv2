@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Spas\Schemas;
 
+use App\Support\FilamentWebpUpload;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
@@ -10,6 +11,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Storage;
@@ -169,13 +171,21 @@ class SpaForm
                                     ->openable()
                                     ->downloadable()
                                     ->saveUploadedFileUsing(
-                                        fn(TemporaryUploadedFile $file): string => self::storeAsWebp(
+                                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                                             file: $file,
                                             directory: 'spas/hero',
                                             targetWidth: 1600,
                                             targetHeight: 900,
+                                            fileName: $get('hero_image_file_name'),
                                         )
                                     ),
+
+                                TextInput::make('hero_image_file_name')
+                                    ->label('Desktop Hero File Name')
+                                    ->placeholder('example-desktop-hero')
+                                    ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
+                                    ->maxLength(120)
+                                    ->dehydrated(false),
 
                                 TextInput::make('hero_image_alt')
                                     ->label('Desktop Hero Alt Text')
@@ -195,13 +205,21 @@ class SpaForm
                                     ->openable()
                                     ->downloadable()
                                     ->saveUploadedFileUsing(
-                                        fn(TemporaryUploadedFile $file): string => self::storeAsWebp(
+                                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                                             file: $file,
                                             directory: 'spas/hero-mobile',
                                             targetWidth: 1200,
                                             targetHeight: 900,
+                                            fileName: $get('hero_mobile_image_file_name'),
                                         )
                                     ),
+
+                                TextInput::make('hero_mobile_image_file_name')
+                                    ->label('Mobile Hero File Name')
+                                    ->placeholder('example-mobile-hero')
+                                    ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
+                                    ->maxLength(120)
+                                    ->dehydrated(false),
 
                                 TextInput::make('hero_mobile_image_alt')
                                     ->label('Mobile Hero Alt Text')
@@ -225,13 +243,21 @@ class SpaForm
                                     ->openable()
                                     ->downloadable()
                                     ->saveUploadedFileUsing(
-                                        fn(TemporaryUploadedFile $file): string => self::storeAsWebp(
+                                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                                             file: $file,
                                             directory: 'spas/cards',
                                             targetWidth: 1200,
                                             targetHeight: 800,
+                                            fileName: $get('card_image_file_name'),
                                         )
                                     ),
+
+                                TextInput::make('card_image_file_name')
+                                    ->label('Card Image File Name')
+                                    ->placeholder('example-card-image')
+                                    ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
+                                    ->maxLength(120)
+                                    ->dehydrated(false),
 
                                 TextInput::make('card_image_alt')
                                     ->label('Card Image Alt Text')

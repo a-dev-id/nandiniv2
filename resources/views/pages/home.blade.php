@@ -28,13 +28,87 @@
 @endpush
 
 <x-layouts.app>
-    <x-heroes.video-hero video-id="NrPKiqRIAP4" />
+    @php
+    $leadContainedImage = $sections->firstWhere('section_key', 'contained_image_section');
+    $remainingSections = $sections->reject(fn ($section) => in_array($section->id, array_filter([
+    $leadContainedImage?->id,
+    ]), true));
+    @endphp
+
+    <x-heroes.video-hero video-id="8aZOOwSdxwE" />
 
     <x-sections.page-description :page="$page" />
 
-    <x-sections.item-carousel :items="$offers" route-name="offers.show" />
+    @if ($leadContainedImage)
+    <x-sections.contained-image-section :section="$leadContainedImage" />
+    @endif
 
-    @foreach ($sections as $section)
+    <section class="bg-white px-6 pt-14 text-center md:pt-20">
+        <h2 class="text-xl font-medium uppercase text-slate-700 mb-3">
+            Luxury Jungle Villas & Royal Suites in Ubud, Bali
+        </h2>
+    </section>
+
+    <x-sections.item-carousel :items="$villas" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" />
+
+    <x-sections.presidential-suite-feature :accommodation="$presidentialSuite" />
+
+    @if ($experienceCategories->isNotEmpty())
+    <section class="bg-white px-6 pt-10 text-center md:pt-14">
+        <h2 class="text-xl font-medium uppercase text-slate-700 mb-3">
+            Experiences Beyond the Stay
+        </h2>
+    </section>
+
+    <x-sections.item-carousel :items="$experienceCategories" route-name="experiences.category" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" />
+    @endif
+
+
+
+    @if ($offers->isNotEmpty())
+    <section class="bg-white px-6 pt-10 text-center md:pt-14">
+        <h2 class="text-xl font-medium uppercase text-slate-700 mb-3">
+            Exclusive Jungle Escapes
+        </h2>
+        <p class="mx-auto max-w-4xl text-sm leading-relaxed text-slate-600 mb-3">
+            Discover exclusive Ubud offers at Nandini Jungle by Hanging Gardens. Book direct for the Best Rate Guarantee and find the perfect package for your Bali escape.
+        </p>
+    </section>
+
+    <x-sections.item-carousel :items="$offers" route-name="offers.show" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" />
+    @endif
+
+    @if ($diningSections->isNotEmpty())
+    <section class="bg-white px-6 pt-10 text-center md:pt-14">
+        <h2 class="text-xl font-medium uppercase text-slate-700 mb-3">
+            Culinary Journeys
+        </h2>
+    </section>
+
+    <x-sections.item-carousel :items="$diningSections" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" />
+    @endif
+
+    @if ($spaSections->isNotEmpty())
+    <section class="bg-white px-6 pt-10 text-center md:pt-14">
+        <h2 class="text-xl font-medium uppercase text-slate-700 mb-3">
+            Essence Spa
+        </h2>
+    </section>
+
+    <x-sections.item-carousel :items="$spaSections" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" />
+    @endif
+
+    @if ($ubudJungleAdventures->isNotEmpty())
+    <section class="bg-white px-6 pt-10 text-center md:pt-14">
+        <h2 class="text-xl font-medium uppercase text-slate-700 mb-3">
+            Bali Adventure Journeys
+        </h2>
+    </section>
+
+    <x-sections.item-carousel :items="$ubudJungleAdventures" route-name="experiences.show" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" />
+    @endif
+
+    @foreach ($remainingSections as $section)
     @if ($section->section_key === 'image_overlay_section')
     <x-sections.image-overlay-section :section="$section" />
     @endif

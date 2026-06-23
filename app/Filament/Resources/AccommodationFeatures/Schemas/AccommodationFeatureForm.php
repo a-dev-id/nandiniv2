@@ -2,12 +2,15 @@
 
 namespace App\Filament\Resources\AccommodationFeatures\Schemas;
 
+use App\Support\FilamentWebpUpload;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class AccommodationFeatureForm
 {
@@ -43,7 +46,22 @@ class AccommodationFeatureForm
                             ->openable()
                             ->downloadable()
                             ->maxSize(1024)
+                            ->saveUploadedFileUsing(
+                                fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::storeOriginal(
+                                    file: $file,
+                                    directory: 'accommodations/features/icons',
+                                    fileName: $get('icon_image_file_name'),
+                                )
+                            )
                             ->helperText('Recommended: SVG, PNG, or WebP icon.')
+                            ->columnSpanFull(),
+
+                        TextInput::make('icon_image_file_name')
+                            ->label('Icon File Name')
+                            ->placeholder('example-feature-icon')
+                            ->helperText('Optional. Leave blank for automatic name.')
+                            ->maxLength(120)
+                            ->dehydrated(false)
                             ->columnSpanFull(),
 
                         Toggle::make('is_active')

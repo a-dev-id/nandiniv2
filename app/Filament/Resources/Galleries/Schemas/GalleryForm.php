@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Galleries\Schemas;
 
+use App\Support\FilamentWebpUpload;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
@@ -9,6 +10,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Storage;
@@ -121,13 +123,21 @@ class GalleryForm
                                     ->openable()
                                     ->downloadable()
                                     ->saveUploadedFileUsing(
-                                        fn(TemporaryUploadedFile $file): string => self::storeAsWebp(
+                                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                                             file: $file,
                                             directory: 'gallery/images',
                                             targetWidth: 1600,
                                             targetHeight: 900,
+                                            fileName: $get('image_file_name'),
                                         )
                                     ),
+
+                                TextInput::make('image_file_name')
+                                    ->label('Desktop Image File Name')
+                                    ->placeholder('example-gallery-image')
+                                    ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
+                                    ->maxLength(120)
+                                    ->dehydrated(false),
 
                                 TextInput::make('image_alt')
                                     ->label('Desktop Image Alt Text')
@@ -147,13 +157,21 @@ class GalleryForm
                                     ->openable()
                                     ->downloadable()
                                     ->saveUploadedFileUsing(
-                                        fn(TemporaryUploadedFile $file): string => self::storeAsWebp(
+                                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                                             file: $file,
                                             directory: 'gallery/mobile',
                                             targetWidth: 1200,
                                             targetHeight: 900,
+                                            fileName: $get('mobile_image_file_name'),
                                         )
                                     ),
+
+                                TextInput::make('mobile_image_file_name')
+                                    ->label('Mobile Image File Name')
+                                    ->placeholder('example-gallery-mobile')
+                                    ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
+                                    ->maxLength(120)
+                                    ->dehydrated(false),
 
                                 TextInput::make('mobile_image_alt')
                                     ->label('Mobile Image Alt Text')

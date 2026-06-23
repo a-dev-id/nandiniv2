@@ -52,5 +52,9 @@ return $accommodation->slug === 'presidential-royal-suite'
     @if ($section->section_key === 'image_overlay_section')
     <x-sections.image-overlay-section :section="$section" />
     @endif
+
+    @if ($section->section_key === 'contained_image_section')
+    <x-sections.contained-image-section :section="$section" />
+    @endif
     @endforeach
 </x-layouts.app>

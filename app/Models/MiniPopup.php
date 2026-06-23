@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\MemberBookingVoucher;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
@@ -47,6 +48,6 @@ class MiniPopup extends Model
                 : '#';
         }
 
-        return filled($this->button_url) ? $this->button_url : '#';
+        return filled($this->button_url) ? MemberBookingVoucher::appendToUrl($this->button_url) : '#';
     }
 }

@@ -137,40 +137,32 @@ default => 'justify-center',
             <div class="{{ $innerWidthClass }}">
 
                 @if ($resolvedTitleText !== '')
-                <h2 class="text-white uppercase text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.20em] font-medium">
+                <h2 class="text-xl text-white uppercase leading-snug font-medium mb-3">
                     {{ $resolvedTitleText }}
                 </h2>
                 @endif
 
                 @if ($resolvedSubtitleText !== '')
-                <p class="mt-3 text-white/90 uppercase tracking-[0.18em] text-xs sm:text-sm">
+                <p class="mt-2 text-white/90 uppercase text-sm sm:text-sm">
                     {{ $resolvedSubtitleText }}
                 </p>
                 @endif
 
                 @if ($resolvedExcerptText !== '')
-                <p class="mt-4 text-white/90 text-[15px] sm:text-base leading-relaxed max-w-2xl {{ $textAlignClass }}">
+                <p class="mt-2 text-white/90 text-sm leading-relaxed max-w-2xl {{ $textAlignClass }}">
                     {{ $resolvedExcerptText }}
                 </p>
                 @endif
 
                 @if ($resolvedDescriptionText !== '')
-                <div class="mt-4 text-white/90 text-[15px] sm:text-base leading-relaxed max-w-2xl {{ $textAlignClass }}
-                    [&_p]:mb-2
-                    [&_p:last-child]:mb-0
-                    [&_strong]:font-semibold
-                    [&_ul]:list-none
-                    [&_ul]:pl-0
-                    [&_ol]:list-none
-                    [&_ol]:pl-0
-                    [&_li]:mb-1">
+                <div class="mt-2 text-white/90 text-sm leading-relaxed max-w-2xl {{ $textAlignClass }} [&_p]:mb-2 [&_p:last-child]:mb-0 [&_strong]:font-semibold [&_ul]:list-none [&_ul]:pl-0 [&_ol]:list-none [&_ol]:pl-0 [&_li]:mb-1">
                     {!! $resolvedDescription !!}
                 </div>
                 @endif
 
                 @if ($buttonLabel && $buttonUrl)
                 <div class="mt-8 flex {{ $buttonAlignClass }}">
-                    <a href="{{ $buttonUrl }}" class="inline-flex items-center justify-center bg-[#A67C3D] text-white px-7 py-3 uppercase tracking-[0.22em] text-[12px] font-bold hover:bg-[#8F6B34] transition">
+                    <a href="{{ $buttonUrl }}" class="inline-flex items-center justify-center bg-[#A67C3D] text-white px-5 py-2.5 uppercase text-sm font-medium hover:bg-[#B8945B] transition tracking-[0.08em]">
                         {{ $buttonLabel }}
                     </a>
                 </div>

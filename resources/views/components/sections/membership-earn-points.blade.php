@@ -5,7 +5,7 @@
 <section class="bg-slate-100 px-6 py-14 md:py-20">
     <div class="mx-auto max-w-[1500px]">
         <div class="mx-auto max-w-3xl text-center md:max-w-5xl">
-            <h2 class="mb-12 text-2xl sm:text-3xl md:text-3xl font-medium uppercase leading-snug tracking-[0.15em] md:tracking-[0.22em] text-slate-800 md:mb-16">
+            <h2 class="text-xl font-medium uppercase leading-snug text-slate-700 mb-3">
                 {{ $title }}
             </h2>
         </div>
@@ -21,11 +21,11 @@
                     </svg>
                 </div>
 
-                <h3 class="text-xl sm:text-2xl md:text-2xl uppercase tracking-[0.15em] text-slate-800 leading-snug">
+                <h3 class="text-lg uppercase text-slate-700 leading-snug mb-3">
                     Hotel Stay
                 </h3>
 
-                <p class="mt-4 max-w-[300px] text-[15px] leading-relaxed text-gray-600 sm:text-base">
+                <p class="mt-2 max-w-[300px] text-sm leading-relaxed text-gray-600">
                     Earn point for night spent in Nandini Jungle
                 </p>
             </div>
@@ -40,11 +40,11 @@
                     </svg>
                 </div>
 
-                <h3 class="text-xl sm:text-2xl md:text-2xl uppercase tracking-[0.15em] text-slate-800 leading-snug">
+                <h3 class="text-lg uppercase text-slate-700 leading-snug mb-3">
                     Food &amp; Beverages
                 </h3>
 
-                <p class="mt-4 max-w-[340px] text-[15px] leading-relaxed text-gray-600 sm:text-base">
+                <p class="mt-2 max-w-[340px] text-sm leading-relaxed text-gray-600">
                     Enhance your travel and earn points for activities everyone will love
                 </p>
             </div>
@@ -57,11 +57,11 @@
                     </svg>
                 </div>
 
-                <h3 class="text-xl sm:text-2xl md:text-2xl uppercase tracking-[0.15em] text-slate-800 leading-snug">
+                <h3 class="text-lg uppercase text-slate-700 leading-snug mb-3">
                     Spa &amp; Wellness
                 </h3>
 
-                <p class="mt-4 max-w-[300px] text-[15px] leading-relaxed text-gray-600 sm:text-base">
+                <p class="mt-2 max-w-[300px] text-sm leading-relaxed text-gray-600">
                     Earn on the go and while you spend
                 </p>
             </div>

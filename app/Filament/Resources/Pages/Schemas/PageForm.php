@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Pages\Schemas;
 
+use App\Support\FilamentWebpUpload;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor;
@@ -10,6 +11,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Storage;
@@ -131,13 +133,21 @@ class PageForm
                                     ->openable()
                                     ->downloadable()
                                     ->saveUploadedFileUsing(
-                                        fn(TemporaryUploadedFile $file): string => self::storeAsWebp(
+                                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                                             file: $file,
                                             directory: 'pages/hero',
                                             targetWidth: 1600,
                                             targetHeight: 900,
+                                            fileName: $get('hero_image_file_name'),
                                         )
                                     ),
+
+                                TextInput::make('hero_image_file_name')
+                                    ->label('Desktop File Name')
+                                    ->placeholder('example-desktop-hero')
+                                    ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
+                                    ->maxLength(120)
+                                    ->dehydrated(false),
 
                                 TextInput::make('hero_image_alt')
                                     ->label('Desktop Alt Text')
@@ -157,13 +167,21 @@ class PageForm
                                     ->openable()
                                     ->downloadable()
                                     ->saveUploadedFileUsing(
-                                        fn(TemporaryUploadedFile $file): string => self::storeAsWebp(
+                                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                                             file: $file,
                                             directory: 'pages/hero-mobile',
                                             targetWidth: 1200,
                                             targetHeight: 900,
+                                            fileName: $get('hero_mobile_image_file_name'),
                                         )
                                     ),
+
+                                TextInput::make('hero_mobile_image_file_name')
+                                    ->label('Mobile File Name')
+                                    ->placeholder('example-mobile-hero')
+                                    ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
+                                    ->maxLength(120)
+                                    ->dehydrated(false),
 
                                 TextInput::make('hero_mobile_image_alt')
                                     ->label('Mobile Alt Text')

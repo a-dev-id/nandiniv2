@@ -2,10 +2,11 @@
 
 namespace App\Services;
 
+use App\Mail\AutoJoinWelcomeMail;
 use App\Models\Member;
-use App\Notifications\AutoJoinedMemberNotification;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class MemberAutoJoinService
@@ -137,7 +138,7 @@ class MemberAutoJoinService
             'email_verified_at' => now(),
         ]);
 
-        $emailNotification = $this->sendWelcomeEmail($member, $temporaryPassword, $reservationId, $data);
+        $emailNotification = $this->sendWelcomeEmail($member, $reservationId, $data);
 
         return [
             'created' => true,
@@ -228,19 +229,21 @@ class MemberAutoJoinService
      */
     protected function sendWelcomeEmail(
         Member $member,
-        string $temporaryPassword,
         int|string $reservationId,
         array $data
     ): array {
         try {
-            $member->notify(new AutoJoinedMemberNotification(
+            Mail::to($member->email)->send(new AutoJoinWelcomeMail(
                 member: $member,
-                temporaryPassword: $temporaryPassword,
-                reservationId: (string) $reservationId,
+                bookingNumber: $this->extractBookingNumber($reservationId, $data),
                 roomName: Arr::get($data, 'roomStay.roomName'),
                 checkinDate: Arr::get($data, 'roomStay.from'),
                 checkoutDate: Arr::get($data, 'roomStay.to'),
             ));
+
+            $member->forceFill([
+                'welcome_email_sent_at' => now(),
+            ])->save();
 
             return [
                 'sent' => true,

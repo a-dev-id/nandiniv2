@@ -51,6 +51,20 @@ $validUntilDate = $member?->membership_expires_at
 $location = $member?->country ?: '-';
 
 $memberPoints = (int) ($member?->points ?? 0);
+$pointTransactionImage = asset('images/membership/dollar.png');
+
+$formatPointLabel = function ($points, string $case = 'title'): string {
+$numericPoints = (float) $points;
+$label = abs($numericPoints) === 1.0 ? 'Point' : 'Points';
+
+if ($case === 'upper') {
+$label = strtoupper($label);
+} elseif ($case === 'lower') {
+$label = strtolower($label);
+}
+
+return number_format($numericPoints, 0) . ' ' . $label;
+};
 
 $memberTier = strtolower((string) ($member?->tier ?? \App\Models\Member::getTierByPoints($memberPoints)));
 
@@ -61,10 +75,10 @@ $memberTier = 'bronze';
 }
 
 $cardMap = [
-'bronze' => asset('images/membership/dana-blank.jpg'),
-'silver' => asset('images/membership/upaya-blank.jpg'),
-'gold' => asset('images/membership/dhyana-blank.jpg'),
-'platinum' => asset('images/membership/jnana-blank.jpg'),
+'bronze' => asset('images/membership/dana-blank2.jpg'),
+'silver' => asset('images/membership/upaya-blank2.jpg'),
+'gold' => asset('images/membership/dhyana-blank2.jpg'),
+'platinum' => asset('images/membership/jnana-blank2.jpg'),
 ];
 
 $tierNameMap = [
@@ -75,11 +89,26 @@ $tierNameMap = [
 ];
 
 $tierLabelMap = [
-'bronze' => 'Bronze',
-'silver' => 'Silver',
-'gold' => 'Gold',
-'platinum' => 'Platinum',
+'bronze' => 'Dana',
+'silver' => 'Upaya',
+'gold' => 'Dhyana',
+'platinum' => 'Jnana',
 ];
+
+$tierBookingCodeMap = [
+'bronze' => 'DANA',
+'silver' => 'UPAYA',
+'gold' => 'DHYANA',
+'platinum' => 'JNANA',
+];
+
+$memberBookingCode = $tierBookingCodeMap[$memberTier] ?? 'DANA';
+$bookingBaseUrl = 'https://nandinijunglebyhanginggardens.reserve-online.net/';
+$memberBookingUrl = $bookingBaseUrl . '?' . http_build_query([
+'checkin' => 'today',
+'nights' => 2,
+'voucher' => $memberBookingCode,
+]);
 
 $nextTierMap = [
 'bronze' => 'silver',
@@ -95,6 +124,7 @@ $nextTierMinimumPoints = [
 ];
 
 $currentCardImage = $cardMap[$memberTier] ?? $cardMap['bronze'];
+$memberCardDownloadName = \Illuminate\Support\Str::slug($memberName . '-' . ($tierLabelMap[$memberTier] ?? 'membership') . '-card') . '.png';
 
 $nextTier = $nextTierMap[$memberTier] ?? null;
 $nextCardImage = $nextTier ? ($cardMap[$nextTier] ?? null) : null;
@@ -177,19 +207,31 @@ $activityHistories
 ?? []
 );
 
+$activeRedemptions = collect();
+
 try {
-if ($activityHistories->isEmpty() && $member) {
+if ($member) {
 $mergedHistories = collect();
+$usedRedemptions = collect();
 
 if (method_exists($member, 'rewardRedemptions')) {
 $rewardRedemptions = $member->rewardRedemptions()
 ->with('reward')
 ->latest()
-->take(30)
+->take(50)
 ->get();
 
-$mergedHistories = $mergedHistories->merge($rewardRedemptions);
+$activeRedemptions = $rewardRedemptions
+->filter(fn ($redemption) => $redemption->status === \App\Models\MemberRewardRedemption::STATUS_PENDING)
+->values();
+
+$usedRedemptions = $rewardRedemptions
+->filter(fn ($redemption) => $redemption->status === \App\Models\MemberRewardRedemption::STATUS_USED || $redemption->used_at)
+->values();
 }
+
+if ($activityHistories->isEmpty()) {
+$mergedHistories = $mergedHistories->merge($usedRedemptions);
 
 if (method_exists($member, 'pointTransactions')) {
 $pointTransactions = $member->pointTransactions()
@@ -213,8 +255,10 @@ $mergedHistories = $mergedHistories->merge($rewardTransactions);
 $activityHistories = $mergedHistories
 ->sortByDesc(function ($item) {
 try {
-return $item->created_at
-? \Carbon\Carbon::parse($item->created_at)->timestamp
+$historyDate = data_get($item, 'used_at') ?: data_get($item, 'created_at');
+
+return $historyDate
+? \Carbon\Carbon::parse($historyDate)->timestamp
 : 0;
 } catch (\Throwable $e) {
 return 0;
@@ -223,35 +267,13 @@ return 0;
 ->take(30)
 ->values();
 }
+}
 } catch (\Throwable $e) {
 $activityHistories = collect();
-}
-
-if ($activityHistories->isEmpty() && app()->environment('local')) {
-$activityHistories = collect([
-[
-'title' => 'Manual Point Top Up',
-'description' => 'Manual point top up for testing.',
-'status' => 'earned',
-'date' => now(),
-'points' => 500,
-'image' => null,
-],
-[
-'title' => 'Balinese Blessing Purification',
-'description' => "Surrender to the embrace of Bali's healing waters with a sacred purification ritual led by a Balinese priest.",
-'status' => 'redeemed',
-'date' => '2026-01-27',
-'points' => -400,
-'image' => null,
-'redemption_code' => 'RDM-TEST-CODE',
-'expires_at' => '2026-02-26',
-],
-]);
+$activeRedemptions = collect();
 }
 
 $historyDisplayLimit = 3;
-$hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
 
 $dashboardRewards = collect($rewards ?? []);
 
@@ -260,58 +282,171 @@ try {
 $dashboardRewards = \App\Models\Reward::query()
 ->with('category')
 ->where('is_active', true)
-->inRandomOrder()
+->orderBy('points_required')
+->orderBy('sort_order')
 ->limit(9)
 ->get();
 } catch (\Throwable $e) {
 $dashboardRewards = collect();
 }
 } else {
-$dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
+$dashboardRewards = $dashboardRewards
+->sortBy(fn ($reward) => (int) ($reward->points_required ?? $reward->points ?? $reward->point_cost ?? 0))
+->take(9)
+->values();
 }
+
+$dashboardAccommodations = collect($accommodations ?? []);
+
+if ($dashboardAccommodations->isEmpty()) {
+try {
+$dashboardAccommodations = \App\Models\Accommodation::query()
+->where('is_active', true)
+->get();
+} catch (\Throwable $e) {
+$dashboardAccommodations = collect();
+}
+}
+
+$normalizeRoomKey = function (?string $value): string {
+return preg_replace('/[^a-z0-9]+/', '', strtolower((string) $value)) ?? '';
+};
+
+$getBookingRoomImage = function ($booking) use ($dashboardAccommodations, $resolveImage, $normalizeRoomKey): ?string {
+$roomName = $normalizeRoomKey($booking->room_name ?? null);
+$roomType = $normalizeRoomKey($booking->room_type ?? null);
+
+$accommodation = $dashboardAccommodations->first(function ($item) use ($roomName, $roomType, $normalizeRoomKey) {
+$title = $normalizeRoomKey($item->title ?? null);
+$villaCode = $normalizeRoomKey($item->villa_code ?? null);
+
+return ($roomName !== '' && $title !== '' && ($roomName === $title || str_contains($roomName, $title) || str_contains($title, $roomName)))
+|| ($roomType !== '' && $villaCode !== '' && $roomType === $villaCode);
+});
+
+if (! $accommodation) {
+return null;
+}
+
+return $resolveImage($accommodation->card_image ?: $accommodation->hero_image ?: null);
+};
+
+$syncedBookings = collect();
+
+try {
+if ($member && \Illuminate\Support\Facades\Schema::hasTable('synced_webhotelier_bookings')) {
+$syncedBookings = $member->syncedBookings()->latest('check_in')->latest()->get();
+}
+} catch (\Throwable $e) {
+$syncedBookings = collect();
+}
+
+$today = \Carbon\Carbon::today();
+
+$confirmedBookingStatuses = ['confirmed', 'confirm', 'booked', 'reservation_confirmed'];
+
+$confirmedBookings = $syncedBookings
+->filter(function ($booking) use ($confirmedBookingStatuses) {
+$status = strtolower(trim(str_replace(['-', ' '], '_', (string) $booking->status)));
+
+return in_array($status, $confirmedBookingStatuses, true);
+})
+->values();
+
+$checkedOutBookings = $confirmedBookings
+->filter(fn ($booking) => $booking->check_out && \Carbon\Carbon::parse($booking->check_out)->lt($today))
+->values();
+
+$currentBookings = $confirmedBookings
+->reject(fn ($booking) => $booking->check_out && \Carbon\Carbon::parse($booking->check_out)->lt($today))
+->values();
+
+$bookingHistories = $checkedOutBookings->map(function ($booking) {
+$room = $booking->room_name ?: $booking->room_type ?: 'Room';
+$dateRange = trim(($booking->check_in?->format('d M Y') ?? '-') . ' - ' . ($booking->check_out?->format('d M Y') ?? '-'));
+
+return [
+'title' => 'Booking ' . ($booking->booking_number ?: ''),
+'description' => trim($room . ' | ' . $dateRange),
+'status' => 'checked_out',
+'date' => $booking->check_out,
+'points' => 0,
+'code' => $booking->booking_number,
+'image' => $getBookingRoomImage($booking),
+];
+});
+
+$activityHistories = $activityHistories
+->merge($bookingHistories)
+->sortByDesc(function ($item) {
+try {
+$historyDate = data_get($item, 'date')
+?: data_get($item, 'used_at')
+?: data_get($item, 'created_at');
+
+return $historyDate
+? \Carbon\Carbon::parse($historyDate)->timestamp
+: 0;
+} catch (\Throwable $e) {
+return 0;
+}
+})
+->values();
+
+$hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
 @endphp
 
 <x-layouts.app>
     <x-heroes.image-hero :page="$page" />
 
     <style>
-        .dashboard-reward-carousel-section .slick-list {
+        .dashboard-reward-carousel-section .slick-list,
+        .dashboard-accommodation-carousel-section .slick-list {
             padding-top: 4px !important;
             padding-bottom: 46px !important;
         }
 
-        .dashboard-reward-carousel-section .slick-track {
+        .dashboard-reward-carousel-section .slick-track,
+        .dashboard-accommodation-carousel-section .slick-track {
             display: flex !important;
         }
 
-        .dashboard-reward-carousel-section .slick-slide {
+        .dashboard-reward-carousel-section .slick-slide,
+        .dashboard-accommodation-carousel-section .slick-slide {
             height: auto !important;
         }
 
-        .dashboard-reward-carousel-section .slick-slide>div {
+        .dashboard-reward-carousel-section .slick-slide>div,
+        .dashboard-accommodation-carousel-section .slick-slide>div {
             height: 100%;
         }
 
-        .dashboard-reward-carousel-section .dashboard-reward-card-article {
+        .dashboard-reward-carousel-section .dashboard-reward-card-article,
+        .dashboard-accommodation-carousel-section .dashboard-accommodation-card-article {
             height: 100%;
             padding-bottom: 8px;
         }
 
-        .dashboard-reward-carousel-section .dashboard-reward-card {
+        .dashboard-reward-carousel-section .dashboard-reward-card,
+        .dashboard-accommodation-carousel-section .dashboard-accommodation-card {
             height: 100%;
             min-height: 540px;
         }
 
-        .dashboard-reward-carousel-section .dashboard-reward-card-body {
+        .dashboard-reward-carousel-section .dashboard-reward-card-body,
+        .dashboard-accommodation-carousel-section .dashboard-accommodation-card-body {
             min-height: 285px;
         }
 
         @media (max-width: 767px) {
-            .dashboard-reward-carousel-section .dashboard-reward-card {
+
+            .dashboard-reward-carousel-section .dashboard-reward-card,
+            .dashboard-accommodation-carousel-section .dashboard-accommodation-card {
                 min-height: auto;
             }
 
-            .dashboard-reward-carousel-section .dashboard-reward-card-body {
+            .dashboard-reward-carousel-section .dashboard-reward-card-body,
+            .dashboard-accommodation-carousel-section .dashboard-accommodation-card-body {
                 min-height: auto;
             }
         }
@@ -323,11 +458,11 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
         <div class="mx-auto w-full max-w-6xl">
 
             <div class="mx-auto max-w-3xl text-center">
-                <h1 class="text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 mb-6 md:mb-8 font-medium">
-                    Member Detail
+                <h1 class="text-2xl leading-snug uppercase text-slate-700 font-medium mb-3">
+                    Member Profile
                 </h1>
 
-                <p class="mt-3 text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+                <p class="mt-2 text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                     Access your exclusive member privileges.
                 </p>
             </div>
@@ -339,7 +474,7 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                         @if ($profilePhotoUrl)
                         <img src="{{ $profilePhotoUrl }}" alt="{{ $memberName }}" class="h-full w-full object-cover" loading="lazy">
                         @else
-                        <span class="text-5xl font-medium uppercase tracking-[0.08em] text-[#A67C3D]">
+                        <span class="text-5xl font-medium uppercase text-[#A67C3D]">
                             {{ $memberInitial }}
                         </span>
                         @endif
@@ -347,18 +482,18 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                 </div>
 
                 <div class="text-center lg:col-span-4 lg:text-left">
-                    <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.20em] uppercase text-slate-800 font-medium">
+                    <h2 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3">
                         {{ $memberName }}
                     </h2>
 
-                    <div class="mt-5 mx-auto max-w-[340px] space-y-2 text-[13px] sm:text-[14px] leading-6 text-gray-600 lg:mx-0">
+                    <div class="mt-2 mx-auto max-w-[340px] space-y-2 text-[13px] sm:text-[14px] leading-6 text-gray-600 lg:mx-0">
                         <div class="grid grid-cols-[88px_1fr] gap-1 text-left">
                             <span>Email</span>
                             <span class="break-all">: {{ $memberEmail }}</span>
                         </div>
 
                         <div class="grid grid-cols-[88px_1fr] gap-1 text-left">
-                            <span>Create</span>
+                            <span>Join on</span>
                             <span>: {{ $createdDate }}</span>
                         </div>
 
@@ -368,8 +503,8 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                         </div>
                     </div>
 
-                    <div class="mt-6 flex justify-center lg:justify-start">
-                        <a href="{{ \Illuminate\Support\Facades\Route::has('membership.profile.edit') ? route('membership.profile.edit') : '#' }}" class="inline-flex min-w-[170px] items-center justify-center border border-[#916B2C] bg-[#916B2C] px-6 py-3 text-xs uppercase tracking-[0.16em] text-white hover:bg-white hover:text-[#916B2C] transition">
+                    <div class="mt-2 flex justify-center lg:justify-start">
+                        <a href="{{ \Illuminate\Support\Facades\Route::has('membership.profile.edit') ? route('membership.profile.edit') : '#' }}" class="inline-flex min-w-[145px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-sm uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium">
                             Edit Profile
                         </a>
                     </div>
@@ -378,43 +513,51 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                 <div class="lg:col-span-5">
                     <div class="mx-auto w-full max-w-[390px]">
 
-                        <div class="relative overflow-hidden rounded-[20px] shadow-lg">
-                            <img src="{{ $currentCardImage }}" alt="{{ $tierNameMap[$memberTier] ?? 'Membership Card' }} {{ $tierLabelMap[$memberTier] ?? '' }} Card" class="block w-full" loading="lazy">
+                        <button type="button" class="group block w-full overflow-hidden rounded-[20px] shadow-lg transition focus:outline-none focus:ring-2 focus:ring-[#A67C3D]/40" aria-label="View membership card" data-member-card-open>
+                            <div class="relative">
+                                <img src="{{ $currentCardImage }}" alt="{{ $tierNameMap[$memberTier] ?? 'Membership Card' }} {{ $tierLabelMap[$memberTier] ?? '' }} Card" class="block w-full transition duration-500 group-hover:scale-[1.015] cursor-pointer" loading="lazy" data-member-card-image>
 
-                            <div class="pointer-events-none absolute inset-0 text-white">
+                                <div class="pointer-events-none absolute inset-0 text-white">
 
-                                <div class="absolute bottom-[14%] left-[8%] max-w-[43%]">
-                                    <p class="text-[14px] sm:text-[17px] md:text-[19px] font-bold uppercase leading-none tracking-[0.02em] drop-shadow-md">
-                                        {{ number_format($memberPoints) }} POINT
-                                    </p>
-                                </div>
+                                    <div class="absolute rounded-[3px] border border-white/70 bg-black/35 px-2.5 py-1.5 shadow-sm backdrop-blur-[1px]" style="left: 8%; bottom: 14%;">
+                                        <p class="text-[9px] sm:text-[10px] md:text-[11px] font-bold uppercase leading-none text-white drop-shadow">
+                                            {{ $formatPointLabel($memberPoints, 'upper') }}
+                                        </p>
+                                    </div>
 
-                                <div class="absolute bottom-[23%] right-[8%] max-w-[48%] text-right">
-                                    <p class="text-[16px] sm:text-[19px] md:text-[22px] font-semibold uppercase leading-none tracking-[0.14em] drop-shadow-md">
-                                        {{ $tierLabelMap[$memberTier] ?? 'Bronze' }}
-                                    </p>
-                                </div>
+                                    <div class="absolute top-[42%] right-[8%] w-[64%] text-right">
+                                        <p class="whitespace-normal break-words text-[14px] sm:text-[16px] md:text-[18px] font-bold uppercase leading-tight text-white/95 drop-shadow">
+                                            {{ $memberName }}
+                                        </p>
+                                    </div>
 
-                                <div class="absolute bottom-[8.5%] right-[8%] text-center">
-                                    <p class="text-[5.5px] sm:text-[6.5px] md:text-[7.5px] font-bold uppercase leading-tight tracking-[0.18em] text-white/95 drop-shadow">
-                                        Valid Till
-                                    </p>
+                                    <div class="absolute bottom-[23%] right-[8%] max-w-[48%] text-right">
+                                        <p class="text-[10px] sm:text-[12px] md:text-[13px] font-semibold uppercase leading-none drop-shadow-md">
+                                            {{ $tierLabelMap[$memberTier] ?? 'Dana' }}
+                                        </p>
+                                    </div>
 
-                                    <p class="mt-0.5 text-[5.5px] sm:text-[6.5px] md:text-[7.5px] font-bold uppercase leading-tight tracking-[0.14em] text-white/95 drop-shadow">
-                                        {{ $validUntilDate }}
-                                    </p>
+                                    <div class="absolute bottom-[8.5%] right-[8%] text-right">
+                                        <p class="text-[5.5px] sm:text-[6.5px] md:text-[7.5px] font-bold uppercase leading-tight text-white/95 drop-shadow">
+                                            Valid Till
+                                        </p>
+
+                                        <p class="mt-0.5 text-[5.5px] sm:text-[6.5px] md:text-[7.5px] font-bold uppercase leading-tight text-white/95 drop-shadow">
+                                            {{ $validUntilDate }}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </button>
 
-                        <div class="mt-4 grid grid-cols-1 items-center gap-3 sm:grid-cols-[1fr_110px]">
+                        <div class="mt-2 grid grid-cols-1 items-center gap-3 sm:grid-cols-[1fr_110px]">
                             @if ($nextTier && $pointsToNextTier !== null)
                             <div class="rounded-lg bg-[#F1F1F1] px-5 py-3 text-center">
-                                <p class="text-[12px] sm:text-[13px] uppercase leading-snug tracking-[0.12em] text-slate-900">
-                                    Another <span class="font-bold">{{ number_format($pointsToNextTier) }} Points</span>
+                                <p class="text-[12px] sm:text-[13px] uppercase leading-snug text-slate-700">
+                                    Another <span class="font-bold">{{ $formatPointLabel($pointsToNextTier) }}</span>
                                 </p>
 
-                                <p class="mt-1 text-[8px] sm:text-[9px] uppercase tracking-[0.16em] text-slate-700">
+                                <p class="mt-1 text-[8px] sm:text-[9px] uppercase text-slate-700">
                                     To reach {{ $tierLabelMap[$nextTier] }} Member
                                 </p>
                             </div>
@@ -426,11 +569,11 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                             @endif
                             @else
                             <div class="rounded-lg bg-[#F1F1F1] px-5 py-3 text-center sm:col-span-2">
-                                <p class="text-[12px] sm:text-[13px] uppercase leading-snug tracking-[0.12em] text-slate-900">
-                                    You are now a <span class="font-bold">Platinum Member</span>
+                                <p class="text-[12px] sm:text-[13px] uppercase leading-snug text-slate-700">
+                                    You are now a <span class="font-bold">Jnana Member</span>
                                 </p>
 
-                                <p class="mt-1 text-[8px] sm:text-[9px] uppercase tracking-[0.16em] text-slate-700">
+                                <p class="mt-1 text-[8px] sm:text-[9px] uppercase text-slate-700">
                                     You have reached the highest membership tier.
                                 </p>
                             </div>
@@ -444,200 +587,409 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
         </div>
     </section>
 
-    {{-- ACTIVITY HISTORY --}}
-    <section class="bg-[#F1F1F1] px-6 py-14 md:py-20">
-        <div class="mx-auto w-full max-w-7xl">
+    <div class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/70 px-4 py-8" data-member-card-modal aria-hidden="true" inert>
+        <button type="button" class="absolute inset-0 h-full w-full cursor-default" aria-label="Close membership card preview" data-member-card-close></button>
 
-            <div class="mb-10 text-center">
-                <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
-                    History
-                </h2>
+        <div class="relative w-full max-w-[640px]">
+            <div class="mb-4 flex justify-end gap-3">
+                <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/70 bg-white text-[#A67C3D] shadow-lg transition hover:bg-[#A67C3D] hover:text-white focus:outline-none focus:ring-2 focus:ring-white/70 tracking-[0.08em] font-medium" aria-label="Download membership card" title="Download membership card" data-member-card-download data-card-image="{{ $currentCardImage }}" data-member-name="{{ e($memberName) }}" data-member-points="{{ e($formatPointLabel($memberPoints, 'upper')) }}" data-member-tier="{{ e($tierLabelMap[$memberTier] ?? 'Dana') }}" data-valid-until="{{ e($validUntilDate) }}" data-download-name="{{ e($memberCardDownloadName) }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <path d="M7 10l5 5 5-5"></path>
+                        <path d="M12 15V3"></path>
+                    </svg>
+                </button>
 
-                <p class="mt-3 text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
-                    Your member activity history.
-                </p>
-            </div>
-
-            <div class="divide-y divide-black/45 border-t border-b border-black/45">
-                @foreach ($activityHistories as $historyIndex => $activity)
-                @php
-                if (is_object($activity) && method_exists($activity, 'loadMissing')) {
-                try {
-                $activity->loadMissing('reward');
-                } catch (\Throwable $e) {
-                //
-                }
-                }
-
-                $isRewardRedemption = is_a($activity, \App\Models\MemberRewardRedemption::class);
-                $isPointTransaction = is_a($activity, \App\Models\MemberPointTransaction::class);
-
-                $title = $getHistoryValue($activity, [
-                'reward_name',
-                'title',
-                'name',
-                'reward.title',
-                'reward.name',
-                'offer.title',
-                'offer.name',
-                'description_title',
-                ], null);
-
-                $statusRaw = strtolower((string) $getHistoryValue($activity, [
-                'status',
-                'type',
-                'transaction_type',
-                'activity_type',
-                ], ''));
-
-                if (! $title && $isPointTransaction) {
-                $title = match ($statusRaw) {
-                'earn' => 'Points Added',
-                'adjustment' => 'Point Adjustment',
-                'redeem' => 'Points Redeemed',
-                default => 'Point Transaction',
-                };
-                }
-
-                $title = $title ?: 'Membership Activity';
-
-                $description = $getHistoryValue($activity, [
-                'description',
-                'excerpt',
-                'reward.description',
-                'reward.excerpt',
-                'offer.description',
-                'offer.excerpt',
-                'notes',
-                'remark',
-                ], '');
-
-                $redemptionCode = $getHistoryValue($activity, [
-                'redemption_code',
-                'redeem_code',
-                'code',
-                ], null);
-
-                $validUntilRaw = $getHistoryValue($activity, [
-                'expires_at',
-                'valid_until',
-                'valid_date',
-                'expired_at',
-                'reward.expires_at',
-                ], null);
-
-                $validUntil = $formatHistoryDate($validUntilRaw);
-                $hasValidUntil = $validUntil !== '-';
-
-                $pointsRaw = $getHistoryValue($activity, [
-                'points',
-                'point',
-                'points_change',
-                'point_change',
-                'points_used',
-                'amount',
-                'reward.points',
-                'reward.points_required',
-                'offer.points',
-                ], 0);
-
-                $pointsNumber = (int) preg_replace('/[^-\d]/', '', (string) $pointsRaw);
-
-                if ($isRewardRedemption) {
-                $pointsNumber = -abs((int) $getHistoryValue($activity, ['points_used'], $pointsNumber));
-                }
-
-                if ($statusRaw === '') {
-                $statusRaw = $pointsNumber < 0 ? 'redeemed' : 'earned' ; } if ($statusRaw==='earn' ) { $statusRaw='earned' ; } if ($isRewardRedemption && $statusRaw==='pending' ) { $statusRaw='redeemed' ; } $statusLabel=strtoupper(str_replace(['_', '-' ], ' ' , $statusRaw)); $statusClass=match ($statusRaw) { 'pending' , 'redeemed' , 'redeem' , 'used' , 'deducted'=> 'bg-[#FF3B3B] text-white',
-                    'earned', 'earn', 'purchased', 'purchase', 'paid', 'completed' => 'bg-[#32C85A] text-white',
-                    'adjustment' => 'bg-[#916B2C] text-white',
-                    default => 'bg-[#916B2C] text-white',
-                    };
-
-                    $date = $formatHistoryDate($getHistoryValue($activity, [
-                    'date',
-                    'activity_date',
-                    'transaction_date',
-                    'redeemed_at',
-                    'used_at',
-                    'purchased_at',
-                    'created_at',
-                    ], null));
-
-                    $pointDisplay = ($pointsNumber > 0 ? '+' : ($pointsNumber < 0 ? '-' : '' )) . number_format(abs($pointsNumber)) . ' POINT' ; $image=$resolveImage($getHistoryValue($activity, [ 'image' , 'photo' , 'thumbnail' , 'card_image' , 'hero_image' , 'reward.image' , 'reward.photo' , 'reward.thumbnail' , 'reward.card_image' , 'reward.hero_image' , 'offer.image' , 'offer.photo' , 'offer.thumbnail' , 'offer.card_image' , 'offer.hero_image' , ], null)); @endphp <article class="grid grid-cols-1 gap-5 py-7 md:grid-cols-[170px_1fr] md:gap-12 md:py-8 {{ $historyIndex >= $historyDisplayLimit ? 'hidden' : '' }}" @if ($historyIndex>= $historyDisplayLimit)
-                        data-history-extra
-                        @endif
-                        >
-                        <div class="w-full">
-                            @if ($image)
-                            <img src="{{ $image }}" alt="{{ $title }}" class="aspect-square w-full max-w-[170px] object-cover" loading="lazy">
-                            @else
-                            <div class="flex aspect-square w-full max-w-[170px] items-center justify-center bg-white">
-                                <span class="text-4xl font-medium uppercase tracking-[0.12em] text-[#916B2C]">
-                                    {{ strtoupper(mb_substr($title, 0, 1)) }}
-                                </span>
-                            </div>
-                            @endif
-                        </div>
-
-                        <div class="flex min-w-0 flex-col justify-center">
-                            <h3 class="text-xl sm:text-2xl md:text-2xl leading-snug tracking-[0.15em] uppercase text-slate-800 font-medium">
-                                {{ $title }}
-                            </h3>
-
-                            @if ($description)
-                            <p class="mt-3 text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl">
-                                {{ \Illuminate\Support\Str::limit(strip_tags($description), 180) }}
-                            </p>
-                            @endif
-
-                            @if ($redemptionCode || $hasValidUntil)
-                            <div class="mt-4 flex flex-wrap gap-3">
-                                @if ($redemptionCode)
-                                <div class="inline-flex w-fit border border-black/40 bg-white px-4 py-2">
-                                    <p class="text-[12px] sm:text-[13px] font-bold uppercase leading-none tracking-[0.14em] text-slate-800">
-                                        Code: {{ $redemptionCode }}
-                                    </p>
-                                </div>
-                                @endif
-
-                                @if ($hasValidUntil)
-                                <div class="inline-flex w-fit border border-[#916B2C]/60 bg-white px-4 py-2">
-                                    <p class="text-[12px] sm:text-[13px] font-bold uppercase leading-none tracking-[0.14em] text-[#916B2C]">
-                                        Valid Until: {{ $validUntil }}
-                                    </p>
-                                </div>
-                                @endif
-                            </div>
-                            @endif
-
-                            <div class="mt-7 grid grid-cols-1 items-center gap-4 text-[14px] sm:grid-cols-[150px_160px_1fr] md:mt-9">
-                                <div>
-                                    <span class="{{ $statusClass }} inline-flex min-w-[138px] items-center justify-center rounded-full px-5 py-2 text-[13px] font-bold leading-none tracking-[0.16em]">
-                                        {{ $statusLabel }}
-                                    </span>
-                                </div>
-
-                                <p class="text-[15px] font-bold uppercase leading-none tracking-[0.18em] text-slate-800">
-                                    {{ $date }}
-                                </p>
-
-                                <p class="text-[15px] font-bold uppercase leading-none tracking-[0.18em] text-slate-800">
-                                    {{ $pointDisplay }}
-                                </p>
-                            </div>
-                        </div>
-                        </article>
-                        @endforeach
-            </div>
-
-            @if ($hasMoreHistories)
-            <div class="mt-10 text-center">
-                <button type="button" data-history-view-more class="inline-flex min-w-[170px] items-center justify-center border border-[#916B2C] bg-[#916B2C] px-7 py-4 text-sm uppercase tracking-[0.14em] text-white hover:bg-white hover:text-[#916B2C] transition">
-                    View More
+                <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/70 bg-white text-slate-700 shadow-lg transition hover:bg-slate-950 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/70 tracking-[0.08em] font-medium" aria-label="Close membership card preview" title="Close" data-member-card-close>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M18 6 6 18"></path>
+                        <path d="m6 6 12 12"></path>
+                    </svg>
                 </button>
             </div>
-            @endif
+
+            <div class="relative overflow-hidden rounded-[20px] shadow-2xl">
+                <img src="{{ $currentCardImage }}" alt="{{ $tierNameMap[$memberTier] ?? 'Membership Card' }} {{ $tierLabelMap[$memberTier] ?? '' }} Card" class="block w-full" loading="lazy">
+
+                <div class="pointer-events-none absolute inset-0 text-white">
+                    <div class="absolute rounded-[3px] border border-white/70 bg-black/35 px-4 py-2.5 shadow-sm backdrop-blur-[1px]" style="left: 8%; bottom: 14%;">
+                        <p class="text-[13px] text-sm md:text-[16px] font-bold uppercase leading-none text-white drop-shadow">
+                            {{ $formatPointLabel($memberPoints, 'upper') }}
+                        </p>
+                    </div>
+
+                    <div class="absolute top-[42%] right-[8%] w-[64%] text-right">
+                        <p class="whitespace-normal break-words text-[20px] sm:text-[25px] md:text-[32px] font-bold uppercase leading-tight text-white/95 drop-shadow">
+                            {{ $memberName }}
+                        </p>
+                    </div>
+
+                    <div class="absolute bottom-[23%] right-[8%] max-w-[48%] text-right">
+                        <p class="text-[13px] sm:text-[14px] text-sm font-semibold uppercase leading-none drop-shadow-md">
+                            {{ $tierLabelMap[$memberTier] ?? 'Dana' }}
+                        </p>
+                    </div>
+
+                    <div class="absolute bottom-[8.5%] right-[8%] text-right">
+                        <p class="text-[8px] sm:text-[11px] md:text-[12px] font-bold uppercase leading-tight text-white/95 drop-shadow">
+                            Valid Till
+                        </p>
+
+                        <p class="mt-1 text-[8px] sm:text-[11px] md:text-[12px] font-bold uppercase leading-tight text-white/95 drop-shadow">
+                            {{ $validUntilDate }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="bg-white px-6 pb-0">
+        <div class="mx-auto w-full max-w-6xl">
+            <div class="flex flex-nowrap justify-center gap-1.5 border-b border-slate-200 pb-4 sm:gap-2" data-membership-dashboard-tabs>
+                <button type="button" class="min-w-0 flex-1 border border-[#A67C3D] bg-[#A67C3D] px-2 py-2.5 text-[10px] font-medium uppercase text-white transition sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="bookings">
+                    My Booking
+                </button>
+
+                <button type="button" class="min-w-0 flex-1 border border-slate-300 bg-white px-2 py-2.5 text-[10px] font-medium uppercase text-slate-700 transition hover:border-[#A67C3D] hover:text-[#A67C3D] sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="redeem">
+                    Point Redeem
+                </button>
+
+                <button type="button" class="min-w-0 flex-1 border border-slate-300 bg-white px-2 py-2.5 text-[10px] font-medium uppercase text-slate-700 transition hover:border-[#A67C3D] hover:text-[#A67C3D] sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="history">
+                    History
+                </button>
+            </div>
+
+            <div class="pt-8" data-dashboard-tab-panel="bookings">
+                @if ($currentBookings->isNotEmpty())
+                <div class="overflow-x-auto border border-slate-200 bg-white">
+                    <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
+                        <thead class="bg-[#F7F7F7] text-[11px] uppercase text-slate-600">
+                            <tr>
+                                <th class="px-4 py-3">Booking Number</th>
+                                <th class="px-4 py-3">Image</th>
+                                <th class="px-4 py-3">Room Name</th>
+                                <th class="px-4 py-3">Check-in</th>
+                                <th class="px-4 py-3">Check-out</th>
+                                <th class="px-4 py-3">Status</th>
+                                <th class="px-4 py-3">Currency</th>
+                                <th class="px-4 py-3 text-right">Total</th>
+                                <th class="px-4 py-3 text-right">Estimated Points</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-slate-100 text-slate-700">
+                            @foreach ($currentBookings as $booking)
+                            @php
+                            $roomImage = $getBookingRoomImage($booking);
+                            @endphp
+                            <tr>
+                                <td class="px-4 py-4 font-bold text-slate-700">{{ $booking->booking_number }}</td>
+                                <td class="px-4 py-4">
+                                    @if ($roomImage)
+                                    <img src="{{ $roomImage }}" alt="{{ $booking->room_name ?: 'Room' }}" class="h-14 w-20 object-cover" loading="lazy">
+                                    @else
+                                    <div class="flex h-14 w-20 items-center justify-center bg-[#F7F7F7] text-[10px] font-bold uppercase text-[#916B2C]">
+                                        Room
+                                    </div>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-4 font-semibold text-slate-700">{{ $booking->room_name ?: '-' }}</td>
+                                <td class="px-4 py-4">{{ $booking->check_in?->format('d M Y') ?? '-' }}</td>
+                                <td class="px-4 py-4">{{ $booking->check_out?->format('d M Y') ?? '-' }}</td>
+                                <td class="px-4 py-4">
+                                    <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold uppercase text-slate-700">
+                                        {{ $booking->status ?: '-' }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-4">{{ $booking->currency ?: '-' }}</td>
+                                <td class="px-4 py-4 text-right">{{ $booking->booking_total !== null ? number_format((float) $booking->booking_total, 0) : '-' }}</td>
+                                <td class="px-4 py-4 text-right">
+                                    {{ $booking->booking_total !== null ? number_format(\App\Models\Member::calculatePointsFromConsumption((float) $booking->booking_total), 0) : '-' }}
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                @else
+                <div class="bg-[#F7F7F7] px-6 py-12 text-center">
+                    <p class="text-sm uppercase text-slate-700">
+                        No booking found yet.
+                    </p>
+                </div>
+                @endif
+            </div>
+
+            <div class="hidden pt-8" data-dashboard-tab-panel="redeem">
+                <div class="overflow-x-auto border border-slate-200 bg-white">
+                    <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
+                        <thead class="bg-[#F7F7F7] text-[11px] uppercase text-slate-700">
+                            <tr>
+                                <th class="px-4 py-4">Reward</th>
+                                <th class="px-4 py-4">Code</th>
+                                <th class="px-4 py-4">Redeemed On</th>
+                                <th class="px-4 py-4">Valid Until</th>
+                                <th class="px-4 py-4 text-right">Points Used</th>
+                                <th class="px-4 py-4">Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-slate-100 text-slate-700">
+                            @forelse ($activeRedemptions as $redemption)
+                            @php
+                            $redemptionTitle = $redemption->reward_name ?: ($redemption->reward?->title ?? $redemption->reward?->name ?? 'Reward');
+                            $redemptionImage = $resolveImage($redemption->reward?->image ?? null);
+                            @endphp
+                            <tr>
+                                <td class="px-4 py-4">
+                                    <div class="flex min-w-[240px] items-center gap-3">
+                                        @if ($redemptionImage)
+                                        <img src="{{ $redemptionImage }}" alt="{{ $redemptionTitle }}" class="h-14 w-20 object-cover" loading="lazy">
+                                        @else
+                                        <div class="flex h-14 w-20 items-center justify-center bg-[#F7F7F7] text-xl font-medium uppercase text-[#916B2C]">
+                                            {{ strtoupper(mb_substr($redemptionTitle, 0, 1)) }}
+                                        </div>
+                                        @endif
+
+                                        <span class="font-bold text-slate-700">{{ $redemptionTitle }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-4">{{ $redemption->redemption_code ?: '-' }}</td>
+                                <td class="px-4 py-4">{{ $redemption->created_at?->format('d M Y') ?? '-' }}</td>
+                                <td class="px-4 py-4">{{ $redemption->expires_at?->format('d M Y') ?? '-' }}</td>
+                                <td class="px-4 py-4 text-right">{{ number_format((int) $redemption->points_used, 0) }}</td>
+                                <td class="px-4 py-4">
+                                    <span class="inline-flex rounded-full bg-[#A67C3D]/10 px-3 py-1 text-[11px] font-bold uppercase text-[#916B2C]">
+                                        {{ $redemption->status_label ?? 'Pending' }}
+                                    </span>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="6" class="px-4 py-12 text-center">
+                                    <p class="text-sm uppercase text-slate-700">
+                                        No active redemptions yet.
+                                    </p>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="hidden" data-dashboard-tab-panel="history">
+        {{-- ACTIVITY HISTORY --}}
+        <section class="bg-white px-6 pt-8 pb-0">
+            <div class="mx-auto w-full max-w-6xl">
+
+                <div class="overflow-x-auto border border-slate-200 bg-white">
+                    <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
+                        <thead class="bg-[#F7F7F7] text-[11px] uppercase text-slate-700">
+                            <tr>
+                                <th class="px-4 py-4">Reward</th>
+                                <th class="px-4 py-4">Code</th>
+                                <th class="px-4 py-4">Redeemed/Received On</th>
+                                <th class="px-4 py-4">Valid Until</th>
+                                <th class="px-4 py-4 text-right">Points Used</th>
+                                <th class="px-4 py-4">Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-slate-100 text-slate-700">
+                            @forelse ($activityHistories as $historyIndex => $activity)
+                            @php
+                            if (is_object($activity) && method_exists($activity, 'loadMissing')) {
+                            try {
+                            $activity->loadMissing('reward');
+                            } catch (\Throwable $e) {
+                            //
+                            }
+                            }
+
+                            $isRewardRedemption = is_a($activity, \App\Models\MemberRewardRedemption::class);
+                            $isPointTransaction = is_a($activity, \App\Models\MemberPointTransaction::class);
+
+                            $title = $getHistoryValue($activity, [
+                            'reward_name',
+                            'title',
+                            'name',
+                            'reward.title',
+                            'reward.name',
+                            'offer.title',
+                            'offer.name',
+                            'description_title',
+                            ], null);
+
+                            $statusRaw = strtolower((string) $getHistoryValue($activity, [
+                            'status',
+                            'type',
+                            'transaction_type',
+                            'activity_type',
+                            ], ''));
+
+                            if (! $title && $isPointTransaction) {
+                            $title = match ($statusRaw) {
+                            'earn' => 'Points Added',
+                            'adjustment' => 'Point Adjustment',
+                            'redeem' => 'Points Redeemed',
+                            default => 'Point Transaction',
+                            };
+                            }
+
+                            $historyDescription = trim((string) $getHistoryValue($activity, [
+                            'description',
+                            'details',
+                            'note',
+                            ], ''));
+
+                            $title = $title ?: 'Membership Activity';
+
+                            $redemptionCode = $getHistoryValue($activity, [
+                            'redemption_code',
+                            'redeem_code',
+                            'code',
+                            ], null);
+
+                            $validUntilRaw = $getHistoryValue($activity, [
+                            'expires_at',
+                            'valid_until',
+                            'valid_date',
+                            'expired_at',
+                            'reward.expires_at',
+                            ], null);
+
+                            $validUntil = $formatHistoryDate($validUntilRaw);
+                            $pointsRaw = $getHistoryValue($activity, [
+                            'points',
+                            'point',
+                            'points_change',
+                            'point_change',
+                            'points_used',
+                            'amount',
+                            'reward.points',
+                            'reward.points_required',
+                            'offer.points',
+                            ], 0);
+
+                            $pointsNumber = (int) preg_replace('/[^-\d]/', '', (string) $pointsRaw);
+
+                            if ($isRewardRedemption) {
+                            $pointsNumber = -abs((int) $getHistoryValue($activity, ['points_used'], $pointsNumber));
+                            }
+
+                            if ($statusRaw === '') {
+                            $statusRaw = $pointsNumber < 0 ? 'used' : 'completed' ; } if ($statusRaw==='earn' ) { $statusRaw='earned' ; } if ($isRewardRedemption && $statusRaw==='pending' ) { $statusRaw='redeemed' ; } $statusLabel=strtoupper(str_replace(['_', '-' ], ' ' , $statusRaw)); $statusClass=match ($statusRaw) { 'pending' , 'redeemed' , 'redeem'=> 'bg-[#F3EDE4] text-[#916B2C]',
+                                'used', 'checked_out', 'completed' => 'bg-slate-100 text-slate-700',
+                                'cancelled', 'expired' => 'bg-red-50 text-red-700',
+                                default => 'bg-[#F3EDE4] text-[#916B2C]',
+                                };
+
+                                $date = $formatHistoryDate($getHistoryValue($activity, [
+                                'redeemed_at',
+                                'created_at',
+                                'date',
+                                'activity_date',
+                                'transaction_date',
+                                'used_at',
+                                'purchased_at',
+                                ], null));
+
+                                $pointsUsedDisplay = abs($pointsNumber) > 0 ? number_format(abs($pointsNumber), 0) : '-';
+                                $historyImage = $isPointTransaction
+                                ? $pointTransactionImage
+                                : $resolveImage($getHistoryValue($activity, [
+                                'image',
+                                'reward.image',
+                                'reward.card_image',
+                                'reward.hero_image',
+                                ], null));
+                                @endphp
+
+                                <tr class="{{ $historyIndex >= $historyDisplayLimit ? 'hidden' : '' }}" @if ($historyIndex>= $historyDisplayLimit) data-history-extra @endif>
+                                    <td class="px-4 py-5">
+                                        <div class="flex min-w-[240px] items-center gap-3">
+                                            @if ($historyImage)
+                                            <img src="{{ $historyImage }}" alt="{{ $title }}" class="h-14 w-16 object-cover" loading="lazy">
+                                            @else
+                                            <div class="flex h-14 w-20 items-center justify-center bg-[#F7F7F7] text-xl font-medium uppercase text-[#916B2C]">
+                                                {{ strtoupper(mb_substr($title, 0, 1)) }}
+                                            </div>
+                                            @endif
+
+                                            <div>
+                                                <p class="font-bold text-slate-950">{{ $title }}</p>
+
+                                                @if ($historyDescription !== '')
+                                                <p class="mt-1 text-sm leading-relaxed text-slate-500">
+                                                    {{ $historyDescription }}
+                                                </p>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-5 text-slate-700">{{ $redemptionCode ?: '-' }}</td>
+                                    <td class="px-4 py-5 text-slate-700">{{ $date }}</td>
+                                    <td class="px-4 py-5 text-slate-700">{{ $validUntil }}</td>
+                                    <td class="px-4 py-5 text-right text-slate-700">{{ $pointsUsedDisplay }}</td>
+                                    <td class="px-4 py-5">
+                                        <span class="{{ $statusClass }} inline-flex rounded-full px-3 py-1 text-[11px] font-bold uppercase">
+                                            {{ $statusLabel }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="6" class="px-4 py-12 text-center">
+                                        <p class="text-sm uppercase text-slate-700">
+                                            No completed history yet.
+                                        </p>
+                                    </td>
+                                </tr>
+                                @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                @if ($hasMoreHistories)
+                <div class="mt-10 text-center">
+                    <button type="button" data-history-view-more class="inline-flex min-w-[145px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-5 py-2.5 text-sm uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium">
+                        View More
+                    </button>
+                </div>
+                @endif
+            </div>
+        </section>
+    </div>
+
+    <section class="w-full bg-white px-0 pt-14 md:pt-20">
+        <div class="relative min-h-[380px] overflow-hidden bg-slate-900 sm:min-h-[460px]">
+            <img src="{{ asset('images/membership/join-today.webp') }}" alt="Nandini Jungle by Hanging Gardens member stay" class="absolute inset-0 h-full w-full object-cover object-center" loading="lazy">
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/35 to-black/55"></div>
+
+            <div class="relative mx-auto flex min-h-[380px] w-full max-w-5xl flex-col items-center justify-center px-6 py-16 text-center text-white sm:min-h-[460px] md:py-20">
+                <h2 class="text-xl font-medium uppercase leading-snug drop-shadow-[0_2px_10px_rgba(0,0,0,0.75)] mb-3">
+                    Plan Your Next Jungle Escape
+                </h2>
+
+                <p class="mt-2 max-w-2xl text-sm leading-relaxed text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.75)]">
+                    Book your next stay using your {{ $tierLabelMap[$memberTier] ?? 'Dana' }} member voucher, or explore our latest offers.
+                </p>
+
+                <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                    <a href="{{ $memberBookingUrl }}" target="_blank" rel="noopener" class="inline-flex min-w-[150px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-5 py-2.5 text-sm font-medium uppercase text-white shadow-lg shadow-black/20 transition hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em]">
+                        Book Now
+                    </a>
+
+                    <a href="{{ route('offers.index') }}" class="inline-flex min-w-[150px] items-center justify-center border border-white/85 bg-black/25 px-5 py-2.5 text-sm font-medium uppercase text-white shadow-lg shadow-black/20 transition hover:border-[#A67C3D] hover:bg-[#A67C3D] hover:text-white tracking-[0.08em]">
+                        See Our Offers
+                    </a>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -646,11 +998,11 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
     <section class="dashboard-reward-carousel-section bg-white px-6 py-14 md:py-20" data-dashboard-reward-carousel-section>
         <div class="mx-auto w-full">
             <div class="mb-8 md:mb-10 text-center">
-                <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
+                <h2 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3">
                     Rewards
                 </h2>
 
-                <p class="mt-3 text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+                <p class="mt-2 text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                     Explore selected rewards available for your Inner Circle points.
                 </p>
             </div>
@@ -708,7 +1060,7 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                                 <img src="{{ $image }}" alt="{{ $alt }}" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy">
                                 @else
                                 <div class="flex h-full w-full items-center justify-center bg-[#F7F7F7]">
-                                    <span class="text-5xl font-medium uppercase tracking-[0.12em] text-[#916B2C]">
+                                    <span class="text-5xl font-medium uppercase text-[#916B2C]">
                                         {{ strtoupper(mb_substr($rewardTitle, 0, 1)) }}
                                     </span>
                                 </div>
@@ -716,12 +1068,12 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                             </div>
 
                             <div class="dashboard-reward-card-body p-7 flex flex-col grow">
-                                <h3 class="text-slate-800 uppercase tracking-[0.15em] text-xl sm:text-2xl md:text-2xl leading-snug font-medium">
+                                <h3 class="text-lg text-slate-700 uppercase leading-snug font-medium mb-3">
                                     {{ $rewardTitle }}
                                 </h3>
 
                                 @if ($rewardDescription)
-                                <p class="mt-5 text-[15px] sm:text-base leading-relaxed text-gray-600">
+                                <p class="mt-2 text-sm leading-relaxed text-gray-600">
                                     {{ \Illuminate\Support\Str::limit(strip_tags($rewardDescription), 145) }}
                                 </p>
                                 @endif
@@ -732,28 +1084,24 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                                             @if ($pointsLabel)
                                             {{ $pointsLabel }}
                                             @else
-                                            {{ number_format((float) $points, 0) }} Points
+                                            {{ $formatPointLabel($points) }}
                                             @endif
                                         </p>
 
                                         @if ($memberCanRedeem)
-                                        <form method="POST" action="{{ $redeemPostUrl }}">
-                                            @csrf
-
-                                            <button type="submit" class="inline-flex min-w-[125px] items-center justify-center border border-slate-950 px-6 py-3 text-sm uppercase text-slate-950 hover:bg-slate-950 hover:text-white transition">
-                                                Redeem
-                                            </button>
-                                        </form>
+                                        <button type="button" data-reward-redeem-button data-redeem-action="{{ $redeemPostUrl }}" data-reward-title="{{ e($rewardTitle) }}" data-reward-points="{{ number_format((float) $points, 0) }}" class="inline-flex min-w-[115px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-sm uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium">
+                                            Redeem
+                                        </button>
                                         @else
-                                        <button type="button" disabled class="inline-flex min-w-[125px] items-center justify-center border border-slate-300 bg-slate-100 px-6 py-3 text-sm uppercase text-slate-400 cursor-not-allowed">
+                                        <button type="button" disabled class="inline-flex min-w-[115px] items-center justify-center border border-slate-300 bg-slate-100 px-4 py-2.5 text-sm uppercase text-slate-400 cursor-not-allowed tracking-[0.08em] font-medium">
                                             Not Enough
                                         </button>
                                         @endif
                                     </div>
 
                                     @if (! $memberCanRedeem && $pointsNeeded > 0)
-                                    <p class="mt-3 text-xs leading-relaxed text-slate-500">
-                                        You need {{ number_format($pointsNeeded, 0) }} more points.
+                                    <p class="mt-2 text-sm leading-relaxed text-slate-500">
+                                        You need {{ number_format($pointsNeeded, 0) }} more {{ $pointsNeeded === 1 ? 'point' : 'points' }}.
                                     </p>
                                     @endif
                                 </div>
@@ -763,23 +1111,304 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
                     @endforeach
                 </div>
 
-                <button type="button" class="dashboard-reward-carousel-prev absolute left-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-black text-white md:h-12 md:w-12" aria-label="Previous reward">
+                <button type="button" class="dashboard-reward-carousel-prev absolute left-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-black text-white md:h-12 md:w-12 tracking-[0.08em] font-medium" aria-label="Previous reward">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="h-4 w-4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
                     </svg>
                 </button>
 
-                <button type="button" class="dashboard-reward-carousel-next absolute right-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-black text-white md:h-12 md:w-12" aria-label="Next reward">
+                <button type="button" class="dashboard-reward-carousel-next absolute right-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-black text-white md:h-12 md:w-12 tracking-[0.08em] font-medium" aria-label="Next reward">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="h-4 w-4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
                     </svg>
                 </button>
+            </div>
+
+            <div class="mt-8 text-center">
+                <a href="{{ \Illuminate\Support\Facades\Route::has('membership.privilege-redemption') ? route('membership.privilege-redemption') : '#' }}" class="inline-flex min-w-[145px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-5 py-2.5 text-sm uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium">
+                    View More
+                </a>
             </div>
         </div>
     </section>
     @endif
 
     <script>
+        function loadMemberCardImage(src) {
+            return new Promise(function (resolve, reject) {
+                const image = new Image();
+                image.onload = function () {
+                    resolve(image);
+                };
+                image.onerror = reject;
+                image.src = src;
+            });
+        }
+
+        function fitMemberCardFontSize(ctx, text, maxWidth, initialSize, fontWeight) {
+            let size = initialSize;
+
+            while (size > 10) {
+                ctx.font = fontWeight + ' ' + size + 'px Arial, sans-serif';
+
+                if (ctx.measureText(text).width <= maxWidth) {
+                    return size;
+                }
+
+                size -= 1;
+            }
+
+            return size;
+        }
+
+        function drawMemberCardText(ctx, text, x, y, maxWidth, fontSize, fontWeight, align) {
+            const fittedSize = fitMemberCardFontSize(ctx, text, maxWidth, fontSize, fontWeight);
+
+            ctx.save();
+            ctx.font = fontWeight + ' ' + fittedSize + 'px Arial, sans-serif';
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = align;
+            ctx.textBaseline = 'alphabetic';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
+            ctx.shadowBlur = Math.max(2, Math.round(fittedSize * 0.12));
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = Math.max(1, Math.round(fittedSize * 0.08));
+            ctx.fillText(text, x, y, maxWidth);
+            ctx.restore();
+        }
+
+        function getMemberCardWrappedLines(ctx, text, maxWidth) {
+            const words = text.split(/\s+/).filter(Boolean);
+            const lines = [];
+            let currentLine = '';
+
+            words.forEach(function (word) {
+                const testLine = currentLine ? currentLine + ' ' + word : word;
+
+                if (ctx.measureText(testLine).width <= maxWidth || currentLine === '') {
+                    currentLine = testLine;
+                    return;
+                }
+
+                lines.push(currentLine);
+                currentLine = word;
+            });
+
+            if (currentLine) {
+                lines.push(currentLine);
+            }
+
+            return lines;
+        }
+
+        function fitMemberCardWrappedFontSize(ctx, text, maxWidth, maxHeight, initialSize, fontWeight, lineHeightRatio) {
+            let size = initialSize;
+
+            while (size > 10) {
+                ctx.font = fontWeight + ' ' + size + 'px Arial, sans-serif';
+
+                const lines = getMemberCardWrappedLines(ctx, text, maxWidth);
+                const lineHeight = size * lineHeightRatio;
+
+                if (lines.length * lineHeight <= maxHeight) {
+                    return { size, lines, lineHeight };
+                }
+
+                size -= 1;
+            }
+
+            ctx.font = fontWeight + ' ' + size + 'px Arial, sans-serif';
+
+            return {
+                size,
+                lines: getMemberCardWrappedLines(ctx, text, maxWidth),
+                lineHeight: size * lineHeightRatio,
+            };
+        }
+
+        function drawMemberCardWrappedText(ctx, text, x, y, maxWidth, maxHeight, fontSize, fontWeight, align) {
+            const fitted = fitMemberCardWrappedFontSize(ctx, text, maxWidth, maxHeight, fontSize, fontWeight, 1.2);
+
+            ctx.save();
+            ctx.font = fontWeight + ' ' + fitted.size + 'px Arial, sans-serif';
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = align;
+            ctx.textBaseline = 'top';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
+            ctx.shadowBlur = Math.max(2, Math.round(fitted.size * 0.12));
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = Math.max(1, Math.round(fitted.size * 0.08));
+
+            fitted.lines.forEach(function (line, index) {
+                ctx.fillText(line, x, y + (index * fitted.lineHeight), maxWidth);
+            });
+
+            ctx.restore();
+        }
+
+        function initMemberCardModal() {
+            const openButton = document.querySelector('[data-member-card-open]');
+            const modal = document.querySelector('[data-member-card-modal]');
+
+            if (!openButton || !modal || modal.dataset.initialized === 'true') {
+                return;
+            }
+
+            const closeButtons = modal.querySelectorAll('[data-member-card-close]');
+
+            function openModal() {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                modal.setAttribute('aria-hidden', 'false');
+                modal.removeAttribute('inert');
+                document.body.classList.add('overflow-hidden');
+
+                const downloadButton = modal.querySelector('[data-member-card-download]');
+
+                if (downloadButton) {
+                    downloadButton.focus({ preventScroll: true });
+                }
+            }
+
+            function closeModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                modal.setAttribute('aria-hidden', 'true');
+                modal.setAttribute('inert', '');
+                document.body.classList.remove('overflow-hidden');
+                openButton.focus({ preventScroll: true });
+            }
+
+            modal.dataset.initialized = 'true';
+            openButton.addEventListener('click', openModal);
+
+            closeButtons.forEach(function (button) {
+                button.addEventListener('click', closeModal);
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            });
+        }
+
+        function initMemberCardDownload() {
+            const button = document.querySelector('[data-member-card-download]');
+
+            if (!button || button.dataset.initialized === 'true') {
+                return;
+            }
+
+            button.dataset.initialized = 'true';
+
+            button.addEventListener('click', async function () {
+                const originalLabel = button.getAttribute('aria-label') || 'Download membership card';
+
+                try {
+                    button.disabled = true;
+                    button.setAttribute('aria-label', 'Preparing membership card download');
+
+                    const image = await loadMemberCardImage(button.dataset.cardImage);
+                    const width = image.naturalWidth || 780;
+                    const height = image.naturalHeight || Math.round(width * 9 / 16);
+                    const scale = width / 640;
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(image, 0, 0, width, height);
+
+                    drawMemberCardText(
+                        ctx,
+                        (button.dataset.memberTier || '').toUpperCase(),
+                        width * 0.92,
+                        height * 0.745,
+                        width * 0.28,
+                        Math.round(24 * scale),
+                        '700',
+                        'right'
+                    );
+
+                    drawMemberCardText(
+                        ctx,
+                        (button.dataset.memberPoints || '').toUpperCase(),
+                        width * 0.92,
+                        height * 0.805,
+                        width * 0.28,
+                        Math.round(18 * scale),
+                        '700',
+                        'right'
+                    );
+
+                    drawMemberCardWrappedText(
+                        ctx,
+                        (button.dataset.memberName || '').toUpperCase(),
+                        width * 0.92,
+                        height * 0.42,
+                        width * 0.64,
+                        height * 0.2,
+                        Math.round(32 * scale),
+                        '700',
+                        'right'
+                    );
+
+                    drawMemberCardText(
+                        ctx,
+                        'VALID TILL',
+                        width * 0.92,
+                        height * 0.865,
+                        width * 0.22,
+                        Math.round(12 * scale),
+                        '700',
+                        'right'
+                    );
+
+                    drawMemberCardText(
+                        ctx,
+                        button.dataset.validUntil || '-',
+                        width * 0.92,
+                        height * 0.905,
+                        width * 0.22,
+                        Math.round(12 * scale),
+                        '700',
+                        'right'
+                    );
+
+                    await new Promise(function (resolve, reject) {
+                        canvas.toBlob(function (blob) {
+                            if (!blob) {
+                                reject(new Error('Unable to create membership card image.'));
+                                return;
+                            }
+
+                            const url = URL.createObjectURL(blob);
+                            const link = document.createElement('a');
+
+                            link.href = url;
+                            link.download = button.dataset.downloadName || 'membership-card.png';
+                            document.body.appendChild(link);
+                            link.click();
+                            link.remove();
+
+                            setTimeout(function () {
+                                URL.revokeObjectURL(url);
+                            }, 1000);
+
+                            resolve();
+                        }, 'image/png');
+                    });
+                } catch (error) {
+                    console.error(error);
+                    alert('Unable to download the membership card. Please try again.');
+                } finally {
+                    button.disabled = false;
+                    button.setAttribute('aria-label', originalLabel);
+                }
+            });
+        }
+
         function initDashboardRewardCarousel(attempt = 0) {
             if (!window.jQuery || !jQuery.fn || !jQuery.fn.slick) {
                 if (attempt < 30) {
@@ -837,6 +1466,63 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
             }
         }
 
+        function initDashboardAccommodationCarousel(attempt = 0) {
+            if (!window.jQuery || !jQuery.fn || !jQuery.fn.slick) {
+                if (attempt < 30) {
+                    setTimeout(function () {
+                        initDashboardAccommodationCarousel(attempt + 1);
+                    }, 150);
+                }
+
+                return;
+            }
+
+            const $carousel = jQuery('.dashboard-accommodation-carousel');
+
+            if (!$carousel.length || $carousel.hasClass('slick-initialized')) {
+                return;
+            }
+
+            const total = parseInt($carousel.attr('data-total') || '0', 10);
+
+            if (total <= 0) {
+                return;
+            }
+
+            const desktopSlides = Math.min(total, 3);
+            const tabletSlides = Math.min(total, 2);
+            const mobileSlides = 1;
+
+            $carousel.slick({
+                slidesToShow: desktopSlides,
+                slidesToScroll: 1,
+                arrows: total > 1,
+                infinite: total > desktopSlides,
+                prevArrow: jQuery('.dashboard-accommodation-carousel-prev'),
+                nextArrow: jQuery('.dashboard-accommodation-carousel-next'),
+                responsive: [
+                    {
+                        breakpoint: 1024,
+                        settings: {
+                            slidesToShow: tabletSlides,
+                            infinite: total > tabletSlides,
+                        },
+                    },
+                    {
+                        breakpoint: 640,
+                        settings: {
+                            slidesToShow: mobileSlides,
+                            infinite: total > mobileSlides,
+                        },
+                    },
+                ],
+            });
+
+            if (total <= 1) {
+                jQuery('.dashboard-accommodation-carousel-prev, .dashboard-accommodation-carousel-next').addClass('hidden');
+            }
+        }
+
         function initHistoryViewMore() {
             const button = document.querySelector('[data-history-view-more]');
 
@@ -855,14 +1541,64 @@ $dashboardRewards = $dashboardRewards->shuffle()->take(9)->values();
             });
         }
 
+        function initMembershipDashboardTabs() {
+            const tabs = Array.from(document.querySelectorAll('[data-dashboard-tab]'));
+            const panels = Array.from(document.querySelectorAll('[data-dashboard-tab-panel]'));
+
+            if (!tabs.length || !panels.length) {
+                return;
+            }
+
+            function activate(tabName) {
+                tabs.forEach(function (tab) {
+                    const isActive = tab.dataset.dashboardTab === tabName;
+
+                    tab.classList.toggle('bg-[#A67C3D]', isActive);
+                    tab.classList.toggle('border-[#A67C3D]', isActive);
+                    tab.classList.toggle('text-white', isActive);
+                    tab.classList.toggle('bg-white', !isActive);
+                    tab.classList.toggle('border-slate-300', !isActive);
+                    tab.classList.toggle('text-slate-700', !isActive);
+                    tab.classList.toggle('hover:text-white', isActive);
+                    tab.classList.toggle('hover:text-[#A67C3D]', !isActive);
+                });
+
+                panels.forEach(function (panel) {
+                    panel.classList.toggle('hidden', panel.dataset.dashboardTabPanel !== tabName);
+                });
+
+            }
+
+            tabs.forEach(function (tab) {
+                if (tab.dataset.initialized === 'true') {
+                    return;
+                }
+
+                tab.dataset.initialized = 'true';
+                tab.addEventListener('click', function () {
+                    activate(tab.dataset.dashboardTab);
+                });
+            });
+
+            activate('bookings');
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             initDashboardRewardCarousel();
+            initDashboardAccommodationCarousel();
             initHistoryViewMore();
+            initMemberCardModal();
+            initMemberCardDownload();
+            initMembershipDashboardTabs();
         });
 
         window.addEventListener('load', function () {
             initDashboardRewardCarousel();
+            initDashboardAccommodationCarousel();
             initHistoryViewMore();
+            initMemberCardModal();
+            initMemberCardDownload();
+            initMembershipDashboardTabs();
         });
     </script>
 </x-layouts.app>

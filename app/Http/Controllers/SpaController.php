@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Page;
 use App\Models\Spa;
+use App\Support\MemberBookingVoucher;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use Illuminate\View\View;
@@ -92,11 +93,11 @@ class SpaController extends Controller
     private function resolveBookingUrl(Spa $spa): ?string
     {
         if (! empty($spa->booking_url_override)) {
-            return $spa->booking_url_override;
+            return MemberBookingVoucher::appendToUrl($spa->booking_url_override);
         }
 
         if (! empty($spa->button_url)) {
-            return $spa->button_url;
+            return MemberBookingVoucher::appendToUrl($spa->button_url);
         }
 
         $checkinDate = $this->resolveBookingCheckinDate($spa);
@@ -114,8 +115,10 @@ class SpaController extends Controller
             return null;
         }
 
-        return 'https://nandinijunglebyhanginggardens.reserve-online.net/'
-            . '?' . http_build_query($query);
+        return MemberBookingVoucher::appendToUrl(
+            'https://nandinijunglebyhanginggardens.reserve-online.net/'
+            . '?' . http_build_query($query)
+        );
     }
 
     private function resolveBookingCheckinDate(Spa $spa): ?string

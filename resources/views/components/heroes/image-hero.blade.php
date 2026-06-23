@@ -35,7 +35,7 @@ $mobileImageSrc = $mobileImageSrcManual ?: $imageSrc;
             <source media="(max-width: 767px)" srcset="{{ $mobileImageSrc }}">
             @endif
 
-            <img src="{{ $desktopImageSrc ?: $mobileImageSrc }}" alt="{{ $alt }}" class="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+            <img src="{{ $desktopImageSrc ?: $mobileImageSrc }}" alt="{{ $alt }}" class="absolute inset-0 w-full h-full object-cover" width="1920" height="1080" loading="eager" fetchpriority="high" decoding="async" />
         </picture>
         @endif
     </div>

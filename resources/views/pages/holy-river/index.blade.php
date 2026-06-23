@@ -34,13 +34,17 @@ $metaImage = $page->hero_image ?? $page->hero_mobile_image ?? null;
 @endpush
 
 <x-layouts.app>
-    <x-heroes.video-hero video-id="eh5h5P6_3LQ" />
+    <x-heroes.video-hero video-id="DQGm1PB0828" />
 
     <x-sections.video-text-section :page="$page" video-id="eh5h5P6_3LQ" />
 
     @foreach ($sections as $section)
     @if ($section->section_key === 'image_overlay_section')
     <x-sections.image-overlay-section :section="$section" />
+    @endif
+
+    @if ($section->section_key === 'contained_image_section')
+    <x-sections.contained-image-section :section="$section" />
     @endif
 
     @if ($section->section_key === 'split_media_section')

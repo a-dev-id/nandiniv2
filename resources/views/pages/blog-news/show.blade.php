@@ -69,7 +69,7 @@ $metaImage = $blog->hero_image
             <source media="(max-width: 767px)" srcset="{{ asset('storage/' . $heroMobileImage) }}">
             @endif
 
-            <img src="{{ asset('storage/' . $heroImage) }}" alt="{{ $heroAlt }}" class="w-full h-[65vh] md:h-[85vh] object-cover object-center">
+            <img src="{{ asset('storage/' . $heroImage) }}" alt="{{ $heroAlt }}" class="w-full h-[65vh] md:h-[85vh] object-cover object-center" width="1920" height="1080" loading="eager" fetchpriority="high" decoding="async">
         </picture>
     </section>
     @endif
@@ -77,7 +77,7 @@ $metaImage = $blog->hero_image
     {{-- Blog Content --}}
     <section class="py-14 md:py-20 px-6">
         <div class="max-w-4xl mx-auto text-center">
-            <p class="mb-4 text-xs uppercase tracking-[0.22em] text-slate-500">
+            <p class="mb-4 text-sm uppercase text-slate-500">
                 {{ ucfirst($blog->type) }}
 
                 @if ($publishedDate)
@@ -85,12 +85,12 @@ $metaImage = $blog->hero_image
                 @endif
             </p>
 
-            <h1 class="text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 mb-6 md:mb-8 font-medium">
+            <h1 class="text-2xl leading-snug uppercase text-slate-700 font-medium mb-3">
                 {{ $blog->title }}
             </h1>
 
             @if (! empty($blog->subtitle))
-            <p class="text-lg md:text-xl text-slate-700 mb-8 uppercase tracking-[0.15em]">
+            <p class="text-lg md:text-xl text-slate-700 mb-8 uppercase">
                 {{ $blog->subtitle }}
             </p>
             @endif
@@ -102,27 +102,11 @@ $metaImage = $blog->hero_image
             @endif
 
             @if (! empty($blog->description))
-            <div class="prose prose-slate text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto
-                [&_p]:mb-4
-                [&_p]:min-h-6
-                [&_p:last-child]:mb-0
-                [&_strong]:font-semibold
-                [&_strong]:text-slate-900
-                [&_ul]:my-6
-                [&_ol]:my-6
-                [&_li]:mb-1
-                [&_h2]:mt-10
-                [&_h2]:mb-4
-                [&_h2]:text-xl sm:[&_h2]:text-2xl md:[&_h2]:text-[28px]
-                [&_h2]:font-semibold
-                [&_h3]:mt-8
-                [&_h3]:mb-3
-                [&_h3]:text-lg sm:[&_h3]:text-xl
-                [&_h3]:font-semibold">
+            <div class="prose prose-slate text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto [&_p]:mb-4 [&_p]:min-h-6 [&_p:last-child]:mb-0 [&_strong]:font-semibold text-slate-700 [&_ul]:my-6 [&_ol]:my-6 [&_li]:mb-1 [&_h2]:mt-10 [&_h1]:mb-3 [&_h2]:mb-3 [&_h3]:mb-3 [&_h2]:text-xl [&_h2]:font-semibold [&_h3]:mt-8 [&_h3]:text-lg [&_h3]:font-semibold">
                 {!! $blog->description !!}
             </div>
             @elseif (! empty($blog->excerpt))
-            <p class="text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+            <p class="text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                 {{ $blog->excerpt }}
             </p>
             @endif
@@ -160,13 +144,17 @@ $metaImage = $blog->hero_image
     @elseif ($section->section_key === 'video_text_section')
     <x-sections.video-text-section :section="$section" />
     @endif
+
+    @if ($section->section_key === 'contained_image_section')
+    <x-sections.contained-image-section :section="$section" />
+    @endif
     @endforeach
 
     {{-- Related Blog --}}
     @if ($relatedBlogs->isNotEmpty())
     <section class="pt-14 md:pt-20">
         <div class="px-6 mb-10 text-center">
-            <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
+            <h2 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3">
                 Related Articles
             </h2>
         </div>

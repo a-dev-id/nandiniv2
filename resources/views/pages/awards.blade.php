@@ -69,7 +69,7 @@
             @endphp
 
             <article class="border-b border-slate-200 py-10 md:py-12">
-                <h2 class="mb-8 text-2xl sm:text-3xl md:text-3xl leading-snug font-medium uppercase tracking-[0.12em] text-slate-800">
+                <h2 class="text-xl leading-snug font-medium uppercase text-slate-700 mb-3">
                     {{ $award->title }}
                 </h2>
 
@@ -82,7 +82,7 @@
 
                     <div class="flex min-w-0 flex-1 flex-col">
                         @if ($descriptionText !== '')
-                        <p class="text-[15px] leading-7 text-slate-700">
+                        <p class="text-sm leading-7 text-slate-700">
                             {{ $descriptionText }}
                         </p>
                         @endif

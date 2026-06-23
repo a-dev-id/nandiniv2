@@ -48,6 +48,10 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
                 <x-sections.image-overlay-section :section="$section" />
                 @break
 
+            @case('contained_image_section')
+                <x-sections.contained-image-section :section="$section" />
+                @break
+
             @case('split_media_section')
                 <x-sections.split-media-section :section="$section" :excerpt-only="false" image-span="8" text-span="4" />
                 @break

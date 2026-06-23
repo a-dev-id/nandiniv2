@@ -10,6 +10,7 @@ use App\Services\RewardRedemptionService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\View\View;
 use InvalidArgumentException;
 use Throwable;
@@ -30,14 +31,34 @@ class MemberRewardRedemptionController extends Controller
         }
 
         $validated = $request->validate([
+            'redeem_date' => ['required', 'date', 'after_or_equal:today'],
+            'redeem_time' => ['required', 'date_format:H:i'],
+            'reward_title' => ['nullable', 'string', 'max:255'],
+            'reward_points' => ['nullable', 'string', 'max:50'],
             'notes' => ['nullable', 'string', 'max:1000'],
+            'special_request' => ['nullable', 'string', 'max:1000'],
         ]);
+
+        $redeemDate = Carbon::parse($validated['redeem_date'])->format('d F Y');
+        $redeemTime = Carbon::createFromFormat('H:i', $validated['redeem_time'])->format('H:i');
+        $notes = implode(PHP_EOL, array_filter([
+            'Preferred date: ' . $redeemDate,
+            'Preferred time: ' . $redeemTime,
+            'Member name: ' . ($member->full_name ?: $member->name ?: '-'),
+            'Email: ' . ($member->email ?: '-'),
+            'Phone / WhatsApp: ' . ($member->phone_number ?: '-'),
+            'Country: ' . ($member->country ?: '-'),
+            'Tier: ' . ($member->tier_label ?: '-'),
+            'Available points at request: ' . number_format((int) $member->points),
+            filled($validated['special_request'] ?? null) ? 'Special request: ' . $validated['special_request'] : null,
+            filled($validated['notes'] ?? null) ? 'Notes: ' . $validated['notes'] : null,
+        ]));
 
         try {
             $redemption = $rewardRedemptionService->redeem(
                 member: $member,
                 reward: $reward,
-                notes: $validated['notes'] ?? null
+                notes: $notes
             );
 
             return redirect()

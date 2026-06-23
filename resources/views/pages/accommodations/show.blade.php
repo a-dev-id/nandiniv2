@@ -43,10 +43,10 @@ $metaImage = $accommodation->hero_image
             <source media="(max-width: 767px)" srcset="{{ asset('storage/' . $accommodation->hero_mobile_image) }}">
             @endif
 
-            <img src="{{ asset('storage/' . ($accommodation->hero_image ?: $accommodation->hero_mobile_image)) }}" alt="{{ $accommodation->hero_image_alt ?: $accommodation->title }}" class="absolute inset-0 w-full h-full object-cover object-center">
+            <img src="{{ asset('storage/' . ($accommodation->hero_image ?: $accommodation->hero_mobile_image)) }}" alt="{{ $accommodation->hero_image_alt ?: $accommodation->title }}" class="absolute inset-0 w-full h-full object-cover object-center" width="1920" height="1080" loading="eager" fetchpriority="high" decoding="async">
         </picture>
         @elseif ($accommodation->card_image)
-        <img src="{{ asset('storage/' . $accommodation->card_image) }}" alt="{{ $accommodation->card_image_alt ?: $accommodation->title }}" class="absolute inset-0 w-full h-full object-cover object-center">
+        <img src="{{ asset('storage/' . $accommodation->card_image) }}" alt="{{ $accommodation->card_image_alt ?: $accommodation->title }}" class="absolute inset-0 w-full h-full object-cover object-center" width="1920" height="1080" loading="eager" fetchpriority="high" decoding="async">
         @endif
 
         <div class="absolute inset-0 bg-black/20"></div>
@@ -55,28 +55,18 @@ $metaImage = $accommodation->hero_image
     {{-- Intro --}}
     <section class="py-14 md:py-20 px-6 text-center bg-white">
         <div class="max-w-5xl mx-auto">
-            <h1 class="text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 mb-6 md:mb-8 font-medium">
+            <h1 class="text-2xl leading-snug uppercase text-slate-700 font-medium mb-3">
                 {{ $accommodation->title }}
             </h1>
 
             @if ($accommodation->excerpt)
-            <p class="text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+            <p class="text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                 {{ $accommodation->excerpt }}
             </p>
             @endif
 
             @if ($accommodation->description)
-            <div class="text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto
-                    [&_p]:mb-5
-                    [&_p:last-child]:mb-0
-                    [&_ul]:list-disc
-                    [&_ul]:pl-6
-                    [&_ul]:mb-5
-                    [&_ol]:list-decimal
-                    [&_ol]:pl-6
-                    [&_ol]:mb-5
-                    [&_li]:mb-2
-                    [&_strong]:text-slate-900">
+            <div class="text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto [&_p]:mb-5 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-5 [&_li]:mb-2 text-slate-700">
                 {!! $accommodation->description !!}
             </div>
             @endif
@@ -90,7 +80,7 @@ $metaImage = $accommodation->hero_image
     @if ($relatedAccommodations->isNotEmpty())
     <section class="pt-14 md:pt-20 bg-white">
         <div class="px-6 mb-10 text-center">
-            <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
+            <h2 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3">
                 You May Also Like
             </h2>
         </div>

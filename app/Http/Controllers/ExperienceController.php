@@ -3,13 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\Experience;
+use App\Models\ExperienceCategory;
 use App\Models\Page;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ExperienceController extends Controller
 {
-    public function index(): View
+    public function index(Request $request, ?string $categorySlug = null): View|RedirectResponse
     {
+        $queryCategory = $request->query('category');
+
+        if (filled($queryCategory)) {
+            return $queryCategory === 'all'
+                ? redirect()->route('experiences.index', [], 301)
+                : redirect()->route('experiences.category', ['categorySlug' => $queryCategory], 301);
+        }
+
+        if ($categorySlug !== null) {
+            abort_if($categorySlug === 'holy-river', 404);
+
+            ExperienceCategory::query()
+                ->where('slug', $categorySlug)
+                ->where('is_active', true)
+                ->firstOrFail();
+        }
+
         $page = Page::query()
             ->where('id', 5)
             ->where('is_active', true)
@@ -32,6 +52,7 @@ class ExperienceController extends Controller
         return view('pages.experiences.index', [
             'page' => $page,
             'experiences' => $experiences,
+            'activeCategory' => $categorySlug,
         ]);
     }
 

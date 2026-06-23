@@ -31,9 +31,15 @@ $headerAlignClass = match ($textAlign) {
 default => 'text-left',
 };
 
+$descriptionAlignClass = match ($textAlign) {
+'center' => 'text-center mx-auto',
+'right' => 'text-right ml-auto',
+default => 'text-left',
+};
+
 $titleColorClass = $backgroundColor === 'dark_navy'
 ? 'text-white'
-: 'text-slate-800';
+: 'text-slate-700';
 
 $descriptionColorClass = $backgroundColor === 'dark_navy'
 ? 'text-white/85'
@@ -45,7 +51,7 @@ $borderColorClass = $backgroundColor === 'dark_navy'
 
 $questionColorClass = $backgroundColor === 'dark_navy'
 ? 'text-white'
-: 'text-slate-900';
+: 'text-slate-700';
 
 $answerColorClass = $backgroundColor === 'dark_navy'
 ? 'text-white/80'
@@ -57,6 +63,9 @@ $iconLineClass = $backgroundColor === 'dark_navy'
 
 $buttonLabel = trim((string) ($section?->button_label ?: $contactLabel));
 $buttonUrl = trim((string) ($section?->button_url ?: $contactUrl)) ?: '#';
+$buttonClass = $backgroundColor === 'dark_navy'
+? 'border-[#A67C3D] bg-[#A67C3D] text-white hover:bg-white hover:text-[#071a33] hover:border-white'
+: 'border-[#A67C3D] bg-[#A67C3D] text-white hover:bg-[#B8945B] hover:border-[#B8945B]';
 
 if (($section?->button_link_type ?? 'manual') === 'route' && $section?->button_route) {
 $buttonUrl = \Illuminate\Support\Facades\Route::has($section->button_route)
@@ -112,7 +121,7 @@ $faqs = count($sectionItems) > 0 ? $sectionItems : $defaultItems;
 
         <div class="{{ $headerAlignClass }}">
             @if ($hasSubtitle)
-            <p class="mb-4 text-sm md:text-base leading-relaxed tracking-[0.18em] uppercase text-[#b28a4a] font-medium">
+            <p class="mb-4 text-sm md:text-base leading-relaxed uppercase text-[#b28a4a] font-medium">
                 {!! str_ireplace(
                 ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
                 '<br class="hidden md:block">',
@@ -122,7 +131,7 @@ $faqs = count($sectionItems) > 0 ? $sectionItems : $defaultItems;
             @endif
 
             @if ($hasTitle)
-            <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase font-medium {{ $titleColorClass }}">
+            <h2 class="text-xl leading-snug uppercase font-medium {{ $titleColorClass }} mb-3">
                 {!! str_ireplace(
                 ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
                 '<br class="hidden md:block">',
@@ -132,13 +141,13 @@ $faqs = count($sectionItems) > 0 ? $sectionItems : $defaultItems;
             @endif
 
             @if ($hasDescription)
-            <div class="mt-8 text-[15px] sm:text-base leading-relaxed max-w-2xl sm:max-w-3xl md:max-w-5xl {{ $descriptionColorClass }} {{ $textAlign === 'center' ? 'mx-auto' : '' }} {{ $textAlign === 'right' ? 'ml-auto' : '' }}">
+            <div class="mt-8 text-sm leading-relaxed max-w-2xl sm:max-w-3xl md:max-w-5xl {{ $descriptionColorClass }} {{ $descriptionAlignClass }}">
                 {!! $description !!}
             </div>
             @endif
 
             @if ($buttonLabel)
-            <a href="{{ $buttonUrl }}" class="mt-8 inline-flex min-w-[145px] items-center justify-center border {{ $borderColorClass }} px-6 py-4 text-xs font-semibold uppercase tracking-[0.22em] {{ $questionColorClass }} transition duration-300 hover:border-[#b28a4a] hover:bg-[#b28a4a] hover:text-white">
+            <a href="{{ $buttonUrl }}" class="mt-8 inline-flex min-w-[130px] items-center justify-center border px-4 py-2.5 text-sm font-medium uppercase transition duration-300 {{ $buttonClass }} tracking-[0.08em]">
                 {{ $buttonLabel }}
             </a>
             @endif
@@ -153,8 +162,8 @@ $faqs = count($sectionItems) > 0 ? $sectionItems : $defaultItems;
             @endphp
 
             <div x-data="{ open: false }" class="border {{ $borderColorClass }}">
-                <button type="button" class="flex w-full items-center justify-between gap-6 px-6 py-6 text-left" @click="open = !open" :aria-expanded="open.toString()" aria-controls="{{ $itemId }}">
-                    <span class="text-[15px] font-semibold leading-7 {{ $questionColorClass }}">
+                <button type="button" class="flex w-full items-center justify-between gap-6 px-4 py-6 text-left tracking-[0.08em] font-medium" @click="open = !open" :aria-expanded="open.toString()" aria-controls="{{ $itemId }}">
+                    <span class="text-sm font-semibold leading-7 {{ $questionColorClass }}">
                         {{ $question }}
                     </span>
 
@@ -166,7 +175,7 @@ $faqs = count($sectionItems) > 0 ? $sectionItems : $defaultItems;
 
                 @if ($answer)
                 <div id="{{ $itemId }}" x-show="open" x-collapse class="px-6 pb-6">
-                    <div class="max-w-3xl text-[15px] sm:text-base leading-relaxed {{ $answerColorClass }}">
+                    <div class="max-w-3xl text-sm leading-relaxed {{ $answerColorClass }}">
                         {!! nl2br(e($answer)) !!}
                     </div>
                 </div>

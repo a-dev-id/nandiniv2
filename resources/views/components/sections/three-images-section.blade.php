@@ -70,7 +70,7 @@ $displayButtonLink = $section?->button_url;
                     <div class="absolute inset-0 bg-black/0 transition duration-500 group-hover:bg-black/35"></div>
 
                     <div class="absolute inset-0 flex items-center justify-center px-6 opacity-0 transition duration-500 group-hover:opacity-100">
-                        <p class="text-white text-center uppercase tracking-[0.22em] text-sm font-medium">
+                        <p class="text-white text-center uppercase text-sm font-medium">
                             {{ $imageAlt }}
                         </p>
                     </div>
@@ -96,7 +96,7 @@ $displayButtonLink = $section?->button_url;
                 {{-- <div class="absolute inset-0 bg-black/0 transition duration-500 group-hover:bg-black/35"></div>
 
                 <div class="absolute inset-0 flex items-center justify-center px-6 opacity-0 transition duration-500 group-hover:opacity-100">
-                    <p class="text-white text-center uppercase tracking-[0.22em] text-sm md:text-base font-medium">
+                    <p class="text-white text-center uppercase text-sm md:text-base font-medium">
                         {{ $imageAlt }}
                     </p>
                 </div> --}}
@@ -111,20 +111,20 @@ $displayButtonLink = $section?->button_url;
     <div class="text-center mt-10 md:mt-16 max-w-3xl mx-auto px-6">
 
         @if ($displayTitle)
-        <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] text-slate-800 uppercase mb-6 font-medium">
+        <h2 class="text-xl leading-snug text-slate-700 uppercase font-medium mb-3">
             {{ $displayTitle }}
         </h2>
         @endif
 
         @if ($displayDescription)
-        <div class="text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+        <div class="text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
             {!! $displayDescription !!}
         </div>
         @endif
 
         @if ($displayButtonText && $displayButtonLink)
         <div class="mt-10">
-            <a href="{{ $displayButtonLink }}" class="inline-flex items-center justify-center bg-[#A67C3D] text-white px-7 py-3 uppercase tracking-[0.22em] text-[12px] font-bold hover:bg-[#8F6B34] transition">
+            <a href="{{ $displayButtonLink }}" class="inline-flex items-center justify-center bg-[#A67C3D] text-white px-5 py-2.5 uppercase text-sm font-medium hover:bg-[#B8945B] transition tracking-[0.08em]">
                 {{ $displayButtonText }}
             </a>
         </div>

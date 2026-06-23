@@ -45,12 +45,12 @@
 
     <section class="px-6 py-14 md:py-20">
         <div class="mx-auto max-w-6xl text-center">
-            <h1 class="text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 mb-6 md:mb-8 font-medium">
+            <h1 class="text-2xl leading-snug uppercase text-slate-700 font-medium mb-3">
                 {{ $page->title }}
             </h1>
 
             @if ($descriptionText !== '')
-            <div class="text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+            <div class="text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                 {!! $descriptionHtml !!}
             </div>
             @endif
@@ -64,7 +64,7 @@
                         </svg>
                     </div>
 
-                    <a href="tel:{{ $phoneClean }}" class="text-[15px] leading-7 text-slate-700 hover:text-[#A67C3D]">
+                    <a href="tel:{{ $phoneClean }}" class="text-sm leading-7 text-slate-700 hover:text-[#A67C3D]">
                         {{ $phone }}
                     </a>
                 </div>
@@ -77,13 +77,13 @@
                         </svg>
                     </div>
 
-                    <p class="max-w-xs text-[15px] leading-7 text-slate-700">
+                    <p class="max-w-xs text-sm leading-7 text-slate-700">
                         Banjar Susut, Desa Buahan,<br>
                         Payangan, Bali 80571,<br>
                         Indonesia
                     </p>
 
-                    <a href="https://wa.me/{{ $phoneClean }}" target="_blank" rel="noopener" class="mt-8 inline-flex items-center gap-3 bg-[#004225] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#00351e]">
+                    <a href="https://wa.me/{{ $phoneClean }}" target="_blank" rel="noopener" class="mt-8 inline-flex items-center gap-3 bg-[#004225] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#00351e] tracking-[0.08em]">
                         Chat with Us
 
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 32 32" fill="currentColor">
@@ -100,18 +100,18 @@
                         </svg>
                     </div>
 
-                    <a href="mailto:{{ $reservationEmail }}" class="text-[15px] leading-7 text-slate-700 hover:text-[#A67C3D]">
+                    <a href="mailto:{{ $reservationEmail }}" class="text-sm leading-7 text-slate-700 hover:text-[#A67C3D]">
                         {{ $reservationEmail }}
                     </a>
                 </div>
             </div>
 
             <div class="mt-14">
-                <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.14em] uppercase font-medium text-slate-800">
+                <h2 class="text-xl leading-snug uppercase font-medium text-slate-700 mb-3">
                     Press &amp; Media Partnership
                 </h2>
 
-                <a href="mailto:{{ $mediaEmail }}" class="mt-2 inline-block text-[15px] leading-7 text-slate-700 hover:text-[#A67C3D]">
+                <a href="mailto:{{ $mediaEmail }}" class="mt-2 inline-block text-sm leading-7 text-slate-700 hover:text-[#A67C3D]">
                     {{ $mediaEmail }}
                 </a>
             </div>

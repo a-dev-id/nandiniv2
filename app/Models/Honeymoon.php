@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\MemberBookingVoucher;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -93,11 +94,11 @@ class Honeymoon extends Model
     public function getResolvedBookingUrlAttribute(): ?string
     {
         if (filled($this->booking_url_override)) {
-            return $this->booking_url_override;
+            return MemberBookingVoucher::appendToUrl($this->booking_url_override);
         }
 
         if (filled($this->button_url)) {
-            return $this->button_url;
+            return MemberBookingVoucher::appendToUrl($this->button_url);
         }
 
         return null;

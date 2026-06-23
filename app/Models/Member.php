@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Notifications\MemberResetPasswordNotification;
+use App\Notifications\MemberPointsAddedNotification;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 
 class Member extends Authenticatable
@@ -40,9 +43,11 @@ class Member extends Authenticatable
         'membership_started_at',
         'membership_expires_at',
         'last_tier_downgraded_at',
+        'membership_expiry_reminder_sent_at',
         'marketing_consent',
         'points',
         'email_verified_at',
+        'welcome_email_sent_at',
     ];
 
     protected $hidden = [
@@ -52,10 +57,12 @@ class Member extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'welcome_email_sent_at' => 'datetime',
         'date_of_birth' => 'date',
         'membership_started_at' => 'datetime',
         'membership_expires_at' => 'datetime',
         'last_tier_downgraded_at' => 'datetime',
+        'membership_expiry_reminder_sent_at' => 'datetime',
         'marketing_consent' => 'boolean',
         'must_change_password' => 'boolean',
         'points' => 'integer',
@@ -72,6 +79,16 @@ class Member extends Authenticatable
         return $this->hasMany(MemberRewardRedemption::class);
     }
 
+    public function syncedBookings(): HasMany
+    {
+        return $this->hasMany(SyncedWebhotelierBooking::class);
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new MemberResetPasswordNotification($token));
+    }
+
     public function getFullNameAttribute(): string
     {
         $fullName = trim(($this->first_name ?? '') . ' ' . ($this->last_name ?? ''));
@@ -81,11 +98,26 @@ class Member extends Authenticatable
 
     public function getTierLabelAttribute(): string
     {
-        return match ($this->tier) {
-            self::TIER_PLATINUM => 'Jnana / Platinum',
-            self::TIER_GOLD => 'Dhyana / Gold',
-            self::TIER_SILVER => 'Upaya / Silver',
-            default => 'Dana / Bronze',
+        return self::getTierLabelForTier((string) $this->tier);
+    }
+
+    public static function getTierLabelForTier(string $tier): string
+    {
+        return match ($tier) {
+            self::TIER_PLATINUM => 'Jnana',
+            self::TIER_GOLD => 'Dhyana',
+            self::TIER_SILVER => 'Upaya',
+            default => 'Dana',
+        };
+    }
+
+    public static function getTierRank(string $tier): int
+    {
+        return match ($tier) {
+            self::TIER_PLATINUM => 4,
+            self::TIER_GOLD => 3,
+            self::TIER_SILVER => 2,
+            default => 1,
         };
     }
 
@@ -134,6 +166,17 @@ class Member extends Authenticatable
         };
     }
 
+    public static function calculatePointsFromConsumption(int|float|null $totalConsumption): int
+    {
+        $totalConsumption = (float) $totalConsumption;
+
+        if ($totalConsumption <= 0) {
+            return 0;
+        }
+
+        return (int) floor((($totalConsumption / 1.21) * 0.05) / 1000);
+    }
+
     public static function getDowngradedTier(string $tier): string
     {
         return match ($tier) {
@@ -146,42 +189,7 @@ class Member extends Authenticatable
 
     public function applyYearlyTierDowngrade(): bool
     {
-        if (! $this->membership_expires_at) {
-            return false;
-        }
-
-        if ($this->membership_expires_at->isFuture()) {
-            return false;
-        }
-
-        $currentPoints = (int) $this->points;
-        $newTier = self::getDowngradedTier($this->tier ?? self::TIER_BRONZE);
-        $newTierMaximumPoints = self::getMaximumPointsForTier($newTier);
-        $newPoints = $newTierMaximumPoints === null
-            ? $currentPoints
-            : min($currentPoints, $newTierMaximumPoints);
-
-        $this->forceFill([
-            'tier' => $newTier,
-            'points' => $newPoints,
-            'membership_started_at' => now(),
-            'membership_expires_at' => now()->addYear(),
-            'last_tier_downgraded_at' => now(),
-        ])->save();
-
-        $pointsAdjustment = $newPoints - $currentPoints;
-
-        if ($pointsAdjustment !== 0) {
-            $this->pointTransactions()->create([
-                'type' => self::POINT_TYPE_ADJUSTMENT,
-                'points' => $pointsAdjustment,
-                'description' => 'Yearly tier downgrade point adjustment',
-                'reference_type' => 'member',
-                'reference_id' => $this->id,
-            ]);
-        }
-
-        return true;
+        return app(\App\Services\MembershipLifecycleService::class)->processExpiredMember($this) === 'downgraded';
     }
 
     public function syncTierFromPoints(): void
@@ -228,6 +236,9 @@ class Member extends Authenticatable
                 throw new InvalidArgumentException('Member does not have enough points.');
             }
 
+            $previousTier = (string) ($this->tier ?? self::TIER_BRONZE);
+            $previousPoints = (int) $this->points;
+
             $transaction = $this->pointTransactions()->create([
                 'type' => $type,
                 'points' => $points,
@@ -242,7 +253,35 @@ class Member extends Authenticatable
                 $this->syncTierFromPoints();
             }
 
+            if ($type !== self::POINT_TYPE_REDEEM && $points > 0) {
+                $this->extendMembershipValidityForPointAddition();
+            }
+
             $this->save();
+
+            $newTier = (string) ($this->tier ?? self::TIER_BRONZE);
+
+            if ($type === self::POINT_TYPE_EARN) {
+                DB::afterCommit(function () use ($points, $description, $previousTier, $previousPoints, $newTier): void {
+                    try {
+                        $this->notify(new MemberPointsAddedNotification(
+                            $points,
+                            (int) $this->points,
+                            $previousPoints,
+                            $previousTier,
+                            $newTier,
+                            $description
+                        ));
+                    } catch (\Throwable $e) {
+                        Log::warning('Member points added email could not be sent.', [
+                            'member_id' => $this->id,
+                            'email' => $this->email,
+                            'points_added' => $points,
+                            'message' => $e->getMessage(),
+                        ]);
+                    }
+                });
+            }
 
             return $transaction;
         });
@@ -276,5 +315,21 @@ class Member extends Authenticatable
             $referenceType,
             $referenceId
         );
+    }
+
+    protected function extendMembershipValidityForPointAddition(): void
+    {
+        $now = now();
+        $currentExpiry = $this->membership_expires_at;
+
+        if (! $this->membership_started_at || ($currentExpiry && $currentExpiry->lte($now))) {
+            $this->membership_started_at = $now;
+        }
+
+        $this->membership_expires_at = $currentExpiry && $currentExpiry->gt($now)
+            ? $currentExpiry->copy()->addYear()
+            : $now->copy()->addYear();
+
+        $this->membership_expiry_reminder_sent_at = null;
     }
 }

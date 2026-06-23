@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\MiniPopups\Schemas;
 
+use App\Support\FilamentWebpUpload;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -11,6 +12,9 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class MiniPopupForm
 {
@@ -97,7 +101,23 @@ class MiniPopupForm
                                     ->panelAspectRatio('4:5')
                                     ->panelLayout('integrated')
                                     ->openable()
-                                    ->downloadable(),
+                                    ->downloadable()
+                                    ->saveUploadedFileUsing(
+                                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
+                                            file: $file,
+                                            directory: 'mini-popups',
+                                            targetWidth: 800,
+                                            targetHeight: 1000,
+                                            fileName: $get('image_file_name'),
+                                        )
+                                    ),
+
+                                TextInput::make('image_file_name')
+                                    ->label('Image File Name')
+                                    ->placeholder('example-popup-image')
+                                    ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
+                                    ->maxLength(120)
+                                    ->dehydrated(false),
 
                                 TextInput::make('image_alt')
                                     ->label('Image Alt Text')
@@ -110,5 +130,95 @@ class MiniPopupForm
                             ]),
                     ]),
             ]);
+    }
+
+    private static function storeAsWebp(
+        TemporaryUploadedFile $file,
+        string $directory,
+        int $targetWidth,
+        int $targetHeight,
+    ): string {
+        $disk = Storage::disk('public');
+
+        $disk->makeDirectory($directory);
+
+        $sourcePath = $file->getRealPath();
+        $mimeType = $file->getMimeType();
+
+        $sourceImage = match ($mimeType) {
+            'image/jpeg', 'image/jpg' => imagecreatefromjpeg($sourcePath),
+            'image/png' => imagecreatefrompng($sourcePath),
+            'image/webp' => imagecreatefromwebp($sourcePath),
+            default => null,
+        };
+
+        if (! $sourceImage) {
+            return $file->store($directory, 'public');
+        }
+
+        if (in_array($mimeType, ['image/jpeg', 'image/jpg'], true) && function_exists('exif_read_data')) {
+            $sourceImage = self::fixImageOrientation($sourceImage, $sourcePath);
+        }
+
+        $sourceWidth = imagesx($sourceImage);
+        $sourceHeight = imagesy($sourceImage);
+
+        $sourceRatio = $sourceWidth / $sourceHeight;
+        $targetRatio = $targetWidth / $targetHeight;
+
+        if ($sourceRatio > $targetRatio) {
+            $cropWidth = (int) round($sourceHeight * $targetRatio);
+            $cropHeight = $sourceHeight;
+        } else {
+            $cropWidth = $sourceWidth;
+            $cropHeight = (int) round($sourceWidth / $targetRatio);
+        }
+
+        $cropX = (int) round(($sourceWidth - $cropWidth) / 2);
+        $cropY = (int) round(($sourceHeight - $cropHeight) / 2);
+
+        $finalImage = imagecreatetruecolor($targetWidth, $targetHeight);
+
+        imagealphablending($finalImage, false);
+        imagesavealpha($finalImage, true);
+
+        imagecopyresampled(
+            $finalImage,
+            $sourceImage,
+            0,
+            0,
+            $cropX,
+            $cropY,
+            $targetWidth,
+            $targetHeight,
+            $cropWidth,
+            $cropHeight
+        );
+
+        $path = $directory . '/' . Str::uuid() . '.webp';
+        $fullPath = $disk->path($path);
+
+        imagewebp($finalImage, $fullPath, 82);
+
+        imagedestroy($sourceImage);
+        imagedestroy($finalImage);
+
+        return $path;
+    }
+
+    private static function fixImageOrientation($image, string $sourcePath)
+    {
+        $exif = @exif_read_data($sourcePath);
+
+        if (! isset($exif['Orientation'])) {
+            return $image;
+        }
+
+        return match ((int) $exif['Orientation']) {
+            3 => imagerotate($image, 180, 0),
+            6 => imagerotate($image, -90, 0),
+            8 => imagerotate($image, 90, 0),
+            default => $image,
+        };
     }
 }

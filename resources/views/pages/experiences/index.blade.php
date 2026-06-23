@@ -38,5 +38,5 @@ $metaImage = $page->hero_image ?? $page->hero_mobile_image ?? null;
 
     <x-sections.page-description :page="$page" />
 
-    <x-sections.item-list model="experience" :items="$experiences" :with-filter="true" route-name="experiences.show" :hidden-categories="['holy-river']" />
+    <x-sections.item-list model="experience" :items="$experiences" :with-filter="true" route-name="experiences.show" :active-category="$activeCategory ?? null" :hidden-categories="['holy-river']" />
 </x-layouts.app>

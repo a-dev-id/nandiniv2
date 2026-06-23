@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Rewards\Schemas;
 
+use App\Support\FilamentWebpUpload;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -10,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Storage;
@@ -154,13 +156,21 @@ class RewardForm
                                     ->openable()
                                     ->downloadable()
                                     ->saveUploadedFileUsing(
-                                        fn(TemporaryUploadedFile $file): string => self::storeAsWebp(
+                                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                                             file: $file,
                                             directory: 'rewards',
                                             targetWidth: 1200,
                                             targetHeight: 800,
+                                            fileName: $get('image_file_name'),
                                         )
                                     ),
+
+                                TextInput::make('image_file_name')
+                                    ->label('Image File Name')
+                                    ->placeholder('example-reward-image')
+                                    ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
+                                    ->maxLength(120)
+                                    ->dehydrated(false),
 
                                 TextInput::make('image_alt')
                                     ->label('Image Alt Text')

@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Offer extends Model
 {
+    private const RESERVE_URL = 'https://nandinijunglebyhanginggardens.reserve-online.net/?checkin=2026-07-01&rooms=1&nights=2&adults=2&rate=942373';
+
     protected $fillable = [
         'title',
         'slug',
@@ -82,42 +84,6 @@ class Offer extends Model
 
     public function getBookingUrlAttribute(): string
     {
-        if ($this->booking_url_override) {
-            return html_entity_decode($this->booking_url_override, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        }
-
-        $baseUrl = 'https://nandinijunglebyhanginggardens.reserve-online.net/';
-
-        $checkinDate = $this->booking_checkin_date;
-
-        if (! $checkinDate || $checkinDate->isPast()) {
-            $checkinDate = now();
-        }
-
-        $params = [
-            'checkin' => $checkinDate->format('Y-m-d'),
-        ];
-
-        if ($this->booking_nights) {
-            $params['nights'] = $this->booking_nights;
-        }
-
-        if ($this->booking_rooms) {
-            $params['rooms'] = $this->booking_rooms;
-        }
-
-        if ($this->booking_adults) {
-            $params['adults'] = $this->booking_adults;
-        }
-
-        if ($this->booking_rate_code) {
-            $params['rate'] = $this->booking_rate_code;
-        }
-
-        if ($this->booking_bkcode) {
-            $params['bkcode'] = $this->booking_bkcode;
-        }
-
-        return $baseUrl . '?' . http_build_query($params);
+        return self::RESERVE_URL;
     }
 }

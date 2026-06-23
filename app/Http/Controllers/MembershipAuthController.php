@@ -4,11 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Member;
 use App\Models\Page;
+use App\Models\Accommodation;
 use App\Notifications\VerifyMemberEmailNotification;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Laravel\Socialite\Facades\Socialite;
+use Throwable;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -66,6 +71,175 @@ class MembershipAuthController extends Controller
         }
 
         return redirect()->route('membership.dashboard');
+    }
+
+    public function redirectToSocialProvider(string $provider): RedirectResponse
+    {
+        abort_unless($this->socialProviderIsSupported($provider), 404);
+
+        if (! $this->socialProviderIsConfigured($provider)) {
+            return redirect()
+                ->route('membership.login')
+                ->withErrors([
+                    'email' => ucfirst($provider) . ' sign in is not configured yet.',
+                ]);
+        }
+
+        return Socialite::driver($provider)->redirect();
+    }
+
+    public function handleSocialProviderCallback(Request $request, string $provider): RedirectResponse
+    {
+        abort_unless($this->socialProviderIsSupported($provider), 404);
+
+        if (! $this->socialProviderIsConfigured($provider)) {
+            return redirect()
+                ->route('membership.login')
+                ->withErrors([
+                    'email' => ucfirst($provider) . ' sign in is not configured yet.',
+                ]);
+        }
+
+        try {
+            $socialUser = Socialite::driver($provider)->user();
+        } catch (Throwable) {
+            return redirect()
+                ->route('membership.login')
+                ->withErrors([
+                    'email' => 'Unable to sign in with ' . ucfirst($provider) . '. Please try again.',
+                ]);
+        }
+
+        $email = strtolower((string) $socialUser->getEmail());
+
+        if (blank($email)) {
+            return redirect()
+                ->route('membership.login')
+                ->withErrors([
+                    'email' => ucfirst($provider) . ' did not share an email address. Please use email and password instead.',
+                ]);
+        }
+
+        $member = Member::query()
+            ->where('email', $email)
+            ->first();
+
+        if (! $member instanceof Member) {
+            [$firstName, $lastName] = $this->splitSocialName((string) $socialUser->getName());
+
+            return redirect()
+                ->route('membership.register')
+                ->with('social_registration_prefill', [
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'email' => $email,
+                ])
+                ->with('status', 'Please complete your membership registration to continue.');
+        }
+
+        if (blank($member->email_verified_at)) {
+            $member->forceFill([
+                'email_verified_at' => now(),
+            ])->save();
+        }
+
+        $member->applyYearlyTierDowngrade();
+
+        Auth::guard('member')->login($member, true);
+        $request->session()->regenerate();
+
+        if ($member->must_change_password) {
+            return redirect()->route('membership.password.change');
+        }
+
+        return redirect()->route('membership.dashboard');
+    }
+
+    public function showForgotPasswordForm(): View
+    {
+        $page = Page::query()
+            ->where('id', 36)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        return view('pages.membership.auth.forgot-password', [
+            'page' => $page,
+        ]);
+    }
+
+    public function sendResetLinkEmail(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'email' => ['required', 'email'],
+        ]);
+
+        $status = Password::broker('members')->sendResetLink([
+            'email' => strtolower($validated['email']),
+        ]);
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return back()->with('status', 'We have emailed your password reset link.');
+        }
+
+        return back()
+            ->withInput($request->only('email'))
+            ->withErrors([
+                'email' => 'We could not find a membership account with that email address.',
+            ]);
+    }
+
+    public function showResetPasswordForm(Request $request, string $token): View
+    {
+        $page = Page::query()
+            ->where('id', 36)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        return view('pages.membership.auth.reset-password', [
+            'page' => $page,
+            'email' => $request->query('email', ''),
+            'token' => $token,
+        ]);
+    }
+
+    public function resetPassword(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'token' => ['required', 'string'],
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $status = Password::broker('members')->reset(
+            [
+                'email' => strtolower($validated['email']),
+                'password' => $validated['password'],
+                'password_confirmation' => $request->input('password_confirmation'),
+                'token' => $validated['token'],
+            ],
+            function (Member $member, string $password): void {
+                $member->forceFill([
+                    'password' => $password,
+                    'must_change_password' => false,
+                ])->save();
+
+                event(new PasswordReset($member));
+            }
+        );
+
+        if ($status === Password::PASSWORD_RESET) {
+            return redirect()
+                ->route('membership.login')
+                ->with('status', 'Your password has been reset. You can now sign in.');
+        }
+
+        return back()
+            ->withInput($request->only('email'))
+            ->withErrors([
+                'email' => $status === Password::INVALID_TOKEN
+                    ? 'This password reset link is invalid or has expired.'
+                    : 'We could not reset your password. Please request a new reset link.',
+            ]);
     }
 
     public function showRegisterForm(): View
@@ -206,8 +380,16 @@ class MembershipAuthController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
+        $accommodationIds = [3, 4, 5, 6, 7];
+        $accommodations = Accommodation::query()
+            ->published()
+            ->whereIn('id', $accommodationIds)
+            ->orderByRaw('FIELD(id, ' . implode(',', $accommodationIds) . ')')
+            ->get();
+
         return view('pages.membership.dashboard', [
             'page' => $page,
+            'accommodations' => $accommodations,
         ]);
     }
 
@@ -225,5 +407,36 @@ class MembershipAuthController extends Controller
     {
         return $member->member_source === Member::SOURCE_MANUAL_REGISTER
             && blank($member->email_verified_at);
+    }
+
+    protected function socialProviderIsSupported(string $provider): bool
+    {
+        return in_array($provider, ['google'], true);
+    }
+
+    protected function socialProviderIsConfigured(string $provider): bool
+    {
+        return filled(config("services.{$provider}.client_id"))
+            && filled(config("services.{$provider}.client_secret"))
+            && filled(config("services.{$provider}.redirect"));
+    }
+
+    /**
+     * @return array{0: string|null, 1: string|null}
+     */
+    protected function splitSocialName(string $name): array
+    {
+        $name = trim($name);
+
+        if ($name === '') {
+            return [null, null];
+        }
+
+        $parts = preg_split('/\s+/', $name, 2) ?: [];
+
+        return [
+            $parts[0] ?? null,
+            $parts[1] ?? null,
+        ];
     }
 }

@@ -18,21 +18,21 @@ $socialLinks = [
 
                 {{-- LOGO --}}
                 <div class="lg:col-span-2 flex items-start">
-                    <a href="/" class="inline-flex">
+                    <a href="/" class="inline-flex tracking-[0.08em] font-medium">
                         <img src="{{ asset('images/logo-njhg.png') }}" alt="Nandini Jungle by Hanging Gardens" class="w-36 lg:w-44 h-auto max-h-52 shrink-0 brightness-0 invert" loading="lazy" />
                     </a>
                 </div>
 
                 {{-- ADDRESS --}}
                 <div class="lg:col-span-3">
-                    <h3 class="text-sm tracking-[0.22em] lg:text-lg uppercase mb-4">Address</h3>
+                    <h3 class="text-lg uppercase mb-3">Address</h3>
 
                     <div class="text-sm leading-7 text-white/90">
                         Banjar Susut, Desa Buahan, Payangan, Bali 80571, Indonesia
                     </div>
 
                     <div class="mt-8">
-                        <h3 class="text-sm tracking-[0.22em] lg:text-lg uppercase mb-4">Phone</h3>
+                        <h3 class="text-lg uppercase mb-3">Phone</h3>
 
                         <div class="text-sm leading-7 text-white/90">
                             <div class="mb-6">
@@ -48,7 +48,7 @@ $socialLinks = [
                     </div>
 
                     <div class="mt-8">
-                        <h3 class="text-sm tracking-[0.22em] lg:text-lg uppercase mb-4">Email</h3>
+                        <h3 class="text-lg uppercase mb-3">Email</h3>
                         <a href="mailto:reservation@nandinibali.com" class="text-sm text-white/90 hover:underline">
                             reservation@nandinibali.com
                         </a>
@@ -57,7 +57,7 @@ $socialLinks = [
 
                 {{-- ABOUT --}}
                 <div class="lg:col-span-2">
-                    <h3 class="text-sm tracking-[0.22em] lg:text-lg uppercase mb-4">About</h3>
+                    <h3 class="text-lg uppercase mb-3">About</h3>
                     <ul class="space-y-3 text-sm text-white/90">
                         <li><a href="{{ route('about-us.index') }}" class="hover:underline">About Us</a></li>
                         <li><a href="{{ route('blog.index') }}" class="hover:underline">Blog &amp; News</a></li>
@@ -69,10 +69,10 @@ $socialLinks = [
 
                 {{-- OTHERS --}}
                 <div class="lg:col-span-2">
-                    <h3 class="text-sm tracking-[0.22em] lg:text-lg uppercase mb-4">Others</h3>
+                    <h3 class="text-lg uppercase mb-3">Others</h3>
                     <ul class="space-y-3 text-sm text-white/90">
                         <li>
-                            <a href="{{ route('sustainability.index') }}" class="hover:underline text-green-700 flex items-center gap-1 font-medium">
+                            <a href="{{ route('sustainability.index') }}" class="hover:underline text-green-700 flex items-center gap-1 font-medium tracking-[0.08em]">
                                 <svg height="16px" width="16px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#35D39B">
                                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -124,13 +124,13 @@ $socialLinks = [
 
                 <div class="space-y-10">
                     <div class="flex items-center justify-center">
-                        <a href="/" class="inline-flex">
+                        <a href="/" class="inline-flex tracking-[0.08em] font-medium">
                             <img src="{{ asset('images/logo-njhg.png') }}" alt="Nandini Jungle by Hanging Gardens" class="w-36 lg:w-44 h-auto max-h-52 shrink-0 brightness-0 invert" loading="lazy" />
                         </a>
                     </div>
 
                     <div>
-                        <h3 class="text-sm tracking-[0.22em] lg:text-lg uppercase mb-4">Address</h3>
+                        <h3 class="text-lg uppercase mb-3">Address</h3>
                         <div class="text-sm leading-7 text-white/90">
                             Banjar Susut, Desa Buahan,<br>
                             Payangan, Bali 80571,<br>
@@ -139,7 +139,7 @@ $socialLinks = [
                     </div>
 
                     <div>
-                        <h3 class="text-sm tracking-[0.22em] lg:text-lg uppercase mb-4">Phone</h3>
+                        <h3 class="text-lg uppercase mb-3">Phone</h3>
 
                         <div class="text-sm text-white/90 space-y-6">
                             <div>
@@ -155,7 +155,7 @@ $socialLinks = [
                     </div>
 
                     <div>
-                        <h3 class="text-sm tracking-[0.22em] lg:text-lg uppercase mb-4">Email</h3>
+                        <h3 class="text-lg uppercase mb-3">Email</h3>
                         <a href="mailto:reservation@nandinibali.com" class="text-sm text-white/90 hover:underline break-all">
                             reservation@nandinibali.com
                         </a>
@@ -164,7 +164,7 @@ $socialLinks = [
 
                 {{-- ABOUT --}}
                 <div class="mt-14">
-                    <h3 class="text-sm tracking-[0.22em] lg:text-lg uppercase mb-5">About</h3>
+                    <h3 class="text-lg uppercase mb-3">About</h3>
                     <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-white/90">
                         <a href="/about" class="hover:underline">About Us</a>
                         <a href="/blog" class="hover:underline">Blog &amp; News</a>
@@ -177,9 +177,9 @@ $socialLinks = [
 
                 {{-- OTHERS --}}
                 <div class="mt-12">
-                    <h3 class="text-sm tracking-[0.22em] lg:text-lg uppercase mb-5">Others</h3>
+                    <h3 class="text-lg uppercase mb-3">Others</h3>
                     <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-white/90">
-                        <a href="/sustainability" class="hover:underline text-green-700 flex items-center gap-1 font-medium">
+                        <a href="/sustainability" class="hover:underline text-green-700 flex items-center gap-1 font-medium tracking-[0.08em]">
                             <svg height="16px" width="16px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#35D39B">
                                 <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                 <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -215,7 +215,7 @@ $socialLinks = [
                         <img src="{{ asset('images/TC_white_winner-gif_L_2025-Circle.gif') }}" class="h-16 sm:h-20 w-auto" loading="lazy" alt="Tripadvisor">
                     </div>
 
-                    <div class="mt-6 flex items-center justify-center gap-4">
+                    <div class="mt-2 flex items-center justify-center gap-4">
                         <img src="{{ asset('images/OIP.webp') }}" class="h-7 sm:h-8 w-auto" loading="lazy" alt="Blink">
                         <img src="{{ asset('images/ot-design.png') }}" class="h-7 sm:h-8 w-auto" loading="lazy" alt="OT Design">
                     </div>
@@ -264,20 +264,20 @@ $socialLinks = [
         <div class="absolute inset-0" @click="gdsOpen = false"></div>
 
         <div x-show="gdsOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-3" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-3" class="relative w-full max-w-[448px] rounded-md bg-white px-8 py-8 text-slate-950 shadow-2xl sm:px-10">
-            <button type="button" class="absolute right-4 top-4 flex h-8 w-8 items-center justify-center text-slate-400 transition hover:text-slate-900" aria-label="Close GDS code popup" @click="gdsOpen = false">
+            <button type="button" class="absolute right-4 top-4 flex h-8 w-8 items-center justify-center text-slate-400 transition text-slate-700 tracking-[0.08em] font-medium" aria-label="Close GDS code popup" @click="gdsOpen = false">
                 <span class="block h-px w-5 rotate-45 bg-current"></span>
                 <span class="absolute block h-px w-5 -rotate-45 bg-current"></span>
             </button>
 
-            <div id="gds-code-title" class="font-serif text-2xl font-normal leading-snug tracking-normal text-slate-950">
+            <div id="gds-code-title" class="font-serif text-2xl font-normal leading-snug text-slate-950">
                 GDS Code
             </div>
 
-            <p class="mt-4 text-[15px] leading-relaxed text-slate-900">
+            <p class="mt-2 text-sm leading-relaxed text-slate-700">
                 Enhancing the distribution to provide flexible and innovative hospitality solutions at a competitive price-point, Nandini Jungle by Hanging Gardens is pleased to announce the launch of our company-wide GDS code.
             </p>
 
-            <dl class="mt-8 grid grid-cols-[100px_1fr] gap-x-3 gap-y-2 text-[15px] leading-relaxed text-slate-900">
+            <dl class="mt-8 grid grid-cols-[100px_1fr] gap-x-3 gap-y-2 text-sm leading-relaxed text-slate-700">
                 <dt>Amadeus</dt>
                 <dd>: GD DPSNJH</dd>
 

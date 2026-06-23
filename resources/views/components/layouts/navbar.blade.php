@@ -1,3 +1,33 @@
+@php
+$member = auth('member')->user();
+$membershipDisabled = (bool) config('features.disable_membership_feature');
+$memberIsLoggedIn = $member instanceof \App\Models\Member;
+$memberName = $memberIsLoggedIn ? ($member->full_name ?: $member->name ?: 'Member') : 'Member';
+$memberFirstName = $memberIsLoggedIn ? trim((string) ($member->first_name ?: str($memberName)->before(' '))) : '';
+$memberDisplayName = trim($memberFirstName);
+$memberDisplayName = $memberDisplayName !== '' ? $memberDisplayName : $memberName;
+$memberInitial = strtoupper(mb_substr($memberName, 0, 1));
+$memberProfilePhoto = $memberIsLoggedIn ? ($member->profile_photo ?? $member->photo ?? null) : null;
+$memberProfilePhotoUrl = $memberProfilePhoto
+? (str_starts_with((string) $memberProfilePhoto, 'http') ? $memberProfilePhoto : asset('storage/' . $memberProfilePhoto))
+: null;
+
+$dashboardUrl = \Illuminate\Support\Facades\Route::has('membership.dashboard')
+? route('membership.dashboard')
+: url('/membership/dashboard');
+
+$redemptionUrl = \Illuminate\Support\Facades\Route::has('membership.privilege-redemption')
+? route('membership.privilege-redemption')
+: url('/membership/privilege-redemption');
+
+$logoutUrl = \Illuminate\Support\Facades\Route::has('membership.logout')
+? route('membership.logout')
+: url('/membership/logout');
+
+$bookDirectUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://nandinijunglebyhanginggardens.reserve-online.net/?checkin=today');
+$roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tour-list.com/DPSearch/?HotelCode=nandinihgs');
+@endphp
+
 <div>
     <nav id="mainNavbar" class="fixed inset-x-0 top-0 z-50 bg-black/35 text-white transition-all duration-300">
         <div class="w-full px-4 sm:px-6 md:px-10 2xl:px-14 relative">
@@ -5,11 +35,11 @@
 
                 {{-- LEFT --}}
                 <div id="navLeft" class="flex items-center gap-4 lg:gap-6 transition-colors duration-300">
-                    <button id="btnMenu" type="button" class="inline-flex items-center gap-3 transition-colors duration-300" aria-label="Open menu">
+                    <button id="btnMenu" type="button" class="inline-flex items-center gap-3 transition-colors duration-300 tracking-[0.08em] font-medium" aria-label="Open menu">
                         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                             <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
                         </svg>
-                        <span class="hidden sm:inline text-[16px] font-medium uppercase">Menu</span>
+                        <span class="hidden sm:inline text-[16px] uppercase">Menu</span>
                     </button>
 
                     <div id="navIcons" class="hidden md:flex items-center gap-5">
@@ -28,39 +58,94 @@
                 </div>
 
                 {{-- CENTER LOGO --}}
-                <a href="{{ route('home') }}" class="absolute left-1/2 -translate-x-1/2 flex items-center justify-center">
+                <a href="{{ route('home') }}" class="absolute left-1/2 -translate-x-1/2 flex items-center justify-center tracking-[0.08em] font-medium">
                     <img id="navLogo" src="{{ asset('images/logo-njhg.png') }}" class="h-14 sm:h-16 lg:h-24 w-auto brightness-0 invert transition-all duration-300" alt="Nandini Jungle" />
                 </a>
 
                 {{-- RIGHT --}}
                 <div class="ml-auto flex items-center gap-3 sm:gap-4">
+                    @if (! $membershipDisabled)
+                    @auth('member')
+                    <div class="relative">
+                        <button id="navProfileBtn" type="button" class="inline-flex items-center gap-3 tracking-[0.08em] font-medium" aria-label="Open member menu" aria-expanded="false">
+                            <span class="hidden sm:inline text-[13px] text-sm font-semibold transition-colors duration-300" data-nav-profile-label>
+                                Welcome! {{ $memberDisplayName }}
+                            </span>
+
+                            <span class="inline-flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-white bg-white/10 text-[14px] font-bold uppercase text-white shadow-sm transition duration-300 hover:border-[#B8945B]" data-nav-profile-avatar>
+                                @if ($memberProfilePhotoUrl)
+                                <img src="{{ $memberProfilePhotoUrl }}" alt="{{ $memberName }}" class="h-full w-full object-cover">
+                                @else
+                                <span>{{ $memberInitial }}</span>
+                                @endif
+                            </span>
+                        </button>
+
+                        <div id="navProfileMenu" class="absolute right-0 top-full z-[80] mt-2 hidden w-56 border border-slate-200 bg-white shadow-xl">
+                            <a href="{{ $bookDirectUrl }}" target="_blank" rel="noopener" class="block px-4 py-2.5 text-center text-sm font-medium uppercase text-white bg-[#A67C3D] transition hover:bg-[#B8945B] hover:text-white tracking-[0.08em]">
+                                Book Now
+                            </a>
+
+                            <a href="{{ $dashboardUrl }}" class="block px-4 py-2.5 text-center text-sm font-medium uppercase text-slate-700 transition hover:bg-[#B8945B] hover:text-white tracking-[0.08em]">
+                                Dashboard
+                            </a>
+
+                            <a href="{{ $redemptionUrl }}" class="block px-4 py-2.5 text-center text-sm font-medium uppercase text-slate-700 transition hover:bg-[#B8945B] hover:text-white tracking-[0.08em]">
+                                Redemption
+                            </a>
+
+                            <form method="POST" action="{{ $logoutUrl }}">
+                                @csrf
+
+                                <button type="submit" class="block w-full px-4 py-2.5 text-center text-sm font-medium uppercase text-slate-700 transition hover:bg-[#B8945B] hover:text-white tracking-[0.08em]">
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    @else
                     {{-- Member: desktop/tablet only --}}
-                    <button id="navMemberBtn" type="button" data-open-membership-panel class="hidden sm:inline-flex items-center justify-center border transition duration-300 uppercase tracking-[0.2em]
-                               text-[10px] sm:text-[16px] font-medium px-3 sm:px-6 lg:px-8 py-1.5 sm:py-2.5 lg:py-3
-                               bg-transparent border-white text-white hover:bg-white hover:border-white hover:text-slate-800">
-                        INNER CIRCLE
-                    </button>
+                    <a id="navMemberBtn" href="{{ route('membership.index') }}" class="hidden sm:inline-flex items-center justify-center border transition duration-300 uppercase text-[10px] sm:text-sm px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 bg-transparent border-white text-white hover:bg-white hover:border-white text-slate-700 tracking-[0.08em] font-medium">
+                        BE A MEMBER
+                    </a>
 
                     {{-- Book --}}
                     <div class="relative">
-                        <button id="navBookBtn" type="button" class="inline-flex items-center justify-center border transition duration-300 uppercase tracking-[0.2em]
-                                   text-[10px] sm:text-[16px] font-medium px-3 sm:px-6 lg:px-8 py-1.5 sm:py-2.5 lg:py-3
-                                   bg-white border-white text-slate-800 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white">
+                        <button id="navBookBtn" type="button" class="inline-flex items-center justify-center border transition duration-300 uppercase text-[10px] sm:text-sm px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 bg-white border-white text-slate-700 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium">
                             <span class="sm:hidden">Book</span>
                             <span class="hidden sm:inline">Book Now</span>
                         </button>
 
                         {{-- Dropdown --}}
                         <div id="navBookMenu" class="absolute right-0 mt-2 w-52 bg-white border border-white shadow-xl hidden">
-                            <a href="https://nandinijunglebyhanginggardens.reserve-online.net/?checkin=today" class="block text-center uppercase tracking-[0.2em] font-medium text-[12px] sm:text-[14px] px-6 py-4 bg-white text-slate-800 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white">
+                            <a href="{{ $bookDirectUrl }}" class="block text-center uppercase text-sm sm:text-[14px] px-4 py-2.5 bg-white text-slate-700 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium">
                                 Book Direct
                             </a>
 
-                            <a href="https://ovs.tour-list.com/DPSearch/?HotelCode=nandinihgs" class="block text-center uppercase tracking-[0.2em] font-medium text-[12px] sm:text-[14px] px-6 py-4 bg-white text-slate-800 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white">
+                            <a href="{{ $roomFlightUrl }}" class="block text-center uppercase text-sm sm:text-[14px] px-4 py-2.5 bg-white text-slate-700 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium">
                                 Room + Flight
                             </a>
                         </div>
                     </div>
+                    @endauth
+                    @else
+                    <div class="relative">
+                        <button id="navBookBtn" type="button" class="inline-flex items-center justify-center border transition duration-300 uppercase text-[10px] sm:text-sm px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 bg-white border-white text-slate-700 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium">
+                            <span class="sm:hidden">Book</span>
+                            <span class="hidden sm:inline">Book Now</span>
+                        </button>
+
+                        <div id="navBookMenu" class="absolute right-0 mt-2 w-52 bg-white border border-white shadow-xl hidden">
+                            <a href="{{ $bookDirectUrl }}" class="block text-center uppercase text-sm sm:text-[14px] px-4 py-2.5 bg-white text-slate-700 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium">
+                                Book Direct
+                            </a>
+
+                            <a href="{{ $roomFlightUrl }}" class="block text-center uppercase text-sm sm:text-[14px] px-4 py-2.5 bg-white text-slate-700 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium">
+                                Room + Flight
+                            </a>
+                        </div>
+                    </div>
+                    @endif
                 </div>
 
             </div>
@@ -79,14 +164,6 @@
     ? route('membership.register')
     : url('/membership/join');
 
-    $dashboardUrl = \Illuminate\Support\Facades\Route::has('membership.dashboard')
-    ? route('membership.dashboard')
-    : url('/membership/dashboard');
-
-    $logoutUrl = \Illuminate\Support\Facades\Route::has('membership.logout')
-    ? route('membership.logout')
-    : url('/membership/logout');
-
     $socialLinks = [
     'instagram' => 'https://www.instagram.com/nandinijungleresort/',
     'facebook' => 'https://www.facebook.com/nandinijungleresort/',
@@ -96,12 +173,12 @@
     @endphp
 
     {{-- OFFCANVAS --}}
-    <aside id="offcanvasMenu" class="fixed top-0 left-0 z-[70] h-dvh w-[78vw] max-w-[330px] bg-white text-slate-800 shadow-2xl -translate-x-full will-change-transform transition-transform duration-300 ease-out overflow-hidden">
+    <aside id="offcanvasMenu" class="fixed top-0 left-0 z-[70] h-dvh w-[78vw] max-w-[330px] bg-white text-slate-700 shadow-2xl -translate-x-full will-change-transform transition-transform duration-300 ease-out overflow-hidden">
         <div class="h-full flex flex-col">
 
             {{-- HEADER --}}
             <div class="relative px-7 pt-8 pb-6 shrink-0">
-                <button id="btnCloseMenu" type="button" aria-label="Close menu" class="absolute right-5 top-5 text-slate-500 hover:text-slate-800">
+                <button id="btnCloseMenu" type="button" aria-label="Close menu" class="absolute right-5 top-5 text-slate-500 text-slate-700">
                     <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
                     </svg>
@@ -111,23 +188,23 @@
                     <img src="{{ asset('images/logo-njhg.png') }}" alt="Nandini Jungle by Hanging Gardens" class="w-52 h-auto" loading="lazy" />
                 </div>
 
-                <div class="mt-6 h-px bg-slate-300/70"></div>
+                <div class="mt-2 h-px bg-slate-300/70"></div>
             </div>
 
             {{-- LINKS --}}
             <div class="px-7 pb-8 grow overflow-y-auto min-h-0">
                 <nav class="space-y-5 text-left">
-                    <a href="{{ route('home') }}" class="block text-[16px] leading-6 font-medium uppercase text-left">
+                    <a href="{{ route('home') }}" class="block text-[14px] leading-6 uppercase text-left tracking-[0.08em] font-medium">
                         Home
                     </a>
 
-                    <a href="{{ route('holy-river.index') }}" class="block text-[16px] leading-6 font-medium uppercase text-left">
+                    <a href="{{ route('holy-river.index') }}" class="block text-[14px] leading-6 uppercase text-left tracking-[0.08em] font-medium">
                         Holy River
                     </a>
 
                     {{-- Dropdown: Offers & Experiences --}}
                     <div>
-                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[16px] leading-6 font-medium uppercase text-left" data-oc-toggle="ocOffers" aria-expanded="false">
+                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[14px] leading-6 uppercase text-left tracking-[0.08em] font-medium" data-oc-toggle="ocOffers" aria-expanded="false">
                             <span class="leading-6 text-left">Offers &amp; Experiences</span>
                             <svg data-oc-icon class="h-4 w-4 text-slate-500 shrink-0 mt-1 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" d="M6 9l6 6 6-6" />
@@ -136,11 +213,11 @@
 
                         <div id="ocOffers" data-oc-panel class="overflow-hidden text-left transition-all duration-300 ease-out" style="max-height: 0px; opacity: 0;">
                             <div class="pt-6 pb-5 ml-7 space-y-5">
-                                <a href="{{ route('offers.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('offers.index') }}" class="block text-[14px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium">
                                     Offers
                                 </a>
 
-                                <a href="{{ route('experiences.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('experiences.index') }}" class="block text-[14px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium">
                                     Experiences
                                 </a>
                             </div>
@@ -149,7 +226,7 @@
 
                     {{-- Dropdown: Accommodations --}}
                     <div>
-                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[16px] leading-6 font-medium uppercase text-left" data-oc-toggle="ocVillas" aria-expanded="false">
+                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[14px] leading-6 uppercase text-left tracking-[0.08em] font-medium" data-oc-toggle="ocVillas" aria-expanded="false">
                             <span class="leading-6 text-left">Accommodations</span>
                             <svg data-oc-icon class="h-4 w-4 text-slate-500 shrink-0 mt-1 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" d="M6 9l6 6 6-6" />
@@ -158,24 +235,24 @@
 
                         <div id="ocVillas" data-oc-panel class="overflow-hidden text-left transition-all duration-300 ease-out" style="max-height: 0px; opacity: 0;">
                             <div class="pt-6 pb-5 ml-7 space-y-5">
-                                <a href="{{ route('accommodations.suites') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('accommodations.suites') }}" class="block text-[14px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium">
                                     The Royal Suites
                                 </a>
 
-                                <a href="{{ route('accommodations.villas') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('accommodations.villas') }}" class="block text-[14px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium">
                                     Jungle Villas
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    <a href="{{ route('little-things.index') }}" class="block text-[16px] leading-6 font-medium uppercase text-left">
+                    <a href="{{ route('little-things.index') }}" class="block text-[14px] leading-6 uppercase text-left tracking-[0.08em] font-medium">
                         The Little Things
                     </a>
 
                     {{-- Dropdown: More --}}
                     <div>
-                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[16px] leading-6 font-medium uppercase text-left" data-oc-toggle="ocMore" aria-expanded="false">
+                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[14px] leading-6 uppercase text-left tracking-[0.08em] font-medium" data-oc-toggle="ocMore" aria-expanded="false">
                             <span class="leading-6 text-left">More</span>
                             <svg data-oc-icon class="h-4 w-4 text-slate-500 shrink-0 mt-1 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" d="M6 9l6 6 6-6" />
@@ -184,100 +261,96 @@
 
                         <div id="ocMore" data-oc-panel class="overflow-hidden text-left transition-all duration-300 ease-out" style="max-height: 0px; opacity: 0;">
                             <div class="pt-6 pb-5 ml-7 space-y-5">
-                                <a href="{{ url('/honeymoon') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ url('/honeymoon') }}" class="block text-[14px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium">
                                     Honeymoon
                                 </a>
 
-                                <a href="{{ route('dining.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('dining.index') }}" class="block text-[14px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium">
                                     Dining
                                 </a>
 
-                                <a href="{{ route('spa.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('spa.index') }}" class="block text-[14px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium">
                                     Spa &amp; Wellness
                                 </a>
 
-                                <a href="{{ route('wedding.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('wedding.index') }}" class="block text-[14px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium">
                                     Wedding
                                 </a>
 
-                                <a href="{{ route('about-us.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('about-us.index') }}" class="block text-[14px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium">
                                     About Us
                                 </a>
 
-                                <a href="{{ route('blog.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('blog.index') }}" class="block text-[14px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium">
                                     Blog & News
                                 </a>
 
-                                <a href="{{ route('awards.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('awards.index') }}" class="block text-[14px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium">
                                     Awards
                                 </a>
 
-                                <a href="{{ route('contact.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('contact.index') }}" class="block text-[14px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium">
                                     Contact
                                 </a>
 
-                                <a href="{{ route('gallery.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('gallery.index') }}" class="block text-[14px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium">
                                     Gallery
                                 </a>
 
-                                <a href="{{ route('faq.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('faq.index') }}" class="block text-[14px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium">
                                     FAQ
                                 </a>
 
-                                <a href="{{ route('sustainability.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
+                                <a href="{{ route('sustainability.index') }}" class="block text-[14px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium">
                                     Sustainability
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Dropdown: Inner Circle - Mobile only --}}
-                    <div class="sm:hidden">
-                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[16px] leading-6 font-medium uppercase text-left" data-oc-toggle="ocMembership" aria-expanded="false">
-                            <span class="leading-6 text-left">Inner Circle</span>
-                            <svg data-oc-icon class="h-4 w-4 text-slate-500 shrink-0 mt-1 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" d="M6 9l6 6 6-6" />
-                            </svg>
-                        </button>
+                    {{-- Inner Circle --}}
+                    @if (! $membershipDisabled)
+                    <div class="pt-2">
 
-                        <div id="ocMembership" data-oc-panel class="overflow-hidden text-left transition-all duration-300 ease-out" style="max-height: 0px; opacity: 0;">
-                            <div class="pt-6 pb-5 ml-7 space-y-5">
-                                <a href="{{ route('membership.index') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
-                                    About Inner Circle
-                                </a>
 
-                                <a href="{{ route('membership.benefits') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
-                                    Benefits
-                                </a>
+                        @guest('member')
+                        <div class="h-px bg-slate-300/70 mb-6"></div>
+                        <div class="grid grid-cols-1 gap-3 pt-5">
+                            <h2 class="text-xl leading-6 uppercase text-left mb-3">
+                                Be a member
+                            </h2>
 
-                                <a href="{{ route('membership.privilege-redemption') }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
-                                    Redemption
-                                </a>
+                            <a href="{{ $loginUrl }}" class="inline-flex w-full items-center justify-center border border-slate-800 bg-transparent px-4 py-2.5 text-[14px] font-medium uppercase text-slate-700 transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em]">
+                                Sign In
+                            </a>
 
-                                @auth('member')
-                                <a href="{{ $dashboardUrl }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
-                                    Dashboard
-                                </a>
-
-                                <form method="POST" action="{{ $logoutUrl }}">
-                                    @csrf
-
-                                    <button type="submit" class="block w-full text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
-                                        Logout
-                                    </button>
-                                </form>
-                                @else
-                                <a href="{{ $loginUrl }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
-                                    Sign In
-                                </a>
-
-                                <a href="{{ $registerUrl }}" class="block text-[14px] leading-6 uppercase font-medium tracking-wide text-slate-600 hover:text-[#B8945B] text-left">
-                                    Join Now
-                                </a>
-                                @endauth
-                            </div>
+                            <a href="{{ $registerUrl }}" class="inline-flex w-full items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-[14px] font-medium uppercase text-white transition duration-300 hover:bg-[#B8945B] hover:border-[#B8945B] tracking-[0.08em]">
+                                Join Now
+                            </a>
                         </div>
+                        @endguest
+
+                        <div class="my-6 pt-2">
+                            <div class="h-px bg-slate-300/70"></div>
+                        </div>
+
+
+                        <h2 class="text-xl leading-6 uppercase text-left mb-3">
+                            Inner Circle
+                        </h2>
+
+                        <div class="space-y-5">
+                            <a href="{{ route('membership.index') }}" class="block text-[14px] leading-6 uppercase text-left hover:text-[#B8945B] tracking-[0.08em] font-medium">
+                                About Inner Circle Program
+                            </a>
+
+                            <a href="{{ route('membership.privilege-redemption') }}" class="block text-[14px] leading-6 uppercase text-left hover:text-[#B8945B] tracking-[0.08em] font-medium">
+                                Redemption
+                            </a>
+                        </div>
+
                     </div>
+                    @endif
 
                 </nav>
             </div>
@@ -315,114 +388,57 @@
         </div>
     </aside>
 
-    {{-- MEMBERSHIP RIGHT PANEL --}}
-    <aside id="membershipPanel" class="fixed top-0 right-0 z-[70] h-dvh w-[86%] max-w-sm bg-white text-slate-800 shadow-2xl translate-x-full will-change-transform transition-transform duration-300 ease-out">
-        <div class="h-full flex flex-col">
-
-            {{-- HEADER --}}
-            <div class="relative px-7 pt-8 pb-6">
-                <button id="btnCloseMembershipPanel" type="button" aria-label="Close membership panel" class="absolute left-5 top-5 text-slate-500 hover:text-slate-800">
-                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
-                    </svg>
-                </button>
-
-                <div class="flex items-center justify-center">
-                    <img src="{{ asset('images/logo-njhg.png') }}" alt="Nandini Jungle by Hanging Gardens" class="w-52 h-auto" loading="lazy" />
-                </div>
-
-                <div class="mt-6 h-px bg-slate-300/70"></div>
-            </div>
-
-            {{-- LINKS --}}
-            <div class="px-7 pb-8 grow overflow-y-auto">
-                <nav class="space-y-6 text-left">
-                    <a href="{{ route('membership.index') }}" class="block text-[16px] font-medium uppercase text-left">
-                        About Inner Circle
-                    </a>
-
-                    <a href="{{ route('membership.benefits') }}" class="block text-[16px] font-medium uppercase text-left">
-                        Benefits
-                    </a>
-
-                    <a href="{{ route('membership.privilege-redemption') }}" class="block text-[16px] font-medium uppercase text-left">
-                        Redemption
-                    </a>
-
-                    <div class="pt-2">
-                        <div class="h-px bg-slate-300/70"></div>
-                    </div>
-
-                    @auth('member')
-                    <div class="grid grid-cols-1 gap-3 pt-1">
-                        <a href="{{ $dashboardUrl }}" class="inline-flex w-full items-center justify-center border border-[#B8945B] bg-[#B8945B] px-6 py-3
-                                           text-[13px] font-bold uppercase tracking-[0.22em] text-white transition duration-300
-                                           hover:bg-[#a37e45] hover:border-[#a37e45]">
-                            Dashboard
-                        </a>
-
-                        <form method="POST" action="{{ $logoutUrl }}" class="w-full">
-                            @csrf
-
-                            <button type="submit" class="inline-flex w-full items-center justify-center border border-slate-800 bg-transparent px-6 py-3
-                                               text-[13px] font-bold uppercase tracking-[0.22em] text-slate-800 transition duration-300
-                                               hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white">
-                                Logout
-                            </button>
-                        </form>
-                    </div>
-                    @else
-                    <div class="grid grid-cols-1 gap-3 pt-1">
-                        <a href="{{ $loginUrl }}" class="inline-flex w-full items-center justify-center border border-slate-800 bg-transparent px-6 py-3
-                                           text-[13px] font-bold uppercase tracking-[0.22em] text-slate-800 transition duration-300
-                                           hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white">
-                            Sign In
-                        </a>
-
-                        <a href="{{ $registerUrl }}" class="inline-flex w-full items-center justify-center border border-[#B8945B] bg-[#B8945B] px-6 py-3
-                                           text-[13px] font-bold uppercase tracking-[0.22em] text-white transition duration-300
-                                           hover:bg-[#a37e45] hover:border-[#a37e45]">
-                            Join Now
-                        </a>
-                    </div>
-                    @endauth
-                </nav>
-            </div>
-
-        </div>
-    </aside>
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const navMemberBtn = document.getElementById('navMemberBtn');
+            const navProfileBtn = document.getElementById('navProfileBtn');
+            const navProfileMenu = document.getElementById('navProfileMenu');
+            const navProfileLabel = document.querySelector('[data-nav-profile-label]');
+            const navProfileAvatar = document.querySelector('[data-nav-profile-avatar]');
 
             const btnMenu = document.getElementById('btnMenu');
             const btnCloseMenu = document.getElementById('btnCloseMenu');
             const offcanvasMenu = document.getElementById('offcanvasMenu');
 
-            const membershipPanel = document.getElementById('membershipPanel');
-            const btnCloseMembershipPanel = document.getElementById('btnCloseMembershipPanel');
             const offcanvasBackdrop = document.getElementById('offcanvasBackdrop');
-            const openMembershipButtons = document.querySelectorAll('[data-open-membership-panel]');
 
             function updateMemberButtonOnScroll() {
-                if (!navMemberBtn) {
+                if (!navMemberBtn && !navProfileAvatar) {
                     return;
                 }
 
                 const isScrolled = window.scrollY > 50;
 
+                if (navProfileAvatar) {
+                    navProfileAvatar.classList.remove('border-white', 'text-white', 'bg-white/10', 'border-slate-950', 'text-slate-950', 'bg-slate-950/5');
+
+                    if (isScrolled) {
+                        navProfileAvatar.classList.add('border-slate-950', 'text-slate-950', 'bg-slate-950/5');
+                    } else {
+                        navProfileAvatar.classList.add('border-white', 'text-white', 'bg-white/10');
+                    }
+                }
+
+                if (navProfileLabel) {
+                    navProfileLabel.classList.toggle('text-slate-950', isScrolled);
+                    navProfileLabel.classList.toggle('text-white', !isScrolled);
+                }
+
+                if (!navMemberBtn) {
+                    return;
+                }
+
                 navMemberBtn.classList.remove(
-                    'bg-[#B8945B]',
-                    'border-[#B8945B]',
+                    'bg-[#A67C3D]',
+                    'border-[#A67C3D]',
                     'text-white',
-                    'hover:bg-[#a37e45]',
-                    'hover:border-[#a37e45]',
+                    'hover:bg-[#B8945B]',
+                    'hover:border-[#B8945B]',
                     'bg-transparent',
                     'border-white',
                     'hover:bg-white',
                     'hover:border-white',
-                    'hover:text-slate-800',
+                    'text-slate-700',
                     'border-slate-950',
                     'text-slate-950',
                     'hover:bg-[#B8945B]',
@@ -446,7 +462,7 @@
                         'text-white',
                         'hover:bg-white',
                         'hover:border-white',
-                        'hover:text-slate-800'
+                        'text-slate-700'
                     );
                 }
             }
@@ -469,14 +485,6 @@
                 document.body.classList.remove('overflow-hidden');
             }
 
-            function isLeftMenuOpen() {
-                return offcanvasMenu && !offcanvasMenu.classList.contains('-translate-x-full');
-            }
-
-            function isMembershipPanelOpen() {
-                return membershipPanel && !membershipPanel.classList.contains('translate-x-full');
-            }
-
             function openLeftMenu(event) {
                 if (event) {
                     event.preventDefault();
@@ -485,8 +493,6 @@
                 if (!offcanvasMenu) {
                     return;
                 }
-
-                closeMembershipPanel(false);
 
                 offcanvasMenu.classList.remove('-translate-x-full');
                 showOverlay();
@@ -499,36 +505,34 @@
 
                 offcanvasMenu.classList.add('-translate-x-full');
 
-                if (shouldHideOverlay && !isMembershipPanelOpen()) {
+                if (shouldHideOverlay) {
                     hideOverlay();
                 }
             }
 
-            function openMembershipPanel(event) {
+            function closeProfileMenu() {
+                if (!navProfileBtn || !navProfileMenu) {
+                    return;
+                }
+
+                navProfileMenu.classList.add('hidden');
+                navProfileBtn.setAttribute('aria-expanded', 'false');
+            }
+
+            function toggleProfileMenu(event) {
                 if (event) {
                     event.preventDefault();
+                    event.stopPropagation();
                 }
 
-                if (!membershipPanel) {
+                if (!navProfileBtn || !navProfileMenu) {
                     return;
                 }
 
-                closeLeftMenu(false);
+                const isOpen = !navProfileMenu.classList.contains('hidden');
 
-                membershipPanel.classList.remove('translate-x-full');
-                showOverlay();
-            }
-
-            function closeMembershipPanel(shouldHideOverlay = true) {
-                if (!membershipPanel) {
-                    return;
-                }
-
-                membershipPanel.classList.add('translate-x-full');
-
-                if (shouldHideOverlay && !isLeftMenuOpen()) {
-                    hideOverlay();
-                }
+                navProfileMenu.classList.toggle('hidden', isOpen);
+                navProfileBtn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
             }
 
             function closeDropdown(toggle, panel) {
@@ -567,29 +571,34 @@
                 });
             }
 
-            openMembershipButtons.forEach(function (button) {
-                button.addEventListener('click', openMembershipPanel);
-            });
-
-            if (btnCloseMembershipPanel) {
-                btnCloseMembershipPanel.addEventListener('click', function () {
-                    closeMembershipPanel();
-                });
-            }
-
             if (offcanvasBackdrop) {
                 offcanvasBackdrop.addEventListener('click', function () {
                     closeLeftMenu(false);
-                    closeMembershipPanel(false);
                     hideOverlay();
                 });
             }
+
+            if (navProfileBtn) {
+                navProfileBtn.addEventListener('click', toggleProfileMenu);
+            }
+
+            document.addEventListener('click', function (event) {
+                if (!navProfileMenu || navProfileMenu.classList.contains('hidden')) {
+                    return;
+                }
+
+                const clickedInside = event.target.closest('#navProfileBtn') || event.target.closest('#navProfileMenu');
+
+                if (!clickedInside) {
+                    closeProfileMenu();
+                }
+            });
 
             document.addEventListener('keydown', function (event) {
                 if (event.key === 'Escape') {
                     closeLeftMenu(false);
-                    closeMembershipPanel(false);
                     hideOverlay();
+                    closeProfileMenu();
                 }
             });
 

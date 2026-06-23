@@ -34,7 +34,7 @@ default => 'bg-white',
 
 $titleColorClass = $backgroundColor === 'dark_navy'
 ? 'text-white'
-: 'text-slate-800';
+: 'text-slate-700';
 
 $descriptionColorClass = $backgroundColor === 'dark_navy'
 ? 'text-white/85'
@@ -171,7 +171,7 @@ $items = count($rewardItems) > 0 ? $rewardItems : $defaultItems;
     <div class="mx-auto max-w-[1500px]">
 
         @if ($hasSubtitle)
-        <p class="mb-4 text-center text-sm md:text-base leading-relaxed tracking-[0.18em] uppercase text-[#b28a4a] font-medium">
+        <p class="mb-4 text-center text-sm md:text-base leading-relaxed uppercase text-[#b28a4a] font-medium">
             {!! str_ireplace(
             ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
             '<br class="hidden md:block">',
@@ -181,7 +181,7 @@ $items = count($rewardItems) > 0 ? $rewardItems : $defaultItems;
         @endif
 
         @if ($hasTitle)
-        <h2 class="text-center text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase font-medium {{ $titleColorClass }}">
+        <h2 class="text-xl text-center leading-snug uppercase font-medium {{ $titleColorClass }} mb-3">
             {!! str_ireplace(
             ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
             '<br class="hidden md:block">',
@@ -191,7 +191,7 @@ $items = count($rewardItems) > 0 ? $rewardItems : $defaultItems;
         @endif
 
         @if ($hasDescription)
-        <div class="mt-8 text-[15px] sm:text-base leading-relaxed max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto {{ $descriptionColorClass }} {{ $descriptionAlignClass }}">
+        <div class="mt-8 text-sm leading-relaxed max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto {{ $descriptionColorClass }} {{ $descriptionAlignClass }}">
             {!! $description !!}
         </div>
         @endif
@@ -219,32 +219,32 @@ $items = count($rewardItems) > 0 ? $rewardItems : $defaultItems;
 
                 <div class="flex flex-1 flex-col px-7 py-8">
                     @if ($categoryLabel)
-                    <p class="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-[#b28a4a]">
+                    <p class="mb-4 text-sm font-semibold uppercase text-[#b28a4a]">
                         {{ $categoryLabel }}
                     </p>
                     @endif
 
                     @if ($itemTitle)
-                    <h3 class="text-xl sm:text-2xl md:text-2xl leading-snug tracking-[0.15em] uppercase font-semibold text-slate-800">
+                    <h3 class="text-lg leading-snug uppercase font-semibold text-slate-700 mb-3">
                         {{ $itemTitle }}
                     </h3>
                     @endif
 
                     @if ($itemDescription)
-                    <div class="mt-5 grow text-[15px] sm:text-base leading-relaxed text-gray-600">
+                    <div class="mt-2 grow text-sm leading-relaxed text-gray-600">
                         {!! nl2br(e($itemDescription)) !!}
                     </div>
                     @endif
 
                     <div class="mt-auto flex items-end justify-between gap-5 pt-10">
                         @if ($pointsLabel)
-                        <p class="text-xs font-semibold uppercase tracking-[0.08em] text-slate-900">
+                        <p class="text-sm font-semibold uppercase text-slate-700">
                             {{ $pointsLabel }}
                         </p>
                         @endif
 
                         @if ($buttonLabel)
-                        <a href="{{ $buttonUrl }}" class="inline-flex min-w-[145px] items-center justify-center border border-slate-900 px-6 py-4 text-xs font-semibold uppercase tracking-[0.32em] text-slate-900 transition duration-300 hover:border-[#b28a4a] hover:bg-[#b28a4a] hover:text-white">
+                        <a href="{{ $buttonUrl }}" class="inline-flex min-w-[130px] items-center justify-center border border-slate-900 px-4 py-2.5 text-sm font-medium uppercase text-slate-700 transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em]">
                             {{ $buttonLabel }}
                         </a>
                         @endif
@@ -256,7 +256,7 @@ $items = count($rewardItems) > 0 ? $rewardItems : $defaultItems;
 
         @if ($viewMoreLabel)
         <div class="mt-14 flex justify-center">
-            <a href="{{ $viewMoreUrl }}" class="inline-flex items-center justify-center border border-slate-900 px-8 py-4 text-xs font-semibold uppercase tracking-[0.32em] text-slate-900 transition duration-300 hover:border-[#b28a4a] hover:bg-[#b28a4a] hover:text-white">
+            <a href="{{ $viewMoreUrl }}" class="inline-flex items-center justify-center border border-slate-900 px-5 py-2.5 text-sm font-medium uppercase text-slate-700 transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em]">
                 {{ $viewMoreLabel }}
             </a>
         </div>

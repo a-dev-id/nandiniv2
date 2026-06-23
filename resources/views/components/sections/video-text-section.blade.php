@@ -73,13 +73,13 @@ $gridOrderText = $reverse ? 'lg:order-1' : 'lg:order-2';
                 <div class="h-full flex flex-col justify-center px-4 sm:px-8 md:px-10 lg:px-12 md:py-14">
                     <div class="text-center">
                         @if ($page?->title)
-                        <h1 class="text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 mb-6 md:mb-8 font-medium">
+                        <h1 class="text-2xl leading-snug uppercase text-slate-700 font-medium mb-3">
                             {{ $page->title }}
                         </h1>
                         @endif
 
                         @if ($page?->excerpt)
-                        <p class="text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+                        <p class="text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
                             {{ $page->excerpt }}
                         </p>
                         @endif

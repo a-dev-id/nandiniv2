@@ -17,73 +17,140 @@ return $value;
 };
 
 $isCheck = fn ($value): bool => in_array(trim((string) $value), ['✓', 'check', 'yes', 'true', '1'], true);
+
+$tiers = [
+'bronze' => 'Dana',
+'silver' => 'Upaya',
+'gold' => 'Dhyana',
+'platinum' => 'Jnana',
+];
 @endphp
 
-<section class="py-14 md:py-20 px-6 bg-white">
-    <div class="max-w-[1500px] mx-auto">
+<section class="bg-white px-0 py-12 md:px-6 md:py-20">
+    <div class="mx-auto max-w-[1500px]">
 
         {{-- Header --}}
-        <div class="mx-auto max-w-4xl text-center">
+        <div class="mx-auto max-w-4xl px-5 text-center md:px-0">
             @if ($section->subtitle)
-            <p class="mb-4 text-sm md:text-base leading-relaxed tracking-[0.18em] uppercase text-[#b28a4a] font-medium">
+            <p class="mb-4 text-sm font-medium uppercase leading-relaxed text-[#b28a4a] md:text-base">
                 {{ $section->subtitle }}
             </p>
             @endif
 
             @if ($section->title)
-            <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
+            <h2 class="text-xl font-medium uppercase leading-snug mb-3">
                 {{ $section->title }}
             </h2>
             @endif
 
             @if ($section->description)
-            <div class="mt-5 text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+            <div class="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-[#4b5563] sm:max-w-3xl md:max-w-5xl">
                 {!! $section->description !!}
             </div>
             @endif
         </div>
 
-        {{-- Table --}}
         @if ($items->isNotEmpty())
-        <div class="mt-14 overflow-x-auto">
-            <table class="w-full min-w-[900px] border-collapse text-[15px] text-slate-950">
+
+        {{-- Mobile Google-style Comparison Table --}}
+        <div class="mt-10 px-5 md:hidden">
+            <div class="border border-[#e7dfcf] bg-white shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
+                <table class="w-full table-fixed border-collapse text-[#10233f]">
+                    <thead>
+                        <tr class="border-b border-[#d8c49a] bg-[#fbfaf7]">
+                            <th class="w-[45%] border-r border-[#e7dfcf] px-3 py-4 text-left text-[11px] font-semibold uppercase text-[#10233f]">
+                                Benefits
+                            </th>
+
+                            @foreach ($tiers as $tierLabel)
+                            <th class="w-[13.75%] border-r border-[#e7dfcf] px-1 py-3 last:border-r-0">
+                                <div class="mx-auto flex h-24 items-center justify-center">
+                                    <span class="[writing-mode:vertical-rl] rotate-180 text-[11px] font-semibold uppercase text-[#10233f]">
+                                        {{ $tierLabel }}
+                                    </span>
+                                </div>
+                            </th>
+                            @endforeach
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach ($items as $index => $item)
+                        <tr class="{{ $index % 2 === 1 ? 'bg-[#fbfaf7]' : 'bg-white' }}">
+                            <td class="border-r border-t border-[#e7dfcf] px-3 py-4 text-[13px] font-medium leading-relaxed text-[#10233f]">
+                                {{ $item['benefit'] ?? '' }}
+                            </td>
+
+                            @foreach ($tiers as $tierKey => $tierLabel)
+                            @php
+                            $value = $formatValue($item[$tierKey] ?? '-');
+                            @endphp
+
+                            <td class="border-r border-t border-[#e7dfcf] px-1 py-4 text-center last:border-r-0">
+                                @if ($isCheck($value))
+                                <span class="inline-flex h-6 w-6 items-center justify-center text-base font-semibold leading-none text-[#b28a4a]">
+                                    ✓
+                                </span>
+                                @elseif ($value === '-')
+                                <span class="text-sm text-[#d8c49a]">
+                                    —
+                                </span>
+                                @else
+                                <span class="block break-words text-[11px] font-semibold leading-snug text-[#10233f]">
+                                    {{ $value }}
+                                </span>
+                                @endif
+                            </td>
+                            @endforeach
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {{-- Desktop Table --}}
+        <div class="mt-14 hidden px-6 md:block">
+            <table class="w-full table-fixed border-collapse text-sm text-[#10233f] text-sm">
                 <thead>
-                    <tr class="border-b border-slate-800">
-                        <th class="w-[38%] px-6 py-5 text-left text-xl tracking-[0.18em] uppercase font-semibold">
+                    <tr class="border-b border-[#b28a4a]">
+                        <th class="w-[40%] px-4 py-5 text-left text-base font-semibold uppercase text-[#10233f] lg:px-6 lg:text-xl">
                             Member Benefits
                         </th>
-                        <th class="px-6 py-5 text-center text-xl tracking-[0.18em] uppercase font-semibold">
-                            Bronze
+
+                        @foreach ($tiers as $tierLabel)
+                        <th class="w-[15%] px-3 py-5 text-center text-base font-semibold uppercase text-[#10233f] lg:px-6 lg:text-xl">
+                            {{ $tierLabel }}
                         </th>
-                        <th class="px-6 py-5 text-center text-xl tracking-[0.18em] uppercase font-semibold">
-                            Silver
-                        </th>
-                        <th class="px-6 py-5 text-center text-xl tracking-[0.18em] uppercase font-semibold">
-                            Gold
-                        </th>
-                        <th class="px-6 py-5 text-center text-xl tracking-[0.18em] uppercase font-semibold">
-                            Platinum
-                        </th>
+                        @endforeach
                     </tr>
                 </thead>
 
                 <tbody>
                     @foreach ($items as $index => $item)
-                    <tr class="{{ $index % 2 === 1 ? 'bg-slate-100' : 'bg-white' }}">
-                        <td class="px-6 py-5 leading-6 text-left">
+                    <tr class="{{ $index % 2 === 1 ? 'bg-[#fbfaf7]' : 'bg-white' }}">
+                        <td class="break-words px-4 py-5 text-left leading-6 text-[#10233f] lg:px-6">
                             {{ $item['benefit'] ?? '' }}
                         </td>
 
-                        @foreach (['bronze', 'silver', 'gold', 'platinum'] as $tier)
+                        @foreach ($tiers as $tierKey => $tierLabel)
                         @php
-                        $value = $formatValue($item[$tier] ?? '-');
+                        $value = $formatValue($item[$tierKey] ?? '-');
                         @endphp
 
-                        <td class="px-6 py-5 text-center leading-6">
+                        <td class="break-words px-3 py-5 text-center leading-6 lg:px-6">
                             @if ($isCheck($value))
-                            <span class="text-lg leading-none">✓</span>
+                            <span class="text-lg leading-none text-[#b28a4a]">
+                                ✓
+                            </span>
+                            @elseif ($value === '-')
+                            <span class="text-[#d8c49a]">
+                                —
+                            </span>
                             @else
-                            {{ $value }}
+                            <span class="text-[#10233f]">
+                                {{ $value }}
+                            </span>
                             @endif
                         </td>
                         @endforeach
@@ -91,10 +158,14 @@ $isCheck = fn ($value): bool => in_array(trim((string) $value), ['✓', 'check',
                     @endforeach
                 </tbody>
             </table>
-            <div class="mt-4 text-[15px] sm:text-base leading-relaxed italic text-gray-600">
-                <i>{{ $section->excerpt }}</i>
-            </div>
         </div>
+
+        @if ($section->excerpt)
+        <div class="mt-2 px-5 text-sm italic leading-relaxed text-[#4b5563] md:px-6">
+            <i>{!! $section->excerpt !!}</i>
+        </div>
+        @endif
+
         @endif
     </div>
 </section>

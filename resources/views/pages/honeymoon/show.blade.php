@@ -29,6 +29,7 @@
     $heroImage = $offer->hero_image ?: $offer->card_image;
     $heroMobileImage = $offer->hero_mobile_image ?: $offer->hero_image ?: $offer->card_image;
     $heroAlt = $offer->hero_image_alt ?: $offer->card_image_alt ?: $offer->title;
+    $bookingUrl = $offer->resolved_booking_url;
     @endphp
 
     <header class="shadow-xl">
@@ -39,7 +40,7 @@
                 <source media="(max-width: 767px)" srcset="{{ asset('storage/' . $heroMobileImage) }}">
                 @endif
 
-                <img src="{{ asset('storage/' . $heroImage) }}" alt="{{ $heroAlt }}" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
+                <img src="{{ asset('storage/' . $heroImage) }}" alt="{{ $heroAlt }}" class="absolute inset-0 w-full h-full object-cover" width="1920" height="1080" loading="eager" fetchpriority="high" decoding="async">
             </picture>
             @endif
         </div>
@@ -47,25 +48,25 @@
 
     <section class="bg-white px-6 py-14 md:py-20 md:px-12 lg:px-[70px]">
         <div class="mx-auto max-w-5xl text-center">
-            <h1 class="text-4xl leading-snug tracking-[0.15em] md:tracking-[0.25em] uppercase text-slate-800 mb-6 md:mb-8 font-medium">
+            <h1 class="text-2xl leading-snug uppercase text-slate-700 font-medium mb-3">
                 {{ $offer->title }}
             </h1>
 
             @if ($offer->excerpt)
-            <p class="mt-6 text-base md:text-lg leading-relaxed text-gray-600">
+            <p class="mt-2 text-base md:text-lg leading-relaxed text-gray-600">
                 {{ $offer->excerpt }}
             </p>
             @endif
 
             @if ($offer->description)
-            <div class="mt-8 text-[15px] sm:text-base leading-relaxed text-gray-600 max-w-4xl mx-auto [&_p]:mb-4 [&_ul]:pl-6 [&_li]:mb-1">
+            <div class="mt-8 text-sm leading-relaxed text-gray-600 max-w-4xl mx-auto [&_p]:mb-4 [&_ul]:pl-6 [&_li]:mb-1">
                 {!! $offer->description !!}
             </div>
             @endif
 
-            @if ($offer->button_url || $offer->booking_url_override)
+            @if ($bookingUrl)
             <div class="mt-10">
-                <a href="{{ $offer->booking_url_override ?: $offer->button_url }}" class="inline-flex min-w-[190px] items-center justify-center border border-[#916B2C] bg-[#916B2C] px-7 py-4 text-sm uppercase tracking-[0.14em] text-white hover:bg-white hover:text-[#916B2C] transition">
+                <a href="{{ $bookingUrl }}" class="inline-flex min-w-[190px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-7 py-4 text-sm uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B]">
                     {{ $offer->button_label ?: 'Book Now' }}
                 </a>
             </div>
@@ -77,7 +78,7 @@
     <section class="bg-[#F7F7F7] px-6 py-14 md:py-20 md:px-12 lg:px-[70px]">
         <div class="mx-auto w-full">
             <div class="mb-10 text-center">
-                <h2 class="text-2xl sm:text-3xl md:text-3xl leading-snug tracking-[0.15em] md:tracking-[0.22em] uppercase text-slate-800 font-medium">
+                <h2 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3">
                     Related Honeymoon Offers
                 </h2>
             </div>
@@ -98,17 +99,17 @@
                         </div>
 
                         <div class="p-7">
-                            <h3 class="text-xl sm:text-2xl md:text-2xl leading-snug tracking-[0.15em] uppercase text-slate-950 font-medium">
+                            <h3 class="text-lg leading-snug uppercase text-slate-950 font-medium mb-3">
                                 {{ $relatedOffer->title }}
                             </h3>
 
                             @if ($relatedOffer->excerpt)
-                            <p class="mt-4 text-[15px] leading-relaxed text-slate-700">
+                            <p class="mt-2 text-sm leading-relaxed text-slate-700">
                                 {{ \Illuminate\Support\Str::limit(strip_tags($relatedOffer->excerpt), 130) }}
                             </p>
                             @endif
 
-                            <p class="mt-6 text-sm uppercase tracking-[0.14em] text-[#916B2C]">
+                            <p class="mt-2 text-sm uppercase text-[#916B2C]">
                                 View Offer
                             </p>
                         </div>

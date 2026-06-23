@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Pages\RelationManagers;
 
+use App\Support\FilamentWebpUpload;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -38,6 +39,7 @@ class SectionsRelationManager extends RelationManager
 
     private const MEDIA_SECTION_KEYS = [
         'image_overlay_section',
+        'contained_image_section',
         'split_media_section',
         'split_media_reverse',
         'three_images_section',
@@ -82,6 +84,7 @@ class SectionsRelationManager extends RelationManager
                                 'dining_information_section' => 'Dining Information Section',
                                 'spa_information_section' => 'Spa Information Section',
                                 'image_overlay_section' => 'Image Overlay Section',
+                                'contained_image_section' => 'Contained Image Section',
                                 'split_media_section' => 'Split Media Section',
                                 'split_media_reverse' => 'Split Media Reverse',
                                 'three_images_section' => 'Three Images Section',
@@ -305,13 +308,23 @@ class SectionsRelationManager extends RelationManager
                                     ->openable()
                                     ->downloadable()
                                     ->saveUploadedFileUsing(
-                                        fn(TemporaryUploadedFile $file): string => self::storeAsWebp(
+                                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                                             file: $file,
                                             directory: 'membership/use-points',
                                             targetWidth: 1200,
                                             targetHeight: 750,
+                                            fileName: $get('image_file_name'),
                                         )
                                     )
+                                    ->visible(fn(Get $get): bool => $get('../../section_key') === 'membership_use_points_section')
+                                    ->columnSpanFull(),
+
+                                TextInput::make('image_file_name')
+                                    ->label('Card Image File Name')
+                                    ->placeholder('example-use-points-card')
+                                    ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
+                                    ->maxLength(120)
+                                    ->dehydrated(false)
                                     ->visible(fn(Get $get): bool => $get('../../section_key') === 'membership_use_points_section')
                                     ->columnSpanFull(),
 
@@ -489,13 +502,21 @@ class SectionsRelationManager extends RelationManager
                                     ->openable()
                                     ->downloadable()
                                     ->saveUploadedFileUsing(
-                                        fn(TemporaryUploadedFile $file): string => self::storeAsWebp(
+                                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                                             file: $file,
                                             directory: 'pages/sections',
                                             targetWidth: 1600,
                                             targetHeight: 900,
+                                            fileName: $get('image_file_name'),
                                         )
                                     ),
+
+                                TextInput::make('image_file_name')
+                                    ->label('Desktop Image File Name')
+                                    ->placeholder('example-section-image')
+                                    ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
+                                    ->maxLength(120)
+                                    ->dehydrated(false),
 
                                 TextInput::make('image_alt')
                                     ->label('Desktop Alt Text')
@@ -515,13 +536,21 @@ class SectionsRelationManager extends RelationManager
                                     ->openable()
                                     ->downloadable()
                                     ->saveUploadedFileUsing(
-                                        fn(TemporaryUploadedFile $file): string => self::storeAsWebp(
+                                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                                             file: $file,
                                             directory: 'pages/sections/mobile',
                                             targetWidth: 1200,
                                             targetHeight: 900,
+                                            fileName: $get('mobile_image_file_name'),
                                         )
                                     ),
+
+                                TextInput::make('mobile_image_file_name')
+                                    ->label('Mobile Image File Name')
+                                    ->placeholder('example-section-mobile')
+                                    ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
+                                    ->maxLength(120)
+                                    ->dehydrated(false),
 
                                 TextInput::make('mobile_image_alt')
                                     ->label('Mobile Alt Text')
@@ -687,6 +716,7 @@ class SectionsRelationManager extends RelationManager
                         'dining_information_section' => 'Dining Information',
                         'spa_information_section' => 'Spa Information',
                         'image_overlay_section' => 'Image Overlay',
+                        'contained_image_section' => 'Contained Image',
                         'split_media_section' => 'Split Media',
                         'split_media_reverse' => 'Split Media Reverse',
                         'three_images_section' => 'Three Images',
@@ -704,6 +734,7 @@ class SectionsRelationManager extends RelationManager
                         'dining_information_section' => 'success',
                         'spa_information_section' => 'warning',
                         'image_overlay_section' => 'info',
+                        'contained_image_section' => 'info',
                         'split_media_section' => 'success',
                         'split_media_reverse' => 'warning',
                         'three_images_section' => 'primary',
