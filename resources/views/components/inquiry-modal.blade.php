@@ -39,6 +39,13 @@
             <input type="hidden" name="inquiry_title" x-bind:value="itemTitle">
             <input type="hidden" name="inquiry_image" x-bind:value="itemImage">
 
+            <div x-show="itemTitle" class="border border-[#E5DDCF] bg-[#F8F4EC] px-4 py-3">
+                <p class="m-0 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#A67C3D] sm:text-xs">
+                    Inquiry For
+                </p>
+                <p class="m-0 mt-1 text-sm font-medium leading-6 text-slate-700 sm:text-base" x-text="itemTitle"></p>
+            </div>
+
             <template x-if="message">
                 <div class="border border-green-200 bg-green-50 px-4 py-3 text-xs text-green-800 sm:text-sm">
                     <p class="m-0" x-text="message"></p>
