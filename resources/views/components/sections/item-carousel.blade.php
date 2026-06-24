@@ -67,14 +67,14 @@
                     @if ($variant === 'gallery')
                     <div class="group aspect-[4/3] md:aspect-[4/3] overflow-hidden bg-slate-100">
                         @if ($image)
-                        <img src="{{ asset('storage/' . $image) }}" alt="{{ $alt }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" />
+                        <img src="{{ asset('storage/' . $image) }}" alt="{{ $alt }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" width="640" height="480" loading="lazy" decoding="async" />
                         @endif
                     </div>
                     @else
                     <a href="{{ $url }}" class="block">
                         <div class="aspect-[4/3] md:aspect-4/3 overflow-hidden bg-slate-100 group">
                             @if ($image)
-                            <img src="{{ asset('storage/' . $image) }}" alt="{{ $alt }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" />
+                            <img src="{{ asset('storage/' . $image) }}" alt="{{ $alt }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" width="640" height="480" loading="lazy" decoding="async" />
                             @endif
                         </div>
                     </a>

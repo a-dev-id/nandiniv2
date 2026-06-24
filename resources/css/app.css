@@ -41,6 +41,30 @@
 }
 
 @layer components {
+    .bg-\[\#A67C3D\] {
+        background-color: #7a5624 !important;
+    }
+
+    .border-\[\#A67C3D\] {
+        border-color: #7a5624 !important;
+    }
+
+    .text-\[\#A67C3D\] {
+        color: #7a5624 !important;
+    }
+
+    .hover\:bg-\[\#B8945B\]:hover {
+        background-color: #8f6b34 !important;
+    }
+
+    .hover\:border-\[\#B8945B\]:hover {
+        border-color: #8f6b34 !important;
+    }
+
+    .hover\:text-\[\#B8945B\]:hover {
+        color: #8f6b34 !important;
+    }
+
     .itemcarousel-slick .slick-track {
         display: flex !important;
     }
@@ -53,6 +77,10 @@
     .itemcarousel-slick .slick-slide > div {
         display: flex;
         flex: 1;
+    }
+
+    .slick-slide[aria-hidden="true"] {
+        visibility: hidden;
     }
 
     nav[aria-label="Pagination Navigation"] a:hover,

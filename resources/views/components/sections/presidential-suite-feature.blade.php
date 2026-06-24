@@ -61,7 +61,7 @@ $galleryImages = $accommodation?->activeImages
 
         @if ($leadImage)
         <div class="group mx-auto max-w-5xl overflow-hidden bg-slate-100">
-            <img src="{{ $leadImage }}" alt="{{ $leadAlt }}" class="aspect-[4/3] md:aspect-[3/2] w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy">
+            <img src="{{ $leadImage }}" alt="{{ $leadAlt }}" class="aspect-[4/3] md:aspect-[16/9] w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy">
         </div>
         @endif
 

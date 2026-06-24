@@ -181,6 +181,16 @@ function initItemCarousel() {
         return;
     }
 
+    const updateSlickAccessibility = ($el) => {
+        $el.find(".slick-slide[aria-hidden='true'] a, .slick-slide[aria-hidden='true'] button, .slick-slide[aria-hidden='true'] input, .slick-slide[aria-hidden='true'] select, .slick-slide[aria-hidden='true'] textarea, .slick-slide[aria-hidden='true'] [tabindex]")
+            .attr("tabindex", "-1")
+            .attr("aria-hidden", "true");
+
+        $el.find(".slick-slide[aria-hidden='false'] a, .slick-slide[aria-hidden='false'] button, .slick-slide[aria-hidden='false'] input, .slick-slide[aria-hidden='false'] select, .slick-slide[aria-hidden='false'] textarea")
+            .removeAttr("tabindex")
+            .removeAttr("aria-hidden");
+    };
+
     ensureSlick().then(($) => {
         $(".itemcarousel-slick").each(function () {
             const $el = $(this);
@@ -188,8 +198,13 @@ function initItemCarousel() {
 
             if ($el.hasClass("slick-initialized")) {
                 $el.slick("refresh");
+                updateSlickAccessibility($el);
                 return;
             }
+
+            $el.on("init reInit afterChange setPosition", function () {
+                updateSlickAccessibility($el);
+            });
 
             $el.slick({
                 slidesToShow: 3,
@@ -222,41 +237,50 @@ function initDeferredYouTubeEmbeds() {
         return;
     }
 
-    const loadEmbeds = () => {
-        embeds.forEach((embed) => {
-            if (embed.dataset.loaded === "true" || !embed.dataset.src) {
-                return;
-            }
+    const toPrivacyUrl = (src) => src.replace("https://www.youtube.com/embed/", "https://www.youtube-nocookie.com/embed/");
 
-            const iframe = document.createElement("iframe");
-            iframe.className = embed.dataset.frameClass || "absolute inset-0 h-full w-full";
-            iframe.src = embed.dataset.src;
-            iframe.title = embed.dataset.title || "Video";
-            iframe.loading = "lazy";
-            iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-            iframe.referrerPolicy = "strict-origin-when-cross-origin";
-            iframe.allowFullscreen = true;
-            iframe.setAttribute("frameborder", "0");
-
-            embed.appendChild(iframe);
-            embed.dataset.loaded = "true";
-        });
-    };
-
-    const scheduleLoad = () => {
-        if ("requestIdleCallback" in window) {
-            window.requestIdleCallback(loadEmbeds, { timeout: 2500 });
+    const loadEmbed = (embed) => {
+        if (embed.dataset.loaded === "true" || !embed.dataset.src) {
             return;
         }
 
-        window.setTimeout(loadEmbeds, 1800);
+        const iframe = document.createElement("iframe");
+        iframe.className = embed.dataset.frameClass || "absolute inset-0 h-full w-full";
+        iframe.src = toPrivacyUrl(embed.dataset.src);
+        iframe.title = embed.dataset.title || "Video";
+        iframe.loading = "lazy";
+        iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+        iframe.referrerPolicy = "strict-origin-when-cross-origin";
+        iframe.allowFullscreen = true;
+        iframe.setAttribute("frameborder", "0");
+
+        embed.appendChild(iframe);
+        embed.dataset.loaded = "true";
     };
 
-    if (document.readyState === "complete") {
-        scheduleLoad();
-    } else {
-        window.addEventListener("load", scheduleLoad, { once: true });
-    }
+    const isVisible = (element) => {
+        const style = window.getComputedStyle(element);
+
+        return style.display !== "none" && style.visibility !== "hidden" && element.getClientRects().length > 0;
+    };
+
+    embeds.forEach((embed) => {
+        if (embed.dataset.autoload === "true") {
+            if (isVisible(embed)) {
+                window.setTimeout(() => loadEmbed(embed), Number(embed.dataset.autoloadDelay || 600));
+            }
+
+            return;
+        }
+
+        embed.addEventListener("click", () => loadEmbed(embed), { once: true });
+        embed.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                loadEmbed(embed);
+            }
+        }, { once: true });
+    });
 }
 
 onPageReady(() => {

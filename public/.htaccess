@@ -5,6 +5,12 @@
 
     RewriteEngine On
 
+    # Serve generated WebP images to browsers that support them while keeping
+    # existing JPG/PNG URLs unchanged for templates and older clients.
+    RewriteCond %{HTTP_ACCEPT} image/webp
+    RewriteCond %{REQUEST_FILENAME}\.webp -f
+    RewriteRule ^(.+)\.(jpe?g|png)$ $1.$2.webp [T=image/webp,E=accept:1,L]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
@@ -40,6 +46,7 @@
 <IfModule mod_headers.c>
     <FilesMatch "\.(?:avif|webp|jpe?g|png|svg|ico|woff2)$">
         Header set Cache-Control "public, max-age=31536000, immutable"
+        Header append Vary Accept
     </FilesMatch>
 
     <FilesMatch "\.(?:css|js)$">

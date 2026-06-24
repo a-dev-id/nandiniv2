@@ -59,7 +59,7 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
 
                 {{-- CENTER LOGO --}}
                 <a href="{{ route('home') }}" class="absolute left-1/2 -translate-x-1/2 flex items-center justify-center tracking-[0.08em] font-medium">
-                    <img id="navLogo" src="{{ asset('images/logo-njhg.png') }}" class="h-14 sm:h-16 lg:h-24 w-auto brightness-0 invert transition-all duration-300" alt="Nandini Jungle" />
+                    <img id="navLogo" src="{{ asset('images/logo-njhg.png') }}" class="h-14 sm:h-16 lg:h-24 w-auto brightness-0 invert transition-all duration-300" alt="Nandini Jungle" width="250" height="104" />
                 </a>
 
                 {{-- RIGHT --}}
@@ -74,7 +74,7 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
 
                             <span class="inline-flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-white bg-white/10 text-[12px] font-bold uppercase text-white shadow-sm transition duration-300 hover:border-[#B8945B] sm:text-[14px]" data-nav-profile-avatar>
                                 @if ($memberProfilePhotoUrl)
-                                <img src="{{ $memberProfilePhotoUrl }}" alt="{{ $memberName }}" class="h-full w-full object-cover">
+                                <img src="{{ $memberProfilePhotoUrl }}" alt="{{ $memberName }}" class="h-full w-full object-cover" width="44" height="44" loading="lazy" decoding="async">
                                 @else
                                 <span>{{ $memberInitial }}</span>
                                 @endif
@@ -185,7 +185,7 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                 </button>
 
                 <div class="flex items-center justify-start">
-                    <img src="{{ asset('images/logo-njhg.png') }}" alt="Nandini Jungle by Hanging Gardens" class="w-36 h-auto" loading="lazy" />
+                    <img src="{{ asset('images/logo-njhg.png') }}" alt="Nandini Jungle by Hanging Gardens" class="w-36 h-auto" width="250" height="104" loading="lazy" decoding="async" />
                 </div>
 
                 <div class="mt-2 h-px bg-slate-300/70"></div>

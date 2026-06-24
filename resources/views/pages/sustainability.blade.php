@@ -36,28 +36,20 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
 
     <section class="bg-white px-6 pb-16 md:pb-24">
         <div class="mx-auto grid max-w-6xl grid-cols-1 gap-5 md:grid-cols-2">
-            <div class="aspect-video overflow-hidden bg-black">
-                <iframe
-                    class="h-full w-full"
-                    src="https://www.youtube.com/embed/BdVcsMHRi5o"
-                    title="The Big Bloom"
-                    loading="lazy"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerpolicy="strict-origin-when-cross-origin"
-                    allowfullscreen>
-                </iframe>
+            <div class="relative aspect-video overflow-hidden bg-black cursor-pointer" role="button" tabindex="0" aria-label="Play The Big Bloom" data-youtube-embed data-src="https://www.youtube-nocookie.com/embed/BdVcsMHRi5o?rel=0&modestbranding=1&playsinline=1" data-title="The Big Bloom">
+                <img src="https://i.ytimg.com/vi/BdVcsMHRi5o/hqdefault.jpg" alt="The Big Bloom video preview" class="h-full w-full object-cover" width="480" height="360" loading="lazy" decoding="async">
+                <div class="absolute inset-0 bg-black/20"></div>
+                <span class="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white ring-1 ring-white/70" aria-hidden="true">
+                    <span class="ml-1 h-0 w-0 border-y-[10px] border-l-[16px] border-y-transparent border-l-white"></span>
+                </span>
             </div>
 
-            <div class="aspect-video overflow-hidden bg-black">
-                <iframe
-                    class="h-full w-full"
-                    src="https://www.youtube.com/embed/Znvc4anarMc"
-                    title="International Flower Competition"
-                    loading="lazy"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerpolicy="strict-origin-when-cross-origin"
-                    allowfullscreen>
-                </iframe>
+            <div class="relative aspect-video overflow-hidden bg-black cursor-pointer" role="button" tabindex="0" aria-label="Play International Flower Competition" data-youtube-embed data-src="https://www.youtube-nocookie.com/embed/Znvc4anarMc?rel=0&modestbranding=1&playsinline=1" data-title="International Flower Competition">
+                <img src="https://i.ytimg.com/vi/Znvc4anarMc/hqdefault.jpg" alt="International Flower Competition video preview" class="h-full w-full object-cover" width="480" height="360" loading="lazy" decoding="async">
+                <div class="absolute inset-0 bg-black/20"></div>
+                <span class="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white ring-1 ring-white/70" aria-hidden="true">
+                    <span class="ml-1 h-0 w-0 border-y-[10px] border-l-[16px] border-y-transparent border-l-white"></span>
+                </span>
             </div>
         </div>
     </section>
