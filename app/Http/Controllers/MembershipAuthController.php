@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Member;
 use App\Models\Page;
 use App\Models\Accommodation;
-use App\Notifications\VerifyMemberEmailNotification;
+use App\Services\MembershipEmailRelayService;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\URL;
 use Laravel\Socialite\Facades\Socialite;
 use Throwable;
 use Illuminate\Validation\Rule;
@@ -294,7 +296,7 @@ class MembershipAuthController extends Controller
             'email_verified_at' => null,
         ]);
 
-        $member->notify(new VerifyMemberEmailNotification($member));
+        $this->sendVerificationEmail($member);
 
         return redirect()
             ->route('membership.login')
@@ -407,6 +409,46 @@ class MembershipAuthController extends Controller
     {
         return $member->member_source === Member::SOURCE_MANUAL_REGISTER
             && blank($member->email_verified_at);
+    }
+
+    protected function sendVerificationEmail(Member $member): void
+    {
+        $verificationUrl = URL::temporarySignedRoute(
+            'membership.verify.email',
+            now()->addHours(24),
+            [
+                'member' => $member->id,
+                'hash' => sha1($member->email),
+            ]
+        );
+
+        // The relay sends the rendered Blade email so this site never uses SMTP directly.
+        $result = app(MembershipEmailRelayService::class)->sendView('emails.membership.verify-email', [
+            'member' => $member,
+            'verificationUrl' => $verificationUrl,
+        ], [
+            'to' => $member->email,
+            'bcc' => $this->guestBcc(),
+            'subject' => 'Verify Your Nandini Inner Circle Email',
+        ]);
+
+        if (! $result['success']) {
+            Log::warning('Member verification email could not be sent through relay.', [
+                'member_id' => $member->id,
+                'email' => $member->email,
+                'relay_response' => $result,
+            ]);
+        }
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function guestBcc(): array
+    {
+        $bcc = trim((string) config('mail.guest_bcc'));
+
+        return $bcc === '' ? [] : [$bcc];
     }
 
     protected function socialProviderIsSupported(string $provider): bool

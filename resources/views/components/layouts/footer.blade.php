@@ -25,16 +25,16 @@ $socialLinks = [
 
                 {{-- ADDRESS --}}
                 <div class="lg:col-span-3">
-                    <h3 class="text-lg uppercase mb-3">Address</h3>
+                    <h3 class="text-base uppercase mb-3 sm:text-lg">Address</h3>
 
-                    <div class="text-sm leading-7 text-white/90">
+                    <div class="text-xs leading-7 text-white/90 sm:text-sm">
                         Banjar Susut, Desa Buahan, Payangan, Bali 80571, Indonesia
                     </div>
 
                     <div class="mt-8">
-                        <h3 class="text-lg uppercase mb-3">Phone</h3>
+                        <h3 class="text-base uppercase mb-3 sm:text-lg">Phone</h3>
 
-                        <div class="text-sm leading-7 text-white/90">
+                        <div class="text-xs leading-7 text-white/90 sm:text-sm">
                             <div class="mb-6">
                                 <div class="text-white/70">Resort:</div>
                                 <a href="tel:+623618983111" class="hover:underline">+62 361 89 83 111</a>
@@ -48,8 +48,8 @@ $socialLinks = [
                     </div>
 
                     <div class="mt-8">
-                        <h3 class="text-lg uppercase mb-3">Email</h3>
-                        <a href="mailto:reservation@nandinibali.com" class="text-sm text-white/90 hover:underline">
+                        <h3 class="text-base uppercase mb-3 sm:text-lg">Email</h3>
+                        <a href="mailto:reservation@nandinibali.com" class="text-xs text-white/90 hover:underline sm:text-sm">
                             reservation@nandinibali.com
                         </a>
                     </div>
@@ -57,8 +57,8 @@ $socialLinks = [
 
                 {{-- ABOUT --}}
                 <div class="lg:col-span-2">
-                    <h3 class="text-lg uppercase mb-3">About</h3>
-                    <ul class="space-y-3 text-sm text-white/90">
+                    <h3 class="text-base uppercase mb-3 sm:text-lg">About</h3>
+                    <ul class="space-y-3 text-xs text-white/90 sm:text-sm">
                         <li><a href="{{ route('about-us.index') }}" class="hover:underline">About Us</a></li>
                         <li><a href="{{ route('blog.index') }}" class="hover:underline">Blog &amp; News</a></li>
                         <li><a href="{{ route('awards.index') }}" class="hover:underline">Awards</a></li>
@@ -69,8 +69,8 @@ $socialLinks = [
 
                 {{-- OTHERS --}}
                 <div class="lg:col-span-2">
-                    <h3 class="text-lg uppercase mb-3">Others</h3>
-                    <ul class="space-y-3 text-sm text-white/90">
+                    <h3 class="text-base uppercase mb-3 sm:text-lg">Others</h3>
+                    <ul class="space-y-3 text-xs text-white/90 sm:text-sm">
                         <li>
                             <a href="{{ route('sustainability.index') }}" class="hover:underline text-green-700 flex items-center gap-1 font-medium tracking-[0.08em]">
                                 <svg height="16px" width="16px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#35D39B">
@@ -108,7 +108,7 @@ $socialLinks = [
                         <div class="flex items-center justify-end gap-6">
                             <img src="{{ asset('images/awards-best-luxury-jungle-retreat.jpeg') }}" class="h-28 w-auto" loading="lazy" alt="Award 2024">
                             <img src="{{ asset('images/awards-best-luxury-jungle-retreat-2025.png') }}" class="h-28 w-auto" loading="lazy" alt="Award 2025">
-                            <img src="{{ asset('images/TC_white_winner-gif_L_2025-Circle.gif') }}" class="h-24 w-auto" loading="lazy" alt="Tripadvisor">
+                            <img src="{{ asset('images/tchotel_2026_W.png') }}" class="h-24 w-auto" loading="lazy" alt="Tripadvisor">
                         </div>
 
                         <div class="flex items-center justify-end gap-4">
@@ -130,8 +130,8 @@ $socialLinks = [
                     </div>
 
                     <div>
-                        <h3 class="text-lg uppercase mb-3">Address</h3>
-                        <div class="text-sm leading-7 text-white/90">
+                        <h3 class="text-base uppercase mb-3 sm:text-lg">Address</h3>
+                        <div class="text-xs leading-7 text-white/90 sm:text-sm">
                             Banjar Susut, Desa Buahan,<br>
                             Payangan, Bali 80571,<br>
                             Indonesia
@@ -139,9 +139,9 @@ $socialLinks = [
                     </div>
 
                     <div>
-                        <h3 class="text-lg uppercase mb-3">Phone</h3>
+                        <h3 class="text-base uppercase mb-3 sm:text-lg">Phone</h3>
 
-                        <div class="text-sm text-white/90 space-y-6">
+                        <div class="text-xs text-white/90 space-y-6 sm:text-sm">
                             <div>
                                 <div class="text-white/70">Resort:</div>
                                 <a href="tel:+623618983111" class="hover:underline">+62 361 89 83 111</a>
@@ -155,8 +155,8 @@ $socialLinks = [
                     </div>
 
                     <div>
-                        <h3 class="text-lg uppercase mb-3">Email</h3>
-                        <a href="mailto:reservation@nandinibali.com" class="text-sm text-white/90 hover:underline break-all">
+                        <h3 class="text-base uppercase mb-3 sm:text-lg">Email</h3>
+                        <a href="mailto:reservation@nandinibali.com" class="text-xs text-white/90 hover:underline break-all sm:text-sm">
                             reservation@nandinibali.com
                         </a>
                     </div>
@@ -164,8 +164,8 @@ $socialLinks = [
 
                 {{-- ABOUT --}}
                 <div class="mt-14">
-                    <h3 class="text-lg uppercase mb-3">About</h3>
-                    <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-white/90">
+                    <h3 class="text-base uppercase mb-3 sm:text-lg">About</h3>
+                    <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs text-white/90 sm:text-sm">
                         <a href="/about" class="hover:underline">About Us</a>
                         <a href="/blog" class="hover:underline">Blog &amp; News</a>
                         <a href="/awards" class="hover:underline">Awards</a>
@@ -177,8 +177,8 @@ $socialLinks = [
 
                 {{-- OTHERS --}}
                 <div class="mt-12">
-                    <h3 class="text-lg uppercase mb-3">Others</h3>
-                    <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-white/90">
+                    <h3 class="text-base uppercase mb-3 sm:text-lg">Others</h3>
+                    <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs text-white/90 sm:text-sm">
                         <a href="/sustainability" class="hover:underline text-green-700 flex items-center gap-1 font-medium tracking-[0.08em]">
                             <svg height="16px" width="16px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#35D39B">
                                 <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -212,7 +212,7 @@ $socialLinks = [
                     <div class="flex items-center justify-center gap-6">
                         <img src="{{ asset('images/awards-best-luxury-jungle-retreat.jpeg') }}" class="h-16 sm:h-20 w-auto" loading="lazy" alt="Award 2024">
                         <img src="{{ asset('images/awards-best-luxury-jungle-retreat-2025.png') }}" class="h-16 sm:h-20 w-auto" loading="lazy" alt="Award 2025">
-                        <img src="{{ asset('images/TC_white_winner-gif_L_2025-Circle.gif') }}" class="h-16 sm:h-20 w-auto" loading="lazy" alt="Tripadvisor">
+                        <img src="{{ asset('images/tchotel_2026_W.png') }}" class="h-16 sm:h-20 w-auto" loading="lazy" alt="Tripadvisor">
                     </div>
 
                     <div class="mt-2 flex items-center justify-center gap-4">
@@ -254,7 +254,7 @@ $socialLinks = [
                 </a>
             </div>
 
-            <div class="text-sm text-white/80 md:text-right">
+            <div class="text-xs text-white/80 md:text-right sm:text-sm">
                 Copyright © {{ date('Y') }} Nandini Jungle by Hanging Gardens.
             </div>
         </div>
@@ -269,15 +269,15 @@ $socialLinks = [
                 <span class="absolute block h-px w-5 -rotate-45 bg-current"></span>
             </button>
 
-            <div id="gds-code-title" class="font-serif text-2xl font-normal leading-snug text-slate-950">
+            <div id="gds-code-title" class="font-serif text-xl font-normal leading-snug text-slate-950 sm:text-2xl">
                 GDS Code
             </div>
 
-            <p class="mt-2 text-sm leading-relaxed text-slate-700">
+            <p class="mt-2 text-xs leading-relaxed text-slate-700 sm:text-sm">
                 Enhancing the distribution to provide flexible and innovative hospitality solutions at a competitive price-point, Nandini Jungle by Hanging Gardens is pleased to announce the launch of our company-wide GDS code.
             </p>
 
-            <dl class="mt-8 grid grid-cols-[100px_1fr] gap-x-3 gap-y-2 text-sm leading-relaxed text-slate-700">
+            <dl class="mt-8 grid grid-cols-[100px_1fr] gap-x-3 gap-y-2 text-xs leading-relaxed text-slate-700 sm:text-sm">
                 <dt>Amadeus</dt>
                 <dd>: GD DPSNJH</dd>
 

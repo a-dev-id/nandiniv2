@@ -44,7 +44,7 @@
     @endif
 
     <section class="bg-white px-6 pt-14 text-center md:pt-20">
-        <h2 class="text-xl font-medium uppercase text-slate-700 mb-3">
+        <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
             Luxury Jungle Villas & Royal Suites in Ubud, Bali
         </h2>
     </section>
@@ -55,7 +55,7 @@
 
     @if ($experienceCategories->isNotEmpty())
     <section class="bg-white px-6 pt-10 text-center md:pt-14">
-        <h2 class="text-xl font-medium uppercase text-slate-700 mb-3">
+        <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
             Experiences Beyond the Stay
         </h2>
     </section>
@@ -67,10 +67,10 @@
 
     @if ($offers->isNotEmpty())
     <section class="bg-white px-6 pt-10 text-center md:pt-14">
-        <h2 class="text-xl font-medium uppercase text-slate-700 mb-3">
+        <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
             Exclusive Jungle Escapes
         </h2>
-        <p class="mx-auto max-w-4xl text-sm leading-relaxed text-slate-600 mb-3">
+        <p class="mx-auto max-w-4xl text-xs leading-relaxed text-slate-600 mb-3 sm:text-sm">
             Discover exclusive Ubud offers at Nandini Jungle by Hanging Gardens. Book direct for the Best Rate Guarantee and find the perfect package for your Bali escape.
         </p>
     </section>
@@ -80,7 +80,7 @@
 
     @if ($diningSections->isNotEmpty())
     <section class="bg-white px-6 pt-10 text-center md:pt-14">
-        <h2 class="text-xl font-medium uppercase text-slate-700 mb-3">
+        <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
             Culinary Journeys
         </h2>
     </section>
@@ -90,7 +90,7 @@
 
     @if ($spaSections->isNotEmpty())
     <section class="bg-white px-6 pt-10 text-center md:pt-14">
-        <h2 class="text-xl font-medium uppercase text-slate-700 mb-3">
+        <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
             Essence Spa
         </h2>
     </section>
@@ -100,7 +100,7 @@
 
     @if ($ubudJungleAdventures->isNotEmpty())
     <section class="bg-white px-6 pt-10 text-center md:pt-14">
-        <h2 class="text-xl font-medium uppercase text-slate-700 mb-3">
+        <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
             Bali Adventure Journeys
         </h2>
     </section>

@@ -71,7 +71,7 @@ $secondaryHref = $resolveButtonUrl($secondaryUrl, 'membership.login');
 @endphp
 
 <header class="relative shadow-xl">
-    <div class="relative w-full aspect-square lg:aspect-auto lg:h-[70vh] overflow-hidden bg-slate-100">
+    <div class="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[70vh] overflow-hidden bg-slate-100">
         @if ($desktopImageSrc || $mobileImageSrc)
         <picture class="block w-full h-full">
             @if ($mobileImageSrc)
@@ -92,7 +92,7 @@ $secondaryHref = $resolveButtonUrl($secondaryUrl, 'membership.login');
             <div class="w-full px-6 pt-20 pb-12 md:px-12 lg:px-[70px] lg:pt-24 lg:pb-16">
                 <div class="max-w-3xl text-white">
                     @if ($heroDescription)
-                    <div class="mb-4 max-w-xl text-base md:text-lg font-light leading-[1.65] text-white/95 [&_p]:mb-1.5 [&_p:last-child]:mb-0">
+                    <div class="mb-4 max-w-xl text-sm md:text-lg font-light leading-[1.65] text-white/95 [&_p]:mb-1.5 [&_p:last-child]:mb-0 sm:text-base">
                         @if ($heroDescriptionHasHtml)
                         {!! $heroDescription !!}
                         @else
@@ -101,7 +101,7 @@ $secondaryHref = $resolveButtonUrl($secondaryUrl, 'membership.login');
                     </div>
                     @endif
 
-                    <h1 class="text-2xl leading-snug uppercase text-white font-medium mb-3">
+                    <h1 class="text-xl leading-snug uppercase text-white font-medium mb-3 sm:text-2xl">
                         {{ $heroTitle }}
                     </h1>
 

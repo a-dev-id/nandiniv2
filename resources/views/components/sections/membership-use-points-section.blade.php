@@ -171,7 +171,7 @@ $items = count($rewardItems) > 0 ? $rewardItems : $defaultItems;
     <div class="mx-auto max-w-[1500px]">
 
         @if ($hasSubtitle)
-        <p class="mb-4 text-center text-sm md:text-base leading-relaxed uppercase text-[#b28a4a] font-medium">
+        <p class="mb-4 text-center text-xs md:text-base leading-relaxed uppercase text-[#b28a4a] font-medium sm:text-sm">
             {!! str_ireplace(
             ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
             '<br class="hidden md:block">',
@@ -181,7 +181,7 @@ $items = count($rewardItems) > 0 ? $rewardItems : $defaultItems;
         @endif
 
         @if ($hasTitle)
-        <h2 class="text-xl text-center leading-snug uppercase font-medium {{ $titleColorClass }} mb-3">
+        <h2 class="text-lg text-center leading-snug uppercase font-medium {{ $titleColorClass }} mb-3 sm:text-xl">
             {!! str_ireplace(
             ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
             '<br class="hidden md:block">',
@@ -191,7 +191,7 @@ $items = count($rewardItems) > 0 ? $rewardItems : $defaultItems;
         @endif
 
         @if ($hasDescription)
-        <div class="mt-8 text-sm leading-relaxed max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto {{ $descriptionColorClass }} {{ $descriptionAlignClass }}">
+        <div class="mt-8 text-xs leading-relaxed max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto {{ $descriptionColorClass }} {{ $descriptionAlignClass }} sm:text-sm">
             {!! $description !!}
         </div>
         @endif
@@ -212,39 +212,39 @@ $items = count($rewardItems) > 0 ? $rewardItems : $defaultItems;
 
             <article class="group flex h-full flex-col bg-white shadow-xl shadow-black/10 ring-1 ring-black/5">
                 @if ($imageUrl)
-                <div class="aspect-square overflow-hidden bg-slate-100 md:aspect-[4/3]">
+                <div class="aspect-[4/3] overflow-hidden bg-slate-100 md:aspect-[4/3]">
                     <img src="{{ $imageUrl }}" alt="{{ $imageAlt ?: $itemTitle }}" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy">
                 </div>
                 @endif
 
                 <div class="flex flex-1 flex-col px-7 py-8">
                     @if ($categoryLabel)
-                    <p class="mb-4 text-sm font-semibold uppercase text-[#b28a4a]">
+                    <p class="mb-4 text-xs font-semibold uppercase text-[#b28a4a] sm:text-sm">
                         {{ $categoryLabel }}
                     </p>
                     @endif
 
                     @if ($itemTitle)
-                    <h3 class="text-lg leading-snug uppercase font-semibold text-slate-700 mb-3">
+                    <h3 class="text-base leading-snug uppercase font-semibold text-slate-700 mb-3 sm:text-lg">
                         {{ $itemTitle }}
                     </h3>
                     @endif
 
                     @if ($itemDescription)
-                    <div class="mt-2 grow text-sm leading-relaxed text-gray-600">
+                    <div class="mt-2 grow text-xs leading-relaxed text-gray-600 sm:text-sm">
                         {!! nl2br(e($itemDescription)) !!}
                     </div>
                     @endif
 
                     <div class="mt-auto flex items-end justify-between gap-5 pt-10">
                         @if ($pointsLabel)
-                        <p class="text-sm font-semibold uppercase text-slate-700">
+                        <p class="text-xs font-semibold uppercase text-slate-700 sm:text-sm">
                             {{ $pointsLabel }}
                         </p>
                         @endif
 
                         @if ($buttonLabel)
-                        <a href="{{ $buttonUrl }}" class="inline-flex min-w-[130px] items-center justify-center border border-slate-900 px-4 py-2.5 text-sm font-medium uppercase text-slate-700 transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em]">
+                        <a href="{{ $buttonUrl }}" class="inline-flex min-w-[130px] items-center justify-center border border-slate-900 px-4 py-2.5 text-xs font-medium uppercase text-slate-700 transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em] sm:text-sm">
                             {{ $buttonLabel }}
                         </a>
                         @endif
@@ -256,7 +256,7 @@ $items = count($rewardItems) > 0 ? $rewardItems : $defaultItems;
 
         @if ($viewMoreLabel)
         <div class="mt-14 flex justify-center">
-            <a href="{{ $viewMoreUrl }}" class="inline-flex items-center justify-center border border-slate-900 px-5 py-2.5 text-sm font-medium uppercase text-slate-700 transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em]">
+            <a href="{{ $viewMoreUrl }}" class="inline-flex items-center justify-center border border-slate-900 px-5 py-2.5 text-xs font-medium uppercase text-slate-700 transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em] sm:text-sm">
                 {{ $viewMoreLabel }}
             </a>
         </div>

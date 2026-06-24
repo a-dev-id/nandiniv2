@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Cron;
 
 use App\Http\Controllers\Controller;
-use App\Mail\AutoJoinWelcomeMail;
 use App\Models\Member;
+use App\Services\MembershipEmailRelayService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 
 class TestWelcomeEmailController extends Controller
 {
@@ -41,17 +40,41 @@ class TestWelcomeEmailController extends Controller
             'points' => 0,
         ]);
 
-        Mail::to($email)->send(new AutoJoinWelcomeMail(
-            member: $member,
-            bookingNumber: 'TEST-BOOKING',
-            roomName: 'Jungle View Villa',
-            checkinDate: now()->toDateString(),
-            checkoutDate: now()->addDay()->toDateString(),
-        ));
+        // This endpoint tests the real relay-backed welcome email path.
+        $result = app(MembershipEmailRelayService::class)->sendView('emails.membership.auto-join-welcome', [
+            'member' => $member,
+            'bookingNumber' => 'TEST-BOOKING',
+            'roomName' => 'Jungle View Villa',
+            'checkinDate' => now()->toDateString(),
+            'checkoutDate' => now()->addDay()->toDateString(),
+            'loginUrl' => route('membership.login'),
+            'passwordResetUrl' => route('membership.password.request'),
+        ], [
+            'to' => $email,
+            'bcc' => $this->guestBcc(),
+            'subject' => 'Welcome to Nandini Inner Circle',
+        ]);
+
+        if (! $result['success']) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Test welcome email could not be sent.',
+            ], 500);
+        }
 
         return response()->json([
             'success' => true,
             'message' => 'Test welcome email sent.',
         ]);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function guestBcc(): array
+    {
+        $bcc = trim((string) config('mail.guest_bcc'));
+
+        return $bcc === '' ? [] : [$bcc];
     }
 }

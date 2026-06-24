@@ -61,18 +61,18 @@ $buttons = [
     <div class="mx-auto grid max-w-7xl gap-12 lg:grid-cols-3 lg:gap-16">
         {{-- Spa Information --}}
         <div class="text-center">
-            <h2 class="text-xl leading-snug font-medium uppercase text-slate-700 mb-3">
+            <h2 class="text-lg leading-snug font-medium uppercase text-slate-700 mb-3 sm:text-xl">
                 Spa Information
             </h2>
 
-            <div class="text-sm leading-relaxed text-slate-700 [&_p]:mb-2 [&_strong]:font-semibold [&_ul]:list-none [&_ul]:pl-0 [&_ol]:list-none [&_ol]:pl-0 [&_li]:mb-1">
+            <div class="text-xs leading-relaxed text-slate-700 [&_p]:mb-2 [&_strong]:font-semibold [&_ul]:list-none [&_ul]:pl-0 [&_ol]:list-none [&_ol]:pl-0 [&_li]:mb-1 sm:text-sm">
                 {!! $spaInformation !!}
             </div>
         </div>
 
         {{-- Additional Information --}}
         <div class="text-center">
-            <h2 class="text-xl leading-snug font-medium uppercase text-slate-700 mb-3">
+            <h2 class="text-lg leading-snug font-medium uppercase text-slate-700 mb-3 sm:text-xl">
                 Additional Information
             </h2>
 
@@ -101,11 +101,11 @@ $buttons = [
 
         {{-- Reservations --}}
         <div class="text-center">
-            <h2 class="text-xl leading-snug font-medium uppercase text-slate-700 mb-3">
+            <h2 class="text-lg leading-snug font-medium uppercase text-slate-700 mb-3 sm:text-xl">
                 Reservations
             </h2>
 
-            <div class="text-sm leading-relaxed text-slate-700 [&_p]:mb-2 [&_strong]:font-semibold [&_a]:hover:text-[#916B2C] [&_ul]:list-none [&_ul]:pl-0 [&_ol]:list-none [&_ol]:pl-0 [&_li]:mb-1">
+            <div class="text-xs leading-relaxed text-slate-700 [&_p]:mb-2 [&_strong]:font-semibold [&_a]:hover:text-[#916B2C] [&_ul]:list-none [&_ul]:pl-0 [&_ol]:list-none [&_ol]:pl-0 [&_li]:mb-1 sm:text-sm">
                 {!! $reservationsInformation !!}
             </div>
         </div>

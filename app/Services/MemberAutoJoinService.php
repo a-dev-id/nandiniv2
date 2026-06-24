@@ -2,11 +2,9 @@
 
 namespace App\Services;
 
-use App\Mail\AutoJoinWelcomeMail;
 use App\Models\Member;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class MemberAutoJoinService
@@ -233,13 +231,33 @@ class MemberAutoJoinService
         array $data
     ): array {
         try {
-            Mail::to($member->email)->send(new AutoJoinWelcomeMail(
-                member: $member,
-                bookingNumber: $this->extractBookingNumber($reservationId, $data),
-                roomName: Arr::get($data, 'roomStay.roomName'),
-                checkinDate: Arr::get($data, 'roomStay.from'),
-                checkoutDate: Arr::get($data, 'roomStay.to'),
-            ));
+            // Auto-join welcome email is rendered here, then delivered by the membership relay.
+            $result = app(MembershipEmailRelayService::class)->sendView('emails.membership.auto-join-welcome', [
+                'member' => $member,
+                'bookingNumber' => $this->extractBookingNumber($reservationId, $data),
+                'roomName' => Arr::get($data, 'roomStay.roomName'),
+                'checkinDate' => Arr::get($data, 'roomStay.from'),
+                'checkoutDate' => Arr::get($data, 'roomStay.to'),
+                'loginUrl' => route('membership.login'),
+                'passwordResetUrl' => route('membership.password.request'),
+            ], [
+                'to' => $member->email,
+                'bcc' => $this->guestBcc(),
+                'subject' => 'Welcome to Nandini Inner Circle',
+            ]);
+
+            if (! $result['success']) {
+                Log::warning('Auto-joined member welcome email could not be sent through relay.', [
+                    'member_id' => $member->id,
+                    'reservation_id' => (string) $reservationId,
+                    'relay_response' => $result,
+                ]);
+
+                return [
+                    'sent' => false,
+                    'error' => $result['error'],
+                ];
+            }
 
             $member->forceFill([
                 'welcome_email_sent_at' => now(),
@@ -261,5 +279,15 @@ class MemberAutoJoinService
                 'error' => $exception->getMessage(),
             ];
         }
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function guestBcc(): array
+    {
+        $bcc = trim((string) config('mail.guest_bcc'));
+
+        return $bcc === '' ? [] : [$bcc];
     }
 }

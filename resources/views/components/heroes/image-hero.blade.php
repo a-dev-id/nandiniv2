@@ -28,7 +28,7 @@ $mobileImageSrc = $mobileImageSrcManual ?: $imageSrc;
 @endphp
 
 <header class="shadow-xl">
-    <div class="relative w-full aspect-square lg:aspect-auto lg:h-[70vh] overflow-hidden bg-slate-100">
+    <div class="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[70vh] overflow-hidden bg-slate-100">
         @if ($desktopImageSrc || $mobileImageSrc)
         <picture class="block w-full h-full">
             @if ($mobileImageSrc)

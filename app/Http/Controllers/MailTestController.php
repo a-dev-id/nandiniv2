@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\MembershipEmailRelayService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class MailTestController extends Controller
 {
@@ -31,19 +31,28 @@ class MailTestController extends Controller
         }
 
         try {
-            Mail::raw(
-                'This is a test email from Nandini Jungle by Hanging Gardens. If you received this email, the mail configuration is working.',
-                function ($message) use ($email) {
-                    $bcc = trim((string) config('mail.guest_bcc'));
+            $body = 'This is a test email from Nandini Jungle by Hanging Gardens. If you received this email, the email relay configuration is working.';
 
-                    $message->to($email)
-                        ->subject('Nandini Mail Test');
+            // The mail test now verifies the relay API instead of local SMTP.
+            $result = app(MembershipEmailRelayService::class)->send([
+                'to' => $email,
+                'bcc' => $this->guestBcc(),
+                'subject' => 'Nandini Mail Test',
+                'html_body' => nl2br(e($body)),
+                'text_body' => $body,
+            ]);
 
-                    if ($bcc !== '') {
-                        $message->bcc($bcc);
-                    }
-                }
-            );
+            if (! $result['success']) {
+                Log::error('Mail relay test failed.', [
+                    'email' => $email,
+                    'relay_response' => $result,
+                ]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Test email could not be sent.',
+                ], 500);
+            }
         } catch (\Throwable $e) {
             Log::error('Mail test failed.', [
                 'email' => $email,
@@ -68,5 +77,15 @@ class MailTestController extends Controller
             'success' => false,
             'message' => 'Invalid mail test token.',
         ], 403);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function guestBcc(): array
+    {
+        $bcc = trim((string) config('mail.guest_bcc'));
+
+        return $bcc === '' ? [] : [$bcc];
     }
 }

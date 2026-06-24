@@ -67,7 +67,7 @@
     @if ($relatedAccommodations->isNotEmpty())
     <section class="pt-14 md:pt-20 bg-white">
         <div class="px-6 mb-10 text-center">
-            <h2 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3">
+            <h2 class="text-lg leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-xl">
                 You May Also Like
             </h2>
         </div>

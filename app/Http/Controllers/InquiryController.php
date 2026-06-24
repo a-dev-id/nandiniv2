@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inquiry;
+use App\Services\MembershipEmailRelayService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class InquiryController extends Controller
@@ -67,24 +67,31 @@ class InquiryController extends Controller
         $recipient = config('mail.inquiry_recipient', 'reservation@nandinibali.com');
 
         try {
-            Mail::send('emails.inquiry.guest', [
+            $result = app(MembershipEmailRelayService::class)->sendView('emails.inquiry.guest', [
                 'inquiry' => $inquiry,
                 'guestName' => $name,
                 'sourceUrl' => $sourceUrl,
                 'requiresLateStart' => $this->requiresLateStart((string) $inquiry->inquiry_title),
-            ], function ($message) use ($recipient, $data, $name, $inquiry) {
-                $bcc = trim((string) config('mail.guest_bcc'));
+            ], [
+                'to' => $data['email'],
+                'cc' => [$recipient],
+                'bcc' => $this->guestBcc(),
+                'subject' => 'Your Inquiry: ' . $inquiry->inquiry_title,
+                'reply_to' => $recipient,
+            ]);
 
-                $message
-                    ->to($data['email'], $name)
-                    ->cc($recipient)
-                    ->replyTo($recipient, 'Nandini Reservations')
-                    ->subject('Your Inquiry: ' . $inquiry->inquiry_title);
+            if (! $result['success']) {
+                $inquiry->update([
+                    'email_error' => $result['error'] ?? 'Email relay failed.',
+                ]);
 
-                if ($bcc !== '') {
-                    $message->bcc($bcc);
-                }
-            });
+                Log::warning('Inquiry email could not be sent through relay.', [
+                    'inquiry_id' => $inquiry->id,
+                    'relay_response' => $result,
+                ]);
+
+                return;
+            }
 
             $inquiry->update([
                 'email_sent_at' => now(),
@@ -100,6 +107,16 @@ class InquiryController extends Controller
                 'error' => $exception->getMessage(),
             ]);
         }
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function guestBcc(): array
+    {
+        $bcc = trim((string) config('mail.guest_bcc'));
+
+        return $bcc === '' ? [] : [$bcc];
     }
 
     private function requiresLateStart(string $title): bool

@@ -101,7 +101,7 @@ $tiers = count($sectionItems) > 0 ? $sectionItems : $defaultTiers;
     <div class="mx-auto">
 
         @if ($hasSubtitle)
-        <p class="mb-4 text-center text-sm md:text-base leading-relaxed uppercase text-[#b28a4a] font-medium">
+        <p class="mb-4 text-center text-xs md:text-base leading-relaxed uppercase text-[#b28a4a] font-medium sm:text-sm">
             {!! str_ireplace(
             ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
             '<br class="hidden md:block">',
@@ -111,7 +111,7 @@ $tiers = count($sectionItems) > 0 ? $sectionItems : $defaultTiers;
         @endif
 
         @if ($hasTitle)
-        <h2 class="text-xl text-center leading-snug uppercase font-medium {{ $titleColorClass }} mb-3">
+        <h2 class="text-lg text-center leading-snug uppercase font-medium {{ $titleColorClass }} mb-3 sm:text-xl">
             {!! str_ireplace(
             ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
             '<br class="hidden md:block">',
@@ -121,7 +121,7 @@ $tiers = count($sectionItems) > 0 ? $sectionItems : $defaultTiers;
         @endif
 
         @if ($hasDescription)
-        <div class="{{ ($hasTitle || $hasSubtitle) ? 'mt-8' : '' }} mx-auto {{ $descriptionWidthClass }} text-sm leading-relaxed {{ $descriptionColorClass }} {{ $descriptionAlignClass }}">
+        <div class="{{ ($hasTitle || $hasSubtitle) ? 'mt-8' : '' }} mx-auto {{ $descriptionWidthClass }} text-xs leading-relaxed {{ $descriptionColorClass }} {{ $descriptionAlignClass }} sm:text-sm">
             {!! $description !!}
         </div>
         @endif
@@ -143,7 +143,7 @@ $tiers = count($sectionItems) > 0 ? $sectionItems : $defaultTiers;
                     <img src="{{ $cardImage }}" alt="{{ $tierName }} member card" class="aspect-[16/9] w-full object-cover rounded-t-2xl" loading="lazy">
 
                     <div class="absolute bottom-[7%] right-[4%] rounded-[3px] border border-white/70 bg-black/35 px-3 py-2 text-right shadow-sm backdrop-blur-[1px]">
-                        <p class="text-[9px] font-bold uppercase leading-none text-white drop-shadow">
+                        <p class="text-[7px] font-bold uppercase leading-none text-white drop-shadow sm:text-[9px]">
                             {{ $pointsRange }}
                         </p>
                     </div>
@@ -151,18 +151,18 @@ $tiers = count($sectionItems) > 0 ? $sectionItems : $defaultTiers;
 
                 <div class="px-6 py-7 md:px-8 md:py-8">
                     <div class="mb-5 flex items-start gap-4">
-                        <span class="mt-1 flex h-9 w-9 shrink-0 items-center justify-center border border-[#b28a4a]/40 text-sm font-medium text-[#b28a4a]">
+                        <span class="mt-1 flex h-9 w-9 shrink-0 items-center justify-center border border-[#b28a4a]/40 text-xs font-medium text-[#b28a4a] sm:text-sm">
                             {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}
                         </span>
 
                         <div>
                             @if ($tierName)
-                            <p class="mb-2 text-sm font-medium uppercase text-[#b28a4a]">
+                            <p class="mb-2 text-xs font-medium uppercase text-[#b28a4a] sm:text-sm">
                                 {{ $tierName }}
                             </p>
                             @endif
 
-                            <h3 class="text-lg leading-snug text-slate-700 mb-3">
+                            <h3 class="text-base leading-snug text-slate-700 mb-3 sm:text-lg">
                                 @if ($circleName)
                                 <span class="font-semibold uppercase">{{ $circleName }}</span>
                                 @endif
@@ -177,7 +177,7 @@ $tiers = count($sectionItems) > 0 ? $sectionItems : $defaultTiers;
                     </div>
 
                     @if ($tierDescription)
-                    <div class="text-sm leading-relaxed text-gray-600">
+                    <div class="text-xs leading-relaxed text-gray-600 sm:text-sm">
                         {!! nl2br(e($tierDescription)) !!}
                     </div>
                     @endif

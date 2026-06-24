@@ -37,14 +37,13 @@
     <x-sections.spa-information-section :section="$section" />
 
     @if ($spas->isNotEmpty())
-    <h2 class="text-xl text-center leading-snug uppercase font-medium mt-20 mb-3">
-        Sacred Jungle Wellness Journey
-    </h2>
-
     {{-- Description --}}
-    <div class="pt-8 md:pt-8 mx-auto max-w-[950px] text-center text-gray-600">
-        <div class="[&_h1]:text-2xl [&_h1]:leading-snug [&_h1]:uppercase text-slate-700 [&_h1]:mb-3 [&_h2]:mb-3 [&_h3]:mb-3 [&_h1]:font-medium [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:leading-tight [&_h2]:normal-case [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:leading-snug [&_p]:mb-2 [&_p]:text-base [&_p]:leading-7 [&_ul]:mb-5 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_li]:text-base [&_li]:leading-7 [&_ul_ul]:mt-2 [&_ul_ul]:list-disc [&_ul_ul]:pl-6 [&_strong]:font-semibold">
-            Reconnect with your inner rhythm where nature meets ancient wisdom.The Sacred Jungle Wellness Journey is a transformative spa experience rooted in traditional Balinese healing. Surrounded by pristine rainforest, this holistic retreat combines restorative massages, purifying botanical treatments, and sacred water rituals to melt away stress, detoxify the body, and restore deep mental clarity.
+    <div class="pt-8 md:pt-8 mx-auto max-w-sm sm:max-w-3xl md:max-w-5xl text-center text-gray-600">
+        <h2 class="text-lg text-center leading-snug uppercase font-medium mt-20 mb-3 sm:text-xl">
+            Sacred Jungle Wellness Journey
+        </h2>
+        <div class="text-xs leading-relaxed text-gray-600 max-w-sm sm:max-w-3xl md:max-w-5xl mx-auto [&_h2]:mt-12 [&_h1]:mb-3 [&_h2]:mb-3 [&_h3]:mb-3 [&_h2]:text-lg [&_h2]:leading-snug [&_h2]:uppercase [&_h2]:text-slate-700 [&_h2]:font-medium [&_h3]:mt-10 [&_h3]:text-base [&_h3]:leading-snug [&_h3]:uppercase [&_h3]:text-slate-700 [&_h3]:font-medium [&_p]:mx-auto [&_p]:max-w-2xl sm:[&_p]:max-w-3xl md:[&_p]:max-w-4xl [&_p]:text-xs [&_p]:leading-relaxed [&_p]:text-gray-600 [&_p]:mb-6 [&_p:last-child]:mb-0 sm:text-sm sm:[&_h2]:text-xl sm:[&_h3]:text-lg sm:[&_p]:text-sm">
+            Reconnect with your inner rhythm where nature meets ancient wisdom. The Sacred Jungle Wellness Journey is a transformative spa experience rooted in traditional Balinese healing. Surrounded by pristine rainforest, this holistic retreat combines restorative massages, purifying botanical treatments, and sacred water rituals to melt away stress, detoxify the body, and restore deep mental clarity.
         </div>
     </div>
 

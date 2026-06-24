@@ -77,19 +77,19 @@ $icons = [
     <div class="mx-auto max-w-7xl text-center">
 
         @if ($section->subtitle)
-        <p class="mb-4 text-sm md:text-base leading-relaxed uppercase text-[#b28a4a] font-medium">
+        <p class="mb-4 text-xs md:text-base leading-relaxed uppercase text-[#b28a4a] font-medium sm:text-sm">
             {{ $section->subtitle }}
         </p>
         @endif
 
         @if ($section->title)
-        <h2 class="text-xl leading-snug uppercase font-medium {{ $titleColorClass }} mb-3">
+        <h2 class="text-lg leading-snug uppercase font-medium {{ $titleColorClass }} mb-3 sm:text-xl">
             {{ $section->title }}
         </h2>
         @endif
 
         @if ($section->description)
-        <div class="mt-2 text-sm leading-relaxed max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto {{ $descriptionColorClass }}">
+        <div class="mt-2 text-xs leading-relaxed max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto {{ $descriptionColorClass }} sm:text-sm">
             {!! $section->description !!}
         </div>
         @endif
@@ -110,13 +110,13 @@ $icons = [
                 </div>
 
                 @if (! empty($item['title']))
-                <h3 class="text-lg uppercase font-medium leading-snug {{ $titleColorClass }} mb-3">
+                <h3 class="text-base uppercase font-medium leading-snug {{ $titleColorClass }} mb-3 sm:text-lg">
                     {{ $item['title'] }}
                 </h3>
                 @endif
 
                 @if (! empty($item['description']))
-                <p class="mt-2 max-w-xs text-sm leading-relaxed {{ $descriptionColorClass }}">
+                <p class="mt-2 max-w-xs text-xs leading-relaxed {{ $descriptionColorClass }} sm:text-sm">
                     {{ $item['description'] }}
                 </p>
                 @endif

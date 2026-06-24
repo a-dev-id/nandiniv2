@@ -54,19 +54,19 @@ $galleryImages = $accommodation?->activeImages
 <section class="bg-white px-3 pb-12 md:px-10 md:pb-6">
     <div class="mx-auto border border-slate-200 px-5 py-8 text-center md:px-12 md:py-12">
         @if ($title)
-        <h2 class="text-xl font-medium uppercase leading-snug text-slate-700 mb-3">
+        <h2 class="text-lg font-medium uppercase leading-snug text-slate-700 mb-3 sm:text-xl">
             {{ $title }}
         </h2>
         @endif
 
         @if ($leadImage)
         <div class="group mx-auto max-w-5xl overflow-hidden bg-slate-100">
-            <img src="{{ $leadImage }}" alt="{{ $leadAlt }}" class="aspect-square md:aspect-[3/2] w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy">
+            <img src="{{ $leadImage }}" alt="{{ $leadAlt }}" class="aspect-[4/3] md:aspect-[3/2] w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy">
         </div>
         @endif
 
         @if ($description)
-        <p class="mx-auto mt-4 max-w-5xl text-sm leading-relaxed text-slate-700">
+        <p class="mx-auto mt-4 max-w-5xl text-xs leading-relaxed text-slate-700 sm:text-sm">
             {{ $description }}
         </p>
         @endif

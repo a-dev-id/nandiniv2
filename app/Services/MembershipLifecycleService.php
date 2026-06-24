@@ -3,8 +3,6 @@
 namespace App\Services;
 
 use App\Models\Member;
-use App\Notifications\MembershipExpiryReminderNotification;
-use App\Notifications\MemberTierDowngradedNotification;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -28,7 +26,25 @@ class MembershipLifecycleService
                     }
 
                     try {
-                        $member->notify(new MembershipExpiryReminderNotification());
+                        // Lifecycle emails are rendered locally and delivered by the membership relay.
+                        $result = app(MembershipEmailRelayService::class)->sendView('emails.membership.expiry-reminder', [
+                            'member' => $member,
+                            'dashboardUrl' => route('membership.dashboard'),
+                        ], [
+                            'to' => $member->email,
+                            'bcc' => $this->guestBcc(),
+                            'subject' => 'Your Membership Tier Is About to Be Downgraded',
+                        ]);
+
+                        if (! $result['success']) {
+                            Log::warning('Membership expiry reminder email could not be sent through relay.', [
+                                'member_id' => $member->id,
+                                'email' => $member->email,
+                                'relay_response' => $result,
+                            ]);
+
+                            continue;
+                        }
 
                         $member->forceFill([
                             'membership_expiry_reminder_sent_at' => now(),
@@ -143,12 +159,28 @@ class MembershipLifecycleService
         });
 
         try {
-            $member->notify(new MemberTierDowngradedNotification(
-                previousTier: $previousTier,
-                newTier: $newTier,
-                previousPoints: $previousPoints,
-                newPoints: $newPoints,
-            ));
+            $result = app(MembershipEmailRelayService::class)->sendView('emails.membership.tier-downgraded', [
+                'member' => $member,
+                'previousTierLabel' => Member::getTierLabelForTier($previousTier),
+                'newTierLabel' => Member::getTierLabelForTier($newTier),
+                'previousPoints' => $previousPoints,
+                'newPoints' => $newPoints,
+                'dashboardUrl' => route('membership.dashboard'),
+            ], [
+                'to' => $member->email,
+                'bcc' => $this->guestBcc(),
+                'subject' => 'Your Membership Tier Has Been Updated',
+            ]);
+
+            if (! $result['success']) {
+                Log::warning('Member tier downgrade email could not be sent through relay.', [
+                    'member_id' => $member->id,
+                    'email' => $member->email,
+                    'previous_tier' => $previousTier,
+                    'new_tier' => $newTier,
+                    'relay_response' => $result,
+                ]);
+            }
         } catch (\Throwable $e) {
             Log::warning('Member tier downgrade email could not be sent.', [
                 'member_id' => $member->id,
@@ -160,5 +192,15 @@ class MembershipLifecycleService
         }
 
         return 'downgraded';
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function guestBcc(): array
+    {
+        $bcc = trim((string) config('mail.guest_bcc'));
+
+        return $bcc === '' ? [] : [$bcc];
     }
 }

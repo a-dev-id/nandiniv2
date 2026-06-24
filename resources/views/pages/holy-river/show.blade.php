@@ -86,42 +86,38 @@ $metaImage = $experience->card_image
     @endphp
 
     @if ($heroImage)
-    <section class="relative w-full">
-        <picture>
-            @if ($heroMobileImage)
-            <source media="(max-width: 767px)" srcset="{{ asset('storage/' . $heroMobileImage) }}">
-            @endif
-
-            <img src="{{ asset('storage/' . $heroImage) }}" alt="{{ $heroAlt }}" class="w-full h-[65vh] md:h-[85vh] object-cover object-center" width="1920" height="1080" loading="eager" fetchpriority="high" decoding="async">
-        </picture>
-    </section>
+    <x-heroes.image-hero
+        :image-src="asset('storage/' . $heroImage)"
+        :mobile-image-src-manual="$heroMobileImage ? asset('storage/' . $heroMobileImage) : asset('storage/' . $heroImage)"
+        :alt-text="$heroAlt"
+    />
     @endif
 
     <section class="py-14 md:py-20 px-6">
         <div class="max-w-4xl mx-auto text-center">
-            <h1 class="text-2xl leading-snug uppercase text-slate-700 font-medium mb-3">
+            <h1 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-2xl">
                 {{ $experience->title }}
             </h1>
 
             @if (! empty($experience->subtitle))
-            <p class="text-lg md:text-xl text-slate-700 mb-8">
+            <p class="text-base md:text-xl text-slate-700 mb-8 sm:text-lg">
                 {{ $experience->subtitle }}
             </p>
             @endif
 
             @if (! empty($experience->description))
-            <div class="prose prose-slate text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+            <div class="prose prose-slate text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto sm:text-sm">
                 {!! $experience->description !!}
             </div>
             @elseif (! empty($experience->excerpt))
-            <p class="text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+            <p class="text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto sm:text-sm">
                 {{ $experience->excerpt }}
             </p>
             @endif
 
             @if ($prices->isNotEmpty())
             <div class="my-10 text-center text-slate-700">
-                <p class="text-sm leading-relaxed">
+                <p class="text-xs leading-relaxed sm:text-sm">
                     Start from
                 </p>
 
@@ -137,23 +133,23 @@ $metaImage = $experience->card_image
                     @if ($amount)
                     <div>
                         @if (! empty($price->label))
-                        <p class="text-sm leading-relaxed font-medium">
+                        <p class="text-xs leading-relaxed font-medium sm:text-sm">
                             {{ $price->label }}
                         </p>
                         @endif
 
-                        <p class="mt-1 text-lg md:text-xl font-bold">
+                        <p class="mt-1 text-base md:text-xl font-bold sm:text-lg">
                             {{ $currency }} {{ number_format((float) $amount, 0, '.', ',') }}{{ $priceSuffix }}
                         </p>
 
                         @if ($unitLabel)
-                        <p class="mt-1 text-sm leading-relaxed">
+                        <p class="mt-1 text-xs leading-relaxed sm:text-sm">
                             {{ $unitLabel }}
                         </p>
                         @endif
 
                         @if (! empty($price->notes))
-                        <p class="mt-2 text-[14px] leading-relaxed text-slate-600">
+                        <p class="mt-2 text-[12px] leading-relaxed text-slate-600 sm:text-[14px]">
                             {{ $price->notes }}
                         </p>
                         @endif
@@ -175,7 +171,7 @@ $metaImage = $experience->card_image
     @if ($relatedExperiences->isNotEmpty())
     <section class="pt-14 md:pt-20">
         <div class="px-6 mb-10 text-center">
-            <h2 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3">
+            <h2 class="text-lg leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-xl">
                 Other Experiences
             </h2>
         </div>

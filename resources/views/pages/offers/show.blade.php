@@ -64,39 +64,34 @@ $metaImage = $offer->hero_image
     $validEndDate = $offer->valid_end_date;
     @endphp
 
-    {{-- Hero Image --}}
     @if ($heroImage)
-    <section class="relative w-full">
-        <picture>
-            @if ($heroMobileImage)
-            <source media="(max-width: 767px)" srcset="{{ asset('storage/' . $heroMobileImage) }}">
-            @endif
-
-            <img src="{{ asset('storage/' . $heroImage) }}" alt="{{ $heroAlt }}" class="w-full h-[65vh] md:h-[85vh] object-cover object-center" width="1920" height="1080" loading="eager" fetchpriority="high" decoding="async">
-        </picture>
-    </section>
+    <x-heroes.image-hero
+        :image-src="asset('storage/' . $heroImage)"
+        :mobile-image-src-manual="$heroMobileImage ? asset('storage/' . $heroMobileImage) : asset('storage/' . $heroImage)"
+        :alt-text="$heroAlt"
+    />
     @endif
 
     {{-- Offer Content --}}
     <section class="py-14 md:py-20 px-6">
         <div class="max-w-4xl mx-auto text-center">
-            <h1 class="text-2xl leading-snug uppercase text-slate-700 font-medium mb-3">
+            <h1 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-2xl">
                 {{ $offer->title }}
             </h1>
 
             @if (! empty($offer->subtitle))
-            <p class="text-lg md:text-xl text-slate-700 mb-8 uppercase">
+            <p class="text-base md:text-xl text-slate-700 mb-8 uppercase sm:text-lg">
                 {{ $offer->subtitle }}
             </p>
             @endif
 
             @if ($validStartDate || $validEndDate)
             <div class="mb-10 text-slate-700">
-                <p class="text-sm leading-relaxed">
+                <p class="text-xs leading-relaxed sm:text-sm">
                     Stay Period
                 </p>
 
-                <p class="mt-1 text-lg md:text-xl font-bold">
+                <p class="mt-1 text-base md:text-xl font-bold sm:text-lg">
                     @if ($validStartDate && $validEndDate)
                     {{ $validStartDate->format('j F Y') }} – {{ $validEndDate->format('j F Y') }}
                     @elseif ($validStartDate)
@@ -109,11 +104,11 @@ $metaImage = $offer->hero_image
             @endif
 
             @if (! empty($offer->description))
-            <div class="prose prose-slate text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto [&_p]:mb-1 [&_p]:min-h-6 [&_p:last-child]:mb-0 [&_strong]:font-semibold text-slate-700 [&_ul]:my-6 [&_ol]:my-6 [&_li]:mb-1 [&_h2]:mt-10 [&_h1]:mb-3 [&_h2]:mb-3 [&_h3]:mb-3 [&_h2]:text-xl [&_h2]:font-semibold [&_h3]:mt-8 [&_h3]:text-lg [&_h3]:font-semibold">
+            <div class="prose prose-slate text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto [&_p]:mb-1 [&_p]:min-h-6 [&_p:last-child]:mb-0 [&_strong]:font-semibold text-slate-700 [&_ul]:my-6 [&_ol]:my-6 [&_li]:mb-1 [&_h2]:mt-10 [&_h1]:mb-3 [&_h2]:mb-3 [&_h3]:mb-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h3]:mt-8 [&_h3]:text-base [&_h3]:font-semibold sm:text-sm sm:[&_h2]:text-xl sm:[&_h3]:text-lg">
                 {!! $offer->description !!}
             </div>
             @elseif (! empty($offer->excerpt))
-            <p class="text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+            <p class="text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto sm:text-sm">
                 {{ $offer->excerpt }}
             </p>
             @endif
@@ -132,7 +127,7 @@ $metaImage = $offer->hero_image
     @if ($relatedOffers->isNotEmpty())
     <section class="pt-14 md:pt-20">
         <div class="px-6 mb-10 text-center">
-            <h2 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3">
+            <h2 class="text-lg leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-xl">
                 Other Offers
             </h2>
         </div>

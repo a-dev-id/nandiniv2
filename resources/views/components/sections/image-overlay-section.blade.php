@@ -137,32 +137,32 @@ default => 'justify-center',
             <div class="{{ $innerWidthClass }}">
 
                 @if ($resolvedTitleText !== '')
-                <h2 class="text-xl text-white uppercase leading-snug font-medium mb-3">
+                <h2 class="text-lg text-white uppercase leading-snug font-medium mb-3 sm:text-xl">
                     {{ $resolvedTitleText }}
                 </h2>
                 @endif
 
                 @if ($resolvedSubtitleText !== '')
-                <p class="mt-2 text-white/90 uppercase text-sm sm:text-sm">
+                <p class="mt-2 text-white/90 uppercase text-xs sm:text-sm">
                     {{ $resolvedSubtitleText }}
                 </p>
                 @endif
 
                 @if ($resolvedExcerptText !== '')
-                <p class="mt-2 text-white/90 text-sm leading-relaxed max-w-2xl {{ $textAlignClass }}">
+                <p class="mt-2 text-white/90 text-xs leading-relaxed max-w-2xl {{ $textAlignClass }} sm:text-sm">
                     {{ $resolvedExcerptText }}
                 </p>
                 @endif
 
                 @if ($resolvedDescriptionText !== '')
-                <div class="mt-2 text-white/90 text-sm leading-relaxed max-w-2xl {{ $textAlignClass }} [&_p]:mb-2 [&_p:last-child]:mb-0 [&_strong]:font-semibold [&_ul]:list-none [&_ul]:pl-0 [&_ol]:list-none [&_ol]:pl-0 [&_li]:mb-1">
+                <div class="mt-2 text-white/90 text-xs leading-relaxed max-w-2xl {{ $textAlignClass }} [&_p]:mb-2 [&_p:last-child]:mb-0 [&_strong]:font-semibold [&_ul]:list-none [&_ul]:pl-0 [&_ol]:list-none [&_ol]:pl-0 [&_li]:mb-1 sm:text-sm">
                     {!! $resolvedDescription !!}
                 </div>
                 @endif
 
                 @if ($buttonLabel && $buttonUrl)
                 <div class="mt-8 flex {{ $buttonAlignClass }}">
-                    <a href="{{ $buttonUrl }}" class="inline-flex items-center justify-center bg-[#A67C3D] text-white px-5 py-2.5 uppercase text-sm font-medium hover:bg-[#B8945B] transition tracking-[0.08em]">
+                    <a href="{{ $buttonUrl }}" class="inline-flex items-center justify-center bg-[#A67C3D] text-white px-5 py-2.5 uppercase text-xs font-medium hover:bg-[#B8945B] transition tracking-[0.08em] sm:text-sm">
                         {{ $buttonLabel }}
                     </a>
                 </div>

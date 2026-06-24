@@ -63,14 +63,14 @@ $displayButtonLink = $section?->button_url;
             @endphp
 
             <div class="snap-center shrink-0 w-full">
-                <div class="group relative aspect-square overflow-hidden bg-slate-100">
+                <div class="group relative aspect-[4/3] overflow-hidden bg-slate-100">
                     @if ($imageUrl)
                     <img src="{{ $imageUrl }}" alt="{{ $imageAlt }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" />
 
                     <div class="absolute inset-0 bg-black/0 transition duration-500 group-hover:bg-black/35"></div>
 
                     <div class="absolute inset-0 flex items-center justify-center px-6 opacity-0 transition duration-500 group-hover:opacity-100">
-                        <p class="text-white text-center uppercase text-sm font-medium">
+                        <p class="text-white text-center uppercase text-xs font-medium sm:text-sm">
                             {{ $imageAlt }}
                         </p>
                     </div>
@@ -96,7 +96,7 @@ $displayButtonLink = $section?->button_url;
                 {{-- <div class="absolute inset-0 bg-black/0 transition duration-500 group-hover:bg-black/35"></div>
 
                 <div class="absolute inset-0 flex items-center justify-center px-6 opacity-0 transition duration-500 group-hover:opacity-100">
-                    <p class="text-white text-center uppercase text-sm md:text-base font-medium">
+                    <p class="text-white text-center uppercase text-xs md:text-base font-medium sm:text-sm">
                         {{ $imageAlt }}
                     </p>
                 </div> --}}
@@ -111,20 +111,20 @@ $displayButtonLink = $section?->button_url;
     <div class="text-center mt-10 md:mt-16 max-w-3xl mx-auto px-6">
 
         @if ($displayTitle)
-        <h2 class="text-xl leading-snug text-slate-700 uppercase font-medium mb-3">
+        <h2 class="text-lg leading-snug text-slate-700 uppercase font-medium mb-3 sm:text-xl">
             {{ $displayTitle }}
         </h2>
         @endif
 
         @if ($displayDescription)
-        <div class="text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+        <div class="text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto sm:text-sm">
             {!! $displayDescription !!}
         </div>
         @endif
 
         @if ($displayButtonText && $displayButtonLink)
         <div class="mt-10">
-            <a href="{{ $displayButtonLink }}" class="inline-flex items-center justify-center bg-[#A67C3D] text-white px-5 py-2.5 uppercase text-sm font-medium hover:bg-[#B8945B] transition tracking-[0.08em]">
+            <a href="{{ $displayButtonLink }}" class="inline-flex items-center justify-center bg-[#A67C3D] text-white px-5 py-2.5 uppercase text-xs font-medium hover:bg-[#B8945B] transition tracking-[0.08em] sm:text-sm">
                 {{ $displayButtonText }}
             </a>
         </div>

@@ -101,14 +101,14 @@ $whatsappUrl = 'https://wa.me/6281236871170';
                     </div>
 
                     <div class="px-4 py-4 pr-11 sm:px-7 sm:py-7 sm:pr-12">
-                        <p x-show="items[active].subtitle" class="mb-1.5 text-[11px] font-semibold uppercase leading-none text-[#b1823b] sm:mb-2 sm:text-sm" x-text="items[active].subtitle"></p>
+                        <p x-show="items[active].subtitle" class="mb-1.5 text-[9px] font-semibold uppercase leading-none text-[#b1823b] sm:mb-2 sm:text-sm" x-text="items[active].subtitle"></p>
 
-                        <h3 class="text-lg leading-snug uppercase text-slate-700 font-medium mb-3" x-text="items[active].title"></h3>
+                        <h3 class="text-base leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-lg" x-text="items[active].title"></h3>
 
-                        <div x-show="items[active].description" class="mt-2 text-[12px] leading-relaxed text-gray-600 sm:text-[14px] [&_p]:mb-1.5 sm:[&_p]:mb-2 [&_p:last-child]:mb-0 [&_ul]:space-y-1 sm:[&_ul]:space-y-2 [&_ul]:pl-4 sm:[&_ul]:pl-5 [&_ul]:list-disc [&_ol]:space-y-1 sm:[&_ol]:space-y-2 [&_ol]:pl-4 sm:[&_ol]:pl-5 [&_ol]:list-decimal [&_strong]:font-semibold [&_a]:text-[#b1823b] [&_a]:underline" x-html="items[active].description"></div>
+                        <div x-show="items[active].description" class="mt-2 text-[10px] leading-relaxed text-gray-600 sm:text-[14px] [&_p]:mb-1.5 sm:[&_p]:mb-2 [&_p:last-child]:mb-0 [&_ul]:space-y-1 sm:[&_ul]:space-y-2 [&_ul]:pl-4 sm:[&_ul]:pl-5 [&_ul]:list-disc [&_ol]:space-y-1 sm:[&_ol]:space-y-2 [&_ol]:pl-4 sm:[&_ol]:pl-5 [&_ol]:list-decimal [&_strong]:font-semibold [&_a]:text-[#b1823b] [&_a]:underline" x-html="items[active].description"></div>
 
                         <div class="mt-2 flex flex-wrap items-center justify-between gap-3 sm:gap-4">
-                            <a x-show="items[active].buttonLabel" :href="items[active].buttonUrl" class="inline-flex min-w-0 flex-1 items-center justify-center bg-[#A67C3D] px-4 py-2.5 text-[11px] font-medium uppercase text-white transition hover:bg-[#B8945B] sm:min-w-[150px] sm:flex-none sm:px-5 sm:py-3 sm:text-sm tracking-[0.08em]" x-text="items[active].buttonLabel"></a>
+                            <a x-show="items[active].buttonLabel" :href="items[active].buttonUrl" class="inline-flex min-w-0 flex-1 items-center justify-center bg-[#A67C3D] px-4 py-2.5 text-[9px] font-medium uppercase text-white transition hover:bg-[#B8945B] sm:min-w-[150px] sm:flex-none sm:px-5 sm:py-3 sm:text-sm tracking-[0.08em]" x-text="items[active].buttonLabel"></a>
 
                             <div class="ml-auto flex items-center gap-2">
                                 <button type="button" class="flex h-7 w-7 items-center justify-center border border-slate-300 text-slate-600 transition hover:border-[#8f6528] hover:text-[#8f6528] tracking-[0.08em] font-medium" aria-label="Previous popup offer" @click="prev()">
@@ -134,7 +134,7 @@ $whatsappUrl = 'https://wa.me/6281236871170';
     </template>
 
     <div class="fixed bottom-5 right-4 z-[67] flex items-center gap-3 sm:right-5">
-        <div x-show="whatsappTipVisible" x-transition class="hidden rounded-xl bg-white px-4 py-3 text-sm leading-none text-slate-700 shadow-xl ring-1 ring-black/10 sm:block">
+        <div x-show="whatsappTipVisible" x-transition class="hidden rounded-xl bg-white px-4 py-3 text-xs leading-none text-slate-700 shadow-xl ring-1 ring-black/10 sm:block sm:text-sm">
             Hi, what can we help you?
         </div>
 

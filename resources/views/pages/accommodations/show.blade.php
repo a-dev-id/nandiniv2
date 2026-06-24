@@ -35,40 +35,43 @@ $metaImage = $accommodation->hero_image
 @endpush
 
 <x-layouts.app>
-    {{-- Hero --}}
-    <section class="relative w-full h-[460px] sm:h-[560px] lg:h-[760px] overflow-hidden bg-slate-100">
-        @if ($accommodation->hero_image || $accommodation->hero_mobile_image)
-        <picture class="absolute inset-0 w-full h-full">
-            @if ($accommodation->hero_mobile_image)
-            <source media="(max-width: 767px)" srcset="{{ asset('storage/' . $accommodation->hero_mobile_image) }}">
-            @endif
+    @php
+    $heroImage = $accommodation->hero_image
+    ?: $accommodation->hero_mobile_image
+    ?: $accommodation->card_image;
 
-            <img src="{{ asset('storage/' . ($accommodation->hero_image ?: $accommodation->hero_mobile_image)) }}" alt="{{ $accommodation->hero_image_alt ?: $accommodation->title }}" class="absolute inset-0 w-full h-full object-cover object-center" width="1920" height="1080" loading="eager" fetchpriority="high" decoding="async">
-        </picture>
-        @elseif ($accommodation->card_image)
-        <img src="{{ asset('storage/' . $accommodation->card_image) }}" alt="{{ $accommodation->card_image_alt ?: $accommodation->title }}" class="absolute inset-0 w-full h-full object-cover object-center" width="1920" height="1080" loading="eager" fetchpriority="high" decoding="async">
-        @endif
+    $heroMobileImage = $accommodation->hero_mobile_image
+    ?: $accommodation->hero_image
+    ?: $accommodation->card_image;
 
-        <div class="absolute inset-0 bg-black/20"></div>
-    </section>
+    $heroAlt = $accommodation->hero_image_alt
+    ?: $accommodation->card_image_alt
+    ?: $accommodation->title;
+    @endphp
+
+    @if ($heroImage)
+    <x-heroes.image-hero
+        :image-src="asset('storage/' . $heroImage)"
+        :mobile-image-src-manual="$heroMobileImage ? asset('storage/' . $heroMobileImage) : asset('storage/' . $heroImage)"
+        :alt-text="$heroAlt"
+    />
+    @endif
 
     {{-- Intro --}}
     <section class="py-14 md:py-20 px-6 text-center bg-white">
         <div class="max-w-5xl mx-auto">
-            <h1 class="text-2xl leading-snug uppercase text-slate-700 font-medium mb-3">
+            <h1 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-2xl">
                 {{ $accommodation->title }}
             </h1>
 
-            @if ($accommodation->excerpt)
-            <p class="text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
-                {{ $accommodation->excerpt }}
-            </p>
-            @endif
-
             @if ($accommodation->description)
-            <div class="text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto [&_p]:mb-5 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-5 [&_li]:mb-2 text-slate-700">
+            <div class="text-xs leading-relaxed text-slate-700 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto [&_p]:mb-5 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-5 [&_li]:mb-2 sm:text-sm">
                 {!! $accommodation->description !!}
             </div>
+            @elseif ($accommodation->excerpt)
+            <p class="text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto sm:text-sm">
+                {{ $accommodation->excerpt }}
+            </p>
             @endif
         </div>
     </section>
@@ -80,7 +83,7 @@ $metaImage = $accommodation->hero_image
     @if ($relatedAccommodations->isNotEmpty())
     <section class="pt-14 md:pt-20 bg-white">
         <div class="px-6 mb-10 text-center">
-            <h2 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3">
+            <h2 class="text-lg leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-xl">
                 You May Also Like
             </h2>
         </div>

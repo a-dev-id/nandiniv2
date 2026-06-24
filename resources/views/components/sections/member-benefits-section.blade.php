@@ -32,19 +32,19 @@ $tiers = [
         {{-- Header --}}
         <div class="mx-auto max-w-4xl px-5 text-center md:px-0">
             @if ($section->subtitle)
-            <p class="mb-4 text-sm font-medium uppercase leading-relaxed text-[#b28a4a] md:text-base">
+            <p class="mb-4 text-xs font-medium uppercase leading-relaxed text-[#b28a4a] md:text-base sm:text-sm">
                 {{ $section->subtitle }}
             </p>
             @endif
 
             @if ($section->title)
-            <h2 class="text-xl font-medium uppercase leading-snug mb-3">
+            <h2 class="text-lg font-medium uppercase leading-snug mb-3 sm:text-xl">
                 {{ $section->title }}
             </h2>
             @endif
 
             @if ($section->description)
-            <div class="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-[#4b5563] sm:max-w-3xl md:max-w-5xl">
+            <div class="mx-auto mt-2 max-w-2xl text-xs leading-relaxed text-[#4b5563] sm:max-w-3xl md:max-w-5xl sm:text-sm">
                 {!! $section->description !!}
             </div>
             @endif
@@ -58,14 +58,14 @@ $tiers = [
                 <table class="w-full table-fixed border-collapse text-[#10233f]">
                     <thead>
                         <tr class="border-b border-[#d8c49a] bg-[#fbfaf7]">
-                            <th class="w-[45%] border-r border-[#e7dfcf] px-3 py-4 text-left text-[11px] font-semibold uppercase text-[#10233f]">
+                            <th class="w-[45%] border-r border-[#e7dfcf] px-3 py-4 text-left text-[9px] font-semibold uppercase text-[#10233f] sm:text-[11px]">
                                 Benefits
                             </th>
 
                             @foreach ($tiers as $tierLabel)
                             <th class="w-[13.75%] border-r border-[#e7dfcf] px-1 py-3 last:border-r-0">
                                 <div class="mx-auto flex h-24 items-center justify-center">
-                                    <span class="[writing-mode:vertical-rl] rotate-180 text-[11px] font-semibold uppercase text-[#10233f]">
+                                    <span class="[writing-mode:vertical-rl] rotate-180 text-[9px] font-semibold uppercase text-[#10233f] sm:text-[11px]">
                                         {{ $tierLabel }}
                                     </span>
                                 </div>
@@ -77,7 +77,7 @@ $tiers = [
                     <tbody>
                         @foreach ($items as $index => $item)
                         <tr class="{{ $index % 2 === 1 ? 'bg-[#fbfaf7]' : 'bg-white' }}">
-                            <td class="border-r border-t border-[#e7dfcf] px-3 py-4 text-[13px] font-medium leading-relaxed text-[#10233f]">
+                            <td class="border-r border-t border-[#e7dfcf] px-3 py-4 text-[11px] font-medium leading-relaxed text-[#10233f] sm:text-[13px]">
                                 {{ $item['benefit'] ?? '' }}
                             </td>
 
@@ -88,15 +88,15 @@ $tiers = [
 
                             <td class="border-r border-t border-[#e7dfcf] px-1 py-4 text-center last:border-r-0">
                                 @if ($isCheck($value))
-                                <span class="inline-flex h-6 w-6 items-center justify-center text-base font-semibold leading-none text-[#b28a4a]">
+                                <span class="inline-flex h-6 w-6 items-center justify-center text-sm font-semibold leading-none text-[#b28a4a] sm:text-base">
                                     ✓
                                 </span>
                                 @elseif ($value === '-')
-                                <span class="text-sm text-[#d8c49a]">
+                                <span class="text-xs text-[#d8c49a] sm:text-sm">
                                     —
                                 </span>
                                 @else
-                                <span class="block break-words text-[11px] font-semibold leading-snug text-[#10233f]">
+                                <span class="block break-words text-[9px] font-semibold leading-snug text-[#10233f] sm:text-[11px]">
                                     {{ $value }}
                                 </span>
                                 @endif
@@ -111,15 +111,15 @@ $tiers = [
 
         {{-- Desktop Table --}}
         <div class="mt-14 hidden px-6 md:block">
-            <table class="w-full table-fixed border-collapse text-sm text-[#10233f] text-sm">
+            <table class="w-full table-fixed border-collapse text-xs text-[#10233f] text-xs sm:text-sm">
                 <thead>
                     <tr class="border-b border-[#b28a4a]">
-                        <th class="w-[40%] px-4 py-5 text-left text-base font-semibold uppercase text-[#10233f] lg:px-6 lg:text-xl">
+                        <th class="w-[40%] px-4 py-5 text-left text-sm font-semibold uppercase text-[#10233f] lg:px-6 lg:text-xl sm:text-base">
                             Member Benefits
                         </th>
 
                         @foreach ($tiers as $tierLabel)
-                        <th class="w-[15%] px-3 py-5 text-center text-base font-semibold uppercase text-[#10233f] lg:px-6 lg:text-xl">
+                        <th class="w-[15%] px-3 py-5 text-center text-sm font-semibold uppercase text-[#10233f] lg:px-6 lg:text-xl sm:text-base">
                             {{ $tierLabel }}
                         </th>
                         @endforeach
@@ -140,7 +140,7 @@ $tiers = [
 
                         <td class="break-words px-3 py-5 text-center leading-6 lg:px-6">
                             @if ($isCheck($value))
-                            <span class="text-lg leading-none text-[#b28a4a]">
+                            <span class="text-base leading-none text-[#b28a4a] sm:text-lg">
                                 ✓
                             </span>
                             @elseif ($value === '-')
@@ -161,7 +161,7 @@ $tiers = [
         </div>
 
         @if ($section->excerpt)
-        <div class="mt-2 px-5 text-sm italic leading-relaxed text-[#4b5563] md:px-6">
+        <div class="mt-2 px-5 text-xs italic leading-relaxed text-[#4b5563] md:px-6 sm:text-sm">
             <i>{!! $section->excerpt !!}</i>
         </div>
         @endif

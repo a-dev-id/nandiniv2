@@ -5,11 +5,9 @@ namespace App\Services;
 use App\Models\BookingSyncLog;
 use App\Models\Member;
 use App\Models\SyncedWebhotelierBooking;
-use App\Mail\AutoJoinWelcomeMail;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Throwable;
 
 class BookingSyncService
@@ -235,13 +233,30 @@ class BookingSyncService
         }
 
         try {
-            Mail::to($recipient)->send(new AutoJoinWelcomeMail(
-                member: $member,
-                bookingNumber: $bookingNumber,
-                roomName: $this->nullableString($payload['room_name'] ?? null),
-                checkinDate: $this->nullableString($payload['check_in'] ?? null),
-                checkoutDate: $this->nullableString($payload['check_out'] ?? null),
-            ));
+            // Booking sync uses the same welcome template, but delivery is delegated to the relay API.
+            $result = app(MembershipEmailRelayService::class)->sendView('emails.membership.auto-join-welcome', [
+                'member' => $member,
+                'bookingNumber' => $bookingNumber,
+                'roomName' => $this->nullableString($payload['room_name'] ?? null),
+                'checkinDate' => $this->nullableString($payload['check_in'] ?? null),
+                'checkoutDate' => $this->nullableString($payload['check_out'] ?? null),
+                'loginUrl' => route('membership.login'),
+                'passwordResetUrl' => route('membership.password.request'),
+            ], [
+                'to' => $recipient,
+                'bcc' => $this->guestBcc(),
+                'subject' => 'Welcome to Nandini Inner Circle',
+            ]);
+
+            if (! $result['success']) {
+                Log::warning('Booking sync auto-join welcome email relay failed.', [
+                    'member_id' => $member->id,
+                    'email' => $member->email,
+                    'relay_response' => $result,
+                ]);
+
+                return 'Welcome email failed.';
+            }
 
             $member->forceFill([
                 'welcome_email_sent_at' => now(),
@@ -330,5 +345,15 @@ class BookingSyncService
     private function publicErrorMessage(Throwable $e): string
     {
         return $e->getMessage() ?: 'Booking sync failed.';
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function guestBcc(): array
+    {
+        $bcc = trim((string) config('mail.guest_bcc'));
+
+        return $bcc === '' ? [] : [$bcc];
     }
 }

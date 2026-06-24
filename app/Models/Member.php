@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-use App\Notifications\MemberResetPasswordNotification;
-use App\Notifications\MemberPointsAddedNotification;
+use App\Services\MembershipEmailRelayService;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -86,7 +85,29 @@ class Member extends Authenticatable
 
     public function sendPasswordResetNotification($token): void
     {
-        $this->notify(new MemberResetPasswordNotification($token));
+        $resetUrl = route('membership.password.reset', [
+            'token' => $token,
+            'email' => $this->getEmailForPasswordReset(),
+        ]);
+
+        // Password reset must not depend on this host's SMTP; relay the rendered template instead.
+        $result = app(MembershipEmailRelayService::class)->sendView('emails.membership.reset-password', [
+            'member' => $this,
+            'resetUrl' => $resetUrl,
+            'expiresInMinutes' => config('auth.passwords.members.expire', 60),
+        ], [
+            'to' => $this->getEmailForPasswordReset(),
+            'bcc' => $this->guestBcc(),
+            'subject' => 'Reset Your Nandini Inner Circle Password',
+        ]);
+
+        if (! $result['success']) {
+            Log::warning('Member password reset email could not be sent through relay.', [
+                'member_id' => $this->id,
+                'email' => $this->email,
+                'relay_response' => $result,
+            ]);
+        }
     }
 
     public function getFullNameAttribute(): string
@@ -263,21 +284,27 @@ class Member extends Authenticatable
 
             if ($type === self::POINT_TYPE_EARN) {
                 DB::afterCommit(function () use ($points, $description, $previousTier, $previousPoints, $newTier): void {
-                    try {
-                        $this->notify(new MemberPointsAddedNotification(
-                            $points,
-                            (int) $this->points,
-                            $previousPoints,
-                            $previousTier,
-                            $newTier,
-                            $description
-                        ));
-                    } catch (\Throwable $e) {
-                        Log::warning('Member points added email could not be sent.', [
+                    $result = app(MembershipEmailRelayService::class)->sendView('emails.membership.points-added', [
+                        'member' => $this,
+                        'pointsAdded' => $points,
+                        'totalPoints' => (int) $this->points,
+                        'previousPoints' => $previousPoints,
+                        'previousTierLabel' => self::getTierLabelForTier($previousTier),
+                        'newTierLabel' => self::getTierLabelForTier($newTier),
+                        'description' => $description,
+                        'dashboardUrl' => route('membership.dashboard'),
+                    ], [
+                        'to' => $this->email,
+                        'bcc' => $this->guestBcc(),
+                        'subject' => 'Your Points Have Been Added to Your Account',
+                    ]);
+
+                    if (! $result['success']) {
+                        Log::warning('Member points added email could not be sent through relay.', [
                             'member_id' => $this->id,
                             'email' => $this->email,
                             'points_added' => $points,
-                            'message' => $e->getMessage(),
+                            'relay_response' => $result,
                         ]);
                     }
                 });
@@ -331,5 +358,15 @@ class Member extends Authenticatable
             : $now->copy()->addYear();
 
         $this->membership_expiry_reminder_sent_at = null;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function guestBcc(): array
+    {
+        $bcc = trim((string) config('mail.guest_bcc'));
+
+        return $bcc === '' ? [] : [$bcc];
     }
 }

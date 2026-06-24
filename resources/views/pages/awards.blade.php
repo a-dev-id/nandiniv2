@@ -69,20 +69,20 @@
             @endphp
 
             <article class="border-b border-slate-200 py-10 md:py-12">
-                <h2 class="text-xl leading-snug font-medium uppercase text-slate-700 mb-3">
+                <h2 class="mb-5 text-lg leading-snug font-medium uppercase text-slate-700 sm:text-xl">
                     {{ $award->title }}
                 </h2>
 
                 <div class="flex flex-col gap-6 md:flex-row md:items-start md:gap-8">
-                    <div class="shrink-0">
+                    <div class="flex h-36 w-40 shrink-0 items-center justify-center">
                         @if ($image)
-                        <img src="{{ asset('storage/' . $image) }}" alt="{{ $imageAlt }}" class="block object-contain" style="width: 128px; height: 128px; object-fit: contain;" loading="lazy">
+                        <img src="{{ asset('storage/' . $image) }}" alt="{{ $imageAlt }}" class="block max-h-36 max-w-40 object-contain" loading="lazy">
                         @endif
                     </div>
 
-                    <div class="flex min-w-0 flex-1 flex-col">
+                    <div class="min-w-0 flex-1">
                         @if ($descriptionText !== '')
-                        <p class="text-sm leading-7 text-slate-700">
+                        <p class="text-xs leading-7 text-slate-700 sm:text-sm">
                             {{ $descriptionText }}
                         </p>
                         @endif
@@ -94,7 +94,75 @@
 
             @if ($awards->hasPages())
             <div class="mt-14">
-                {{ $awards->links() }}
+                <nav role="navigation" aria-label="Pagination Navigation">
+                    <div class="hidden sm:flex-1 sm:flex sm:gap-2 sm:items-center sm:justify-between">
+                        <div>
+                            <p class="text-xs text-gray-700 leading-5 sm:text-sm">
+                                Showing
+                                <span class="font-medium">{{ $awards->firstItem() }}</span>
+                                to
+                                <span class="font-medium">{{ $awards->lastItem() }}</span>
+                                of
+                                <span class="font-medium">{{ $awards->total() }}</span>
+                                results
+                            </p>
+                        </div>
+
+                        <div>
+                            <span class="inline-flex rtl:flex-row-reverse shadow-sm rounded-md">
+                                @php
+                                $awardPageUrl = fn(int $page): string => $page === 1
+                                ? route('awards.index')
+                                : route('awards.page', ['page' => $page]);
+                                @endphp
+
+                                @if ($awards->onFirstPage())
+                                <span aria-disabled="true" aria-label="Previous">
+                                    <span class="inline-flex items-center px-2 py-2 text-xs font-medium text-gray-500 bg-white border border-gray-300 cursor-not-allowed rounded-l-md leading-5 sm:text-sm" aria-hidden="true">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                    </span>
+                                </span>
+                                @else
+                                <a href="{{ $awardPageUrl($awards->currentPage() - 1) }}" rel="prev" class="inline-flex items-center px-2 py-2 text-xs font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md leading-5 transition duration-150 sm:text-sm" aria-label="Previous">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                                @endif
+
+                                @for ($pageNumber = 1; $pageNumber <= $awards->lastPage(); $pageNumber++)
+                                    @if ($pageNumber === $awards->currentPage())
+                                    <span aria-current="page">
+                                        <span class="inline-flex items-center px-4 py-2 -ml-px text-xs font-medium bg-[#A67C3D] border border-[#A67C3D] text-white cursor-default leading-5 sm:text-sm">{{ $pageNumber }}</span>
+                                    </span>
+                                    @else
+                                    <a href="{{ $awardPageUrl($pageNumber) }}" class="inline-flex items-center px-4 py-2 -ml-px text-xs font-medium text-gray-700 bg-white border border-gray-300 leading-5 transition duration-150 sm:text-sm" aria-label="Go to page {{ $pageNumber }}">
+                                        {{ $pageNumber }}
+                                    </a>
+                                    @endif
+                                    @endfor
+
+                                    @if ($awards->hasMorePages())
+                                    <a href="{{ $awardPageUrl($awards->currentPage() + 1) }}" rel="next" class="inline-flex items-center px-2 py-2 -ml-px text-xs font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md leading-5 transition duration-150 sm:text-sm" aria-label="Next">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                    </a>
+                                    @else
+                                    <span aria-disabled="true" aria-label="Next">
+                                        <span class="inline-flex items-center px-2 py-2 -ml-px text-xs font-medium text-gray-500 bg-white border border-gray-300 cursor-not-allowed rounded-r-md leading-5 sm:text-sm" aria-hidden="true">
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                            </svg>
+                                        </span>
+                                    </span>
+                                    @endif
+                            </span>
+                        </div>
+                    </div>
+                </nav>
             </div>
             @endif
         </div>

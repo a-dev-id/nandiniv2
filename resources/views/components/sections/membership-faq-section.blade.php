@@ -121,7 +121,7 @@ $faqs = count($sectionItems) > 0 ? $sectionItems : $defaultItems;
 
         <div class="{{ $headerAlignClass }}">
             @if ($hasSubtitle)
-            <p class="mb-4 text-sm md:text-base leading-relaxed uppercase text-[#b28a4a] font-medium">
+            <p class="mb-4 text-xs md:text-base leading-relaxed uppercase text-[#b28a4a] font-medium sm:text-sm">
                 {!! str_ireplace(
                 ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
                 '<br class="hidden md:block">',
@@ -131,7 +131,7 @@ $faqs = count($sectionItems) > 0 ? $sectionItems : $defaultItems;
             @endif
 
             @if ($hasTitle)
-            <h2 class="text-xl leading-snug uppercase font-medium {{ $titleColorClass }} mb-3">
+            <h2 class="text-lg leading-snug uppercase font-medium {{ $titleColorClass }} mb-3 sm:text-xl">
                 {!! str_ireplace(
                 ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
                 '<br class="hidden md:block">',
@@ -141,13 +141,13 @@ $faqs = count($sectionItems) > 0 ? $sectionItems : $defaultItems;
             @endif
 
             @if ($hasDescription)
-            <div class="mt-8 text-sm leading-relaxed max-w-2xl sm:max-w-3xl md:max-w-5xl {{ $descriptionColorClass }} {{ $descriptionAlignClass }}">
+            <div class="mt-8 text-xs leading-relaxed max-w-2xl sm:max-w-3xl md:max-w-5xl {{ $descriptionColorClass }} {{ $descriptionAlignClass }} sm:text-sm">
                 {!! $description !!}
             </div>
             @endif
 
             @if ($buttonLabel)
-            <a href="{{ $buttonUrl }}" class="mt-8 inline-flex min-w-[130px] items-center justify-center border px-4 py-2.5 text-sm font-medium uppercase transition duration-300 {{ $buttonClass }} tracking-[0.08em]">
+            <a href="{{ $buttonUrl }}" class="mt-8 inline-flex min-w-[130px] items-center justify-center border px-4 py-2.5 text-xs font-medium uppercase transition duration-300 {{ $buttonClass }} tracking-[0.08em] sm:text-sm">
                 {{ $buttonLabel }}
             </a>
             @endif
@@ -163,7 +163,7 @@ $faqs = count($sectionItems) > 0 ? $sectionItems : $defaultItems;
 
             <div x-data="{ open: false }" class="border {{ $borderColorClass }}">
                 <button type="button" class="flex w-full items-center justify-between gap-6 px-4 py-6 text-left tracking-[0.08em] font-medium" @click="open = !open" :aria-expanded="open.toString()" aria-controls="{{ $itemId }}">
-                    <span class="text-sm font-semibold leading-7 {{ $questionColorClass }}">
+                    <span class="text-xs font-semibold leading-7 {{ $questionColorClass }} sm:text-sm">
                         {{ $question }}
                     </span>
 
@@ -175,7 +175,7 @@ $faqs = count($sectionItems) > 0 ? $sectionItems : $defaultItems;
 
                 @if ($answer)
                 <div id="{{ $itemId }}" x-show="open" x-collapse class="px-6 pb-6">
-                    <div class="max-w-3xl text-sm leading-relaxed {{ $answerColorClass }}">
+                    <div class="max-w-3xl text-xs leading-relaxed {{ $answerColorClass }} sm:text-sm">
                         {!! nl2br(e($answer)) !!}
                     </div>
                 </div>

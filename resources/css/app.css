@@ -54,4 +54,20 @@
         display: flex;
         flex: 1;
     }
+
+    nav[aria-label="Pagination Navigation"] a:hover,
+    nav[aria-label="Pagination Navigation"] a:hover svg {
+        color: #ffffff !important;
+    }
+
+    nav[aria-label="Pagination Navigation"] a:hover {
+        background-color: #b8945b !important;
+        border-color: #b8945b !important;
+    }
+
+    nav[aria-label="Pagination Navigation"] span[aria-current="page"] > span {
+        background-color: #a67c3d !important;
+        border-color: #a67c3d !important;
+        color: #ffffff !important;
+    }
 }

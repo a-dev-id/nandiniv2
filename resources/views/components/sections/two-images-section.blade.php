@@ -75,7 +75,7 @@ $displayButtonLink = $section?->button_url;
                     @endphp
 
                     <div class="snap-center shrink-0 w-full">
-                        <div class="group relative aspect-square md:aspect-3/2 overflow-hidden bg-slate-100">
+                        <div class="group relative aspect-[4/3] md:aspect-3/2 overflow-hidden bg-slate-100">
                             @if ($imageUrl)
                             <img src="{{ $imageUrl }}" alt="{{ $imageAlt }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" />
                             @endif
@@ -109,20 +109,20 @@ $displayButtonLink = $section?->button_url;
                     <div class="text-center">
 
                         @if ($title)
-                        <h2 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3">
+                        <h2 class="text-lg leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-xl">
                             {{ $title }}
                         </h2>
                         @endif
 
                         @if ($description)
-                        <div class="mt-2 text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+                        <div class="mt-2 text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto sm:text-sm">
                             {!! $description !!}
                         </div>
                         @endif
 
                         @if (! $noButton && $displayButtonText && $displayButtonLink)
                         <div class="mt-8">
-                            <a href="{{ $displayButtonLink }}" class="inline-flex items-center justify-center bg-[#A67C3D] text-white px-5 py-2.5 uppercase text-sm font-medium hover:bg-[#B8945B] transition tracking-[0.08em]">
+                            <a href="{{ $displayButtonLink }}" class="inline-flex items-center justify-center bg-[#A67C3D] text-white px-5 py-2.5 uppercase text-xs font-medium hover:bg-[#B8945B] transition tracking-[0.08em] sm:text-sm">
                                 {{ $displayButtonText }}
                             </a>
                         </div>

@@ -29,7 +29,15 @@ use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\MembershipProfileController;
 use App\Http\Controllers\OfferController;
 use App\Services\WebhotelierPullService;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/__clear-cache/nandini-2026-06-23', function () {
+    Artisan::call('optimize:clear');
+
+    return response('Cache cleared', 200)
+        ->header('Content-Type', 'text/plain');
+});
 
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
@@ -263,6 +271,10 @@ Route::get('/blog-news/{slug}', [BlogController::class, 'show'])
 */
 Route::get('/awards', [AwardController::class, 'index'])
     ->name('awards.index');
+
+Route::get('/awards/page/{page}', [AwardController::class, 'index'])
+    ->whereNumber('page')
+    ->name('awards.page');
 
 /*
 |--------------------------------------------------------------------------

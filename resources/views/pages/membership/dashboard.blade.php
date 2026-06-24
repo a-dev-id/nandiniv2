@@ -458,11 +458,11 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
         <div class="mx-auto w-full max-w-6xl">
 
             <div class="mx-auto max-w-3xl text-center">
-                <h1 class="text-2xl leading-snug uppercase text-slate-700 font-medium mb-3">
+                <h1 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-2xl">
                     Member Profile
                 </h1>
 
-                <p class="mt-2 text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+                <p class="mt-2 text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto sm:text-sm">
                     Access your exclusive member privileges.
                 </p>
             </div>
@@ -474,7 +474,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                         @if ($profilePhotoUrl)
                         <img src="{{ $profilePhotoUrl }}" alt="{{ $memberName }}" class="h-full w-full object-cover" loading="lazy">
                         @else
-                        <span class="text-5xl font-medium uppercase text-[#A67C3D]">
+                        <span class="text-4xl font-medium uppercase text-[#A67C3D] sm:text-5xl">
                             {{ $memberInitial }}
                         </span>
                         @endif
@@ -482,11 +482,11 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                 </div>
 
                 <div class="text-center lg:col-span-4 lg:text-left">
-                    <h2 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3">
+                    <h2 class="text-lg leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-xl">
                         {{ $memberName }}
                     </h2>
 
-                    <div class="mt-2 mx-auto max-w-[340px] space-y-2 text-[13px] sm:text-[14px] leading-6 text-gray-600 lg:mx-0">
+                    <div class="mt-2 mx-auto max-w-[340px] space-y-2 text-[11px] sm:text-[14px] leading-6 text-gray-600 lg:mx-0">
                         <div class="grid grid-cols-[88px_1fr] gap-1 text-left">
                             <span>Email</span>
                             <span class="break-all">: {{ $memberEmail }}</span>
@@ -504,7 +504,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                     </div>
 
                     <div class="mt-2 flex justify-center lg:justify-start">
-                        <a href="{{ \Illuminate\Support\Facades\Route::has('membership.profile.edit') ? route('membership.profile.edit') : '#' }}" class="inline-flex min-w-[145px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-sm uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium">
+                        <a href="{{ \Illuminate\Support\Facades\Route::has('membership.profile.edit') ? route('membership.profile.edit') : '#' }}" class="inline-flex min-w-[145px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
                             Edit Profile
                         </a>
                     </div>
@@ -520,19 +520,19 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                                 <div class="pointer-events-none absolute inset-0 text-white">
 
                                     <div class="absolute rounded-[3px] border border-white/70 bg-black/35 px-2.5 py-1.5 shadow-sm backdrop-blur-[1px]" style="left: 8%; bottom: 14%;">
-                                        <p class="text-[9px] sm:text-[10px] md:text-[11px] font-bold uppercase leading-none text-white drop-shadow">
+                                        <p class="text-[7px] sm:text-[10px] md:text-[11px] font-bold uppercase leading-none text-white drop-shadow">
                                             {{ $formatPointLabel($memberPoints, 'upper') }}
                                         </p>
                                     </div>
 
                                     <div class="absolute top-[42%] right-[8%] w-[64%] text-right">
-                                        <p class="whitespace-normal break-words text-[14px] sm:text-[16px] md:text-[18px] font-bold uppercase leading-tight text-white/95 drop-shadow">
+                                        <p class="whitespace-normal break-words text-[12px] sm:text-[16px] md:text-[18px] font-bold uppercase leading-tight text-white/95 drop-shadow">
                                             {{ $memberName }}
                                         </p>
                                     </div>
 
                                     <div class="absolute bottom-[23%] right-[8%] max-w-[48%] text-right">
-                                        <p class="text-[10px] sm:text-[12px] md:text-[13px] font-semibold uppercase leading-none drop-shadow-md">
+                                        <p class="text-[8px] sm:text-[12px] md:text-[13px] font-semibold uppercase leading-none drop-shadow-md">
                                             {{ $tierLabelMap[$memberTier] ?? 'Dana' }}
                                         </p>
                                     </div>
@@ -553,11 +553,11 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                         <div class="mt-2 grid grid-cols-1 items-center gap-3 sm:grid-cols-[1fr_110px]">
                             @if ($nextTier && $pointsToNextTier !== null)
                             <div class="rounded-lg bg-[#F1F1F1] px-5 py-3 text-center">
-                                <p class="text-[12px] sm:text-[13px] uppercase leading-snug text-slate-700">
+                                <p class="text-[10px] sm:text-[13px] uppercase leading-snug text-slate-700">
                                     Another <span class="font-bold">{{ $formatPointLabel($pointsToNextTier) }}</span>
                                 </p>
 
-                                <p class="mt-1 text-[8px] sm:text-[9px] uppercase text-slate-700">
+                                <p class="mt-1 text-[7px] sm:text-[9px] uppercase text-slate-700">
                                     To reach {{ $tierLabelMap[$nextTier] }} Member
                                 </p>
                             </div>
@@ -569,11 +569,11 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                             @endif
                             @else
                             <div class="rounded-lg bg-[#F1F1F1] px-5 py-3 text-center sm:col-span-2">
-                                <p class="text-[12px] sm:text-[13px] uppercase leading-snug text-slate-700">
+                                <p class="text-[10px] sm:text-[13px] uppercase leading-snug text-slate-700">
                                     You are now a <span class="font-bold">Jnana Member</span>
                                 </p>
 
-                                <p class="mt-1 text-[8px] sm:text-[9px] uppercase text-slate-700">
+                                <p class="mt-1 text-[7px] sm:text-[9px] uppercase text-slate-700">
                                     You have reached the highest membership tier.
                                 </p>
                             </div>
@@ -613,29 +613,29 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
 
                 <div class="pointer-events-none absolute inset-0 text-white">
                     <div class="absolute rounded-[3px] border border-white/70 bg-black/35 px-4 py-2.5 shadow-sm backdrop-blur-[1px]" style="left: 8%; bottom: 14%;">
-                        <p class="text-[13px] text-sm md:text-[16px] font-bold uppercase leading-none text-white drop-shadow">
+                        <p class="text-[11px] text-xs md:text-[16px] font-bold uppercase leading-none text-white drop-shadow sm:text-[13px] sm:text-sm">
                             {{ $formatPointLabel($memberPoints, 'upper') }}
                         </p>
                     </div>
 
                     <div class="absolute top-[42%] right-[8%] w-[64%] text-right">
-                        <p class="whitespace-normal break-words text-[20px] sm:text-[25px] md:text-[32px] font-bold uppercase leading-tight text-white/95 drop-shadow">
+                        <p class="whitespace-normal break-words text-[18px] sm:text-[25px] md:text-[32px] font-bold uppercase leading-tight text-white/95 drop-shadow">
                             {{ $memberName }}
                         </p>
                     </div>
 
                     <div class="absolute bottom-[23%] right-[8%] max-w-[48%] text-right">
-                        <p class="text-[13px] sm:text-[14px] text-sm font-semibold uppercase leading-none drop-shadow-md">
+                        <p class="text-[11px] sm:text-[14px] text-xs font-semibold uppercase leading-none drop-shadow-md">
                             {{ $tierLabelMap[$memberTier] ?? 'Dana' }}
                         </p>
                     </div>
 
                     <div class="absolute bottom-[8.5%] right-[8%] text-right">
-                        <p class="text-[8px] sm:text-[11px] md:text-[12px] font-bold uppercase leading-tight text-white/95 drop-shadow">
+                        <p class="text-[7px] sm:text-[11px] md:text-[12px] font-bold uppercase leading-tight text-white/95 drop-shadow">
                             Valid Till
                         </p>
 
-                        <p class="mt-1 text-[8px] sm:text-[11px] md:text-[12px] font-bold uppercase leading-tight text-white/95 drop-shadow">
+                        <p class="mt-1 text-[7px] sm:text-[11px] md:text-[12px] font-bold uppercase leading-tight text-white/95 drop-shadow">
                             {{ $validUntilDate }}
                         </p>
                     </div>
@@ -647,15 +647,15 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
     <section class="bg-white px-6 pb-0">
         <div class="mx-auto w-full max-w-6xl">
             <div class="flex flex-nowrap justify-center gap-1.5 border-b border-slate-200 pb-4 sm:gap-2" data-membership-dashboard-tabs>
-                <button type="button" class="min-w-0 flex-1 border border-[#A67C3D] bg-[#A67C3D] px-2 py-2.5 text-[10px] font-medium uppercase text-white transition sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="bookings">
+                <button type="button" class="min-w-0 flex-1 border border-[#A67C3D] bg-[#A67C3D] px-2 py-2.5 text-[8px] font-medium uppercase text-white transition sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="bookings">
                     My Booking
                 </button>
 
-                <button type="button" class="min-w-0 flex-1 border border-slate-300 bg-white px-2 py-2.5 text-[10px] font-medium uppercase text-slate-700 transition hover:border-[#A67C3D] hover:text-[#A67C3D] sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="redeem">
+                <button type="button" class="min-w-0 flex-1 border border-slate-300 bg-white px-2 py-2.5 text-[8px] font-medium uppercase text-slate-700 transition hover:border-[#A67C3D] hover:text-[#A67C3D] sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="redeem">
                     Point Redeem
                 </button>
 
-                <button type="button" class="min-w-0 flex-1 border border-slate-300 bg-white px-2 py-2.5 text-[10px] font-medium uppercase text-slate-700 transition hover:border-[#A67C3D] hover:text-[#A67C3D] sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="history">
+                <button type="button" class="min-w-0 flex-1 border border-slate-300 bg-white px-2 py-2.5 text-[8px] font-medium uppercase text-slate-700 transition hover:border-[#A67C3D] hover:text-[#A67C3D] sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="history">
                     History
                 </button>
             </div>
@@ -663,8 +663,8 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
             <div class="pt-8" data-dashboard-tab-panel="bookings">
                 @if ($currentBookings->isNotEmpty())
                 <div class="overflow-x-auto border border-slate-200 bg-white">
-                    <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
-                        <thead class="bg-[#F7F7F7] text-[11px] uppercase text-slate-600">
+                    <table class="min-w-full divide-y divide-slate-200 text-left text-xs sm:text-sm">
+                        <thead class="bg-[#F7F7F7] text-[9px] uppercase text-slate-600 sm:text-[11px]">
                             <tr>
                                 <th class="px-4 py-3">Booking Number</th>
                                 <th class="px-4 py-3">Image</th>
@@ -689,7 +689,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                                     @if ($roomImage)
                                     <img src="{{ $roomImage }}" alt="{{ $booking->room_name ?: 'Room' }}" class="h-14 w-20 object-cover" loading="lazy">
                                     @else
-                                    <div class="flex h-14 w-20 items-center justify-center bg-[#F7F7F7] text-[10px] font-bold uppercase text-[#916B2C]">
+                                    <div class="flex h-14 w-20 items-center justify-center bg-[#F7F7F7] text-[8px] font-bold uppercase text-[#916B2C] sm:text-[10px]">
                                         Room
                                     </div>
                                     @endif
@@ -698,7 +698,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                                 <td class="px-4 py-4">{{ $booking->check_in?->format('d M Y') ?? '-' }}</td>
                                 <td class="px-4 py-4">{{ $booking->check_out?->format('d M Y') ?? '-' }}</td>
                                 <td class="px-4 py-4">
-                                    <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold uppercase text-slate-700">
+                                    <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-[9px] font-bold uppercase text-slate-700 sm:text-[11px]">
                                         {{ $booking->status ?: '-' }}
                                     </span>
                                 </td>
@@ -714,7 +714,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                 </div>
                 @else
                 <div class="bg-[#F7F7F7] px-6 py-12 text-center">
-                    <p class="text-sm uppercase text-slate-700">
+                    <p class="text-xs uppercase text-slate-700 sm:text-sm">
                         No booking found yet.
                     </p>
                 </div>
@@ -723,8 +723,8 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
 
             <div class="hidden pt-8" data-dashboard-tab-panel="redeem">
                 <div class="overflow-x-auto border border-slate-200 bg-white">
-                    <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
-                        <thead class="bg-[#F7F7F7] text-[11px] uppercase text-slate-700">
+                    <table class="min-w-full divide-y divide-slate-200 text-left text-xs sm:text-sm">
+                        <thead class="bg-[#F7F7F7] text-[9px] uppercase text-slate-700 sm:text-[11px]">
                             <tr>
                                 <th class="px-4 py-4">Reward</th>
                                 <th class="px-4 py-4">Code</th>
@@ -747,7 +747,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                                         @if ($redemptionImage)
                                         <img src="{{ $redemptionImage }}" alt="{{ $redemptionTitle }}" class="h-14 w-20 object-cover" loading="lazy">
                                         @else
-                                        <div class="flex h-14 w-20 items-center justify-center bg-[#F7F7F7] text-xl font-medium uppercase text-[#916B2C]">
+                                        <div class="flex h-14 w-20 items-center justify-center bg-[#F7F7F7] text-lg font-medium uppercase text-[#916B2C] sm:text-xl">
                                             {{ strtoupper(mb_substr($redemptionTitle, 0, 1)) }}
                                         </div>
                                         @endif
@@ -760,7 +760,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                                 <td class="px-4 py-4">{{ $redemption->expires_at?->format('d M Y') ?? '-' }}</td>
                                 <td class="px-4 py-4 text-right">{{ number_format((int) $redemption->points_used, 0) }}</td>
                                 <td class="px-4 py-4">
-                                    <span class="inline-flex rounded-full bg-[#A67C3D]/10 px-3 py-1 text-[11px] font-bold uppercase text-[#916B2C]">
+                                    <span class="inline-flex rounded-full bg-[#A67C3D]/10 px-3 py-1 text-[9px] font-bold uppercase text-[#916B2C] sm:text-[11px]">
                                         {{ $redemption->status_label ?? 'Pending' }}
                                     </span>
                                 </td>
@@ -768,7 +768,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                             @empty
                             <tr>
                                 <td colspan="6" class="px-4 py-12 text-center">
-                                    <p class="text-sm uppercase text-slate-700">
+                                    <p class="text-xs uppercase text-slate-700 sm:text-sm">
                                         No active redemptions yet.
                                     </p>
                                 </td>
@@ -787,8 +787,8 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
             <div class="mx-auto w-full max-w-6xl">
 
                 <div class="overflow-x-auto border border-slate-200 bg-white">
-                    <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
-                        <thead class="bg-[#F7F7F7] text-[11px] uppercase text-slate-700">
+                    <table class="min-w-full divide-y divide-slate-200 text-left text-xs sm:text-sm">
+                        <thead class="bg-[#F7F7F7] text-[9px] uppercase text-slate-700 sm:text-[11px]">
                             <tr>
                                 <th class="px-4 py-4">Reward</th>
                                 <th class="px-4 py-4">Code</th>
@@ -915,7 +915,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                                             @if ($historyImage)
                                             <img src="{{ $historyImage }}" alt="{{ $title }}" class="h-14 w-16 object-cover" loading="lazy">
                                             @else
-                                            <div class="flex h-14 w-20 items-center justify-center bg-[#F7F7F7] text-xl font-medium uppercase text-[#916B2C]">
+                                            <div class="flex h-14 w-20 items-center justify-center bg-[#F7F7F7] text-lg font-medium uppercase text-[#916B2C] sm:text-xl">
                                                 {{ strtoupper(mb_substr($title, 0, 1)) }}
                                             </div>
                                             @endif
@@ -924,7 +924,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                                                 <p class="font-bold text-slate-950">{{ $title }}</p>
 
                                                 @if ($historyDescription !== '')
-                                                <p class="mt-1 text-sm leading-relaxed text-slate-500">
+                                                <p class="mt-1 text-xs leading-relaxed text-slate-500 sm:text-sm">
                                                     {{ $historyDescription }}
                                                 </p>
                                                 @endif
@@ -936,7 +936,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                                     <td class="px-4 py-5 text-slate-700">{{ $validUntil }}</td>
                                     <td class="px-4 py-5 text-right text-slate-700">{{ $pointsUsedDisplay }}</td>
                                     <td class="px-4 py-5">
-                                        <span class="{{ $statusClass }} inline-flex rounded-full px-3 py-1 text-[11px] font-bold uppercase">
+                                        <span class="{{ $statusClass }} inline-flex rounded-full px-3 py-1 text-[9px] font-bold uppercase sm:text-[11px]">
                                             {{ $statusLabel }}
                                         </span>
                                     </td>
@@ -944,7 +944,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                                 @empty
                                 <tr>
                                     <td colspan="6" class="px-4 py-12 text-center">
-                                        <p class="text-sm uppercase text-slate-700">
+                                        <p class="text-xs uppercase text-slate-700 sm:text-sm">
                                             No completed history yet.
                                         </p>
                                     </td>
@@ -956,7 +956,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
 
                 @if ($hasMoreHistories)
                 <div class="mt-10 text-center">
-                    <button type="button" data-history-view-more class="inline-flex min-w-[145px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-5 py-2.5 text-sm uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium">
+                    <button type="button" data-history-view-more class="inline-flex min-w-[145px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-5 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
                         View More
                     </button>
                 </div>
@@ -972,20 +972,20 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
             <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/35 to-black/55"></div>
 
             <div class="relative mx-auto flex min-h-[380px] w-full max-w-5xl flex-col items-center justify-center px-6 py-16 text-center text-white sm:min-h-[460px] md:py-20">
-                <h2 class="text-xl font-medium uppercase leading-snug drop-shadow-[0_2px_10px_rgba(0,0,0,0.75)] mb-3">
+                <h2 class="text-lg font-medium uppercase leading-snug drop-shadow-[0_2px_10px_rgba(0,0,0,0.75)] mb-3 sm:text-xl">
                     Plan Your Next Jungle Escape
                 </h2>
 
-                <p class="mt-2 max-w-2xl text-sm leading-relaxed text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.75)]">
+                <p class="mt-2 max-w-2xl text-xs leading-relaxed text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.75)] sm:text-sm">
                     Book your next stay using your {{ $tierLabelMap[$memberTier] ?? 'Dana' }} member voucher, or explore our latest offers.
                 </p>
 
                 <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                    <a href="{{ $memberBookingUrl }}" target="_blank" rel="noopener" class="inline-flex min-w-[150px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-5 py-2.5 text-sm font-medium uppercase text-white shadow-lg shadow-black/20 transition hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em]">
+                    <a href="{{ $memberBookingUrl }}" target="_blank" rel="noopener" class="inline-flex min-w-[150px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-5 py-2.5 text-xs font-medium uppercase text-white shadow-lg shadow-black/20 transition hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em] sm:text-sm">
                         Book Now
                     </a>
 
-                    <a href="{{ route('offers.index') }}" class="inline-flex min-w-[150px] items-center justify-center border border-white/85 bg-black/25 px-5 py-2.5 text-sm font-medium uppercase text-white shadow-lg shadow-black/20 transition hover:border-[#A67C3D] hover:bg-[#A67C3D] hover:text-white tracking-[0.08em]">
+                    <a href="{{ route('offers.index') }}" class="inline-flex min-w-[150px] items-center justify-center border border-white/85 bg-black/25 px-5 py-2.5 text-xs font-medium uppercase text-white shadow-lg shadow-black/20 transition hover:border-[#A67C3D] hover:bg-[#A67C3D] hover:text-white tracking-[0.08em] sm:text-sm">
                         See Our Offers
                     </a>
                 </div>
@@ -998,11 +998,11 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
     <section class="dashboard-reward-carousel-section bg-white px-6 py-14 md:py-20" data-dashboard-reward-carousel-section>
         <div class="mx-auto w-full">
             <div class="mb-8 md:mb-10 text-center">
-                <h2 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3">
+                <h2 class="text-lg leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-xl">
                     Rewards
                 </h2>
 
-                <p class="mt-2 text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+                <p class="mt-2 text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto sm:text-sm">
                     Explore selected rewards available for your Inner Circle points.
                 </p>
             </div>
@@ -1060,7 +1060,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                                 <img src="{{ $image }}" alt="{{ $alt }}" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy">
                                 @else
                                 <div class="flex h-full w-full items-center justify-center bg-[#F7F7F7]">
-                                    <span class="text-5xl font-medium uppercase text-[#916B2C]">
+                                    <span class="text-4xl font-medium uppercase text-[#916B2C] sm:text-5xl">
                                         {{ strtoupper(mb_substr($rewardTitle, 0, 1)) }}
                                     </span>
                                 </div>
@@ -1068,19 +1068,19 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                             </div>
 
                             <div class="dashboard-reward-card-body p-7 flex flex-col grow">
-                                <h3 class="text-lg text-slate-700 uppercase leading-snug font-medium mb-3">
+                                <h3 class="text-base text-slate-700 uppercase leading-snug font-medium mb-3 sm:text-lg">
                                     {{ $rewardTitle }}
                                 </h3>
 
                                 @if ($rewardDescription)
-                                <p class="mt-2 text-sm leading-relaxed text-gray-600">
+                                <p class="mt-2 text-xs leading-relaxed text-gray-600 sm:text-sm">
                                     {{ \Illuminate\Support\Str::limit(strip_tags($rewardDescription), 145) }}
                                 </p>
                                 @endif
 
                                 <div class="mt-auto pt-12">
                                     <div class="flex items-center justify-between gap-5">
-                                        <p class="text-sm uppercase text-slate-950">
+                                        <p class="text-xs uppercase text-slate-950 sm:text-sm">
                                             @if ($pointsLabel)
                                             {{ $pointsLabel }}
                                             @else
@@ -1089,18 +1089,18 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                                         </p>
 
                                         @if ($memberCanRedeem)
-                                        <button type="button" data-reward-redeem-button data-redeem-action="{{ $redeemPostUrl }}" data-reward-title="{{ e($rewardTitle) }}" data-reward-points="{{ number_format((float) $points, 0) }}" class="inline-flex min-w-[115px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-sm uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium">
+                                        <button type="button" data-reward-redeem-button data-redeem-action="{{ $redeemPostUrl }}" data-reward-title="{{ e($rewardTitle) }}" data-reward-points="{{ number_format((float) $points, 0) }}" class="inline-flex min-w-[115px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
                                             Redeem
                                         </button>
                                         @else
-                                        <button type="button" disabled class="inline-flex min-w-[115px] items-center justify-center border border-slate-300 bg-slate-100 px-4 py-2.5 text-sm uppercase text-slate-400 cursor-not-allowed tracking-[0.08em] font-medium">
+                                        <button type="button" disabled class="inline-flex min-w-[115px] items-center justify-center border border-slate-300 bg-slate-100 px-4 py-2.5 text-xs uppercase text-slate-400 cursor-not-allowed tracking-[0.08em] font-medium sm:text-sm">
                                             Not Enough
                                         </button>
                                         @endif
                                     </div>
 
                                     @if (! $memberCanRedeem && $pointsNeeded > 0)
-                                    <p class="mt-2 text-sm leading-relaxed text-slate-500">
+                                    <p class="mt-2 text-xs leading-relaxed text-slate-500 sm:text-sm">
                                         You need {{ number_format($pointsNeeded, 0) }} more {{ $pointsNeeded === 1 ? 'point' : 'points' }}.
                                     </p>
                                     @endif
@@ -1125,7 +1125,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
             </div>
 
             <div class="mt-8 text-center">
-                <a href="{{ \Illuminate\Support\Facades\Route::has('membership.privilege-redemption') ? route('membership.privilege-redemption') : '#' }}" class="inline-flex min-w-[145px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-5 py-2.5 text-sm uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium">
+                <a href="{{ \Illuminate\Support\Facades\Route::has('membership.privilege-redemption') ? route('membership.privilege-redemption') : '#' }}" class="inline-flex min-w-[145px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-5 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
                     View More
                 </a>
             </div>

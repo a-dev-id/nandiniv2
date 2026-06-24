@@ -254,7 +254,7 @@ $useShowMore = $model === 'experience'
             }
             @endphp
 
-            <a href="{{ $filterUrl }}" class="border px-3 py-1.5 text-xs uppercase transition sm:text-sm {{ $active === $key ? 'border-[#A67C3D] bg-[#A67C3D] text-white' : 'border-black/15 bg-white text-slate-700 hover:border-black/40' }} tracking-[0.08em] font-medium">
+            <a href="{{ $filterUrl }}" class="border px-3 py-1.5 text-[11px] uppercase transition sm:text-sm {{ $active === $key ? 'border-[#A67C3D] bg-[#A67C3D] text-white' : 'border-black/15 bg-white text-slate-700 hover:border-black/40' }} tracking-[0.08em] font-medium">
                 {{ $label }}
             </a>
             @endforeach
@@ -309,6 +309,8 @@ $useShowMore = $model === 'experience'
             ? \App\Support\MemberBookingVoucher::appendToUrl($item->booking_url)
             : null;
 
+            $usesOfferCardLayout = in_array($model, ['offer', 'experience'], true);
+
             $shortExcerpt = \Illuminate\Support\Str::words(
             preg_replace('/\.{3,}/', '', (string) $item->excerpt) ?: (string) $item->excerpt,
             24,
@@ -317,10 +319,10 @@ $useShowMore = $model === 'experience'
             @endphp
 
             <article class="flex" @if ($useShowMore) x-show="{{ $loop->index }} < visibleCount" @endif>
-                <div class="flex h-full w-full flex-col {{ $model === 'offer' ? 'border border-slate-200 bg-white' : '' }}">
+                <div class="flex h-full w-full flex-col {{ $usesOfferCardLayout ? 'border border-slate-200 bg-white' : '' }}">
 
                     @if ($model === 'gallery')
-                    <div class="aspect-square overflow-hidden bg-slate-100 md:aspect-3/2">
+                    <div class="aspect-[4/3] overflow-hidden bg-slate-100 md:aspect-3/2">
                         @if ($desktopImage || $mobileImage)
                         <picture class="block h-full w-full">
                             @if ($mobileImage)
@@ -333,7 +335,7 @@ $useShowMore = $model === 'experience'
                     </div>
                     @else
                     <a href="{{ $url }}" class="block">
-                        <div class="group aspect-square overflow-hidden bg-slate-100 md:aspect-3/2">
+                        <div class="group aspect-[4/3] overflow-hidden bg-slate-100 md:aspect-3/2">
                             @if ($desktopImage || $mobileImage)
                             <picture class="block h-full w-full">
                                 @if ($mobileImage)
@@ -346,28 +348,28 @@ $useShowMore = $model === 'experience'
                         </div>
                     </a>
 
-                    @if ($model === 'offer')
+                    @if ($usesOfferCardLayout)
                     <div class="flex grow flex-col px-6 py-6 sm:px-7">
-                        <h3 class="text-lg font-semibold leading-snug text-slate-700 mb-3">
+                        <h3 class="text-base font-semibold leading-snug text-slate-700 mb-3 sm:text-lg">
                             <a href="{{ $url }}" class="transition hover:text-[#A67C3D] uppercase">
                                 {{ $item->title }}
                             </a>
                         </h3>
 
                         @if (! empty($item->excerpt))
-                        <p x-data="{ expanded: false }" x-bind:aria-expanded="expanded.toString()" role="button" tabindex="0" class="mt-2 grow cursor-pointer text-sm leading-relaxed text-slate-600" @click="expanded = ! expanded" @keydown.enter.prevent="expanded = ! expanded" @keydown.space.prevent="expanded = ! expanded">
+                        <p x-data="{ expanded: false }" x-bind:aria-expanded="expanded.toString()" role="button" tabindex="0" class="mt-2 grow cursor-pointer text-xs leading-relaxed text-slate-600 sm:text-sm" @click="expanded = ! expanded" @keydown.enter.prevent="expanded = ! expanded" @keydown.space.prevent="expanded = ! expanded">
                             <span x-show="! expanded">{{ $shortExcerpt }}</span>
                             <span x-show="expanded">{{ $item->excerpt }}</span>
                         </p>
                         @endif
 
                         <div class="mt-9 flex flex-wrap items-center justify-start gap-4">
-                            <a href="{{ $url }}" class="inline-flex min-w-[120px] items-center justify-center border border-slate-700 px-4 py-2.5 text-sm font-medium uppercase text-slate-700 transition hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em]">
+                            <a href="{{ $url }}" class="inline-flex min-w-[120px] items-center justify-center border border-slate-700 px-4 py-2.5 text-xs font-medium uppercase text-slate-700 transition hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em] sm:text-sm">
                                 Explore More
                             </a>
 
-                            @if ($reserveUrl)
-                            <a href="{{ $reserveUrl }}" class="inline-flex min-w-[120px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-sm font-medium uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em]">
+                            @if ($model === 'offer' && $reserveUrl)
+                            <a href="{{ $reserveUrl }}" class="inline-flex min-w-[120px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-xs font-medium uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] sm:text-sm">
                                 Reserve
                             </a>
                             @endif
@@ -375,18 +377,18 @@ $useShowMore = $model === 'experience'
                     </div>
                     @else
                     <div class="flex grow flex-col pt-7">
-                        <h3 class="text-lg leading-snug font-medium uppercase text-slate-700 mb-3">
+                        <h3 class="text-base leading-snug font-medium uppercase text-slate-700 mb-3 sm:text-lg">
                             {{ $item->title }}
                         </h3>
 
                         @if (! empty($item->excerpt))
-                        <p class="mt-2 grow text-sm leading-relaxed text-gray-600">
+                        <p class="mt-2 grow text-xs leading-relaxed text-gray-600 sm:text-sm">
                             {{ $item->excerpt }}
                         </p>
                         @endif
 
                         <div class="mt-7 flex {{ in_array($model, ['offer', 'experience'], true) ? 'justify-start' : 'justify-end' }}">
-                            <a href="{{ $url }}" class="text-[14px] font-medium uppercase text-slate-700 hover:underline tracking-[0.08em]">
+                            <a href="{{ $url }}" class="text-[12px] font-medium uppercase text-slate-700 hover:underline tracking-[0.08em] sm:text-[14px]">
                                 {{ $buttonText }}
                             </a>
                         </div>
@@ -407,7 +409,7 @@ $useShowMore = $model === 'experience'
 
         @if ($useShowMore)
         <div class="mt-14 flex justify-center">
-            <button type="button" x-show="visibleCount < {{ $items->count() }}" @click="visibleCount += {{ $showMoreStep }}" class="inline-flex items-center justify-center border border-slate-900 px-7 py-3 text-sm font-semibold uppercase text-slate-700 transition hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white">
+            <button type="button" x-show="visibleCount < {{ $items->count() }}" @click="visibleCount += {{ $showMoreStep }}" class="inline-flex items-center justify-center border border-slate-900 px-7 py-3 text-xs font-semibold uppercase text-slate-700 transition hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white sm:text-sm">
                 Show More
             </button>
         </div>

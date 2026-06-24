@@ -65,14 +65,14 @@
                     @endphp
 
                     @if ($variant === 'gallery')
-                    <div class="group aspect-square md:aspect-[4/3] overflow-hidden bg-slate-100">
+                    <div class="group aspect-[4/3] md:aspect-[4/3] overflow-hidden bg-slate-100">
                         @if ($image)
                         <img src="{{ asset('storage/' . $image) }}" alt="{{ $alt }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" />
                         @endif
                     </div>
                     @else
                     <a href="{{ $url }}" class="block">
-                        <div class="aspect-square md:aspect-4/3 overflow-hidden bg-slate-100 group">
+                        <div class="aspect-[4/3] md:aspect-4/3 overflow-hidden bg-slate-100 group">
                             @if ($image)
                             <img src="{{ asset('storage/' . $image) }}" alt="{{ $alt }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" />
                             @endif
@@ -80,26 +80,26 @@
                     </a>
 
                     <div class="flex flex-col grow border border-slate-200 border-t-0 bg-white px-6 py-6 sm:px-7">
-                        <h3 class="text-lg font-semibold leading-snug text-slate-700 uppercase mb-3">
+                        <h3 class="text-base font-semibold leading-snug text-slate-700 uppercase mb-3 sm:text-lg">
                             <a href="{{ $url }}" class="transition hover:text-[#A67C3D]">
                                 {{ $title }}
                             </a>
                         </h3>
 
                         @if ($summary)
-                        <p x-data="{ expanded: false }" x-bind:aria-expanded="expanded.toString()" role="button" tabindex="0" class="mt-2 grow cursor-pointer text-sm leading-relaxed text-slate-600" @click="expanded = ! expanded" @keydown.enter.prevent="expanded = ! expanded" @keydown.space.prevent="expanded = ! expanded">
+                        <p x-data="{ expanded: false }" x-bind:aria-expanded="expanded.toString()" role="button" tabindex="0" class="mt-2 grow cursor-pointer text-xs leading-relaxed text-slate-600 sm:text-sm" @click="expanded = ! expanded" @keydown.enter.prevent="expanded = ! expanded" @keydown.space.prevent="expanded = ! expanded">
                             <span x-show="! expanded">{{ $shortSummary }}</span>
                             <span x-show="expanded">{{ $summary }}</span>
                         </p>
                         @endif
 
                         <div class="mt-9 flex flex-wrap items-center {{ $buttonAlignClass }} gap-4">
-                            <a href="{{ $url }}" class="inline-flex min-w-[120px] items-center justify-center border border-slate-700 px-4 py-2.5 text-sm font-medium uppercase text-slate-700 transition hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em]">
+                            <a href="{{ $url }}" class="inline-flex min-w-[120px] items-center justify-center border border-slate-700 px-4 py-2.5 text-xs font-medium uppercase text-slate-700 transition hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em] sm:text-sm">
                                 Explore More
                             </a>
 
                             @if ($showReserveButton && $reserveUrl)
-                            <a href="{{ $reserveUrl }}" class="inline-flex min-w-[120px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-sm font-medium uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em]">
+                            <a href="{{ $reserveUrl }}" class="inline-flex min-w-[120px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-xs font-medium uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] sm:text-sm">
                                 Reserve
                             </a>
                             @endif

@@ -72,6 +72,11 @@ return [
         'test_token' => env('WELCOME_EMAIL_TEST_TOKEN'),
     ],
 
+    'email_relay' => [
+        'url' => env('MEMBERSHIP_EMAIL_RELAY_URL'),
+        'token' => env('MEMBERSHIP_EMAIL_RELAY_TOKEN'),
+    ],
+
     'mail_test_token' => env('MAIL_TEST_TOKEN'),
 
 ];

@@ -56,12 +56,12 @@ $gridOrderText = $reverse ? 'lg:order-1' : 'lg:order-2';
 
             {{-- Video --}}
             <div class="lg:col-span-7 {{ $gridOrderVideo }}">
-                <div class="relative aspect-square md:aspect-3/2 overflow-hidden bg-slate-100">
+                <div class="relative aspect-[4/3] md:aspect-3/2 overflow-hidden bg-slate-100">
                     @if ($embedUrl)
                     <iframe class="absolute inset-0 h-full w-full" src="{{ $embedUrl }}" title="{{ $page?->title ?? 'Video' }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
                     </iframe>
                     @else
-                    <div class="h-full w-full flex items-center justify-center text-sm text-slate-500">
+                    <div class="h-full w-full flex items-center justify-center text-xs text-slate-500 sm:text-sm">
                         Invalid / missing video ID
                     </div>
                     @endif
@@ -73,13 +73,13 @@ $gridOrderText = $reverse ? 'lg:order-1' : 'lg:order-2';
                 <div class="h-full flex flex-col justify-center px-4 sm:px-8 md:px-10 lg:px-12 md:py-14">
                     <div class="text-center">
                         @if ($page?->title)
-                        <h1 class="text-2xl leading-snug uppercase text-slate-700 font-medium mb-3">
+                        <h1 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-2xl">
                             {{ $page->title }}
                         </h1>
                         @endif
 
                         @if ($page?->excerpt)
-                        <p class="text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+                        <p class="text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto sm:text-sm">
                             {{ $page->excerpt }}
                         </p>
                         @endif

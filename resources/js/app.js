@@ -277,6 +277,8 @@ Alpine.data("inquiryModal", () => ({
     itemImage: "",
     today: new Date().toISOString().slice(0, 10),
     reserveTime: "",
+    closeCountdown: 0,
+    closeCountdownTimer: null,
 
     get isLateActivity() {
         const title = this.itemTitle.toLowerCase();
@@ -311,6 +313,7 @@ Alpine.data("inquiryModal", () => ({
 
     open(trigger = null) {
         this.setInquiryItem(trigger);
+        this.clearCloseCountdown();
         this.isOpen = true;
         this.message = "";
         this.error = "";
@@ -347,11 +350,34 @@ Alpine.data("inquiryModal", () => ({
             return;
         }
 
+        this.clearCloseCountdown();
         this.isOpen = false;
         this.message = "";
         this.error = "";
         document.documentElement.classList.remove("overflow-hidden");
         document.body.classList.remove("overflow-hidden");
+    },
+
+    startCloseCountdown(seconds = 5) {
+        this.clearCloseCountdown();
+        this.closeCountdown = seconds;
+
+        this.closeCountdownTimer = window.setInterval(() => {
+            this.closeCountdown -= 1;
+
+            if (this.closeCountdown <= 0) {
+                this.close();
+            }
+        }, 1000);
+    },
+
+    clearCloseCountdown() {
+        if (this.closeCountdownTimer) {
+            window.clearInterval(this.closeCountdownTimer);
+            this.closeCountdownTimer = null;
+        }
+
+        this.closeCountdown = 0;
     },
 
     async submit(event) {
@@ -361,6 +387,7 @@ Alpine.data("inquiryModal", () => ({
 
         const form = event.target;
         this.isSubmitting = true;
+        this.clearCloseCountdown();
         this.message = "";
         this.error = "";
 
@@ -386,6 +413,7 @@ Alpine.data("inquiryModal", () => ({
 
             this.message = data.message || "Thank you. Your inquiry has been sent.";
             form.reset();
+            this.startCloseCountdown(5);
         } catch (error) {
             this.error = error.message || "We could not send your inquiry. Please try again.";
         } finally {

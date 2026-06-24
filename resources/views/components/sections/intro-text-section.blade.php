@@ -68,7 +68,7 @@ $sectionSpacingClass = ($hasTitle || $hasSubtitle)
 
         {{-- Subtitle --}}
         @if ($hasSubtitle)
-        <p class="mb-4 text-center text-sm md:text-base leading-relaxed uppercase text-[#b28a4a] font-medium">
+        <p class="mb-4 text-center text-xs md:text-base leading-relaxed uppercase text-[#b28a4a] font-medium sm:text-sm">
             {!! str_ireplace(
             ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
             '<br class="hidden md:block">',
@@ -79,7 +79,7 @@ $sectionSpacingClass = ($hasTitle || $hasSubtitle)
 
         {{-- Title --}}
         @if ($hasTitle)
-        <h2 class="text-xl text-center leading-snug uppercase font-medium {{ $titleColorClass }} mb-3">
+        <h2 class="text-lg text-center leading-snug uppercase font-medium {{ $titleColorClass }} mb-3 sm:text-xl">
             {!! str_ireplace(
             ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
             '<br class="hidden md:block">',
@@ -91,7 +91,7 @@ $sectionSpacingClass = ($hasTitle || $hasSubtitle)
         {{-- Description --}}
         @if ($hasDescription)
         <div class="{{ $descriptionMarginClass }} {{ $descriptionWidthClass }} {{ $descriptionAlignClass }} {{ $descriptionColorClass }} pt-8 md:pt-10">
-            <div class="[&_h1]:text-2xl [&_h1]:leading-snug [&_h1]:uppercase text-slate-700 [&_h1]:mb-3 [&_h2]:mb-3 [&_h3]:mb-3 [&_h1]:font-medium [&_h2]:text-xl [&_h2]:font-medium [&_h2]:leading-snug [&_h2]:uppercase [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:leading-snug [&_p]:mb-2 text-sm [&_p]:leading-relaxed [&_ul]:mb-5 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_li]:text-sm [&_li]:leading-7 [&_ul_ul]:mt-2 [&_ul_ul]:list-disc [&_ul_ul]:pl-6 [&_strong]:font-semibold">
+            <div class="[&_h1]:text-xl [&_h1]:leading-snug [&_h1]:uppercase text-slate-700 [&_h1]:mb-3 [&_h2]:mb-3 [&_h3]:mb-3 [&_h1]:font-medium [&_h2]:text-lg [&_h2]:font-medium [&_h2]:leading-snug [&_h2]:uppercase [&_h3]:text-base [&_h3]:font-semibold [&_h3]:leading-snug [&_p]:mb-2 text-xs [&_p]:leading-relaxed [&_ul]:mb-5 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_li]:text-xs [&_li]:leading-7 [&_ul_ul]:mt-2 [&_ul_ul]:list-disc [&_ul_ul]:pl-6 [&_strong]:font-semibold sm:text-sm sm:[&_h1]:text-2xl sm:[&_h2]:text-xl sm:[&_h3]:text-lg sm:[&_li]:text-sm">
                 {!! $description !!}
             </div>
         </div>

@@ -5,7 +5,7 @@
 <section class="bg-slate-100 px-6 py-14 md:py-20">
     <div class="mx-auto max-w-[1500px]">
         <div class="mx-auto max-w-3xl text-center md:max-w-5xl">
-            <h2 class="text-xl font-medium uppercase leading-snug text-slate-700 mb-3">
+            <h2 class="text-lg font-medium uppercase leading-snug text-slate-700 mb-3 sm:text-xl">
                 {{ $title }}
             </h2>
         </div>
@@ -21,11 +21,11 @@
                     </svg>
                 </div>
 
-                <h3 class="text-lg uppercase text-slate-700 leading-snug mb-3">
+                <h3 class="text-base uppercase text-slate-700 leading-snug mb-3 sm:text-lg">
                     Hotel Stay
                 </h3>
 
-                <p class="mt-2 max-w-[300px] text-sm leading-relaxed text-gray-600">
+                <p class="mt-2 max-w-[300px] text-xs leading-relaxed text-gray-600 sm:text-sm">
                     Earn point for night spent in Nandini Jungle
                 </p>
             </div>
@@ -40,11 +40,11 @@
                     </svg>
                 </div>
 
-                <h3 class="text-lg uppercase text-slate-700 leading-snug mb-3">
+                <h3 class="text-base uppercase text-slate-700 leading-snug mb-3 sm:text-lg">
                     Food &amp; Beverages
                 </h3>
 
-                <p class="mt-2 max-w-[340px] text-sm leading-relaxed text-gray-600">
+                <p class="mt-2 max-w-[340px] text-xs leading-relaxed text-gray-600 sm:text-sm">
                     Enhance your travel and earn points for activities everyone will love
                 </p>
             </div>
@@ -57,11 +57,11 @@
                     </svg>
                 </div>
 
-                <h3 class="text-lg uppercase text-slate-700 leading-snug mb-3">
+                <h3 class="text-base uppercase text-slate-700 leading-snug mb-3 sm:text-lg">
                     Spa &amp; Wellness
                 </h3>
 
-                <p class="mt-2 max-w-[300px] text-sm leading-relaxed text-gray-600">
+                <p class="mt-2 max-w-[300px] text-xs leading-relaxed text-gray-600 sm:text-sm">
                     Earn on the go and while you spend
                 </p>
             </div>

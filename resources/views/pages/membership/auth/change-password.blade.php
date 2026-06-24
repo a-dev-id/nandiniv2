@@ -9,21 +9,21 @@
             <div class="mx-auto max-w-[620px] bg-white px-6 py-8 shadow-xl sm:px-8 md:px-10 md:py-10 lg:px-12">
 
                 <div class="mb-8 text-center">
-                    <p class="text-sm sm:text-sm uppercase text-[#A67C3D]">
+                    <p class="text-xs sm:text-sm uppercase text-[#A67C3D]">
                         Nandini Inner Circle
                     </p>
 
-                    <h1 class="text-2xl mt-4 leading-snug uppercase text-slate-700 font-medium mb-3">
+                    <h1 class="text-xl mt-4 leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-2xl">
                         Change Password
                     </h1>
 
-                    <p class="text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+                    <p class="text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto sm:text-sm">
                         Your account was created automatically from your booking. Please change your temporary password before continuing.
                     </p>
                 </div>
 
                 @if (session('status'))
-                <div class="mb-6 border border-green-200 bg-green-50 px-4 py-3 text-[14px] leading-6 text-green-700">
+                <div class="mb-6 border border-green-200 bg-green-50 px-4 py-3 text-[12px] leading-6 text-green-700 sm:text-[14px]">
                     {{ session('status') }}
                 </div>
                 @endif
@@ -33,12 +33,12 @@
 
                     {{-- Current Password --}}
                     <div>
-                        <label for="current_password" class="mb-3 block text-sm sm:text-sm uppercase text-slate-500">
+                        <label for="current_password" class="mb-3 block text-xs sm:text-sm uppercase text-slate-500">
                             Current Password <span class="text-red-600">*</span>
                         </label>
 
                         <div class="relative">
-                            <input id="current_password" type="password" name="current_password" required autocomplete="current-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-sm leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D]">
+                            <input id="current_password" type="password" name="current_password" required autocomplete="current-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
 
                             <button type="button" data-toggle-password="current_password" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#A67C3D]" aria-label="Show current password">
                                 <svg data-eye-open class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -56,7 +56,7 @@
                         </div>
 
                         @error('current_password')
-                        <p class="mt-2 text-[14px] leading-6 text-red-600">
+                        <p class="mt-2 text-[12px] leading-6 text-red-600 sm:text-[14px]">
                             {{ $message }}
                         </p>
                         @enderror
@@ -64,12 +64,12 @@
 
                     {{-- New Password --}}
                     <div>
-                        <label for="password" class="mb-3 block text-sm sm:text-sm uppercase text-slate-500">
+                        <label for="password" class="mb-3 block text-xs sm:text-sm uppercase text-slate-500">
                             New Password <span class="text-red-600">*</span>
                         </label>
 
                         <div class="relative">
-                            <input id="password" type="password" name="password" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-sm leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D]">
+                            <input id="password" type="password" name="password" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
 
                             <button type="button" data-toggle-password="password" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#A67C3D]" aria-label="Show new password">
                                 <svg data-eye-open class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -87,7 +87,7 @@
                         </div>
 
                         @error('password')
-                        <p class="mt-2 text-[14px] leading-6 text-red-600">
+                        <p class="mt-2 text-[12px] leading-6 text-red-600 sm:text-[14px]">
                             {{ $message }}
                         </p>
                         @enderror
@@ -95,12 +95,12 @@
 
                     {{-- Confirm Password --}}
                     <div>
-                        <label for="password_confirmation" class="mb-3 block text-sm sm:text-sm uppercase text-slate-500">
+                        <label for="password_confirmation" class="mb-3 block text-xs sm:text-sm uppercase text-slate-500">
                             Confirm New Password <span class="text-red-600">*</span>
                         </label>
 
                         <div class="relative">
-                            <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-sm leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D]">
+                            <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
 
                             <button type="button" data-toggle-password="password_confirmation" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#A67C3D]" aria-label="Show confirm password">
                                 <svg data-eye-open class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -117,10 +117,10 @@
                             </button>
                         </div>
 
-                        <p id="password-match-message" class="mt-2 hidden text-[14px] leading-6"></p>
+                        <p id="password-match-message" class="mt-2 hidden text-[12px] leading-6 sm:text-[14px]"></p>
                     </div>
 
-                    <button id="change-password-submit-button" type="submit" class="inline-flex w-full items-center justify-center bg-[#A67C3D] px-5 py-2.5 text-sm font-medium uppercase text-white transition hover:bg-[#B8945B] disabled:cursor-not-allowed disabled:opacity-50 tracking-[0.08em]">
+                    <button id="change-password-submit-button" type="submit" class="inline-flex w-full items-center justify-center bg-[#A67C3D] px-5 py-2.5 text-xs font-medium uppercase text-white transition hover:bg-[#B8945B] disabled:cursor-not-allowed disabled:opacity-50 tracking-[0.08em] sm:text-sm">
                         Update Password
                     </button>
                 </form>

@@ -14,7 +14,7 @@
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:680px;background:#ffffff;border:1px solid #e5ddcf;">
                     <tr>
                         <td style="padding:32px 32px 22px;text-align:center;">
-                            <img src="https://nandinibali.com/images/nandini-logo.png" alt="Nandini Jungle by Hanging Gardens" width="150" style="display:block;width:150px;max-width:100%;height:auto;margin:0 auto 22px;border:0;">
+                            <img src="{{asset('images/logo-njhg.png')}}" alt="Nandini Jungle by Hanging Gardens" width="150" style="display:block;width:150px;max-width:100%;height:auto;margin:0 auto 22px;border:0;">
                             <p style="margin:0 0 10px;color:#b8945b;font-size:12px;font-weight:bold;letter-spacing:3px;text-transform:uppercase;">Inquiry Received</p>
                             <h1 style="margin:0;color:#0f1d33;font-family:Georgia,'Times New Roman',serif;font-size:28px;line-height:1.35;letter-spacing:5px;text-transform:uppercase;">
                                 {{ $inquiry->inquiry_title ?: 'Nandini Inquiry' }}

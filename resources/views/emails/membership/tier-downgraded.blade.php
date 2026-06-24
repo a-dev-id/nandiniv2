@@ -1,5 +1,5 @@
 @php
-$logoUrl = asset('images/logo-njhg.png');
+$logoUrl = 'https://new-nandini.nandinibali.com/images/logo-njhg.png';
 $expiresAt = $member->membership_expires_at?->format('d F Y') ?? '-';
 @endphp
 

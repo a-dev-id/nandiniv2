@@ -52,95 +52,101 @@ $firstImage = $galleryImages->first();
 
 $thumbnailImages = $galleryImages;
 
-if ($galleryImages->count() > 1 && $galleryImages->count() < 6) {
-    $thumbnailImages = collect();
+if ($galleryImages->count() > 1 && $galleryImages->count() < 6) { $thumbnailImages=collect(); while ($thumbnailImages->count() < 6) { $thumbnailImages=$thumbnailImages->merge($galleryImages);
+        }
 
-    while ($thumbnailImages->count() < 6) {
-        $thumbnailImages = $thumbnailImages->merge($galleryImages);
-    }
+        $thumbnailImages = $thumbnailImages->take(6)->values();
+        }
 
-    $thumbnailImages = $thumbnailImages->take(6)->values();
-}
+        $directBookingUrl = $accommodation?->booking_url;
+        $secondaryButtonLabel = trim((string) ($accommodation?->button_label ?? ''));
+        $secondaryButtonUrl = trim((string) ($accommodation?->button_url ?? ''));
+        @endphp
 
-$directBookingUrl = $accommodation?->booking_url;
-@endphp
+        @if ($accommodation)
+        <section class="py-14 md:py-28 w-full bg-[#F7F7F7]">
+            <div class="{{ $wrapper }}">
+                <div class="grid grid-cols-1 lg:grid-cols-12 items-center gap-10 lg:gap-16">
 
-@if ($accommodation)
-<section class="py-14 md:py-28 w-full bg-[#F7F7F7]">
-    <div class="{{ $wrapper }}">
-        <div class="grid grid-cols-1 lg:grid-cols-12 items-center gap-10 lg:gap-16">
+                    {{-- Features --}}
+                    <div class="lg:col-span-5 {{ $gridOrderFeatures }}">
+                        <div class="px-4 sm:px-8 md:px-10 lg:px-12">
+                            <h2 class="text-lg leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-xl">
+                                Features
+                            </h2>
 
-            {{-- Features --}}
-            <div class="lg:col-span-5 {{ $gridOrderFeatures }}">
-                <div class="px-4 sm:px-8 md:px-10 lg:px-12">
-                    <h2 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3">
-                        Features
-                    </h2>
+                            @if ($features->isNotEmpty())
+                            <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
+                                @foreach ($features as $feature)
+                                <div class="flex items-center gap-3">
+                                    @if ($feature->icon_image)
+                                    <img src="{{ asset('storage/' . $feature->icon_image) }}" alt="{{ $feature->label }}" class="w-6 h-6 object-contain shrink-0 brightness-0 opacity-80" loading="lazy">
+                                    @endif
 
-                    @if ($features->isNotEmpty())
-                    <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
-                        @foreach ($features as $feature)
-                        <div class="flex items-center gap-3">
-                            @if ($feature->icon_image)
-                            <img src="{{ asset('storage/' . $feature->icon_image) }}" alt="{{ $feature->label }}" class="w-6 h-6 object-contain shrink-0 brightness-0 opacity-80" loading="lazy">
+                                    <span class="text-xs leading-6 text-slate-700 sm:text-sm">
+                                        {{ $feature->label }}
+                                    </span>
+                                </div>
+                                @endforeach
+                            </div>
                             @endif
 
-                            <span class="text-sm leading-6 text-slate-700">
-                                {{ $feature->label }}
-                            </span>
+                            @if ($directBookingUrl || ($secondaryButtonLabel !== '' && $secondaryButtonUrl !== ''))
+                            <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                                @if ($directBookingUrl)
+                                <x-buttons.link-button :href="$directBookingUrl" variant="solid">
+                                    Book Now
+                                </x-buttons.link-button>
+                                @endif
+
+                                @if ($secondaryButtonLabel !== '' && $secondaryButtonUrl !== '')
+                                <x-buttons.link-button :href="$secondaryButtonUrl" variant="white-gold">
+                                    {{ $secondaryButtonLabel }}
+                                </x-buttons.link-button>
+                                @endif
+                            </div>
+                            @endif
                         </div>
-                        @endforeach
-                    </div>
-                    @endif
-
-                    @if ($directBookingUrl)
-                    <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                        <x-buttons.link-button :href="$directBookingUrl" variant="solid">
-                            Book Now
-                        </x-buttons.link-button>
-                    </div>
-                    @endif
-                </div>
-            </div>
-
-            {{-- Gallery --}}
-            <div class="lg:col-span-7 {{ $gridOrderGallery }}">
-                @if ($galleryImages->isNotEmpty())
-                <div id="{{ $componentId }}" class="w-full">
-                    {{-- Main Image --}}
-                    <div class="relative aspect-[4/3] md:aspect-[16/10] overflow-hidden bg-slate-100">
-                        <img data-main-image src="{{ $firstImage['src'] }}" alt="{{ $firstImage['alt'] }}" class="w-full h-full object-cover transition-opacity duration-300" loading="lazy">
                     </div>
 
-                    @if ($thumbnailImages->count() > 1)
-                    {{-- Thumbnail Slider --}}
-                    <div class="relative mt-2 px-10">
-                        <button type="button" data-gallery-prev class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-black text-white flex items-center justify-center hover:bg-[#B8945B] transition tracking-[0.08em] font-medium" aria-label="Previous image">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-                            </svg>
-                        </button>
+                    {{-- Gallery --}}
+                    <div class="lg:col-span-7 {{ $gridOrderGallery }}">
+                        @if ($galleryImages->isNotEmpty())
+                        <div id="{{ $componentId }}" class="w-full">
+                            {{-- Main Image --}}
+                            <div class="relative aspect-[4/3] md:aspect-[16/9] overflow-hidden bg-slate-100">
+                                <img data-main-image src="{{ $firstImage['src'] }}" alt="{{ $firstImage['alt'] }}" class="w-full h-full object-cover transition-opacity duration-300" loading="lazy">
+                            </div>
 
-                        <div data-thumbnail-track class="flex gap-3 overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                            @foreach ($thumbnailImages as $index => $image)
-                            <button type="button" data-gallery-thumb data-index="{{ $index }}" data-src="{{ $image['src'] }}" data-alt="{{ $image['alt'] }}" class="shrink-0 w-24 sm:w-28 md:w-32 aspect-[4/3] overflow-hidden bg-slate-100 border {{ $index === 0 ? 'border-slate-800' : 'border-transparent' }} tracking-[0.08em] font-medium" aria-label="Show image {{ $index + 1 }}">
-                                <img src="{{ $image['src'] }}" alt="{{ $image['alt'] }}" class="w-full h-full object-cover" loading="lazy">
-                            </button>
-                            @endforeach
+                            @if ($thumbnailImages->count() > 1)
+                            {{-- Thumbnail Slider --}}
+                            <div class="relative mt-2 px-10">
+                                <button type="button" data-gallery-prev class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-black text-white flex items-center justify-center hover:bg-[#B8945B] transition tracking-[0.08em] font-medium" aria-label="Previous image">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                                    </svg>
+                                </button>
+
+                                <div data-thumbnail-track class="flex gap-3 overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                                    @foreach ($thumbnailImages as $index => $image)
+                                    <button type="button" data-gallery-thumb data-index="{{ $index }}" data-src="{{ $image['src'] }}" data-alt="{{ $image['alt'] }}" class="shrink-0 w-24 sm:w-28 md:w-32 aspect-[4/3] overflow-hidden bg-slate-100 border {{ $index === 0 ? 'border-slate-800' : 'border-transparent' }} tracking-[0.08em] font-medium" aria-label="Show image {{ $index + 1 }}">
+                                        <img src="{{ $image['src'] }}" alt="{{ $image['alt'] }}" class="w-full h-full object-cover" loading="lazy">
+                                    </button>
+                                    @endforeach
+                                </div>
+
+                                <button type="button" data-gallery-next class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-black text-white flex items-center justify-center hover:bg-[#B8945B] transition tracking-[0.08em] font-medium" aria-label="Next image">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                    </svg>
+                                </button>
+                            </div>
+                            @endif
                         </div>
 
-                        <button type="button" data-gallery-next class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-black text-white flex items-center justify-center hover:bg-[#B8945B] transition tracking-[0.08em] font-medium" aria-label="Next image">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                            </svg>
-                        </button>
-                    </div>
-                    @endif
-                </div>
-
-                @if ($galleryImages->count() > 1)
-                <script>
-                    (() => {
+                        @if ($galleryImages->count() > 1)
+                        <script>
+                            (() => {
                         const root = document.getElementById(@json($componentId));
 
                         if (!root) return;
@@ -235,12 +241,12 @@ $directBookingUrl = $accommodation?->booking_url;
 
                         startAutoSlide();
                     })();
-                </script>
-                @endif
-                @endif
-            </div>
+                        </script>
+                        @endif
+                        @endif
+                    </div>
 
-        </div>
-    </div>
-</section>
-@endif
+                </div>
+            </div>
+        </section>
+        @endif

@@ -88,19 +88,19 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
     <section class="bg-white px-6 py-14 md:px-12 md:py-20 lg:px-[70px]">
         <div class="mx-auto w-full">
             @if (session('success'))
-            <div class="border border-green-700 bg-green-50 px-5 py-4 text-sm text-green-900">
+            <div class="border border-green-700 bg-green-50 px-5 py-4 text-xs text-green-900 sm:text-sm">
                 {{ session('success') }}
             </div>
             @endif
 
             @if (session('error'))
-            <div class="border border-red-700 bg-red-50 px-5 py-4 text-sm text-red-900">
+            <div class="border border-red-700 bg-red-50 px-5 py-4 text-xs text-red-900 sm:text-sm">
                 {{ session('error') }}
             </div>
             @endif
 
             @if ($errors->any())
-            <div class="border border-red-700 bg-red-50 px-5 py-4 text-sm text-red-900">
+            <div class="border border-red-700 bg-red-50 px-5 py-4 text-xs text-red-900 sm:text-sm">
                 {{ $errors->first() }}
             </div>
             @endif
@@ -124,12 +124,12 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
     <section class="py-14 md:py-20 bg-white membership-reward-carousel-section" data-reward-carousel-section>
         <div class="mx-auto w-full px-6 md:px-12 lg:px-[70px]">
             <div class="mb-8 md:mb-10 text-center">
-                <h2 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3">
+                <h2 class="text-lg leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-xl">
                     {{ $categoryTitle }}
                 </h2>
 
                 @if ($categoryDescription)
-                <p class="mt-2 text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto">
+                <p class="mt-2 text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto sm:text-sm">
                     {{ $categoryDescription }}
                 </p>
                 @endif
@@ -184,19 +184,19 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
 
                 <article class="reward-card-article px-3 w-full flex">
                     <div class="reward-card bg-white shadow-xl flex flex-col w-full group">
-                        <div class="md:aspect-[4/3] aspect-square overflow-hidden bg-slate-100">
+                        <div class="md:aspect-[4/3] aspect-[4/3] overflow-hidden bg-slate-100">
                             @if ($image)
                             <img src="{{ asset('storage/' . $image) }}" alt="{{ $alt }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" />
                             @endif
                         </div>
 
                         <div class="reward-card-body p-7 flex flex-col grow">
-                            <h3 class="text-lg text-slate-700 uppercase leading-snug font-medium mb-3">
+                            <h3 class="text-base text-slate-700 uppercase leading-snug font-medium mb-3 sm:text-lg">
                                 {{ $reward->title }}
                             </h3>
 
                             @if ($rewardDescription)
-                            <div class="mt-2 text-gray-600 text-sm leading-relaxed [&_p]:mb-3 [&_p:last-child]:mb-0 [&_strong]:font-semibold [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mb-1">
+                            <div class="mt-2 text-gray-600 text-xs leading-relaxed [&_p]:mb-3 [&_p:last-child]:mb-0 [&_strong]:font-semibold [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mb-1 sm:text-sm">
                                 @if ($rewardDescriptionHasHtml)
                                 {!! $rewardDescription !!}
                                 @else
@@ -207,7 +207,7 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
 
                             <div class="mt-auto pt-12">
                                 <div class="flex items-center justify-between gap-5">
-                                    <p class="text-sm uppercase text-slate-950">
+                                    <p class="text-xs uppercase text-slate-950 sm:text-sm">
                                         @if ($pointsLabel)
                                         {{ $pointsLabel }}
                                         @else
@@ -217,30 +217,23 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
 
                                     @if ($currentMember)
                                     @if ($memberCanRedeem)
-                                    <button
-                                        type="button"
-                                        data-reward-redeem-button
-                                        data-redeem-action="{{ $redeemPostUrl }}"
-                                        data-reward-title="{{ e($reward->title) }}"
-                                        data-reward-points="{{ number_format((float) $points, 0) }}"
-                                        class="inline-flex min-w-[125px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-6 py-3 text-sm uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B]"
-                                    >
+                                    <button type="button" data-reward-redeem-button data-redeem-action="{{ $redeemPostUrl }}" data-reward-title="{{ e($reward->title) }}" data-reward-points="{{ number_format((float) $points, 0) }}" class="inline-flex min-w-[125px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-6 py-3 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] sm:text-sm">
                                         Redeem
                                     </button>
                                     @else
-                                    <button type="button" disabled class="inline-flex min-w-[115px] items-center justify-center border border-slate-300 bg-slate-100 px-4 py-2.5 text-sm uppercase text-slate-400 cursor-not-allowed tracking-[0.08em] font-medium">
+                                    <button type="button" disabled class="inline-flex min-w-[115px] items-center justify-center border border-slate-300 bg-slate-100 px-4 py-2.5 text-xs uppercase text-slate-400 cursor-not-allowed tracking-[0.08em] font-medium sm:text-sm">
                                         Not Enough
                                     </button>
                                     @endif
                                     @else
-                                    <a href="{{ $redeemLoginUrl }}" class="inline-flex min-w-[115px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-sm uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium">
+                                    <a href="{{ $redeemLoginUrl }}" class="inline-flex min-w-[115px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
                                         Redeem
                                     </a>
                                     @endif
                                 </div>
 
                                 @if ($currentMember && ! $memberCanRedeem)
-                                <p class="mt-2 text-sm leading-relaxed text-slate-500">
+                                <p class="mt-2 text-xs leading-relaxed text-slate-500 sm:text-sm">
                                     You need {{ number_format(max($points - (int) $currentMember->points, 0), 0) }} more points to redeem this reward.
                                 </p>
                                 @endif

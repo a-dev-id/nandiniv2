@@ -109,7 +109,7 @@ $finalPrimaryUrl = $sectionButtonUrl ?: $primaryUrl;
         <div class="absolute inset-0 flex items-center justify-start px-6 md:px-12 lg:px-[90px]">
             <div class="max-w-3xl text-left text-white">
                 @if ($resolvedTitle)
-                <h2 class="text-xl font-medium uppercase leading-snug text-white mb-3">
+                <h2 class="text-lg font-medium uppercase leading-snug text-white mb-3 sm:text-xl">
                     {!! str_ireplace(
                     ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;', "\n"],
                     '<br>',
@@ -119,7 +119,7 @@ $finalPrimaryUrl = $sectionButtonUrl ?: $primaryUrl;
                 @endif
 
                 @if ($resolvedDescription)
-                <p class="mt-2 max-w-2xl text-sm leading-relaxed text-white/90">
+                <p class="mt-2 max-w-2xl text-xs leading-relaxed text-white/90 sm:text-sm">
                     {{ $resolvedDescription }}
                 </p>
                 @endif

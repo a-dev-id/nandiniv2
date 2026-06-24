@@ -59,7 +59,7 @@ $alt = $sectionImage?->image_alt
             <source media="(max-width: 767px)" srcset="{{ $mobileImage }}">
             @endif
 
-            <img src="{{ $desktopImage ?: $mobileImage }}" alt="{{ $alt }}" class="aspect-square w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105 md:aspect-[3/1]" loading="lazy">
+            <img src="{{ $desktopImage ?: $mobileImage }}" alt="{{ $alt }}" class="aspect-[4/3] w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105 md:aspect-[3/1]" loading="lazy">
         </picture>
     </div>
 </section>

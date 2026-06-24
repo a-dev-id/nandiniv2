@@ -92,17 +92,17 @@ $countries = [
                         <div class="text-center lg:text-left">
 
                             @if ($subtitle)
-                            <p class="text-sm sm:text-sm uppercase text-[#A67C3D]">
+                            <p class="text-xs sm:text-sm uppercase text-[#A67C3D]">
                                 {{ $subtitle }}
                             </p>
                             @endif
 
-                            <h1 class="text-2xl mt-4 leading-snug uppercase text-slate-700 font-medium mb-3">
+                            <h1 class="text-xl mt-4 leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-2xl">
                                 {{ $title }}
                             </h1>
 
                             @if ($description)
-                            <div class="text-sm leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto [&_p]:mb-2 [&_p:last-child]:mb-0">
+                            <div class="text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto [&_p]:mb-2 [&_p:last-child]:mb-0 sm:text-sm">
                                 @if ($descriptionHasHtml)
                                 {!! $description !!}
                                 @else
@@ -111,7 +111,7 @@ $countries = [
                             </div>
                             @endif
 
-                            <div class="mt-8 text-sm leading-7 text-slate-700">
+                            <div class="mt-8 text-xs leading-7 text-slate-700 sm:text-sm">
                                 Already a member?
 
                                 <a href="{{ route('membership.login') }}" class="font-medium uppercase text-[#A67C3D] transition hover:text-[#8F6B34] tracking-[0.08em]">
@@ -128,7 +128,7 @@ $countries = [
                     <div class="mx-auto w-full max-w-[720px] bg-white px-6 py-8 shadow-xl sm:px-8 md:px-10 md:py-10 lg:px-12">
 
                         @if (session('status'))
-                        <div class="mb-6 border border-green-200 bg-green-50 px-4 py-3 text-[14px] leading-6 text-green-700">
+                        <div class="mb-6 border border-green-200 bg-green-50 px-4 py-3 text-[12px] leading-6 text-green-700 sm:text-[14px]">
                             {{ session('status') }}
                         </div>
                         @endif
@@ -136,35 +136,35 @@ $countries = [
                         <form id="membership-register-form" method="POST" action="{{ Route::has('membership.register.submit') ? route('membership.register.submit') : route('membership.register') }}" class="space-y-6">
                             @csrf
 
-                            <p class="text-[13px] leading-6 text-slate-500">
+                            <p class="text-[11px] leading-6 text-slate-500 sm:text-[13px]">
                                 <span class="text-red-600">*</span> Required fields
                             </p>
 
                             {{-- Name --}}
                             <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
                                 <div>
-                                    <label for="first_name" class="mb-3 block text-sm sm:text-sm uppercase text-slate-500">
+                                    <label for="first_name" class="mb-3 block text-xs sm:text-sm uppercase text-slate-500">
                                         First Name <span class="text-red-600">*</span>
                                     </label>
 
-                                    <input id="first_name" type="text" name="first_name" value="{{ $prefillFirstName }}" required autocomplete="given-name" class="w-full border border-slate-300 bg-white px-4 py-3 text-sm leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D]">
+                                    <input id="first_name" type="text" name="first_name" value="{{ $prefillFirstName }}" required autocomplete="given-name" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
 
                                     @error('first_name')
-                                    <p class="mt-2 text-[14px] leading-6 text-red-600">
+                                    <p class="mt-2 text-[12px] leading-6 text-red-600 sm:text-[14px]">
                                         {{ $message }}
                                     </p>
                                     @enderror
                                 </div>
 
                                 <div>
-                                    <label for="last_name" class="mb-3 block text-sm sm:text-sm uppercase text-slate-500">
+                                    <label for="last_name" class="mb-3 block text-xs sm:text-sm uppercase text-slate-500">
                                         Last Name <span class="text-red-600">*</span>
                                     </label>
 
-                                    <input id="last_name" type="text" name="last_name" value="{{ $prefillLastName }}" required autocomplete="family-name" class="w-full border border-slate-300 bg-white px-4 py-3 text-sm leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D]">
+                                    <input id="last_name" type="text" name="last_name" value="{{ $prefillLastName }}" required autocomplete="family-name" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
 
                                     @error('last_name')
-                                    <p class="mt-2 text-[14px] leading-6 text-red-600">
+                                    <p class="mt-2 text-[12px] leading-6 text-red-600 sm:text-[14px]">
                                         {{ $message }}
                                     </p>
                                     @enderror
@@ -174,25 +174,25 @@ $countries = [
                             {{-- Phone and Country --}}
                             <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
                                 <div>
-                                    <label for="phone_number" class="mb-3 block text-sm sm:text-sm uppercase text-slate-500">
+                                    <label for="phone_number" class="mb-3 block text-xs sm:text-sm uppercase text-slate-500">
                                         Phone Number / WhatsApp
                                     </label>
 
-                                    <input id="phone_number" type="text" name="phone_number" value="{{ old('phone_number') }}" autocomplete="tel" class="w-full border border-slate-300 bg-white px-4 py-3 text-sm leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D]">
+                                    <input id="phone_number" type="text" name="phone_number" value="{{ old('phone_number') }}" autocomplete="tel" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
 
                                     @error('phone_number')
-                                    <p class="mt-2 text-[14px] leading-6 text-red-600">
+                                    <p class="mt-2 text-[12px] leading-6 text-red-600 sm:text-[14px]">
                                         {{ $message }}
                                     </p>
                                     @enderror
                                 </div>
 
                                 <div>
-                                    <label for="country" class="mb-3 block text-sm sm:text-sm uppercase text-slate-500">
+                                    <label for="country" class="mb-3 block text-xs sm:text-sm uppercase text-slate-500">
                                         Country <span class="text-red-600">*</span>
                                     </label>
 
-                                    <input id="country" type="text" name="country" value="{{ old('country') }}" list="country-list" required autocomplete="country-name" placeholder="Search country..." class="w-full border border-slate-300 bg-white px-4 py-3 text-sm leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D]">
+                                    <input id="country" type="text" name="country" value="{{ old('country') }}" list="country-list" required autocomplete="country-name" placeholder="Search country..." class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
 
                                     <datalist id="country-list">
                                         @foreach ($countries as $country)
@@ -201,7 +201,7 @@ $countries = [
                                     </datalist>
 
                                     @error('country')
-                                    <p class="mt-2 text-[14px] leading-6 text-red-600">
+                                    <p class="mt-2 text-[12px] leading-6 text-red-600 sm:text-[14px]">
                                         {{ $message }}
                                     </p>
                                     @enderror
@@ -210,14 +210,14 @@ $countries = [
 
                             {{-- Email --}}
                             <div>
-                                <label for="email" class="mb-3 block text-sm sm:text-sm uppercase text-slate-500">
+                                <label for="email" class="mb-3 block text-xs sm:text-sm uppercase text-slate-500">
                                     Email Address <span class="text-red-600">*</span>
                                 </label>
 
-                                <input id="email" type="email" name="email" value="{{ $prefillEmail }}" required autocomplete="email" class="w-full border border-slate-300 bg-white px-4 py-3 text-sm leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D]">
+                                <input id="email" type="email" name="email" value="{{ $prefillEmail }}" required autocomplete="email" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
 
                                 @error('email')
-                                <p class="mt-2 text-[14px] leading-6 text-red-600">
+                                <p class="mt-2 text-[12px] leading-6 text-red-600 sm:text-[14px]">
                                     {{ $message }}
                                 </p>
                                 @enderror
@@ -225,14 +225,14 @@ $countries = [
 
                             {{-- Address --}}
                             <div>
-                                <label for="address" class="mb-3 block text-sm sm:text-sm uppercase text-slate-500">
+                                <label for="address" class="mb-3 block text-xs sm:text-sm uppercase text-slate-500">
                                     Address
                                 </label>
 
-                                <textarea id="address" name="address" rows="3" autocomplete="street-address" class="w-full resize-none border border-slate-300 bg-white px-4 py-3 text-sm leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D]">{{ old('address') }}</textarea>
+                                <textarea id="address" name="address" rows="3" autocomplete="street-address" class="w-full resize-none border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">{{ old('address') }}</textarea>
 
                                 @error('address')
-                                <p class="mt-2 text-[14px] leading-6 text-red-600">
+                                <p class="mt-2 text-[12px] leading-6 text-red-600 sm:text-[14px]">
                                     {{ $message }}
                                 </p>
                                 @enderror
@@ -241,12 +241,12 @@ $countries = [
                             {{-- Password --}}
                             <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
                                 <div>
-                                    <label for="password" class="mb-3 block text-sm sm:text-sm uppercase text-slate-500">
+                                    <label for="password" class="mb-3 block text-xs sm:text-sm uppercase text-slate-500">
                                         Password <span class="text-red-600">*</span>
                                     </label>
 
                                     <div class="relative">
-                                        <input id="password" type="password" name="password" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-sm leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D]">
+                                        <input id="password" type="password" name="password" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
 
                                         <button type="button" data-toggle-password="password" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#A67C3D]" aria-label="Show password">
                                             <svg data-eye-open class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -264,19 +264,19 @@ $countries = [
                                     </div>
 
                                     @error('password')
-                                    <p class="mt-2 text-[14px] leading-6 text-red-600">
+                                    <p class="mt-2 text-[12px] leading-6 text-red-600 sm:text-[14px]">
                                         {{ $message }}
                                     </p>
                                     @enderror
                                 </div>
 
                                 <div>
-                                    <label for="password_confirmation" class="mb-3 block text-sm sm:text-sm uppercase text-slate-500">
+                                    <label for="password_confirmation" class="mb-3 block text-xs sm:text-sm uppercase text-slate-500">
                                         Confirm Password <span class="text-red-600">*</span>
                                     </label>
 
                                     <div class="relative">
-                                        <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-sm leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D]">
+                                        <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
 
                                         <button type="button" data-toggle-password="password_confirmation" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#A67C3D]" aria-label="Show confirm password">
                                             <svg data-eye-open class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -293,13 +293,13 @@ $countries = [
                                         </button>
                                     </div>
 
-                                    <p id="password-match-message" class="mt-2 hidden text-[14px] leading-6"></p>
+                                    <p id="password-match-message" class="mt-2 hidden text-[12px] leading-6 sm:text-[14px]"></p>
                                 </div>
                             </div>
 
                             {{-- Checkboxes --}}
                             <div class="space-y-3">
-                                <label class="flex items-start gap-3 text-[14px] leading-6 text-slate-700">
+                                <label class="flex items-start gap-3 text-[12px] leading-6 text-slate-700 sm:text-[14px]">
                                     <input type="checkbox" name="marketing_consent" value="1" @checked(old('marketing_consent')) class="mt-1 h-4 w-4 border-slate-300 text-[#A67C3D] focus:ring-[#A67C3D]">
 
                                     <span>
@@ -308,19 +308,19 @@ $countries = [
                                 </label>
 
                                 @error('marketing_consent')
-                                <p class="text-[14px] leading-6 text-red-600">
+                                <p class="text-[12px] leading-6 text-red-600 sm:text-[14px]">
                                     {{ $message }}
                                 </p>
                                 @enderror
                             </div>
 
                             {{-- Terms --}}
-                            <div class="text-[14px] leading-6 text-slate-700">
+                            <div class="text-[12px] leading-6 text-slate-700 sm:text-[14px]">
                                 By signing up, I agree to receive and manage my Nandini Inner Circle membership account according to Nandini Jungle by Hanging Gardens policies.
                             </div>
 
                             {{-- Submit --}}
-                            <button id="register-submit-button" type="submit" class="inline-flex w-full items-center justify-center gap-3 bg-[#A67C3D] px-5 py-2.5 text-sm font-medium uppercase text-white transition hover:bg-[#B8945B] disabled:cursor-not-allowed disabled:opacity-50 md:w-auto tracking-[0.08em]">
+                            <button id="register-submit-button" type="submit" class="inline-flex w-full items-center justify-center gap-3 bg-[#A67C3D] px-5 py-2.5 text-xs font-medium uppercase text-white transition hover:bg-[#B8945B] disabled:cursor-not-allowed disabled:opacity-50 md:w-auto tracking-[0.08em] sm:text-sm">
                                 <svg id="register-submit-spinner" class="hidden h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 0-4 4H4Z"></path>
@@ -328,13 +328,13 @@ $countries = [
                                 <span id="register-submit-label">Register</span>
                             </button>
 
-                            <div class="flex items-center gap-4 text-[11px] font-bold uppercase text-slate-400">
+                            <div class="flex items-center gap-4 text-[9px] font-bold uppercase text-slate-400 sm:text-[11px]">
                                 <span class="h-px flex-1 bg-slate-200"></span>
                                 <span>Or</span>
                                 <span class="h-px flex-1 bg-slate-200"></span>
                             </div>
 
-                            <a href="{{ route('membership.social.redirect', 'google') }}" class="inline-flex w-full items-center justify-center gap-3 border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium uppercase text-slate-700 transition hover:border-[#A67C3D] hover:text-[#A67C3D] tracking-[0.08em]">
+                            <a href="{{ route('membership.social.redirect', 'google') }}" class="inline-flex w-full items-center justify-center gap-3 border border-slate-300 bg-white px-4 py-2.5 text-xs font-medium uppercase text-slate-700 transition hover:border-[#A67C3D] hover:text-[#A67C3D] tracking-[0.08em] sm:text-sm">
                                 <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09Z" />
                                     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23Z" />
