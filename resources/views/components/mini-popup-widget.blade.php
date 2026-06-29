@@ -108,14 +108,14 @@ $whatsappUrl = 'https://wa.me/6281236871170';
                         <div x-show="items[active].description" class="mt-2 text-[10px] leading-relaxed text-gray-600 sm:text-[14px] [&_p]:mb-1.5 sm:[&_p]:mb-2 [&_p:last-child]:mb-0 [&_ul]:space-y-1 sm:[&_ul]:space-y-2 [&_ul]:pl-4 sm:[&_ul]:pl-5 [&_ul]:list-disc [&_ol]:space-y-1 sm:[&_ol]:space-y-2 [&_ol]:pl-4 sm:[&_ol]:pl-5 [&_ol]:list-decimal [&_strong]:font-semibold [&_a]:text-[#b1823b] [&_a]:underline" x-html="items[active].description"></div>
 
                         <div class="mt-2 flex flex-wrap items-center justify-between gap-3 sm:gap-4">
-                            <a x-show="items[active].buttonLabel" :href="items[active].buttonUrl" class="inline-flex min-w-0 flex-1 items-center justify-center bg-[#A67C3D] px-4 py-2.5 text-[9px] font-medium uppercase text-white transition hover:bg-[#B8945B] sm:min-w-[150px] sm:flex-none sm:px-5 sm:py-3 sm:text-sm tracking-[0.08em]" x-text="items[active].buttonLabel"></a>
+                            <a x-show="items[active].buttonLabel" :href="items[active].buttonUrl" class="inline-flex min-w-0 flex-1 items-center justify-center bg-[#A88444] px-4 py-2.5 text-[9px] font-medium uppercase text-white transition hover:bg-[#B8945B] sm:min-w-[150px] sm:flex-none sm:px-5 sm:py-3 sm:text-sm tracking-[0.08em]" x-text="items[active].buttonLabel"></a>
 
                             <div class="ml-auto flex items-center gap-2">
-                                <button type="button" class="flex h-7 w-7 items-center justify-center border border-slate-300 text-slate-600 transition hover:border-[#8f6528] hover:text-[#8f6528] tracking-[0.08em] font-medium" aria-label="Previous popup offer" @click="prev()">
+                                <button type="button" class="flex h-7 w-7 items-center justify-center border border-[#A88444] text-[#A88444] transition hover:border-[#A88444] hover:bg-[#A88444] hover:text-white tracking-[0.08em] font-medium" aria-label="Previous popup offer" @click="prev()">
                                     <span aria-hidden="true">&lsaquo;</span>
                                 </button>
 
-                                <button type="button" class="flex h-7 w-7 items-center justify-center border border-slate-300 text-slate-600 transition hover:border-[#8f6528] hover:text-[#8f6528] tracking-[0.08em] font-medium" aria-label="Next popup offer" @click="next()">
+                                <button type="button" class="flex h-7 w-7 items-center justify-center border border-[#A88444] text-[#A88444] transition hover:border-[#A88444] hover:bg-[#A88444] hover:text-white tracking-[0.08em] font-medium" aria-label="Next popup offer" @click="next()">
                                     <span aria-hidden="true">&rsaquo;</span>
                                 </button>
                             </div>

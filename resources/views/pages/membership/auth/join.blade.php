@@ -92,7 +92,7 @@ $countries = [
                         <div class="text-center lg:text-left">
 
                             @if ($subtitle)
-                            <p class="text-xs sm:text-sm uppercase text-[#A67C3D]">
+                            <p class="text-xs sm:text-sm uppercase text-[#A88444]">
                                 {{ $subtitle }}
                             </p>
                             @endif
@@ -114,7 +114,7 @@ $countries = [
                             <div class="mt-8 text-xs leading-7 text-slate-700 sm:text-sm">
                                 Already a member?
 
-                                <a href="{{ route('membership.login') }}" class="font-medium uppercase text-[#A67C3D] transition hover:text-[#8F6B34] tracking-[0.08em]">
+                                <a href="{{ route('membership.login') }}" class="font-medium uppercase text-[#A88444] transition hover:text-[#8F6B34] tracking-[0.08em]">
                                     Sign In
                                 </a>
                             </div>
@@ -147,7 +147,7 @@ $countries = [
                                         First Name <span class="text-red-600">*</span>
                                     </label>
 
-                                    <input id="first_name" type="text" name="first_name" value="{{ $prefillFirstName }}" required autocomplete="given-name" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                                    <input id="first_name" type="text" name="first_name" value="{{ $prefillFirstName }}" required autocomplete="given-name" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
 
                                     @error('first_name')
                                     <p class="mt-2 text-[12px] leading-6 text-red-600 sm:text-[14px]">
@@ -161,7 +161,7 @@ $countries = [
                                         Last Name <span class="text-red-600">*</span>
                                     </label>
 
-                                    <input id="last_name" type="text" name="last_name" value="{{ $prefillLastName }}" required autocomplete="family-name" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                                    <input id="last_name" type="text" name="last_name" value="{{ $prefillLastName }}" required autocomplete="family-name" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
 
                                     @error('last_name')
                                     <p class="mt-2 text-[12px] leading-6 text-red-600 sm:text-[14px]">
@@ -178,7 +178,7 @@ $countries = [
                                         Phone Number / WhatsApp
                                     </label>
 
-                                    <input id="phone_number" type="text" name="phone_number" value="{{ old('phone_number') }}" autocomplete="tel" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                                    <input id="phone_number" type="text" name="phone_number" value="{{ old('phone_number') }}" autocomplete="tel" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
 
                                     @error('phone_number')
                                     <p class="mt-2 text-[12px] leading-6 text-red-600 sm:text-[14px]">
@@ -192,7 +192,7 @@ $countries = [
                                         Country <span class="text-red-600">*</span>
                                     </label>
 
-                                    <input id="country" type="text" name="country" value="{{ old('country') }}" list="country-list" required autocomplete="country-name" placeholder="Search country..." class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                                    <input id="country" type="text" name="country" value="{{ old('country') }}" list="country-list" required autocomplete="country-name" placeholder="Search country..." class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
 
                                     <datalist id="country-list">
                                         @foreach ($countries as $country)
@@ -214,7 +214,7 @@ $countries = [
                                     Email Address <span class="text-red-600">*</span>
                                 </label>
 
-                                <input id="email" type="email" name="email" value="{{ $prefillEmail }}" required autocomplete="email" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                                <input id="email" type="email" name="email" value="{{ $prefillEmail }}" required autocomplete="email" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
 
                                 @error('email')
                                 <p class="mt-2 text-[12px] leading-6 text-red-600 sm:text-[14px]">
@@ -229,7 +229,7 @@ $countries = [
                                     Address
                                 </label>
 
-                                <textarea id="address" name="address" rows="3" autocomplete="street-address" class="w-full resize-none border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">{{ old('address') }}</textarea>
+                                <textarea id="address" name="address" rows="3" autocomplete="street-address" class="w-full resize-none border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">{{ old('address') }}</textarea>
 
                                 @error('address')
                                 <p class="mt-2 text-[12px] leading-6 text-red-600 sm:text-[14px]">
@@ -246,9 +246,9 @@ $countries = [
                                     </label>
 
                                     <div class="relative">
-                                        <input id="password" type="password" name="password" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                                        <input id="password" type="password" name="password" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
 
-                                        <button type="button" data-toggle-password="password" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#A67C3D]" aria-label="Show password">
+                                        <button type="button" data-toggle-password="password" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#A88444]" aria-label="Show password">
                                             <svg data-eye-open class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12Z" />
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -276,9 +276,9 @@ $countries = [
                                     </label>
 
                                     <div class="relative">
-                                        <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                                        <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
 
-                                        <button type="button" data-toggle-password="password_confirmation" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#A67C3D]" aria-label="Show confirm password">
+                                        <button type="button" data-toggle-password="password_confirmation" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#A88444]" aria-label="Show confirm password">
                                             <svg data-eye-open class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12Z" />
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -300,7 +300,7 @@ $countries = [
                             {{-- Checkboxes --}}
                             <div class="space-y-3">
                                 <label class="flex items-start gap-3 text-[12px] leading-6 text-slate-700 sm:text-[14px]">
-                                    <input type="checkbox" name="marketing_consent" value="1" @checked(old('marketing_consent')) class="mt-1 h-4 w-4 border-slate-300 text-[#A67C3D] focus:ring-[#A67C3D]">
+                                    <input type="checkbox" name="marketing_consent" value="1" @checked(old('marketing_consent')) class="mt-1 h-4 w-4 border-slate-300 text-[#A88444] focus:ring-[#A88444]">
 
                                     <span>
                                         I would like to receive personalized communications, including offers, details about promotions, and travel-related products from Nandini Jungle by Hanging Gardens via email.
@@ -320,7 +320,7 @@ $countries = [
                             </div>
 
                             {{-- Submit --}}
-                            <button id="register-submit-button" type="submit" class="inline-flex w-full items-center justify-center gap-3 bg-[#A67C3D] px-5 py-2.5 text-xs font-medium uppercase text-white transition hover:bg-[#B8945B] disabled:cursor-not-allowed disabled:opacity-50 md:w-auto tracking-[0.08em] sm:text-sm">
+                            <button id="register-submit-button" type="submit" class="inline-flex w-full items-center justify-center gap-3 bg-[#A88444] px-5 py-2.5 text-xs font-medium uppercase text-white transition hover:bg-[#B8945B] disabled:cursor-not-allowed disabled:opacity-50 md:w-auto tracking-[0.08em] sm:text-sm">
                                 <svg id="register-submit-spinner" class="hidden h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 0-4 4H4Z"></path>
@@ -334,7 +334,7 @@ $countries = [
                                 <span class="h-px flex-1 bg-slate-200"></span>
                             </div>
 
-                            <a href="{{ route('membership.social.redirect', 'google') }}" class="inline-flex w-full items-center justify-center gap-3 border border-slate-300 bg-white px-4 py-2.5 text-xs font-medium uppercase text-slate-700 transition hover:border-[#A67C3D] hover:text-[#A67C3D] tracking-[0.08em] sm:text-sm">
+                            <a href="{{ route('membership.social.redirect', 'google') }}" class="inline-flex w-full items-center justify-center gap-3 border border-slate-300 bg-white px-4 py-2.5 text-xs font-medium uppercase text-slate-700 transition hover:border-[#A88444] hover:text-[#A88444] tracking-[0.08em] sm:text-sm">
                                 <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09Z" />
                                     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23Z" />

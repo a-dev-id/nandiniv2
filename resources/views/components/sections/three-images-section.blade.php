@@ -124,7 +124,7 @@ $displayButtonLink = $section?->button_url;
 
         @if ($displayButtonText && $displayButtonLink)
         <div class="mt-10">
-            <a href="{{ $displayButtonLink }}" class="inline-flex items-center justify-center bg-[#A67C3D] text-white px-5 py-2.5 uppercase text-xs font-medium hover:bg-[#B8945B] transition tracking-[0.08em] sm:text-sm">
+            <a href="{{ $displayButtonLink }}" class="inline-flex items-center justify-center bg-[#A88444] text-white px-5 py-2.5 uppercase text-xs font-medium hover:bg-[#B8945B] transition tracking-[0.08em] sm:text-sm">
                 {{ $displayButtonText }}
             </a>
         </div>

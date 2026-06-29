@@ -254,7 +254,7 @@ $useShowMore = $model === 'experience'
             }
             @endphp
 
-            <a href="{{ $filterUrl }}" class="border px-3 py-1.5 text-[11px] uppercase transition sm:text-sm {{ $active === $key ? 'border-[#A67C3D] bg-[#A67C3D] text-white' : 'border-black/15 bg-white text-slate-700 hover:border-black/40' }} tracking-[0.08em] font-medium">
+            <a href="{{ $filterUrl }}" class="border px-3 py-1.5 text-[11px] uppercase transition sm:text-sm {{ $active === $key ? 'border-[#A88444] bg-[#A88444] text-white' : 'border-black/15 bg-white text-slate-700 hover:border-black/40' }} tracking-[0.08em] font-medium">
                 {{ $label }}
             </a>
             @endforeach
@@ -351,7 +351,7 @@ $useShowMore = $model === 'experience'
                     @if ($usesOfferCardLayout)
                     <div class="flex grow flex-col px-6 py-6 sm:px-7">
                         <h3 class="text-base font-semibold leading-snug text-slate-700 mb-3 sm:text-lg">
-                            <a href="{{ $url }}" class="transition hover:text-[#A67C3D] uppercase">
+                            <a href="{{ $url }}" class="transition hover:text-[#A88444] uppercase">
                                 {{ $item->title }}
                             </a>
                         </h3>
@@ -369,7 +369,7 @@ $useShowMore = $model === 'experience'
                             </a>
 
                             @if ($model === 'offer' && $reserveUrl)
-                            <a href="{{ $reserveUrl }}" class="inline-flex min-w-[120px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-xs font-medium uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] sm:text-sm">
+                            <a href="{{ $reserveUrl }}" class="inline-flex min-w-[120px] items-center justify-center border border-[#A88444] bg-[#A88444] px-4 py-2.5 text-xs font-medium uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] sm:text-sm">
                                 Reserve
                             </a>
                             @endif

@@ -9,7 +9,7 @@
             <div class="mx-auto max-w-[620px] bg-white px-6 py-8 shadow-xl sm:px-8 md:px-10 md:py-10 lg:px-12">
 
                 <div class="mb-8 text-center">
-                    <p class="text-xs sm:text-sm uppercase text-[#A67C3D]">
+                    <p class="text-xs sm:text-sm uppercase text-[#A88444]">
                         Nandini Inner Circle
                     </p>
 
@@ -38,9 +38,9 @@
                         </label>
 
                         <div class="relative">
-                            <input id="current_password" type="password" name="current_password" required autocomplete="current-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                            <input id="current_password" type="password" name="current_password" required autocomplete="current-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
 
-                            <button type="button" data-toggle-password="current_password" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#A67C3D]" aria-label="Show current password">
+                            <button type="button" data-toggle-password="current_password" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#A88444]" aria-label="Show current password">
                                 <svg data-eye-open class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12Z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -69,9 +69,9 @@
                         </label>
 
                         <div class="relative">
-                            <input id="password" type="password" name="password" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                            <input id="password" type="password" name="password" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
 
-                            <button type="button" data-toggle-password="password" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#A67C3D]" aria-label="Show new password">
+                            <button type="button" data-toggle-password="password" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#A88444]" aria-label="Show new password">
                                 <svg data-eye-open class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12Z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -100,9 +100,9 @@
                         </label>
 
                         <div class="relative">
-                            <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                            <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
 
-                            <button type="button" data-toggle-password="password_confirmation" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#A67C3D]" aria-label="Show confirm password">
+                            <button type="button" data-toggle-password="password_confirmation" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#A88444]" aria-label="Show confirm password">
                                 <svg data-eye-open class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12Z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -120,7 +120,7 @@
                         <p id="password-match-message" class="mt-2 hidden text-[12px] leading-6 sm:text-[14px]"></p>
                     </div>
 
-                    <button id="change-password-submit-button" type="submit" class="inline-flex w-full items-center justify-center bg-[#A67C3D] px-5 py-2.5 text-xs font-medium uppercase text-white transition hover:bg-[#B8945B] disabled:cursor-not-allowed disabled:opacity-50 tracking-[0.08em] sm:text-sm">
+                    <button id="change-password-submit-button" type="submit" class="inline-flex w-full items-center justify-center bg-[#A88444] px-5 py-2.5 text-xs font-medium uppercase text-white transition hover:bg-[#B8945B] disabled:cursor-not-allowed disabled:opacity-50 tracking-[0.08em] sm:text-sm">
                         Update Password
                     </button>
                 </form>

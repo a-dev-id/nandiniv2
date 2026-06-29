@@ -217,7 +217,7 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
 
                                     @if ($currentMember)
                                     @if ($memberCanRedeem)
-                                    <button type="button" data-reward-redeem-button data-redeem-action="{{ $redeemPostUrl }}" data-reward-title="{{ e($reward->title) }}" data-reward-points="{{ number_format((float) $points, 0) }}" class="inline-flex min-w-[125px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-6 py-3 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] sm:text-sm">
+                                    <button type="button" data-reward-redeem-button data-redeem-action="{{ $redeemPostUrl }}" data-reward-title="{{ e($reward->title) }}" data-reward-points="{{ number_format((float) $points, 0) }}" class="inline-flex min-w-[125px] items-center justify-center border border-[#A88444] bg-[#A88444] px-6 py-3 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] sm:text-sm">
                                         Redeem
                                     </button>
                                     @else
@@ -226,7 +226,7 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
                                     </button>
                                     @endif
                                     @else
-                                    <a href="{{ $redeemLoginUrl }}" class="inline-flex min-w-[115px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
+                                    <a href="{{ $redeemLoginUrl }}" class="inline-flex min-w-[115px] items-center justify-center border border-[#A88444] bg-[#A88444] px-4 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
                                         Redeem
                                     </a>
                                     @endif
@@ -244,13 +244,13 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
                 @endforeach
             </div>
 
-            <button type="button" class="reward-carousel-prev absolute left-3 md:left-8 lg:left-[45px] top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black text-white flex items-center justify-center z-10 tracking-[0.08em] font-medium" aria-label="Previous">
+            <button type="button" class="reward-carousel-prev absolute left-3 md:left-8 lg:left-[45px] top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-[#A88444] text-white flex items-center justify-center z-10 transition hover:bg-[#A88444] tracking-[0.08em] font-medium" aria-label="Previous">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
                 </svg>
             </button>
 
-            <button type="button" class="reward-carousel-next absolute right-3 md:right-8 lg:right-[45px] top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black text-white flex items-center justify-center z-10 tracking-[0.08em] font-medium" aria-label="Next">
+            <button type="button" class="reward-carousel-next absolute right-3 md:right-8 lg:right-[45px] top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-[#A88444] text-white flex items-center justify-center z-10 transition hover:bg-[#A88444] tracking-[0.08em] font-medium" aria-label="Next">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
                 </svg>

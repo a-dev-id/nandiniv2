@@ -130,7 +130,7 @@ if ($galleryImages->count() > 1 && $galleryImages->count() < 6) { $thumbnailImag
                             @if ($thumbnailImages->count() > 1)
                             {{-- Thumbnail Slider --}}
                             <div class="relative mt-2 px-10">
-                                <button type="button" data-gallery-prev class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-black text-white flex items-center justify-center hover:bg-[#B8945B] transition tracking-[0.08em] font-medium" aria-label="Previous image">
+                                <button type="button" data-gallery-prev class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-[#A88444] text-white flex items-center justify-center hover:bg-[#A88444] transition tracking-[0.08em] font-medium" aria-label="Previous image">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                                     </svg>
@@ -144,7 +144,7 @@ if ($galleryImages->count() > 1 && $galleryImages->count() < 6) { $thumbnailImag
                                     @endforeach
                                 </div>
 
-                                <button type="button" data-gallery-next class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-black text-white flex items-center justify-center hover:bg-[#B8945B] transition tracking-[0.08em] font-medium" aria-label="Next image">
+                                <button type="button" data-gallery-next class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-[#A88444] text-white flex items-center justify-center hover:bg-[#A88444] transition tracking-[0.08em] font-medium" aria-label="Next image">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                                     </svg>

@@ -95,7 +95,7 @@ $titleColorClass = $backgroundColor === 'dark_navy' ? 'text-white' : 'text-slate
 $bodyColorClass = $backgroundColor === 'dark_navy' ? 'text-white/85' : 'text-slate-700';
 $buttonClass = $backgroundColor === 'dark_navy'
 ? 'border-white text-white hover:bg-white hover:text-slate-900'
-: 'border-slate-700 text-slate-700 hover:bg-[#A67C3D] hover:border-[#A67C3D] hover:text-white';
+: 'border-slate-700 text-slate-700 hover:bg-[#A88444] hover:border-[#A88444] hover:text-white';
 
 $imageOrderClass = $reverse ? 'lg:order-2' : 'lg:order-1';
 $textOrderClass = $reverse ? 'lg:order-1' : 'lg:order-2';
@@ -140,7 +140,7 @@ $buttonUrl = $section?->button_url;
                 @endif
 
                 @if ($subtitle !== '')
-                <p class="mt-5 text-xs font-semibold leading-relaxed uppercase text-[#A67C3D] sm:text-sm">
+                <p class="mt-5 text-xs font-semibold leading-relaxed uppercase text-[#A88444] sm:text-sm">
                     {{ $subtitle }}
                 </p>
                 @endif

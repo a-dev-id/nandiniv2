@@ -64,8 +64,8 @@ $iconLineClass = $backgroundColor === 'dark_navy'
 $buttonLabel = trim((string) ($section?->button_label ?: $contactLabel));
 $buttonUrl = trim((string) ($section?->button_url ?: $contactUrl)) ?: '#';
 $buttonClass = $backgroundColor === 'dark_navy'
-? 'border-[#A67C3D] bg-[#A67C3D] text-white hover:bg-white hover:text-[#071a33] hover:border-white'
-: 'border-[#A67C3D] bg-[#A67C3D] text-white hover:bg-[#B8945B] hover:border-[#B8945B]';
+? 'border-[#A88444] bg-[#A88444] text-white hover:bg-white hover:text-[#071a33] hover:border-white'
+: 'border-[#A88444] bg-[#A88444] text-white hover:bg-[#B8945B] hover:border-[#B8945B]';
 
 if (($section?->button_link_type ?? 'manual') === 'route' && $section?->button_route) {
 $buttonUrl = \Illuminate\Support\Facades\Route::has($section->button_route)

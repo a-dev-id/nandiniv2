@@ -125,14 +125,14 @@ function initNavbarScroll() {
             toggleClasses(logo, ["lg:h-16"], ["lg:h-24", "brightness-0", "invert"]);
             toggleClasses(navLeft, ["text-slate-700"], ["text-white"]);
             toggleClasses(navIcons, ["text-slate-700"]);
-            toggleClasses(bookBtn, ["bg-[#A67C3D]", "border-[#A67C3D]", "text-white"], ["bg-white", "border-white", "text-slate-700"]);
+            toggleClasses(bookBtn, ["bg-[#A88444]", "border-[#A88444]", "text-white"], ["bg-white", "border-white", "text-slate-700"]);
         } else {
             toggleClasses(navbar, ["bg-black/35", "text-white"], ["bg-white", "text-slate-700", "shadow", "backdrop-blur-md"]);
             toggleClasses(inner, ["lg:h-28"], ["lg:h-20"]);
             toggleClasses(logo, ["lg:h-24", "brightness-0", "invert"], ["lg:h-16"]);
             toggleClasses(navLeft, ["text-white"], ["text-slate-700"]);
             toggleClasses(navIcons, [], ["text-slate-700"]);
-            toggleClasses(bookBtn, ["bg-white", "border-white", "text-slate-700"], ["bg-[#A67C3D]", "border-[#A67C3D]", "text-white"]);
+            toggleClasses(bookBtn, ["bg-white", "border-white", "text-slate-700"], ["bg-[#A88444]", "border-[#A88444]", "text-white"]);
         }
     }
 

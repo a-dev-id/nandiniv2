@@ -77,7 +77,7 @@ $metaImage = $page?->hero_image ?: $page?->hero_mobile_image ?: null;
         <div class="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-8">
             <div class="mx-auto w-full max-w-[720px] overflow-hidden bg-white px-5 py-8 shadow-xl sm:px-8 md:px-10 md:py-10 lg:px-12">
                 <div class="mb-8 text-center">
-                    <p class="text-xs sm:text-sm uppercase text-[#A67C3D]">
+                    <p class="text-xs sm:text-sm uppercase text-[#A88444]">
                         Nandini Inner Circle
                     </p>
 
@@ -119,7 +119,7 @@ $metaImage = $page?->hero_image ?: $page?->hero_mobile_image ?: null;
                             @if ($profilePhotoUrl)
                             <img src="{{ $profilePhotoUrl }}" alt="{{ $member->full_name }}" class="h-full w-full object-cover">
                             @else
-                            <span class="text-4xl font-medium uppercase text-[#A67C3D] sm:text-5xl">
+                            <span class="text-4xl font-medium uppercase text-[#A88444] sm:text-5xl">
                                 {{ strtoupper(mb_substr($member->full_name ?: $member->name ?: 'M', 0, 1)) }}
                             </span>
                             @endif
@@ -130,7 +130,7 @@ $metaImage = $page?->hero_image ?: $page?->hero_mobile_image ?: null;
                                 Profile Photo
                             </label>
 
-                            <input id="profile_photo" type="file" name="profile_photo" accept="image/jpeg,image/png,image/webp" class="w-full border border-slate-300 bg-white px-4 py-3 text-[12px] leading-7 text-slate-700 outline-none transition file:mr-4 file:border-0 file:bg-[#A67C3D] file:px-4 file:py-2 file:text-[9px] file:font-bold file:uppercase file:text-white focus:border-[#A67C3D] sm:text-[14px] sm:file:text-[11px]">
+                            <input id="profile_photo" type="file" name="profile_photo" accept="image/jpeg,image/png,image/webp" class="w-full border border-slate-300 bg-white px-4 py-3 text-[12px] leading-7 text-slate-700 outline-none transition file:mr-4 file:border-0 file:bg-[#A88444] file:px-4 file:py-2 file:text-[9px] file:font-bold file:uppercase file:text-white focus:border-[#A88444] sm:text-[14px] sm:file:text-[11px]">
 
                             <p class="mt-2 text-[11px] leading-6 text-slate-500 sm:text-[13px]">
                                 JPG, PNG, or WEBP. Maximum 2MB.
@@ -144,7 +144,7 @@ $metaImage = $page?->hero_image ?: $page?->hero_mobile_image ?: null;
                                 First Name
                             </label>
 
-                            <input id="first_name" type="text" name="first_name" value="{{ $firstName }}" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                            <input id="first_name" type="text" name="first_name" value="{{ $firstName }}" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
                         </div>
 
                         <div>
@@ -152,7 +152,7 @@ $metaImage = $page?->hero_image ?: $page?->hero_mobile_image ?: null;
                                 Last Name
                             </label>
 
-                            <input id="last_name" type="text" name="last_name" value="{{ $lastName }}" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                            <input id="last_name" type="text" name="last_name" value="{{ $lastName }}" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
                         </div>
                     </div>
 
@@ -173,7 +173,7 @@ $metaImage = $page?->hero_image ?: $page?->hero_mobile_image ?: null;
                             Country
                         </label>
 
-                        <select id="country" name="country" data-country-select class="block w-full max-w-full min-w-0 border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                        <select id="country" name="country" data-country-select class="block w-full max-w-full min-w-0 border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
                             <option value="">Select Country</option>
                             @foreach ($countries as $value => $label)
                             <option value="{{ $value }}" @selected($country===$value)>{{ $label }}</option>
@@ -187,7 +187,7 @@ $metaImage = $page?->hero_image ?: $page?->hero_mobile_image ?: null;
                                 Phone / WhatsApp Number
                             </label>
 
-                            <div class="flex w-full max-w-full min-w-0 overflow-hidden border border-slate-300 bg-white transition focus-within:border-[#A67C3D]">
+                            <div class="flex w-full max-w-full min-w-0 overflow-hidden border border-slate-300 bg-white transition focus-within:border-[#A88444]">
                                 <select name="phone_code" data-phone-code-select aria-label="Country phone code" class="w-[94px] shrink-0 border-0 border-r border-slate-300 bg-white px-3 py-3 text-xs leading-7 text-slate-700 outline-none sm:w-[104px] sm:text-sm">
                                     @foreach ($uniquePhoneCodes as $phoneCode)
                                     <option value="{{ $phoneCode['code'] }}" @selected($selectedPhoneCode===$phoneCode['code'])>{{ $phoneCode['code'] }}</option>
@@ -203,7 +203,7 @@ $metaImage = $page?->hero_image ?: $page?->hero_mobile_image ?: null;
                                 Date of Birth
                             </label>
 
-                            <input id="date_of_birth" type="date" name="date_of_birth" value="{{ $dateOfBirth }}" class="block w-full max-w-full min-w-0 border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                            <input id="date_of_birth" type="date" name="date_of_birth" value="{{ $dateOfBirth }}" class="block w-full max-w-full min-w-0 border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
                         </div>
                     </div>
 
@@ -212,7 +212,7 @@ $metaImage = $page?->hero_image ?: $page?->hero_mobile_image ?: null;
                             Address
                         </label>
 
-                        <textarea id="address" name="address" rows="4" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">{{ $address }}</textarea>
+                        <textarea id="address" name="address" rows="4" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">{{ $address }}</textarea>
                     </div>
 
                     <div class="border-t border-slate-200 pt-6">
@@ -230,7 +230,7 @@ $metaImage = $page?->hero_image ?: $page?->hero_mobile_image ?: null;
                             Current Password
                         </label>
 
-                        <input id="current_password" type="password" name="current_password" autocomplete="current-password" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                        <input id="current_password" type="password" name="current_password" autocomplete="current-password" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
 
                         @error('current_password')
                         <p class="mt-2 text-[12px] leading-6 text-red-600 sm:text-[14px]">
@@ -245,7 +245,7 @@ $metaImage = $page?->hero_image ?: $page?->hero_mobile_image ?: null;
                                 New Password
                             </label>
 
-                            <input id="password" type="password" name="password" autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                            <input id="password" type="password" name="password" autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
 
                             @error('password')
                             <p class="mt-2 text-[12px] leading-6 text-red-600 sm:text-[14px]">
@@ -259,16 +259,16 @@ $metaImage = $page?->hero_image ?: $page?->hero_mobile_image ?: null;
                                 Confirm New Password
                             </label>
 
-                            <input id="password_confirmation" type="password" name="password_confirmation" autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                            <input id="password_confirmation" type="password" name="password_confirmation" autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
                         </div>
                     </div>
 
-                    <button type="submit" class="inline-flex w-full items-center justify-center bg-[#A67C3D] px-5 py-2.5 text-xs font-medium uppercase text-white transition hover:bg-[#B8945B] tracking-[0.08em] sm:text-sm">
+                    <button type="submit" class="inline-flex w-full items-center justify-center bg-[#A88444] px-5 py-2.5 text-xs font-medium uppercase text-white transition hover:bg-[#B8945B] tracking-[0.08em] sm:text-sm">
                         Save Profile
                     </button>
 
                     <div class="pt-2 text-center text-xs leading-7 text-slate-700 sm:text-sm">
-                        <a href="{{ route('membership.dashboard') }}" class="font-medium uppercase text-[#A67C3D] transition hover:text-[#8F6B34] tracking-[0.08em]">
+                        <a href="{{ route('membership.dashboard') }}" class="font-medium uppercase text-[#A88444] transition hover:text-[#8F6B34] tracking-[0.08em]">
                             Back to Dashboard
                         </a>
                     </div>

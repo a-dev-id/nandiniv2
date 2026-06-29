@@ -16,7 +16,7 @@ $imageAlt = $page->hero_image_alt
         <div class="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-8">
             <div class="mx-auto w-full max-w-[560px] bg-white px-6 py-8 shadow-xl sm:px-8 md:px-10 md:py-10 lg:px-12">
                 <div class="mb-8 text-center">
-                    <p class="text-xs sm:text-sm uppercase text-[#A67C3D]">
+                    <p class="text-xs sm:text-sm uppercase text-[#A88444]">
                         Nandini Inner Circle
                     </p>
 
@@ -49,7 +49,7 @@ $imageAlt = $page->hero_image_alt
                             Email Address
                         </label>
 
-                        <input id="email" type="email" name="email" value="{{ old('email', $email) }}" required autofocus autocomplete="email" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                        <input id="email" type="email" name="email" value="{{ old('email', $email) }}" required autofocus autocomplete="email" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
                     </div>
 
                     <div>
@@ -57,7 +57,7 @@ $imageAlt = $page->hero_image_alt
                             New Password
                         </label>
 
-                        <input id="password" type="password" name="password" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                        <input id="password" type="password" name="password" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
                     </div>
 
                     <div>
@@ -65,10 +65,10 @@ $imageAlt = $page->hero_image_alt
                             Confirm Password
                         </label>
 
-                        <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                        <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
                     </div>
 
-                    <button type="submit" class="inline-flex w-full items-center justify-center bg-[#A67C3D] px-5 py-2.5 text-xs font-medium uppercase text-white transition hover:bg-[#B8945B] tracking-[0.08em] sm:text-sm">
+                    <button type="submit" class="inline-flex w-full items-center justify-center bg-[#A88444] px-5 py-2.5 text-xs font-medium uppercase text-white transition hover:bg-[#B8945B] tracking-[0.08em] sm:text-sm">
                         Reset Password
                     </button>
                 </form>

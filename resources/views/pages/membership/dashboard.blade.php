@@ -474,7 +474,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                         @if ($profilePhotoUrl)
                         <img src="{{ $profilePhotoUrl }}" alt="{{ $memberName }}" class="h-full w-full object-cover" loading="lazy">
                         @else
-                        <span class="text-4xl font-medium uppercase text-[#A67C3D] sm:text-5xl">
+                        <span class="text-4xl font-medium uppercase text-[#A88444] sm:text-5xl">
                             {{ $memberInitial }}
                         </span>
                         @endif
@@ -504,7 +504,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                     </div>
 
                     <div class="mt-2 flex justify-center lg:justify-start">
-                        <a href="{{ \Illuminate\Support\Facades\Route::has('membership.profile.edit') ? route('membership.profile.edit') : '#' }}" class="inline-flex min-w-[145px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
+                        <a href="{{ \Illuminate\Support\Facades\Route::has('membership.profile.edit') ? route('membership.profile.edit') : '#' }}" class="inline-flex min-w-[145px] items-center justify-center border border-[#A88444] bg-[#A88444] px-4 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
                             Edit Profile
                         </a>
                     </div>
@@ -513,7 +513,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                 <div class="lg:col-span-5">
                     <div class="mx-auto w-full max-w-[390px]">
 
-                        <button type="button" class="group block w-full overflow-hidden rounded-[20px] shadow-lg transition focus:outline-none focus:ring-2 focus:ring-[#A67C3D]/40" aria-label="View membership card" data-member-card-open>
+                        <button type="button" class="group block w-full overflow-hidden rounded-[20px] shadow-lg transition focus:outline-none focus:ring-2 focus:ring-[#A88444]/40" aria-label="View membership card" data-member-card-open>
                             <div class="relative">
                                 <img src="{{ $currentCardImage }}" alt="{{ $tierNameMap[$memberTier] ?? 'Membership Card' }} {{ $tierLabelMap[$memberTier] ?? '' }} Card" class="block w-full transition duration-500 group-hover:scale-[1.015] cursor-pointer" loading="lazy" data-member-card-image>
 
@@ -592,7 +592,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
 
         <div class="relative w-full max-w-[640px]">
             <div class="mb-4 flex justify-end gap-3">
-                <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/70 bg-white text-[#A67C3D] shadow-lg transition hover:bg-[#A67C3D] hover:text-white focus:outline-none focus:ring-2 focus:ring-white/70 tracking-[0.08em] font-medium" aria-label="Download membership card" title="Download membership card" data-member-card-download data-card-image="{{ $currentCardImage }}" data-member-name="{{ e($memberName) }}" data-member-points="{{ e($formatPointLabel($memberPoints, 'upper')) }}" data-member-tier="{{ e($tierLabelMap[$memberTier] ?? 'Dana') }}" data-valid-until="{{ e($validUntilDate) }}" data-download-name="{{ e($memberCardDownloadName) }}">
+                <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/70 bg-white text-[#A88444] shadow-lg transition hover:bg-[#A88444] hover:text-white focus:outline-none focus:ring-2 focus:ring-white/70 tracking-[0.08em] font-medium" aria-label="Download membership card" title="Download membership card" data-member-card-download data-card-image="{{ $currentCardImage }}" data-member-name="{{ e($memberName) }}" data-member-points="{{ e($formatPointLabel($memberPoints, 'upper')) }}" data-member-tier="{{ e($tierLabelMap[$memberTier] ?? 'Dana') }}" data-valid-until="{{ e($validUntilDate) }}" data-download-name="{{ e($memberCardDownloadName) }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <path d="M7 10l5 5 5-5"></path>
@@ -647,15 +647,15 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
     <section class="bg-white px-6 pb-0">
         <div class="mx-auto w-full max-w-6xl">
             <div class="flex flex-nowrap justify-center gap-1.5 border-b border-slate-200 pb-4 sm:gap-2" data-membership-dashboard-tabs>
-                <button type="button" class="min-w-0 flex-1 border border-[#A67C3D] bg-[#A67C3D] px-2 py-2.5 text-[8px] font-medium uppercase text-white transition sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="bookings">
+                <button type="button" class="min-w-0 flex-1 border border-[#A88444] bg-[#A88444] px-2 py-2.5 text-[8px] font-medium uppercase text-white transition sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="bookings">
                     My Booking
                 </button>
 
-                <button type="button" class="min-w-0 flex-1 border border-slate-300 bg-white px-2 py-2.5 text-[8px] font-medium uppercase text-slate-700 transition hover:border-[#A67C3D] hover:text-[#A67C3D] sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="redeem">
+                <button type="button" class="min-w-0 flex-1 border border-slate-300 bg-white px-2 py-2.5 text-[8px] font-medium uppercase text-slate-700 transition hover:border-[#A88444] hover:text-[#A88444] sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="redeem">
                     Point Redeem
                 </button>
 
-                <button type="button" class="min-w-0 flex-1 border border-slate-300 bg-white px-2 py-2.5 text-[8px] font-medium uppercase text-slate-700 transition hover:border-[#A67C3D] hover:text-[#A67C3D] sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="history">
+                <button type="button" class="min-w-0 flex-1 border border-slate-300 bg-white px-2 py-2.5 text-[8px] font-medium uppercase text-slate-700 transition hover:border-[#A88444] hover:text-[#A88444] sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="history">
                     History
                 </button>
             </div>
@@ -760,7 +760,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                                 <td class="px-4 py-4">{{ $redemption->expires_at?->format('d M Y') ?? '-' }}</td>
                                 <td class="px-4 py-4 text-right">{{ number_format((int) $redemption->points_used, 0) }}</td>
                                 <td class="px-4 py-4">
-                                    <span class="inline-flex rounded-full bg-[#A67C3D]/10 px-3 py-1 text-[9px] font-bold uppercase text-[#916B2C] sm:text-[11px]">
+                                    <span class="inline-flex rounded-full bg-[#A88444]/10 px-3 py-1 text-[9px] font-bold uppercase text-[#916B2C] sm:text-[11px]">
                                         {{ $redemption->status_label ?? 'Pending' }}
                                     </span>
                                 </td>
@@ -956,7 +956,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
 
                 @if ($hasMoreHistories)
                 <div class="mt-10 text-center">
-                    <button type="button" data-history-view-more class="inline-flex min-w-[145px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-5 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
+                    <button type="button" data-history-view-more class="inline-flex min-w-[145px] items-center justify-center border border-[#A88444] bg-[#A88444] px-5 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
                         View More
                     </button>
                 </div>
@@ -981,11 +981,11 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                 </p>
 
                 <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                    <a href="{{ $memberBookingUrl }}" target="_blank" rel="noopener" class="inline-flex min-w-[150px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-5 py-2.5 text-xs font-medium uppercase text-white shadow-lg shadow-black/20 transition hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em] sm:text-sm">
+                    <a href="{{ $memberBookingUrl }}" target="_blank" rel="noopener" class="inline-flex min-w-[150px] items-center justify-center border border-[#A88444] bg-[#A88444] px-5 py-2.5 text-xs font-medium uppercase text-white shadow-lg shadow-black/20 transition hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em] sm:text-sm">
                         Book Now
                     </a>
 
-                    <a href="{{ route('offers.index') }}" class="inline-flex min-w-[150px] items-center justify-center border border-white/85 bg-black/25 px-5 py-2.5 text-xs font-medium uppercase text-white shadow-lg shadow-black/20 transition hover:border-[#A67C3D] hover:bg-[#A67C3D] hover:text-white tracking-[0.08em] sm:text-sm">
+                    <a href="{{ route('offers.index') }}" class="inline-flex min-w-[150px] items-center justify-center border border-white/85 bg-black/25 px-5 py-2.5 text-xs font-medium uppercase text-white shadow-lg shadow-black/20 transition hover:border-[#A88444] hover:bg-[#A88444] hover:text-white tracking-[0.08em] sm:text-sm">
                         See Our Offers
                     </a>
                 </div>
@@ -1089,7 +1089,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                                         </p>
 
                                         @if ($memberCanRedeem)
-                                        <button type="button" data-reward-redeem-button data-redeem-action="{{ $redeemPostUrl }}" data-reward-title="{{ e($rewardTitle) }}" data-reward-points="{{ number_format((float) $points, 0) }}" class="inline-flex min-w-[115px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
+                                        <button type="button" data-reward-redeem-button data-redeem-action="{{ $redeemPostUrl }}" data-reward-title="{{ e($rewardTitle) }}" data-reward-points="{{ number_format((float) $points, 0) }}" class="inline-flex min-w-[115px] items-center justify-center border border-[#A88444] bg-[#A88444] px-4 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
                                             Redeem
                                         </button>
                                         @else
@@ -1111,13 +1111,13 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                     @endforeach
                 </div>
 
-                <button type="button" class="dashboard-reward-carousel-prev absolute left-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-black text-white md:h-12 md:w-12 tracking-[0.08em] font-medium" aria-label="Previous reward">
+                <button type="button" class="dashboard-reward-carousel-prev absolute left-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-[#A88444] text-white transition hover:bg-[#A88444] md:h-12 md:w-12 tracking-[0.08em] font-medium" aria-label="Previous reward">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="h-4 w-4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
                     </svg>
                 </button>
 
-                <button type="button" class="dashboard-reward-carousel-next absolute right-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-black text-white md:h-12 md:w-12 tracking-[0.08em] font-medium" aria-label="Next reward">
+                <button type="button" class="dashboard-reward-carousel-next absolute right-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-[#A88444] text-white transition hover:bg-[#A88444] md:h-12 md:w-12 tracking-[0.08em] font-medium" aria-label="Next reward">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="h-4 w-4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
                     </svg>
@@ -1125,7 +1125,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
             </div>
 
             <div class="mt-8 text-center">
-                <a href="{{ \Illuminate\Support\Facades\Route::has('membership.privilege-redemption') ? route('membership.privilege-redemption') : '#' }}" class="inline-flex min-w-[145px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-5 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
+                <a href="{{ \Illuminate\Support\Facades\Route::has('membership.privilege-redemption') ? route('membership.privilege-redemption') : '#' }}" class="inline-flex min-w-[145px] items-center justify-center border border-[#A88444] bg-[#A88444] px-5 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
                     View More
                 </a>
             </div>
@@ -1553,14 +1553,14 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                 tabs.forEach(function (tab) {
                     const isActive = tab.dataset.dashboardTab === tabName;
 
-                    tab.classList.toggle('bg-[#A67C3D]', isActive);
-                    tab.classList.toggle('border-[#A67C3D]', isActive);
+                    tab.classList.toggle('bg-[#A88444]', isActive);
+                    tab.classList.toggle('border-[#A88444]', isActive);
                     tab.classList.toggle('text-white', isActive);
                     tab.classList.toggle('bg-white', !isActive);
                     tab.classList.toggle('border-slate-300', !isActive);
                     tab.classList.toggle('text-slate-700', !isActive);
                     tab.classList.toggle('hover:text-white', isActive);
-                    tab.classList.toggle('hover:text-[#A67C3D]', !isActive);
+                    tab.classList.toggle('hover:text-[#A88444]', !isActive);
                 });
 
                 panels.forEach(function (panel) {

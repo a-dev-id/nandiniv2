@@ -60,7 +60,7 @@
 
             @if ($bookingUrl)
             <div class="mt-10">
-                <a href="{{ $bookingUrl }}" class="inline-flex min-w-[190px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-7 py-4 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] sm:text-sm">
+                <a href="{{ $bookingUrl }}" class="inline-flex min-w-[190px] items-center justify-center border border-[#A88444] bg-[#A88444] px-7 py-4 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] sm:text-sm">
                     {{ $offer->button_label ?: 'Book Now' }}
                 </a>
             </div>

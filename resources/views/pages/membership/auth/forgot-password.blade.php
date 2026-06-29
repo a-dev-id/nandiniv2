@@ -18,7 +18,7 @@ $imageAlt = $page->hero_image_alt
         <div class="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-8">
             <div class="mx-auto w-full max-w-[560px] bg-white px-6 py-8 shadow-xl sm:px-8 md:px-10 md:py-10 lg:px-12">
                 <div class="mb-8 text-center">
-                    <p class="text-xs sm:text-sm uppercase text-[#A67C3D]">
+                    <p class="text-xs sm:text-sm uppercase text-[#A88444]">
                         Nandini Inner Circle
                     </p>
 
@@ -45,7 +45,7 @@ $imageAlt = $page->hero_image_alt
                             Email Address
                         </label>
 
-                        <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="email" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                        <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="email" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
 
                         @error('email')
                         <p class="mt-2 text-[12px] leading-6 text-red-600 sm:text-[14px]">
@@ -54,14 +54,14 @@ $imageAlt = $page->hero_image_alt
                         @enderror
                     </div>
 
-                    <button type="submit" class="inline-flex w-full items-center justify-center bg-[#A67C3D] px-5 py-2.5 text-xs font-medium uppercase text-white transition hover:bg-[#B8945B] tracking-[0.08em] sm:text-sm">
+                    <button type="submit" class="inline-flex w-full items-center justify-center bg-[#A88444] px-5 py-2.5 text-xs font-medium uppercase text-white transition hover:bg-[#B8945B] tracking-[0.08em] sm:text-sm">
                         Send Reset Link
                     </button>
 
                     <div class="pt-2 text-center text-xs leading-7 text-slate-700 sm:text-sm">
                         Remember your password?
 
-                        <a href="{{ route('membership.login') }}" class="font-medium uppercase text-[#A67C3D] transition hover:text-[#8F6B34] tracking-[0.08em]">
+                        <a href="{{ route('membership.login') }}" class="font-medium uppercase text-[#A88444] transition hover:text-[#8F6B34] tracking-[0.08em]">
                             Sign In
                         </a>
                     </div>

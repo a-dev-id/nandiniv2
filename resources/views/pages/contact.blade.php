@@ -64,7 +64,7 @@
                         </svg>
                     </div>
 
-                    <a href="tel:{{ $phoneClean }}" class="text-xs leading-7 text-slate-700 hover:text-[#A67C3D] sm:text-sm">
+                    <a href="tel:{{ $phoneClean }}" class="text-xs leading-7 text-slate-700 hover:text-[#A88444] sm:text-sm">
                         {{ $phone }}
                     </a>
                 </div>
@@ -100,7 +100,7 @@
                         </svg>
                     </div>
 
-                    <a href="mailto:{{ $reservationEmail }}" class="text-xs leading-7 text-slate-700 hover:text-[#A67C3D] sm:text-sm">
+                    <a href="mailto:{{ $reservationEmail }}" class="text-xs leading-7 text-slate-700 hover:text-[#A88444] sm:text-sm">
                         {{ $reservationEmail }}
                     </a>
                 </div>
@@ -111,7 +111,7 @@
                     Press &amp; Media Partnership
                 </h2>
 
-                <a href="mailto:{{ $mediaEmail }}" class="mt-2 inline-block text-xs leading-7 text-slate-700 hover:text-[#A67C3D] sm:text-sm">
+                <a href="mailto:{{ $mediaEmail }}" class="mt-2 inline-block text-xs leading-7 text-slate-700 hover:text-[#A88444] sm:text-sm">
                     {{ $mediaEmail }}
                 </a>
             </div>

@@ -45,7 +45,7 @@ $descriptionHasHtml = is_string($description) && $description !== strip_tags($de
                         <div class="text-center lg:text-left">
 
                             @if ($subtitle)
-                            <p class="text-xs sm:text-sm uppercase text-[#A67C3D]">
+                            <p class="text-xs sm:text-sm uppercase text-[#A88444]">
                                 {{ $subtitle }}
                             </p>
                             @endif
@@ -105,7 +105,7 @@ $descriptionHasHtml = is_string($description) && $description !== strip_tags($de
                                     Email Address {{--<span class="text-red-600">*</span>--}}
                                 </label>
 
-                                <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="email" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                                <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="email" class="w-full border border-slate-300 bg-white px-4 py-3 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
 
                                 @error('email')
                                 <p class="mt-2 text-[12px] leading-6 text-red-600 sm:text-[14px]">
@@ -121,9 +121,9 @@ $descriptionHasHtml = is_string($description) && $description !== strip_tags($de
                                 </label>
 
                                 <div class="relative">
-                                    <input id="password" type="password" name="password" required autocomplete="current-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A67C3D] sm:text-sm">
+                                    <input id="password" type="password" name="password" required autocomplete="current-password" class="w-full border border-slate-300 bg-white px-4 py-3 pr-14 text-xs leading-7 text-slate-700 outline-none transition focus:border-[#A88444] sm:text-sm">
 
-                                    <button type="button" data-toggle-password="password" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#A67C3D]" aria-label="Show password">
+                                    <button type="button" data-toggle-password="password" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#A88444]" aria-label="Show password">
                                         {{-- Eye Open --}}
                                         <svg data-eye-open class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12Z" />
@@ -154,18 +154,18 @@ $descriptionHasHtml = is_string($description) && $description !== strip_tags($de
                             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                 {{-- Remember --}}
                                 <label class="flex items-center gap-3 text-xs leading-7 text-slate-700 sm:text-sm">
-                                    <input type="checkbox" name="remember" value="1" class="h-4 w-4 border-slate-300 text-[#A67C3D] focus:ring-[#A67C3D]">
+                                    <input type="checkbox" name="remember" value="1" class="h-4 w-4 border-slate-300 text-[#A88444] focus:ring-[#A88444]">
 
                                     <span>Keep me signed in</span>
                                 </label>
 
-                                <a href="{{ route('membership.password.request') }}" class="text-[11px] font-medium uppercase text-[#A67C3D] transition hover:text-[#8F6B34] tracking-[0.08em] sm:text-[13px]">
+                                <a href="{{ route('membership.password.request') }}" class="text-[11px] font-medium uppercase text-[#A88444] transition hover:text-[#8F6B34] tracking-[0.08em] sm:text-[13px]">
                                     Forgot Password?
                                 </a>
                             </div>
 
                             {{-- Submit --}}
-                            <button type="submit" class="inline-flex w-full items-center justify-center bg-[#A67C3D] px-5 py-2.5 text-xs font-medium uppercase text-white transition hover:bg-[#B8945B] tracking-[0.08em] sm:text-sm">
+                            <button type="submit" class="inline-flex w-full items-center justify-center bg-[#A88444] px-5 py-2.5 text-xs font-medium uppercase text-white transition hover:bg-[#B8945B] tracking-[0.08em] sm:text-sm">
                                 Sign In
                             </button>
 
@@ -173,7 +173,7 @@ $descriptionHasHtml = is_string($description) && $description !== strip_tags($de
                             <div class="pt-2 text-center text-xs leading-7 text-slate-700 sm:text-sm">
                                 Not a member yet?
 
-                                <a href="{{ route('membership.register') }}" class="font-medium uppercase text-[#A67C3D] transition hover:text-[#8F6B34] tracking-[0.08em]">
+                                <a href="{{ route('membership.register') }}" class="font-medium uppercase text-[#A88444] transition hover:text-[#8F6B34] tracking-[0.08em]">
                                     Join Now
                                 </a>
                             </div>
@@ -184,7 +184,7 @@ $descriptionHasHtml = is_string($description) && $description !== strip_tags($de
                                 <span class="h-px flex-1 bg-slate-200"></span>
                             </div>
 
-                            <a href="{{ route('membership.social.redirect', 'google') }}" class="inline-flex w-full items-center justify-center gap-3 border border-slate-300 bg-white px-4 py-2.5 text-xs font-medium uppercase text-slate-700 transition hover:border-[#A67C3D] hover:text-[#A67C3D] tracking-[0.08em] sm:text-sm">
+                            <a href="{{ route('membership.social.redirect', 'google') }}" class="inline-flex w-full items-center justify-center gap-3 border border-slate-300 bg-white px-4 py-2.5 text-xs font-medium uppercase text-slate-700 transition hover:border-[#A88444] hover:text-[#A88444] tracking-[0.08em] sm:text-sm">
                                 <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09Z" />
                                     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23Z" />

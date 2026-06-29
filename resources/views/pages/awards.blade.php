@@ -135,7 +135,7 @@
                                 @for ($pageNumber = 1; $pageNumber <= $awards->lastPage(); $pageNumber++)
                                     @if ($pageNumber === $awards->currentPage())
                                     <span aria-current="page">
-                                        <span class="inline-flex items-center px-4 py-2 -ml-px text-xs font-medium bg-[#A67C3D] border border-[#A67C3D] text-white cursor-default leading-5 sm:text-sm">{{ $pageNumber }}</span>
+                                        <span class="inline-flex items-center px-4 py-2 -ml-px text-xs font-medium bg-[#A88444] border border-[#A88444] text-white cursor-default leading-5 sm:text-sm">{{ $pageNumber }}</span>
                                     </span>
                                     @else
                                     <a href="{{ $awardPageUrl($pageNumber) }}" class="inline-flex items-center px-4 py-2 -ml-px text-xs font-medium text-gray-700 bg-white border border-gray-300 leading-5 transition duration-150 sm:text-sm" aria-label="Go to page {{ $pageNumber }}">

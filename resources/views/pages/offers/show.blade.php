@@ -52,7 +52,7 @@ $metaImage = $offer->hero_image
     ?? $offer->card_image_alt
     ?? $offer->title;
 
-    $buttonLabel = $offer->button_label ?: 'Book Now';
+    $buttonLabel = $offer->button_label ?: 'Reserve';
 
     $buttonUrl = html_entity_decode(
     $offer->booking_url,
@@ -65,11 +65,7 @@ $metaImage = $offer->hero_image
     @endphp
 
     @if ($heroImage)
-    <x-heroes.image-hero
-        :image-src="asset('storage/' . $heroImage)"
-        :mobile-image-src-manual="$heroMobileImage ? asset('storage/' . $heroMobileImage) : asset('storage/' . $heroImage)"
-        :alt-text="$heroAlt"
-    />
+    <x-heroes.image-hero :image-src="asset('storage/' . $heroImage)" :mobile-image-src-manual="$heroMobileImage ? asset('storage/' . $heroMobileImage) : asset('storage/' . $heroImage)" :alt-text="$heroAlt" />
     @endif
 
     {{-- Offer Content --}}

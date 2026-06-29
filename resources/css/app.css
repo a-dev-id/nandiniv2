@@ -41,16 +41,16 @@
 }
 
 @layer components {
-    .bg-\[\#A67C3D\] {
-        background-color: #7a5624 !important;
+    .bg-\[\#A88444\] {
+        background-color: #A88444 !important;
     }
 
-    .border-\[\#A67C3D\] {
-        border-color: #7a5624 !important;
+    .border-\[\#A88444\] {
+        border-color: #A88444 !important;
     }
 
-    .text-\[\#A67C3D\] {
-        color: #7a5624 !important;
+    .text-\[\#A88444\] {
+        color: #A88444 !important;
     }
 
     .hover\:bg-\[\#B8945B\]:hover {
@@ -94,8 +94,8 @@
     }
 
     nav[aria-label="Pagination Navigation"] span[aria-current="page"] > span {
-        background-color: #a67c3d !important;
-        border-color: #a67c3d !important;
+        background-color: #a88444 !important;
+        border-color: #a88444 !important;
         color: #ffffff !important;
     }
 }

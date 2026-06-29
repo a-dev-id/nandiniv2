@@ -84,7 +84,7 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
                 </p>
 
                 <div class="mt-2 border border-[#eee8df] bg-white px-5 py-5 text-left">
-                    <p class="text-xs font-semibold uppercase text-[#A67C3D] sm:text-sm">
+                    <p class="text-xs font-semibold uppercase text-[#A88444] sm:text-sm">
                         Terms & Conditions
                     </p>
 
@@ -101,7 +101,7 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
             </div>
 
             <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="{{ route('membership.dashboard') }}" class="inline-flex w-full sm:w-auto min-w-[150px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-5 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
+                <a href="{{ route('membership.dashboard') }}" class="inline-flex w-full sm:w-auto min-w-[150px] items-center justify-center border border-[#A88444] bg-[#A88444] px-5 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
                     Go to Dashboard
                 </a>
 

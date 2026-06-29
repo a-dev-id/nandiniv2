@@ -81,7 +81,7 @@
 
                     <div class="flex flex-col grow border border-slate-200 border-t-0 bg-white px-6 py-6 sm:px-7">
                         <h3 class="text-base font-semibold leading-snug text-slate-700 uppercase mb-3 sm:text-lg">
-                            <a href="{{ $url }}" class="transition hover:text-[#A67C3D]">
+                            <a href="{{ $url }}" class="transition hover:text-[#A88444]">
                                 {{ $title }}
                             </a>
                         </h3>
@@ -99,7 +99,7 @@
                             </a>
 
                             @if ($showReserveButton && $reserveUrl)
-                            <a href="{{ $reserveUrl }}" class="inline-flex min-w-[120px] items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-xs font-medium uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] sm:text-sm">
+                            <a href="{{ $reserveUrl }}" class="inline-flex min-w-[120px] items-center justify-center border border-[#A88444] bg-[#A88444] px-4 py-2.5 text-xs font-medium uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] sm:text-sm">
                                 Reserve
                             </a>
                             @endif
@@ -112,13 +112,13 @@
             @endforeach
         </div>
 
-        <button type="button" class="itemcarousel-prev absolute {{ $previousButtonClass }} {{ $buttonPositionClass }} -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-[#A67C3D] text-white flex items-center justify-center z-10 transition hover:bg-[#B8945B] tracking-[0.08em] font-medium" aria-label="Previous">
+        <button type="button" class="itemcarousel-prev absolute {{ $previousButtonClass }} {{ $buttonPositionClass }} -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-[#A88444] text-white flex items-center justify-center z-10 transition hover:bg-[#A88444] tracking-[0.08em] font-medium" aria-label="Previous">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
             </svg>
         </button>
 
-        <button type="button" class="itemcarousel-next absolute {{ $nextButtonClass }} {{ $buttonPositionClass }} -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-[#A67C3D] text-white flex items-center justify-center z-10 transition hover:bg-[#B8945B] tracking-[0.08em] font-medium" aria-label="Next">
+        <button type="button" class="itemcarousel-next absolute {{ $nextButtonClass }} {{ $buttonPositionClass }} -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-[#A88444] text-white flex items-center justify-center z-10 transition hover:bg-[#A88444] tracking-[0.08em] font-medium" aria-label="Next">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
             </svg>

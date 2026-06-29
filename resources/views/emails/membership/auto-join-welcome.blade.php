@@ -77,8 +77,8 @@ $logoUrl = rtrim(config('app.url'), '/') . '/images/logo-njhg.png';
 
                             <table role="presentation" cellspacing="0" cellpadding="0" align="center" style="margin:0 auto 22px;">
                                 <tr>
-                                    <td align="center" bgcolor="#a67c3d">
-                                        <a href="{{ $passwordResetUrl }}" style="display:inline-block;padding:15px 26px;color:#ffffff;background:#a67c3d;font-size:12px;font-weight:bold;letter-spacing:2.5px;line-height:1;text-decoration:none;text-transform:uppercase;">
+                                    <td align="center" bgcolor="#a88444">
+                                        <a href="{{ $passwordResetUrl }}" style="display:inline-block;padding:15px 26px;color:#ffffff;background:#a88444;font-size:12px;font-weight:bold;letter-spacing:2.5px;line-height:1;text-decoration:none;text-transform:uppercase;">
                                             Set Your Password
                                         </a>
                                     </td>

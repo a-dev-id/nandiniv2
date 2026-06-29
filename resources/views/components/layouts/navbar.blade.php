@@ -82,8 +82,8 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                         </button>
 
                         <div id="navProfileMenu" class="absolute right-0 top-full z-[80] mt-2 hidden w-56 border border-slate-200 bg-white shadow-xl">
-                            <a href="{{ $bookDirectUrl }}" target="_blank" rel="noopener" class="block px-4 py-2.5 text-center text-xs font-medium uppercase text-white bg-[#A67C3D] transition hover:bg-[#B8945B] hover:text-white tracking-[0.08em] sm:text-sm">
-                                Book Now
+                            <a href="{{ $bookDirectUrl }}" target="_blank" rel="noopener" class="block px-4 py-2.5 text-center text-xs font-medium uppercase text-white bg-[#A88444] transition hover:bg-[#B8945B] hover:text-white tracking-[0.08em] sm:text-sm">
+                                Reserve
                             </a>
 
                             <a href="{{ $dashboardUrl }}" class="block px-4 py-2.5 text-center text-xs font-medium uppercase text-slate-700 transition hover:bg-[#B8945B] hover:text-white tracking-[0.08em] sm:text-sm">
@@ -112,8 +112,8 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                     {{-- Book --}}
                     <div class="relative">
                         <button id="navBookBtn" type="button" class="inline-flex items-center justify-center border transition duration-300 uppercase text-[8px] sm:text-sm px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 bg-white border-white text-slate-700 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium">
-                            <span class="sm:hidden">Book</span>
-                            <span class="hidden sm:inline">Book Now</span>
+                            <span class="sm:hidden">Reserve</span>
+                            <span class="hidden sm:inline">Reserve</span>
                         </button>
 
                         {{-- Dropdown --}}
@@ -131,8 +131,8 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                     @else
                     <div class="relative">
                         <button id="navBookBtn" type="button" class="inline-flex items-center justify-center border transition duration-300 uppercase text-xs px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 bg-white border-white text-slate-700 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium">
-                            <span class="sm:hidden">Book</span>
-                            <span class="hidden sm:inline">Book Now</span>
+                            <span class="sm:hidden">Reserve</span>
+                            <span class="hidden sm:inline">Reserve</span>
                         </button>
 
                         <div id="navBookMenu" class="absolute right-0 mt-2 w-52 bg-white border border-white shadow-xl hidden">
@@ -198,32 +198,6 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                         Home
                     </a>
 
-                    <a href="{{ route('holy-river.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                        Holy River
-                    </a>
-
-                    {{-- Dropdown: Offers & Experiences --}}
-                    <div>
-                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]" data-oc-toggle="ocOffers" aria-expanded="false">
-                            <span class="leading-6 text-left">Offers &amp; Experiences</span>
-                            <svg data-oc-icon class="h-4 w-4 text-slate-500 shrink-0 mt-1 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" d="M6 9l6 6 6-6" />
-                            </svg>
-                        </button>
-
-                        <div id="ocOffers" data-oc-panel class="overflow-hidden text-left transition-all duration-300 ease-out" style="max-height: 0px; opacity: 0;">
-                            <div class="pt-6 pb-5 ml-7 space-y-5">
-                                <a href="{{ route('offers.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                                    Offers
-                                </a>
-
-                                <a href="{{ route('experiences.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                                    Experiences
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
                     {{-- Dropdown: Accommodations --}}
                     <div>
                         <button type="button" class="w-full flex items-start justify-between gap-3 text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]" data-oc-toggle="ocVillas" aria-expanded="false">
@@ -246,9 +220,71 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                         </div>
                     </div>
 
+                    <a href="{{ route('holy-river.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                        Holy River
+                    </a>
+
                     <a href="{{ route('little-things.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         The Little Things
                     </a>
+
+                    <a href="{{ route('experiences.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                        Experiences
+                    </a>
+
+                    <a href="{{ route('offers.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                        Offers
+                    </a>
+
+                    <a href="{{ route('dining.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                        Dining
+                    </a>
+
+                    <a href="{{ route('spa.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                        Spa & Wellness
+                    </a>
+
+                    <a href="{{ route('wedding.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                        Wedding
+                    </a>
+
+                    <a href="{{ route('sustainability.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                        Sustainability
+                    </a>
+
+                    <a href="{{ route('gallery.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                        Gallery
+                    </a>
+
+                    <a href="{{ route('blog.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                        Blog & News
+                    </a>
+
+                    <a href="{{ route('about-us.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                        About Us
+                    </a>
+
+                    {{-- Dropdown: Offers & Experiences --}}
+                    {{-- <div>
+                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]" data-oc-toggle="ocOffers" aria-expanded="false">
+                            <span class="leading-6 text-left">Offers &amp; Experiences</span>
+                            <svg data-oc-icon class="h-4 w-4 text-slate-500 shrink-0 mt-1 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
+
+                        <div id="ocOffers" data-oc-panel class="overflow-hidden text-left transition-all duration-300 ease-out" style="max-height: 0px; opacity: 0;">
+                            <div class="pt-6 pb-5 ml-7 space-y-5">
+                                <a href="{{ route('offers.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                    Offers
+                                </a>
+
+                                <a href="{{ route('experiences.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                    Experiences
+                                </a>
+                            </div>
+                        </div>
+                    </div> --}}
 
                     {{-- Dropdown: More --}}
                     <div>
@@ -265,7 +301,7 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                                     Honeymoon
                                 </a>
 
-                                <a href="{{ route('dining.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                {{-- <a href="{{ route('dining.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
                                     Dining
                                 </a>
 
@@ -283,7 +319,7 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
 
                                 <a href="{{ route('blog.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
                                     Blog & News
-                                </a>
+                                </a> --}}
 
                                 <a href="{{ route('awards.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
                                     Awards
@@ -293,17 +329,17 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                                     Contact
                                 </a>
 
-                                <a href="{{ route('gallery.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                {{-- <a href="{{ route('gallery.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
                                     Gallery
-                                </a>
+                                </a> --}}
 
                                 <a href="{{ route('faq.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
                                     FAQ
                                 </a>
 
-                                <a href="{{ route('sustainability.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                {{-- <a href="{{ route('sustainability.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
                                     Sustainability
-                                </a>
+                                </a> --}}
                             </div>
                         </div>
                     </div>
@@ -324,7 +360,7 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                                 Sign In
                             </a>
 
-                            <a href="{{ $registerUrl }}" class="inline-flex w-full items-center justify-center border border-[#A67C3D] bg-[#A67C3D] px-4 py-2.5 text-[12px] font-medium uppercase text-white transition duration-300 hover:bg-[#B8945B] hover:border-[#B8945B] tracking-[0.08em] sm:text-[14px]">
+                            <a href="{{ $registerUrl }}" class="inline-flex w-full items-center justify-center border border-[#A88444] bg-[#A88444] px-4 py-2.5 text-[12px] font-medium uppercase text-white transition duration-300 hover:bg-[#B8945B] hover:border-[#B8945B] tracking-[0.08em] sm:text-[14px]">
                                 Join Now
                             </a>
                         </div>
@@ -429,8 +465,8 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                 }
 
                 navMemberBtn.classList.remove(
-                    'bg-[#A67C3D]',
-                    'border-[#A67C3D]',
+                    'bg-[#A88444]',
+                    'border-[#A88444]',
                     'text-white',
                     'hover:bg-[#B8945B]',
                     'hover:border-[#B8945B]',
