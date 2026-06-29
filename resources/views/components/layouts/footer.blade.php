@@ -5,6 +5,21 @@ $socialLinks = [
 'youtube' => 'https://www.youtube.com/@NandiniJunglebyHangingGardens',
 'tripadvisor' => 'https://www.tripadvisor.com/Hotel_Review-g21379722-d603743-Reviews-Nandini_Jungle_By_Hanging_Gardens-Buahan_Payangan_Gianyar_Regency_Bali.html',
 ];
+
+$seoFooterPageLabels = [
+    31 => 'Bali Jungle Resort Ubud',
+    34 => 'Ubud Wellness Retreat',
+];
+
+$seoFooterLinks = \App\Models\Page::query()
+    ->whereIn('id', array_keys($seoFooterPageLabels))
+    ->where('is_active', true)
+    ->get(['id', 'slug'])
+    ->sortBy(fn ($page) => array_search($page->id, array_keys($seoFooterPageLabels), true))
+    ->map(fn ($page) => [
+        'href' => route('pages.show', ['slug' => $page->slug]),
+        'label' => $seoFooterPageLabels[$page->id],
+    ]);
 @endphp
 
 <footer class="bg-black text-white" x-data="{ gdsOpen: false }" @keydown.escape.window="gdsOpen = false">
@@ -98,7 +113,9 @@ $socialLinks = [
                                 GDS Code
                             </button>
                         </li>
-                        {{-- <li><a href="/bali-jungle-resort-ubud" class="hover:underline">Bali Jungle Resort<br>Ubud</a></li> --}}
+                        @foreach ($seoFooterLinks as $link)
+                        <li><a href="{{ $link['href'] }}" class="hover:underline">{{ $link['label'] }}</a></li>
+                        @endforeach
                     </ul>
                 </div>
 
@@ -203,7 +220,9 @@ $socialLinks = [
                         <button type="button" class="hover:underline" @click="gdsOpen = true">
                             GDS Code
                         </button>
-                        <a href="/bali-jungle-resort-ubud" class="hover:underline">Bali Jungle Resort Ubud</a>
+                        @foreach ($seoFooterLinks as $link)
+                        <a href="{{ $link['href'] }}" class="hover:underline">{{ $link['label'] }}</a>
+                        @endforeach
                     </div>
                 </div>
 

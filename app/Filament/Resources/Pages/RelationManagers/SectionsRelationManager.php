@@ -42,6 +42,8 @@ class SectionsRelationManager extends RelationManager
         'contained_image_section',
         'split_media_section',
         'split_media_reverse',
+        'seo_split_media_section',
+        'seo_split_media_reverse',
         'three_images_section',
         'two_images_section',
         'two_images_reverse',
@@ -87,6 +89,8 @@ class SectionsRelationManager extends RelationManager
                                 'contained_image_section' => 'Contained Image Section',
                                 'split_media_section' => 'Split Media Section',
                                 'split_media_reverse' => 'Split Media Reverse',
+                                'seo_split_media_section' => 'SEO Split Media Section',
+                                'seo_split_media_reverse' => 'SEO Split Media Reverse',
                                 'three_images_section' => 'Three Images Section',
                                 'two_images_section' => 'Two Images Section',
                                 'two_images_reverse' => 'Two Images Reverse',
@@ -515,8 +519,14 @@ class SectionsRelationManager extends RelationManager
                                     ->label('Desktop Image File Name')
                                     ->placeholder('example-section-image')
                                     ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
-                                    ->maxLength(120)
-                                    ->dehydrated(false),
+                                    ->afterStateHydrated(function ($component, ?string $state, Get $get): void {
+                                        if (filled($state) || blank($get('image'))) {
+                                            return;
+                                        }
+
+                                        $component->state(pathinfo((string) $get('image'), PATHINFO_FILENAME));
+                                    })
+                                    ->maxLength(120),
 
                                 TextInput::make('image_alt')
                                     ->label('Desktop Alt Text')
@@ -549,8 +559,14 @@ class SectionsRelationManager extends RelationManager
                                     ->label('Mobile Image File Name')
                                     ->placeholder('example-section-mobile')
                                     ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
-                                    ->maxLength(120)
-                                    ->dehydrated(false),
+                                    ->afterStateHydrated(function ($component, ?string $state, Get $get): void {
+                                        if (filled($state) || blank($get('mobile_image'))) {
+                                            return;
+                                        }
+
+                                        $component->state(pathinfo((string) $get('mobile_image'), PATHINFO_FILENAME));
+                                    })
+                                    ->maxLength(120),
 
                                 TextInput::make('mobile_image_alt')
                                     ->label('Mobile Alt Text')
@@ -615,6 +631,8 @@ class SectionsRelationManager extends RelationManager
                                 'intro_text_section',
                                 'image_overlay_section',
                                 'how_it_works_section',
+                                'seo_split_media_section',
+                                'seo_split_media_reverse',
                                 'membership_tier_section',
                                 'membership_use_points_section',
                                 'membership_faq_section',
@@ -626,6 +644,8 @@ class SectionsRelationManager extends RelationManager
                                     ->visible(fn(Get $get): bool => in_array($get('section_key'), [
                                         'intro_text_section',
                                         'image_overlay_section',
+                                        'seo_split_media_section',
+                                        'seo_split_media_reverse',
                                         'membership_tier_section',
                                         'membership_use_points_section',
                                         'membership_faq_section',
@@ -635,7 +655,10 @@ class SectionsRelationManager extends RelationManager
                                         'center' => 'Center',
                                         'right' => 'Right',
                                     ])
-                                    ->default('center')
+                                    ->default(fn(Get $get): string => in_array($get('section_key'), [
+                                        'seo_split_media_section',
+                                        'seo_split_media_reverse',
+                                    ], true) ? 'left' : 'center')
                                     ->required(),
 
                                 Select::make('background_color')
@@ -644,6 +667,8 @@ class SectionsRelationManager extends RelationManager
                                     ->visible(fn(Get $get): bool => in_array($get('section_key'), [
                                         'intro_text_section',
                                         'how_it_works_section',
+                                        'seo_split_media_section',
+                                        'seo_split_media_reverse',
                                         'membership_tier_section',
                                         'membership_use_points_section',
                                         'membership_faq_section',
@@ -655,7 +680,10 @@ class SectionsRelationManager extends RelationManager
                                         'light_gold' => 'Light Gold',
                                         'dark_navy' => 'Dark Navy',
                                     ])
-                                    ->default('white'),
+                                    ->default(fn(Get $get): string => in_array($get('section_key'), [
+                                        'seo_split_media_section',
+                                        'seo_split_media_reverse',
+                                    ], true) ? 'soft_gray' : 'white'),
                             ]),
 
                         Section::make('Settings')
@@ -719,6 +747,8 @@ class SectionsRelationManager extends RelationManager
                         'contained_image_section' => 'Contained Image',
                         'split_media_section' => 'Split Media',
                         'split_media_reverse' => 'Split Media Reverse',
+                        'seo_split_media_section' => 'SEO Split Media',
+                        'seo_split_media_reverse' => 'SEO Split Media Reverse',
                         'three_images_section' => 'Three Images',
                         'two_images_section' => 'Two Images',
                         'two_images_reverse' => 'Two Images Reverse',
@@ -737,6 +767,8 @@ class SectionsRelationManager extends RelationManager
                         'contained_image_section' => 'info',
                         'split_media_section' => 'success',
                         'split_media_reverse' => 'warning',
+                        'seo_split_media_section' => 'success',
+                        'seo_split_media_reverse' => 'warning',
                         'three_images_section' => 'primary',
                         'two_images_section' => 'success',
                         'two_images_reverse' => 'warning',

@@ -54,6 +54,12 @@ $metaImage = $experience->card_image
     ?? $experience->hero_image_alt
     ?? $experience->title;
 
+    $inquiryImage = $experience->card_image
+    ?? $experience->image
+    ?? $experience->hero_image
+    ?? $page->hero_image
+    ?? null;
+
     $prices = $experience->prices
     ? $experience->prices->filter(fn ($price) => (bool) ($price->is_active ?? true))->values()
     : collect();
@@ -161,7 +167,13 @@ $metaImage = $experience->card_image
             @endif
 
             <div class="mb-8">
-                <x-buttons.link-button href="#" variant="solid">
+                <x-buttons.link-button
+                    href="#"
+                    variant="solid"
+                    data-inquiry-button
+                    data-inquiry-title="{{ $experience->title }}"
+                    :data-inquiry-image="$inquiryImage ? asset('storage/' . $inquiryImage) : null"
+                >
                     Inquire Now
                 </x-buttons.link-button>
             </div>

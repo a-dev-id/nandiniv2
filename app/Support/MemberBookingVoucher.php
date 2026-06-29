@@ -8,10 +8,6 @@ use Illuminate\Support\Facades\Auth;
 class MemberBookingVoucher
 {
     private const BOOKING_HOST = 'nandinijunglebyhanginggardens.reserve-online.net';
-    private const LEGACY_BOOKING_HOSTS = [
-        'ovs.tour-list.com',
-        'tour-list.com',
-    ];
 
     public static function appendToUrl(?string $url): ?string
     {
@@ -44,10 +40,6 @@ class MemberBookingVoucher
         }
 
         parse_str($parts['query'] ?? '', $query);
-
-        if (isset($query['room']) || isset($query['rate'])) {
-            return $url;
-        }
 
         $query['voucher'] = $voucher;
 
@@ -84,8 +76,7 @@ class MemberBookingVoucher
         $host = strtolower((string) parse_url($url, PHP_URL_HOST));
 
         return str_ends_with($host, '.reserve-online.net')
-            || $host === 'reserve-online.net'
-            || in_array($host, self::LEGACY_BOOKING_HOSTS, true);
+            || $host === 'reserve-online.net';
     }
 
     private static function normalizeBookingHost(string $url): string

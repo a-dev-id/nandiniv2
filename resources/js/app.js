@@ -353,6 +353,8 @@ Alpine.data("inquiryModal", () => ({
 
     setInquiryItem(trigger) {
         const container = trigger?.closest("section, article, main") || document;
+        const triggerTitle = trigger?.dataset?.inquiryTitle?.trim();
+        const triggerImage = trigger?.dataset?.inquiryImage?.trim();
         const heading =
             container.querySelector("h1") ||
             document.querySelector("h1") ||
@@ -361,12 +363,13 @@ Alpine.data("inquiryModal", () => ({
         const image = container.querySelector("img") || document.querySelector("main img, section img");
 
         this.itemTitle =
+            triggerTitle ||
             heading?.content ||
             heading?.textContent?.trim() ||
             document.title ||
             "Nandini Inquiry";
 
-        this.itemImage = ogImage?.content || image?.currentSrc || image?.src || "";
+        this.itemImage = triggerImage || ogImage?.content || image?.currentSrc || image?.src || "";
     },
 
     close() {

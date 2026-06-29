@@ -17,6 +17,11 @@ class PageController extends Controller
                         ->where('is_active', true)
                         ->orderBy('sort_order');
                 },
+                'sections.images' => function ($query) {
+                    $query
+                        ->where('is_active', true)
+                        ->orderBy('sort_order');
+                },
             ])
             ->where('slug', 'home')
             ->where('is_active', true)
@@ -51,6 +56,11 @@ class PageController extends Controller
         $page = Page::query()
             ->with([
                 'sections' => function ($query) {
+                    $query
+                        ->where('is_active', true)
+                        ->orderBy('sort_order');
+                },
+                'sections.images' => function ($query) {
                     $query
                         ->where('is_active', true)
                         ->orderBy('sort_order');

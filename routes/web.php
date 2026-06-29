@@ -28,6 +28,7 @@ use App\Http\Controllers\MembershipAuthController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\MembershipProfileController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\PageController;
 use App\Services\WebhotelierPullService;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -414,3 +415,7 @@ Route::get('/cron/members/lifecycle/{token}', MembershipLifecycleController::cla
 
 Route::get('/cron/members/test-welcome-email/{token}', TestWelcomeEmailController::class)
     ->name('cron.members.test-welcome-email');
+
+Route::get('/{slug}', [PageController::class, 'show'])
+    ->where('slug', '[A-Za-z0-9\-]+')
+    ->name('pages.show');

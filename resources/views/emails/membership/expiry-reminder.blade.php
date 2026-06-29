@@ -1,5 +1,5 @@
 @php
-$logoUrl = 'https://new-nandini.nandinibali.com/images/logo-njhg.png';
+$logoUrl = rtrim(config('app.url'), '/') . '/images/logo-njhg.png';
 $expiresAt = $member->membership_expires_at?->format('d F Y') ?? '-';
 @endphp
 

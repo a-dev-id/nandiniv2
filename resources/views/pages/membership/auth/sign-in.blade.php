@@ -37,7 +37,7 @@ $descriptionHasHtml = is_string($description) && $description !== strip_tags($de
     {{-- SIGN IN SECTION --}}
     <section class="w-full bg-[#F7F7F7] py-16 md:py-24 lg:py-28">
         <div class="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-8">
-            <div class="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-14">
+            <div class="mx-auto grid max-w-6xl grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-14">
 
                 {{-- LEFT CONTENT --}}
                 <div class="lg:col-span-5">

@@ -115,7 +115,7 @@ class MembershipEmailRelayService
             'html_body' => $html,
             'text_body' => (string) ($payload['text_body'] ?? $this->htmlToText($html)),
             'reply_to' => $payload['reply_to'] ?? null,
-            'source' => 'new-nandini',
+            'source' => parse_url((string) config('app.url'), PHP_URL_HOST) ?: 'nandinibali.com',
         ];
     }
 

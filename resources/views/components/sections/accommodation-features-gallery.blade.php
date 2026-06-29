@@ -61,6 +61,15 @@ if ($galleryImages->count() > 1 && $galleryImages->count() < 6) { $thumbnailImag
         $directBookingUrl = $accommodation?->booking_url;
         $secondaryButtonLabel = trim((string) ($accommodation?->button_label ?? ''));
         $secondaryButtonUrl = trim((string) ($accommodation?->button_url ?? ''));
+        $normalizedSecondaryButtonLabel = strtolower(trim(preg_replace('/\s+/', ' ', $secondaryButtonLabel)));
+        $isRoomFlightButton = $normalizedSecondaryButtonLabel === 'room + flight'
+        || str_contains($secondaryButtonUrl, 'reserve-online.net/DPSearch')
+        || str_contains($secondaryButtonUrl, 'ovs.tour-list.com/DPSearch');
+
+        if ($isRoomFlightButton) {
+            $secondaryButtonLabel = $secondaryButtonLabel !== '' ? $secondaryButtonLabel : 'Room + Flight';
+            $secondaryButtonUrl = $accommodation?->room_flight_url ?: $secondaryButtonUrl;
+        }
         @endphp
 
         @if ($accommodation)

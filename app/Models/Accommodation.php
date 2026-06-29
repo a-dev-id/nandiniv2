@@ -95,11 +95,28 @@ class Accommodation extends Model
 
     public function getBookingUrlAttribute(): ?string
     {
+        if (! empty($this->booking_url_override)) {
+            return $this->booking_url_override;
+        }
+
         if (! empty($this->villa_code)) {
             return 'https://nandinijunglebyhanginggardens.reserve-online.net/?room=' . urlencode($this->villa_code);
         }
 
         return null;
+    }
+
+    public function getRoomFlightUrlAttribute(): ?string
+    {
+        if (empty($this->villa_code)) {
+            return null;
+        }
+
+        return 'https://ovs.tour-list.com/DPSearch/?' . http_build_query([
+            'HotelCode' => 'nandinihgs',
+            'Language' => 'en',
+            'ExtRoomCode' => $this->villa_code,
+        ]);
     }
 
     public function getUrlPrefixAttribute(): string
