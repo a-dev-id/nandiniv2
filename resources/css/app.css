@@ -65,6 +65,13 @@
         color: #8f6b34 !important;
     }
 
+    .mini-popup-arrow:hover,
+    .mini-popup-arrow:focus-visible {
+        background-color: #A88444 !important;
+        border-color: #A88444 !important;
+        color: #ffffff !important;
+    }
+
     .itemcarousel-slick .slick-track {
         display: flex !important;
     }

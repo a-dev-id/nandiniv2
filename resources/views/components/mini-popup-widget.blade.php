@@ -111,12 +111,12 @@ $whatsappUrl = 'https://wa.me/6281236871170';
                             <a x-show="items[active].buttonLabel" :href="items[active].buttonUrl" class="inline-flex min-w-0 flex-1 items-center justify-center bg-[#A88444] px-4 py-2.5 text-[9px] font-medium uppercase text-white transition hover:bg-[#B8945B] sm:min-w-[150px] sm:flex-none sm:px-5 sm:py-3 sm:text-sm tracking-[0.08em]" x-text="items[active].buttonLabel"></a>
 
                             <div class="ml-auto flex items-center gap-2">
-                                <button type="button" class="flex h-7 w-7 items-center justify-center border border-[#A88444] text-[#A88444] transition hover:border-[#A88444] hover:bg-[#A88444] hover:text-white tracking-[0.08em] font-medium" aria-label="Previous popup offer" @click="prev()">
-                                    <span aria-hidden="true">&lsaquo;</span>
+                                <button type="button" class="mini-popup-arrow flex h-7 w-7 items-center justify-center border border-[#A88444] text-[#A88444] transition tracking-[0.08em] font-medium" aria-label="Previous popup offer" @click="prev()">
+                                    <span class="leading-none" aria-hidden="true">&lsaquo;</span>
                                 </button>
 
-                                <button type="button" class="flex h-7 w-7 items-center justify-center border border-[#A88444] text-[#A88444] transition hover:border-[#A88444] hover:bg-[#A88444] hover:text-white tracking-[0.08em] font-medium" aria-label="Next popup offer" @click="next()">
-                                    <span aria-hidden="true">&rsaquo;</span>
+                                <button type="button" class="mini-popup-arrow flex h-7 w-7 items-center justify-center border border-[#A88444] text-[#A88444] transition tracking-[0.08em] font-medium" aria-label="Next popup offer" @click="next()">
+                                    <span class="leading-none" aria-hidden="true">&rsaquo;</span>
                                 </button>
                             </div>
                         </div>

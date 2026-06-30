@@ -235,7 +235,7 @@ Route::get('/spa-wellness/{slug}', [SpaController::class, 'show'])
 | Wedding
 |--------------------------------------------------------------------------
 */
-Route::get('/wedding', [WeddingController::class, 'index'])
+Route::get('/weddings', [WeddingController::class, 'index'])
     ->name('wedding.index');
 
 /*

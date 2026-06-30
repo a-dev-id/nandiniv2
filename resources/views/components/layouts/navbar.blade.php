@@ -119,7 +119,7 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                         {{-- Dropdown --}}
                         <div id="navBookMenu" class="absolute right-0 mt-2 w-52 bg-white border border-white shadow-xl hidden">
                             <a href="{{ $bookDirectUrl }}" class="block text-center uppercase text-xs sm:text-[14px] px-4 py-2.5 bg-white text-slate-700 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium">
-                                Book Direct
+                                Room
                             </a>
 
                             <a href="https://ovs.tour-list.com/DPSearch/?HotelCode=nandinihgs&Language=en" class="block text-center uppercase text-xs sm:text-[14px] px-4 py-2.5 bg-white text-slate-700 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium">
@@ -137,7 +137,7 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
 
                         <div id="navBookMenu" class="absolute right-0 mt-2 w-52 bg-white border border-white shadow-xl hidden">
                             <a href="{{ $bookDirectUrl }}" class="block text-center uppercase text-xs sm:text-[14px] px-4 py-2.5 bg-white text-slate-700 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium">
-                                Book Direct
+                                Room
                             </a>
 
                             <a href="https://ovs.tour-list.com/DPSearch/?HotelCode=nandinihgs&Language=en" class="block text-center uppercase text-xs sm:text-[14px] px-4 py-2.5 bg-white text-slate-700 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium">
