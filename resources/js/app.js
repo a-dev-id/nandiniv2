@@ -283,6 +283,27 @@ function initDeferredYouTubeEmbeds() {
     });
 }
 
+function resetRecaptcha(form = null) {
+    if (!window.grecaptcha?.reset) {
+        return;
+    }
+
+    const widgets = form
+        ? form.querySelectorAll("[data-recaptcha-widget]")
+        : document.querySelectorAll("[data-recaptcha-widget]");
+
+    widgets.forEach((widget) => {
+        const widgetId = widget.dataset.widgetId;
+
+        if (widgetId !== undefined) {
+            window.grecaptcha.reset(Number(widgetId));
+            return;
+        }
+
+        window.grecaptcha.reset();
+    });
+}
+
 onPageReady(() => {
     initNavbarScroll();
     initNavbarActions();
@@ -440,9 +461,11 @@ Alpine.data("inquiryModal", () => ({
 
             this.message = data.message || "Thank you. Your inquiry has been sent.";
             form.reset();
+            resetRecaptcha(form);
             this.startCloseCountdown(5);
         } catch (error) {
             this.error = error.message || "We could not send your inquiry. Please try again.";
+            resetRecaptcha(form);
         } finally {
             this.isSubmitting = false;
         }

@@ -59,9 +59,12 @@
                     '...'
                     );
 
-                    $reserveUrl = ! empty($item->booking_url)
+                    $reserveUrl = $item->resolved_button_url
+                    ?? (! empty($item->booking_url)
                     ? \App\Support\MemberBookingVoucher::appendToUrl($item->booking_url)
-                    : null;
+                    : null);
+
+                    $reserveLabel = $item->button_label ?: 'Reserve';
                     @endphp
 
                     @if ($variant === 'gallery')
@@ -100,7 +103,7 @@
 
                             @if ($showReserveButton && $reserveUrl)
                             <a href="{{ $reserveUrl }}" class="inline-flex min-w-[120px] items-center justify-center border border-[#A88444] bg-[#A88444] px-4 py-2.5 text-xs font-medium uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] sm:text-sm">
-                                Reserve
+                                {{ $reserveLabel }}
                             </a>
                             @endif
                         </div>

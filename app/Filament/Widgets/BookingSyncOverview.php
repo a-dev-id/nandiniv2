@@ -8,6 +8,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class BookingSyncOverview extends StatsOverviewWidget
 {
+    protected ?string $pollingInterval = '60s';
+
     protected function getStats(): array
     {
         $last = BookingSyncLog::query()->latest()->first();

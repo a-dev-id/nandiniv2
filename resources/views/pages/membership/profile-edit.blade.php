@@ -263,6 +263,8 @@ $metaImage = $page?->hero_image ?: $page?->hero_mobile_image ?: null;
                         </div>
                     </div>
 
+                    <x-recaptcha />
+
                     <button type="submit" class="inline-flex w-full items-center justify-center bg-[#A88444] px-5 py-2.5 text-xs font-medium uppercase text-white transition hover:bg-[#B8945B] tracking-[0.08em] sm:text-sm">
                         Save Profile
                     </button>

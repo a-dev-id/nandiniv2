@@ -306,7 +306,11 @@ $useShowMore = $model === 'experience'
             }
 
             $reserveUrl = $model === 'offer'
-            ? \App\Support\MemberBookingVoucher::appendToUrl($item->booking_url)
+            ? $item->resolved_button_url
+            : null;
+
+            $reserveLabel = $model === 'offer'
+            ? ($item->button_label ?: 'Reserve')
             : null;
 
             $usesOfferCardLayout = in_array($model, ['offer', 'experience'], true);
@@ -370,7 +374,7 @@ $useShowMore = $model === 'experience'
 
                             @if ($model === 'offer' && $reserveUrl)
                             <a href="{{ $reserveUrl }}" class="inline-flex min-w-[120px] items-center justify-center border border-[#A88444] bg-[#A88444] px-4 py-2.5 text-xs font-medium uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] sm:text-sm">
-                                Reserve
+                                {{ $reserveLabel }}
                             </a>
                             @endif
                         </div>
@@ -417,7 +421,79 @@ $useShowMore = $model === 'experience'
 
         @if ($paginator && $paginator->hasPages())
         <div class="mt-14">
+            @if ($model === 'blog')
+            @php
+            $currentPage = $paginator->currentPage();
+            $lastPage = $paginator->lastPage();
+            $visibleStart = max(1, min($currentPage - 1, $lastPage - 3));
+            $visibleEnd = min($lastPage, max($currentPage + 1, 4));
+            $blogPageUrl = fn (int $pageNumber) => $pageNumber <= 1
+            ? route('blog.index')
+            : route('blog.page', ['page' => $pageNumber]);
+            @endphp
+
+            <nav class="flex justify-center" aria-label="Blog pagination">
+                <div class="inline-flex overflow-hidden rounded shadow-md ring-1 ring-slate-200">
+                    @if ($paginator->onFirstPage())
+                    <span class="flex h-10 w-10 items-center justify-center border-r border-slate-200 bg-slate-100 text-slate-400" aria-disabled="true" aria-label="Previous page">
+                        &lsaquo;
+                    </span>
+                    @else
+                    <a href="{{ $blogPageUrl($currentPage - 1) }}" rel="prev" class="flex h-10 w-10 items-center justify-center border-r border-slate-200 bg-[#A88444] text-white transition hover:bg-[#B8945B]" aria-label="Previous page">
+                        &lsaquo;
+                    </a>
+                    @endif
+
+                    @if ($visibleStart > 1)
+                    <a href="{{ $blogPageUrl(1) }}" class="flex h-10 min-w-10 items-center justify-center border-r border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 transition hover:bg-[#B8945B] hover:text-white">
+                        1
+                    </a>
+
+                    @if ($visibleStart > 2)
+                    <span class="flex h-10 min-w-10 items-center justify-center border-r border-slate-200 bg-white px-4 text-sm font-medium text-slate-500">
+                        ...
+                    </span>
+                    @endif
+                    @endif
+
+                    @for ($pageNumber = $visibleStart; $pageNumber <= $visibleEnd; $pageNumber++)
+                    @if ($pageNumber === $currentPage)
+                    <span class="flex h-10 min-w-10 items-center justify-center border-r border-slate-200 bg-[#A88444] px-4 text-sm font-medium text-white" aria-current="page">
+                        {{ $pageNumber }}
+                    </span>
+                    @else
+                    <a href="{{ $blogPageUrl($pageNumber) }}" class="flex h-10 min-w-10 items-center justify-center border-r border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 transition hover:bg-[#B8945B] hover:text-white">
+                        {{ $pageNumber }}
+                    </a>
+                    @endif
+                    @endfor
+
+                    @if ($visibleEnd < $lastPage)
+                    @if ($visibleEnd < $lastPage - 1)
+                    <span class="flex h-10 min-w-10 items-center justify-center border-r border-slate-200 bg-white px-4 text-sm font-medium text-slate-500">
+                        ...
+                    </span>
+                    @endif
+
+                    <a href="{{ $blogPageUrl($lastPage) }}" class="flex h-10 min-w-10 items-center justify-center border-r border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 transition hover:bg-[#B8945B] hover:text-white">
+                        {{ $lastPage }}
+                    </a>
+                    @endif
+
+                    @if ($paginator->hasMorePages())
+                    <a href="{{ $blogPageUrl($currentPage + 1) }}" rel="next" class="flex h-10 w-10 items-center justify-center bg-[#A88444] text-white transition hover:bg-[#B8945B]" aria-label="Next page">
+                        &rsaquo;
+                    </a>
+                    @else
+                    <span class="flex h-10 w-10 items-center justify-center bg-slate-100 text-slate-400" aria-disabled="true" aria-label="Next page">
+                        &rsaquo;
+                    </span>
+                    @endif
+                </div>
+            </nav>
+            @else
             {{ $paginator->links() }}
+            @endif
         </div>
         @endif
 

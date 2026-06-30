@@ -41,7 +41,7 @@ return [
         'public' => [
             'driver' => 'local',
             // 'root' => storage_path('app/public'),
-            'root' => env('PUBLIC_STORAGE_ROOT', '../nandinibali.com/storage'),
+            'root' => env('PUBLIC_STORAGE_ROOT', '../public_html/storage'),
             'url' => rtrim(env('APP_URL', 'http://localhost'), '/') . '/storage',
             'visibility' => 'public',
             'throw' => false,

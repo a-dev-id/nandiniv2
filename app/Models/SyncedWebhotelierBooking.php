@@ -9,6 +9,7 @@ class SyncedWebhotelierBooking extends Model
 {
     protected $fillable = [
         'member_id',
+        'member_assigned_manually',
         'booking_number',
         'guest_name',
         'email',
@@ -31,6 +32,7 @@ class SyncedWebhotelierBooking extends Model
         'check_in' => 'date',
         'check_out' => 'date',
         'rooms' => 'integer',
+        'member_assigned_manually' => 'boolean',
         'booking_total' => 'decimal:2',
         'remote_updated_at' => 'datetime',
         'last_synced_at' => 'datetime',

@@ -116,6 +116,8 @@ $memberPoints = (int) ($member?->points ?? 0);
                 </ul>
             </div>
 
+            <x-recaptcha />
+
             <div class="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
                 <button type="button" x-on:click="close()" x-bind:disabled="isSubmitting" class="inline-flex items-center justify-center bg-red-600 px-5 py-2.5 text-xs font-medium uppercase text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60 tracking-[0.08em] sm:text-sm">
                     Cancel

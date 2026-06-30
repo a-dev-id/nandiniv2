@@ -72,6 +72,11 @@
         color: #ffffff !important;
     }
 
+    .blog-detail-content figcaption,
+    .blog-detail-content .attachment__caption {
+        display: none !important;
+    }
+
     .itemcarousel-slick .slick-track {
         display: flex !important;
     }

@@ -10,6 +10,7 @@ use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class MemberRewardRedemptionsTable
 {
@@ -26,7 +27,16 @@ class MemberRewardRedemptionsTable
 
                 TextColumn::make('member.full_name')
                     ->label('Member')
-                    ->searchable(['members.first_name', 'members.last_name', 'members.name', 'members.email'])
+                    ->searchable(
+                        query: fn(Builder $query, string $search): Builder => $query->whereHas(
+                            'member',
+                            fn(Builder $query): Builder => $query
+                                ->where('first_name', 'like', "%{$search}%")
+                                ->orWhere('last_name', 'like', "%{$search}%")
+                                ->orWhere('name', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%")
+                        ),
+                    )
                     ->description(fn(MemberRewardRedemption $record): string => $record->member?->email ?? '-'),
 
                 TextColumn::make('reward_name')

@@ -107,21 +107,32 @@ class BookingSyncService
             return;
         }
 
-        $memberResult = $this->firstOrCreateMember($email, $payload);
-        $member = $memberResult['member'];
+        $booking = SyncedWebhotelierBooking::firstOrNew([
+            'booking_number' => $bookingNumber,
+        ]);
 
-        if ($memberResult['created']) {
-            $summary['members_created']++;
-            $summary['welcome_email_messages'][] = $this->sendWelcomeEmail($member, $bookingNumber, $payload);
-        } elseif ($memberResult['updated']) {
-            $summary['members_updated']++;
-            $summary['welcome_email_messages'][] = 'Welcome email skipped because member already exists.';
+        $member = null;
+
+        if ($booking->exists && $booking->member_assigned_manually && $booking->member_id) {
+            $member = $booking->member;
+            $summary['welcome_email_messages'][] = 'Welcome email skipped because booking is manually assigned to a member.';
         } else {
-            $summary['welcome_email_messages'][] = 'Welcome email skipped because member already exists.';
+            $memberResult = $this->firstOrCreateMember($email, $payload);
+            $member = $memberResult['member'];
+
+            if ($memberResult['created']) {
+                $summary['members_created']++;
+                $summary['welcome_email_messages'][] = $this->sendWelcomeEmail($member, $bookingNumber, $payload);
+            } elseif ($memberResult['updated']) {
+                $summary['members_updated']++;
+                $summary['welcome_email_messages'][] = 'Welcome email skipped because member already exists.';
+            } else {
+                $summary['welcome_email_messages'][] = 'Welcome email skipped because member already exists.';
+            }
         }
 
         $attributes = [
-            'member_id' => $member->getKey(),
+            'member_id' => $member?->getKey(),
             'guest_name' => $this->nullableString($payload['guest_name'] ?? null),
             'email' => $email,
             'phone' => $this->nullableString($payload['phone'] ?? null),
@@ -138,10 +149,6 @@ class BookingSyncService
             'remote_updated_at' => $this->dateTime($payload['remote_updated_at'] ?? null),
             'last_synced_at' => now(),
         ];
-
-        $booking = SyncedWebhotelierBooking::firstOrNew([
-            'booking_number' => $bookingNumber,
-        ]);
 
         $exists = $booking->exists;
         $booking->fill($attributes);

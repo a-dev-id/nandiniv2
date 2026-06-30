@@ -54,11 +54,7 @@ $metaImage = $offer->hero_image
 
     $buttonLabel = $offer->button_label ?: 'Reserve';
 
-    $buttonUrl = html_entity_decode(
-    $offer->booking_url,
-    ENT_QUOTES | ENT_HTML5,
-    'UTF-8'
-    );
+    $buttonUrl = $offer->resolved_button_url;
 
     $validStartDate = $offer->valid_start_date;
     $validEndDate = $offer->valid_end_date;

@@ -262,6 +262,10 @@ Route::get('/about-us', [AboutUsController::class, 'index'])
 Route::get('/blog-news', [BlogController::class, 'index'])
     ->name('blog.index');
 
+Route::get('/blog-news/page/{page}', [BlogController::class, 'index'])
+    ->whereNumber('page')
+    ->name('blog.page');
+
 Route::get('/blog-news/{slug}', [BlogController::class, 'show'])
     ->name('blog.show');
 

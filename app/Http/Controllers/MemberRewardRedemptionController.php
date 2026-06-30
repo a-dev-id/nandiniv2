@@ -6,6 +6,7 @@ use App\Models\Member;
 use App\Models\MemberRewardRedemption;
 use App\Models\Page;
 use App\Models\Reward;
+use App\Rules\Recaptcha;
 use App\Services\RewardRedemptionService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
@@ -37,6 +38,7 @@ class MemberRewardRedemptionController extends Controller
             'reward_points' => ['nullable', 'string', 'max:50'],
             'notes' => ['nullable', 'string', 'max:1000'],
             'special_request' => ['nullable', 'string', 'max:1000'],
+            'g-recaptcha-response' => Recaptcha::rules(),
         ]);
 
         $redeemDate = Carbon::parse($validated['redeem_date'])->format('d F Y');

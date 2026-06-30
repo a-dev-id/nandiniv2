@@ -5,12 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\BlogNews;
 use App\Models\Page;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class BlogController extends Controller
 {
-    public function index(): View
+    public function index(Request $request, ?int $page = null): View|RedirectResponse
     {
+        $queryPage = (int) $request->query('page', 0);
+
+        if ($queryPage > 1) {
+            return redirect()->route('blog.page', ['page' => $queryPage], 301);
+        }
+
+        if ($queryPage === 1 || $page === 1) {
+            return redirect()->route('blog.index', [], 301);
+        }
+
+        $currentPage = max(1, $page ?? 1);
+
         $page = Page::query()
             ->where('id', 15)
             ->where('is_active', true)
@@ -23,8 +37,7 @@ class BlogController extends Controller
             ->blog()
             ->orderByDesc('published_at')
             ->orderBy('sort_order')
-            ->paginate(9)
-            ->withQueryString();
+            ->paginate(9, ['*'], 'page', $currentPage);
 
         return view('pages.blog-news.index', [
             'page' => $page,

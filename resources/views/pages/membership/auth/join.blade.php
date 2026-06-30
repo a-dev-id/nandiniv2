@@ -319,6 +319,8 @@ $countries = [
                                 By signing up, I agree to receive and manage my Nandini Inner Circle membership account according to Nandini Jungle by Hanging Gardens policies.
                             </div>
 
+                            <x-recaptcha />
+
                             {{-- Submit --}}
                             <button id="register-submit-button" type="submit" class="inline-flex w-full items-center justify-center gap-3 bg-[#A88444] px-5 py-2.5 text-xs font-medium uppercase text-white transition hover:bg-[#B8945B] disabled:cursor-not-allowed disabled:opacity-50 md:w-auto tracking-[0.08em] sm:text-sm">
                                 <svg id="register-submit-spinner" class="hidden h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">

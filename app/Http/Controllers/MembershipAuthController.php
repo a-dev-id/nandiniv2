@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Member;
 use App\Models\Page;
 use App\Models\Accommodation;
+use App\Rules\Recaptcha;
 use App\Services\MembershipEmailRelayService;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
@@ -38,7 +39,9 @@ class MembershipAuthController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
+            'g-recaptcha-response' => Recaptcha::rules(),
         ]);
+        unset($credentials['g-recaptcha-response']);
 
         $remember = $request->boolean('remember');
 
@@ -173,6 +176,7 @@ class MembershipAuthController extends Controller
     {
         $validated = $request->validate([
             'email' => ['required', 'email'],
+            'g-recaptcha-response' => Recaptcha::rules(),
         ]);
 
         $status = Password::broker('members')->sendResetLink([
@@ -210,6 +214,7 @@ class MembershipAuthController extends Controller
             'token' => ['required', 'string'],
             'email' => ['required', 'email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'g-recaptcha-response' => Recaptcha::rules(),
         ]);
 
         $status = Password::broker('members')->reset(
@@ -272,6 +277,7 @@ class MembershipAuthController extends Controller
             'address' => ['nullable', 'string', 'max:1000'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'marketing_consent' => ['nullable', 'boolean'],
+            'g-recaptcha-response' => Recaptcha::rules(),
         ]);
 
         $member = Member::create([
@@ -336,6 +342,7 @@ class MembershipAuthController extends Controller
         $validated = $request->validate([
             'current_password' => ['required', 'string'],
             'password' => ['required', 'string', 'min:8', 'confirmed', 'different:current_password'],
+            'g-recaptcha-response' => Recaptcha::rules(),
         ]);
 
         if (! Hash::check($validated['current_password'], $member->password)) {

@@ -17,7 +17,6 @@ class MemberPointTransactionsTable
             ->columns([
                 TextColumn::make('member.full_name')
                     ->label('Member')
-                    ->searchable(['members.first_name', 'members.last_name', 'members.name', 'members.email'])
                     ->description(fn(MemberPointTransaction $record): string => $record->member?->email ?? '-')
                     ->weight('semibold'),
 

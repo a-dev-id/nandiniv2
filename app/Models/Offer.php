@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use App\Support\MemberBookingVoucher;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Route;
+use Throwable;
 
 class Offer extends Model
 {
@@ -84,6 +88,62 @@ class Offer extends Model
 
     public function getBookingUrlAttribute(): string
     {
+        if (filled($this->booking_url_override)) {
+            return html_entity_decode((string) $this->booking_url_override, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        }
+
+        $query = array_filter([
+            'checkin' => $this->resolveBookingCheckinDate(),
+            'nights' => $this->booking_nights,
+            'rooms' => $this->booking_rooms,
+            'adults' => $this->booking_adults,
+            'rate' => $this->booking_rate_code,
+            'bkcode' => $this->booking_bkcode,
+        ], fn($value) => filled($value));
+
+        if (! empty($query)) {
+            return 'https://nandinijunglebyhanginggardens.reserve-online.net/?' . http_build_query($query);
+        }
+
         return self::RESERVE_URL;
+    }
+
+    public function getResolvedButtonUrlAttribute(): ?string
+    {
+        if (filled($this->button_url)) {
+            return $this->resolveButtonRouteOrUrl($this->button_url);
+        }
+
+        return MemberBookingVoucher::appendToUrl($this->booking_url);
+    }
+
+    private function resolveButtonRouteOrUrl(string $value): string
+    {
+        $value = trim(html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+
+        if (Route::has($value)) {
+            try {
+                return route($value);
+            } catch (Throwable) {
+                return $value;
+            }
+        }
+
+        return MemberBookingVoucher::appendToUrl($value);
+    }
+
+    private function resolveBookingCheckinDate(): ?string
+    {
+        if (empty($this->booking_checkin_date)) {
+            return null;
+        }
+
+        $checkinDate = $this->booking_checkin_date instanceof Carbon
+            ? $this->booking_checkin_date
+            : Carbon::parse($this->booking_checkin_date);
+
+        return $checkinDate->isPast()
+            ? today()->toDateString()
+            : $checkinDate->toDateString();
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inquiry;
+use App\Rules\Recaptcha;
 use App\Services\MembershipEmailRelayService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -28,7 +29,9 @@ class InquiryController extends Controller
             'reserve_date' => ['required', 'date'],
             'reserve_time' => ['required', 'date_format:H:i'],
             'source_url' => ['nullable', 'url', 'max:2048'],
+            'g-recaptcha-response' => Recaptcha::rules(),
         ]);
+        unset($validated['g-recaptcha-response']);
 
         $name = trim($validated['title'] . ' ' . $validated['first_name'] . ' ' . $validated['last_name']);
         $sourceUrl = $validated['source_url'] ?? url()->previous();
