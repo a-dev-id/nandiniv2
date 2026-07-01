@@ -45,16 +45,16 @@ class OffersTable
                     ->label('Status')
                     ->badge()
                     ->getStateUsing(function ($record): string {
-                        if (! $record->is_active) {
-                            return 'Inactive';
-                        }
-
                         if ($record->valid_start_date && $record->valid_start_date->isFuture()) {
                             return 'Scheduled';
                         }
 
                         if ($record->valid_end_date && $record->valid_end_date->isPast()) {
                             return 'Expired';
+                        }
+
+                        if (! $record->is_active) {
+                            return 'Inactive';
                         }
 
                         return 'Live';

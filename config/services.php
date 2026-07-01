@@ -72,6 +72,10 @@ return [
         'lifecycle_cron_token' => env('MEMBERSHIP_LIFECYCLE_CRON_TOKEN'),
     ],
 
+    'offers' => [
+        'publication_cron_token' => env('OFFERS_PUBLICATION_CRON_TOKEN'),
+    ],
+
     'welcome_email' => [
         'test_mode' => env('WELCOME_EMAIL_TEST_MODE', true),
         'test_recipient' => env('WELCOME_EMAIL_TEST_RECIPIENT'),

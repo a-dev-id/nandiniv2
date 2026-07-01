@@ -71,11 +71,13 @@ class OfferForm
                                 DatePicker::make('valid_start_date')
                                     ->label('Valid Start Date')
                                     ->native(false)
+                                    ->beforeOrEqual('valid_end_date')
                                     ->helperText('Offer will start showing from this date.'),
 
                                 DatePicker::make('valid_end_date')
                                     ->label('Valid End Date')
                                     ->native(false)
+                                    ->afterOrEqual('valid_start_date')
                                     ->helperText('Offer will stop showing after this date.'),
 
                                 TextInput::make('button_label')

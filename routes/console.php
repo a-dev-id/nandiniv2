@@ -2,6 +2,7 @@
 
 use App\Models\Member;
 use App\Services\MembershipLifecycleService;
+use App\Services\OfferPublicationService;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -69,4 +70,13 @@ Artisan::command('membership:process-lifecycle {--skip-reminders : Do not send 9
     $this->info("Expired memberships skipped: {$expiredSummary['skipped']}");
 })->purpose('Send membership expiry reminders and process yearly tier renewals/downgrades.');
 
+Artisan::command('offers:sync-publication', function (OfferPublicationService $service) {
+    $summary = $service->sync();
+
+    $this->info("Offers activated: {$summary['activated']}");
+    $this->info("Future offers deactivated: {$summary['deactivated_scheduled']}");
+    $this->info("Expired offers deactivated: {$summary['deactivated_expired']}");
+})->purpose('Activate and deactivate offers based on their valid date range.');
+
 Schedule::command('membership:process-lifecycle')->dailyAt('08:00');
+Schedule::command('offers:sync-publication')->dailyAt('00:05');
