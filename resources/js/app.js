@@ -209,7 +209,7 @@ function initItemCarousel() {
             $el.slick({
                 slidesToShow: 3,
                 slidesToScroll: 1,
-                infinite: false,
+                infinite: true,
                 arrows: true,
                 prevArrow: $wrap.find(".itemcarousel-prev"),
                 nextArrow: $wrap.find(".itemcarousel-next"),

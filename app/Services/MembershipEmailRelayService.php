@@ -114,7 +114,7 @@ class MembershipEmailRelayService
             'subject' => (string) ($payload['subject'] ?? ''),
             'html_body' => $html,
             'text_body' => (string) ($payload['text_body'] ?? $this->htmlToText($html)),
-            'reply_to' => $payload['reply_to'] ?? null,
+            'reply_to' => $payload['reply_to'] ?? config('mail.guest_reply_to'),
             'source' => parse_url((string) config('app.url'), PHP_URL_HOST) ?: 'nandinibali.com',
         ];
     }

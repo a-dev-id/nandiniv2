@@ -36,6 +36,7 @@ class VerifyMemberEmailNotification extends Notification
 
         return (new MailMessage)
             ->subject('Verify Your Nandini Inner Circle Email')
+            ->replyTo(config('mail.guest_reply_to'))
             ->bcc($this->guestBcc())
             ->view('emails.membership.verify-email', [
                 'member' => $this->member,

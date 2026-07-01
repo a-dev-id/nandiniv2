@@ -29,6 +29,7 @@ class MemberPointsAddedNotification extends Notification
     {
         return (new MailMessage)
             ->subject('Your Points Have Been Added to Your Account')
+            ->replyTo(config('mail.guest_reply_to'))
             ->bcc($this->guestBcc())
             ->view('emails.membership.points-added', [
                 'member' => $notifiable,

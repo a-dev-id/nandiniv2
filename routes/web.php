@@ -44,6 +44,9 @@ Route::get('/__clear-cache/nandini-2026-06-23', function () {
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
 
+Route::get('/explore', [PageController::class, 'explore'])
+    ->name('explore');
+
 Route::get('/login', function () {
     if (config('features.disable_membership_feature')) {
         return redirect()->route('home');

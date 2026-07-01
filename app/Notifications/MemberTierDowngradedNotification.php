@@ -27,6 +27,7 @@ class MemberTierDowngradedNotification extends Notification
     {
         return (new MailMessage)
             ->subject('Your Membership Tier Has Been Updated')
+            ->replyTo(config('mail.guest_reply_to'))
             ->bcc($this->guestBcc())
             ->view('emails.membership.tier-downgraded', [
                 'member' => $notifiable,

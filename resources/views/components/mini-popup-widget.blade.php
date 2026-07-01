@@ -135,7 +135,7 @@ $whatsappUrl = 'https://wa.me/6281236871170';
 
     <div class="fixed bottom-5 right-4 z-[67] flex items-center gap-3 sm:right-5">
         <div x-show="whatsappTipVisible" x-transition class="hidden rounded-xl bg-white px-4 py-3 text-xs leading-none text-slate-700 shadow-xl ring-1 ring-black/10 sm:block sm:text-sm">
-            Hi, what can we help you?
+            Hi, how may we assist you today?
         </div>
 
         <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer" class="flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl transition hover:bg-[#1ebe5d] tracking-[0.08em] font-medium" aria-label="Chat with us on WhatsApp">

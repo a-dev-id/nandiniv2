@@ -80,7 +80,7 @@ class InquiryController extends Controller
                 'cc' => [$recipient],
                 'bcc' => $this->guestBcc(),
                 'subject' => 'Your Inquiry: ' . $inquiry->inquiry_title,
-                'reply_to' => $recipient,
+                'reply_to' => config('mail.guest_reply_to'),
             ]);
 
             if (! $result['success']) {

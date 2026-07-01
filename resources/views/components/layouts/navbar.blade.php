@@ -105,7 +105,7 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                     </div>
                     @else
                     {{-- Member: desktop/tablet only --}}
-                    <a id="navMemberBtn" href="{{ route('membership.index') }}" class="hidden sm:inline-flex items-center justify-center border transition duration-300 uppercase text-[8px] sm:text-sm px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 bg-transparent border-white text-white hover:bg-white hover:border-white text-slate-700 tracking-[0.08em] font-medium">
+                    <a id="navMemberBtn" href="{{ route('membership.index') }}" class="hidden sm:inline-flex items-center justify-center border transition duration-300 uppercase text-[8px] sm:text-sm px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 bg-transparent border-white text-white hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium">
                         BE A MEMBER
                     </a>
 
@@ -475,6 +475,7 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                     'hover:bg-white',
                     'hover:border-white',
                     'text-slate-700',
+                    'hover:text-slate-700',
                     'border-slate-950',
                     'text-slate-950',
                     'hover:bg-[#B8945B]',
@@ -496,9 +497,9 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                         'bg-transparent',
                         'border-white',
                         'text-white',
-                        'hover:bg-white',
-                        'hover:border-white',
-                        'text-slate-700'
+                        'hover:bg-[#B8945B]',
+                        'hover:border-[#B8945B]',
+                        'hover:text-white'
                     );
                 }
             }

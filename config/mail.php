@@ -119,4 +119,6 @@ return [
 
     'guest_bcc' => env('MAIL_GUEST_BCC') ?: 'news@nandinibali.com',
 
+    'guest_reply_to' => env('MAIL_GUEST_REPLY_TO') ?: 'reservation@nandinibali.com',
+
 ];

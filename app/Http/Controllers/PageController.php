@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Experience;
 use App\Models\Offer;
 use App\Models\Page;
 use Illuminate\View\View;
@@ -72,6 +73,38 @@ class PageController extends Controller
 
         return view('pages.show', [
             'page' => $page,
+        ]);
+    }
+
+    public function explore(): View
+    {
+        $page = Page::query()
+            ->where('id', 1)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $offers = Offer::query()
+            ->published()
+            ->orderBy('sort_order')
+            ->orderByDesc('id')
+            ->limit(8)
+            ->get();
+
+        $experiences = Experience::query()
+            ->where('is_active', true)
+            ->whereIn('slug', [
+                'moonlit-jungle-romance',
+                'riverside-romance',
+                'balinese-blessing-purification-at-the-holy-river',
+                'nandini-signature-spa-on-the-river',
+            ])
+            ->orderByRaw("FIELD(slug, 'moonlit-jungle-romance', 'riverside-romance', 'balinese-blessing-purification-at-the-holy-river', 'nandini-signature-spa-on-the-river')")
+            ->get();
+
+        return view('pages.explore', [
+            'page' => $page,
+            'offers' => $offers,
+            'experiences' => $experiences,
         ]);
     }
 }

@@ -19,6 +19,7 @@ class MembershipExpiryReminderNotification extends Notification
     {
         return (new MailMessage)
             ->subject('Your Membership Tier Is About to Be Downgraded')
+            ->replyTo(config('mail.guest_reply_to'))
             ->bcc($this->guestBcc())
             ->view('emails.membership.expiry-reminder', [
                 'member' => $notifiable,

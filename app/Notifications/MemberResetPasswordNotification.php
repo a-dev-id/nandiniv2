@@ -28,6 +28,7 @@ class MemberResetPasswordNotification extends Notification
 
         return (new MailMessage)
             ->subject('Reset Your Nandini Inner Circle Password')
+            ->replyTo(config('mail.guest_reply_to'))
             ->bcc($this->guestBcc())
             ->view('emails.membership.reset-password', [
                 'member' => $notifiable,
