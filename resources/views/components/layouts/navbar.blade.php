@@ -201,7 +201,7 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                     {{-- Dropdown: Accommodations --}}
                     <div>
                         <button type="button" class="w-full flex items-start justify-between gap-3 text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]" data-oc-toggle="ocVillas" aria-expanded="false">
-                            <span class="leading-6 text-left">Accommodations</span>
+                            <span class="leading-6 text-left">Jungle Villas &<br> Royal Suites</span>
                             <svg data-oc-icon class="h-4 w-4 text-slate-500 shrink-0 mt-1 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" d="M6 9l6 6 6-6" />
                             </svg>
@@ -209,12 +209,12 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
 
                         <div id="ocVillas" data-oc-panel class="overflow-hidden text-left transition-all duration-300 ease-out" style="max-height: 0px; opacity: 0;">
                             <div class="pt-6 pb-5 ml-7 space-y-5">
-                                <a href="{{ route('accommodations.suites') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                                    The Royal Suites
-                                </a>
-
                                 <a href="{{ route('accommodations.villas') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
                                     Jungle Villas
+                                </a>
+
+                                <a href="{{ route('accommodations.suites') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                    Royal Suites
                                 </a>
                             </div>
                         </div>

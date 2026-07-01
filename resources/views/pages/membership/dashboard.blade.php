@@ -1111,13 +1111,13 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                     @endforeach
                 </div>
 
-                <button type="button" class="dashboard-reward-carousel-prev absolute left-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-[#A88444] text-white transition hover:bg-[#A88444] md:h-12 md:w-12 tracking-[0.08em] font-medium" aria-label="Previous reward">
+                <button type="button" class="dashboard-reward-carousel-prev fold-carousel-arrow fold-image-carousel-arrow absolute left-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-[#A88444] text-white transition hover:bg-[#A88444] md:h-12 md:w-12 tracking-[0.08em] font-medium" aria-label="Previous reward">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="h-4 w-4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
                     </svg>
                 </button>
 
-                <button type="button" class="dashboard-reward-carousel-next absolute right-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-[#A88444] text-white transition hover:bg-[#A88444] md:h-12 md:w-12 tracking-[0.08em] font-medium" aria-label="Next reward">
+                <button type="button" class="dashboard-reward-carousel-next fold-carousel-arrow fold-image-carousel-arrow absolute right-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-[#A88444] text-white transition hover:bg-[#A88444] md:h-12 md:w-12 tracking-[0.08em] font-medium" aria-label="Next reward">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="h-4 w-4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
                     </svg>

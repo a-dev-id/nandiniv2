@@ -95,6 +95,49 @@
         visibility: hidden;
     }
 
+    @media (max-width: 340px) {
+        .fold-carousel-arrow {
+            width: 2rem !important;
+            height: 2rem !important;
+        }
+
+        .fold-image-carousel-arrow {
+            top: 6rem !important;
+        }
+
+        .fold-carousel-arrow svg {
+            width: 0.875rem !important;
+            height: 0.875rem !important;
+        }
+
+        .fold-carousel-actions {
+            flex-wrap: nowrap !important;
+            gap: 0.5rem !important;
+        }
+
+        .fold-carousel-actions > a,
+        .fold-carousel-actions > button {
+            min-width: 0 !important;
+            padding: 0.5rem 0.625rem !important;
+            font-size: 0.625rem !important;
+            line-height: 1.2 !important;
+            white-space: nowrap !important;
+        }
+
+        .fold-carousel-actions:has(> :nth-child(2)) > a,
+        .fold-carousel-actions:has(> :nth-child(2)) > button {
+            min-width: 0 !important;
+            flex: 1 1 0 !important;
+            padding: 0.625rem 0.5rem !important;
+        }
+
+        .fold-carousel-actions > :only-child {
+            flex: 0 0 auto !important;
+            min-width: 5.75rem !important;
+            max-width: 6.875rem !important;
+        }
+    }
+
     nav[aria-label="Pagination Navigation"] a:hover,
     nav[aria-label="Pagination Navigation"] a:hover svg {
         color: #ffffff !important;
