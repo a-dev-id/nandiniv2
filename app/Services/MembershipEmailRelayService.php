@@ -109,8 +109,8 @@ class MembershipEmailRelayService
 
         return [
             'to' => $payload['to'] ?? null,
-            'cc' => $this->mergeRecipients($payload['cc'] ?? [], config('mail.guest_cc')),
-            'bcc' => $payload['bcc'] ?? [],
+            'cc' => $this->mergeRecipients($payload['cc'] ?? []),
+            'bcc' => $this->mergeRecipients($payload['bcc'] ?? []),
             'subject' => (string) ($payload['subject'] ?? ''),
             'html_body' => $html,
             'text_body' => (string) ($payload['text_body'] ?? $this->htmlToText($html)),
@@ -135,8 +135,9 @@ class MembershipEmailRelayService
                     return $value;
                 }
 
-                return explode(',', (string) $value);
+                return [$value];
             })
+            ->flatMap(fn(mixed $value): array => explode(',', (string) $value))
             ->map(fn(mixed $value): string => trim((string) $value))
             ->filter()
             ->unique()

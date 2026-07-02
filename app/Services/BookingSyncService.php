@@ -247,15 +247,6 @@ class BookingSyncService
             return 'Welcome email skipped because member email is empty.';
         }
 
-        $testMode = filter_var(config('services.welcome_email.test_mode', true), FILTER_VALIDATE_BOOL);
-        $recipient = $testMode
-            ? trim((string) config('services.welcome_email.test_recipient'))
-            : (string) $member->email;
-
-        if ($testMode && $recipient === '') {
-            return 'Welcome email skipped because test recipient is empty.';
-        }
-
         try {
             // Booking sync uses the same welcome template, but delivery is delegated to the relay API.
             $result = app(MembershipEmailRelayService::class)->sendView('emails.membership.auto-join-welcome', [
@@ -267,7 +258,7 @@ class BookingSyncService
                 'loginUrl' => route('membership.login'),
                 'passwordResetUrl' => route('membership.password.request'),
             ], [
-                'to' => $recipient,
+                'to' => $member->email,
                 'bcc' => $this->guestBcc(),
                 'subject' => 'Welcome to Nandini Inner Circle',
             ]);
@@ -286,9 +277,7 @@ class BookingSyncService
                 'welcome_email_sent_at' => now(),
             ])->save();
 
-            return $testMode
-                ? 'Welcome email sent to test recipient.'
-                : 'Welcome email sent to member.';
+            return 'Welcome email sent to member.';
         } catch (Throwable $e) {
             Log::warning('Booking sync auto-join welcome email failed.', [
                 'member_id' => $member->id,

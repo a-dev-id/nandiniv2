@@ -186,7 +186,6 @@ class MemberRewardRedemptionsTable
                 'dashboardUrl' => route('membership.dashboard'),
             ], [
                 'to' => $member->email,
-                'cc' => self::mailRecipients(config('mail.guest_cc')),
                 'bcc' => self::mailRecipients(config('mail.guest_bcc')),
                 'subject' => 'Your Reward Has Been Successfully Redeemed',
             ]);

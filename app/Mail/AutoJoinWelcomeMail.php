@@ -27,7 +27,6 @@ class AutoJoinWelcomeMail extends Mailable
         return new Envelope(
             subject: 'Welcome to Nandini Inner Circle',
             replyTo: $this->guestReplyTo(),
-            cc: $this->guestCc(),
             bcc: $this->guestBcc(),
         );
     }
@@ -50,17 +49,7 @@ class AutoJoinWelcomeMail extends Mailable
     {
         $bcc = trim((string) config('mail.guest_bcc'));
 
-        return $bcc === '' ? [] : [$bcc];
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    private function guestCc(): array
-    {
-        $cc = trim((string) config('mail.guest_cc'));
-
-        return $cc === '' ? [] : array_values(array_filter(array_map('trim', explode(',', $cc))));
+        return $bcc === '' ? [] : array_values(array_filter(array_map('trim', explode(',', $bcc))));
     }
 
     /**

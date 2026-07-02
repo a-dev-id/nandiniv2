@@ -136,7 +136,6 @@ class MemberRewardRedemptionController extends Controller
                 'thankYouUrl' => route('membership.rewards.thank-you', $redemption),
             ], [
                 'to' => $member->email,
-                'cc' => $this->guestCc(),
                 'bcc' => $this->guestBcc(),
                 'subject' => 'Your Reward Redemption Confirmation',
             ]);
@@ -170,14 +169,6 @@ class MemberRewardRedemptionController extends Controller
             ])
             ->orderBy('sort_order')
             ->get();
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    private function guestCc(): array
-    {
-        return $this->mailRecipients(config('mail.guest_cc'));
     }
 
     /**
