@@ -342,7 +342,6 @@ class MembershipAuthController extends Controller
         $validated = $request->validate([
             'current_password' => ['required', 'string'],
             'password' => ['required', 'string', 'min:8', 'confirmed', 'different:current_password'],
-            'g-recaptcha-response' => Recaptcha::rules(),
         ]);
 
         if (! Hash::check($validated['current_password'], $member->password)) {

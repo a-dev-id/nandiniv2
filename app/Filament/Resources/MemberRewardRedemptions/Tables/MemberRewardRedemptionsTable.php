@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\MemberRewardRedemptions\Tables;
 
 use App\Models\MemberRewardRedemption;
+use App\Services\MembershipEmailRelayService;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
@@ -11,6 +12,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class MemberRewardRedemptionsTable
 {
@@ -101,6 +104,9 @@ class MemberRewardRedemptionsTable
                         $notes = self::appendStaffNote($record->notes, 'Accepted / used', $data['notes'] ?? null);
 
                         $record->markAsUsed($notes);
+                        $record->refresh();
+
+                        self::sendRedemptionSuccessEmail($record);
 
                         Notification::make()
                             ->title('Redemption accepted')
@@ -163,5 +169,55 @@ class MemberRewardRedemptionsTable
             $existingNotes,
             $line,
         ])));
+    }
+
+    private static function sendRedemptionSuccessEmail(MemberRewardRedemption $redemption): void
+    {
+        $member = $redemption->member;
+
+        if (! $member || blank($member->email)) {
+            return;
+        }
+
+        try {
+            $result = app(MembershipEmailRelayService::class)->sendView('emails.membership.reward-redemption-success', [
+                'member' => $member,
+                'redemption' => $redemption,
+                'dashboardUrl' => route('membership.dashboard'),
+            ], [
+                'to' => $member->email,
+                'cc' => self::mailRecipients(config('mail.guest_cc')),
+                'bcc' => self::mailRecipients(config('mail.guest_bcc')),
+                'subject' => 'Your Reward Has Been Successfully Redeemed',
+            ]);
+
+            if (! $result['success']) {
+                Log::warning('Reward redemption success email could not be sent through relay.', [
+                    'member_id' => $member->id,
+                    'redemption_id' => $redemption->id,
+                    'email' => $member->email,
+                    'relay_response' => $result,
+                ]);
+            }
+        } catch (Throwable $exception) {
+            Log::warning('Reward redemption success email could not be sent.', [
+                'member_id' => $member->id,
+                'redemption_id' => $redemption->id,
+                'email' => $member->email,
+                'error' => $exception->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private static function mailRecipients(mixed $value): array
+    {
+        return collect(explode(',', (string) $value))
+            ->map(fn(mixed $recipient): string => trim((string) $recipient))
+            ->filter()
+            ->values()
+            ->all();
     }
 }

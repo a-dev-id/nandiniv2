@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Member;
+use App\Support\AutoJoinBookingCutoff;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -64,6 +65,15 @@ class MemberAutoJoinService
                 'created' => false,
                 'skipped' => true,
                 'reason' => 'Reservation is cancelled.',
+                'email' => $email,
+            ];
+        }
+
+        if (! AutoJoinBookingCutoff::wasCreatedAfterCutoff($data)) {
+            return [
+                'created' => false,
+                'skipped' => true,
+                'reason' => 'Booking was not created after 1 July 2026.',
                 'email' => $email,
             ];
         }

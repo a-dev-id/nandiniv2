@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\BookingSyncLog;
 use App\Models\Member;
 use App\Models\SyncedWebhotelierBooking;
+use App\Support\AutoJoinBookingCutoff;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -117,7 +118,11 @@ class BookingSyncService
             $member = $booking->member;
             $summary['welcome_email_messages'][] = 'Welcome email skipped because booking is manually assigned to a member.';
         } else {
-            $memberResult = $this->firstOrCreateMember($email, $payload);
+            $memberResult = $this->firstOrCreateMember(
+                $email,
+                $payload,
+                AutoJoinBookingCutoff::wasCreatedAfterCutoff($payload)
+            );
             $member = $memberResult['member'];
 
             if ($memberResult['created']) {
@@ -126,6 +131,8 @@ class BookingSyncService
             } elseif ($memberResult['updated']) {
                 $summary['members_updated']++;
                 $summary['welcome_email_messages'][] = 'Welcome email skipped because member already exists.';
+            } elseif ($memberResult['skipped'] ?? false) {
+                $summary['welcome_email_messages'][] = $memberResult['reason'];
             } else {
                 $summary['welcome_email_messages'][] = 'Welcome email skipped because member already exists.';
             }
@@ -157,13 +164,23 @@ class BookingSyncService
         $exists ? $summary['bookings_updated']++ : $summary['bookings_created']++;
     }
 
-    private function firstOrCreateMember(string $email, array $payload): array
+    private function firstOrCreateMember(string $email, array $payload, bool $canCreateMember): array
     {
         $member = Member::whereRaw('LOWER(email) = ?', [$email])->first();
         $created = false;
         $updated = false;
 
         if (! $member) {
+            if (! $canCreateMember) {
+                return [
+                    'member' => null,
+                    'created' => false,
+                    'updated' => false,
+                    'skipped' => true,
+                    'reason' => 'Welcome email skipped because booking was not created after 1 July 2026.',
+                ];
+            }
+
             $guestName = $this->nullableString($payload['guest_name'] ?? null) ?: $email;
             [$firstName, $lastName] = $this->splitName($guestName);
             $temporaryPassword = trim((string) ($payload['booking_number'] ?? ''));

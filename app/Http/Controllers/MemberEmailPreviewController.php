@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Member;
+use App\Models\MemberRewardRedemption;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\URL;
 use Illuminate\View\View;
@@ -45,6 +46,27 @@ class MemberEmailPreviewController extends Controller
         ]);
 
         $member->id = 1;
+
+        $redemption = new MemberRewardRedemption([
+            'reward_name' => 'Jungle Spa Experience',
+            'points_used' => 250,
+            'status' => MemberRewardRedemption::STATUS_PENDING,
+            'redemption_code' => 'RDM-20260702-PREVIEW',
+            'expires_at' => now()->addMonth(),
+        ]);
+        $redemption->id = 1;
+        $redemption->created_at = now();
+
+        $usedRedemption = new MemberRewardRedemption([
+            'reward_name' => 'Jungle Spa Experience',
+            'points_used' => 250,
+            'status' => MemberRewardRedemption::STATUS_USED,
+            'redemption_code' => 'RDM-20260702-SUCCESS',
+            'expires_at' => now()->addMonth(),
+            'used_at' => now(),
+        ]);
+        $usedRedemption->id = 2;
+        $usedRedemption->created_at = now()->subDay();
 
         return [
             'verify-email' => [
@@ -116,6 +138,29 @@ class MemberEmailPreviewController extends Controller
                     'newTierLabel' => Member::getTierLabelForTier(Member::TIER_SILVER),
                     'totalPoints' => 800,
                     'description' => null,
+                    'dashboardUrl' => route('membership.dashboard'),
+                ],
+            ],
+            'reward-redeemed' => [
+                'title' => 'Reward Redeemed',
+                'subject' => 'Your Reward Redemption Confirmation',
+                'view' => 'emails.membership.reward-redeemed',
+                'data' => [
+                    'member' => $member,
+                    'redemption' => $redemption,
+                    'redeemDate' => now()->addWeek()->format('d F Y'),
+                    'redeemTime' => '14:00',
+                    'specialRequest' => 'Please prepare a quiet table near the jungle view.',
+                    'thankYouUrl' => route('membership.rewards.thank-you', $redemption),
+                ],
+            ],
+            'reward-redemption-success' => [
+                'title' => 'Reward Redemption Success',
+                'subject' => 'Your Reward Has Been Successfully Redeemed',
+                'view' => 'emails.membership.reward-redemption-success',
+                'data' => [
+                    'member' => $member,
+                    'redemption' => $usedRedemption,
                     'dashboardUrl' => route('membership.dashboard'),
                 ],
             ],

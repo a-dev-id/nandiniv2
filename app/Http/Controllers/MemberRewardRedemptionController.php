@@ -7,11 +7,13 @@ use App\Models\MemberRewardRedemption;
 use App\Models\Page;
 use App\Models\Reward;
 use App\Rules\Recaptcha;
+use App\Services\MembershipEmailRelayService;
 use App\Services\RewardRedemptionService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use InvalidArgumentException;
 use Throwable;
@@ -63,6 +65,14 @@ class MemberRewardRedemptionController extends Controller
                 notes: $notes
             );
 
+            $this->sendRedemptionEmail(
+                member: $member,
+                redemption: $redemption,
+                redeemDate: $redeemDate,
+                redeemTime: $redeemTime,
+                specialRequest: $validated['special_request'] ?? null
+            );
+
             return redirect()
                 ->route('membership.rewards.thank-you', $redemption)
                 ->with('success', 'Reward redeemed successfully.');
@@ -109,6 +119,46 @@ class MemberRewardRedemptionController extends Controller
         ]);
     }
 
+    private function sendRedemptionEmail(
+        Member $member,
+        MemberRewardRedemption $redemption,
+        string $redeemDate,
+        string $redeemTime,
+        ?string $specialRequest = null
+    ): void {
+        try {
+            $result = app(MembershipEmailRelayService::class)->sendView('emails.membership.reward-redeemed', [
+                'member' => $member,
+                'redemption' => $redemption,
+                'redeemDate' => $redeemDate,
+                'redeemTime' => $redeemTime,
+                'specialRequest' => filled($specialRequest) ? $specialRequest : null,
+                'thankYouUrl' => route('membership.rewards.thank-you', $redemption),
+            ], [
+                'to' => $member->email,
+                'cc' => $this->guestCc(),
+                'bcc' => $this->guestBcc(),
+                'subject' => 'Your Reward Redemption Confirmation',
+            ]);
+
+            if (! $result['success']) {
+                Log::warning('Reward redemption confirmation email could not be sent through relay.', [
+                    'member_id' => $member->id,
+                    'redemption_id' => $redemption->id,
+                    'email' => $member->email,
+                    'relay_response' => $result,
+                ]);
+            }
+        } catch (Throwable $exception) {
+            Log::warning('Reward redemption confirmation email could not be sent.', [
+                'member_id' => $member->id,
+                'redemption_id' => $redemption->id,
+                'email' => $member->email,
+                'error' => $exception->getMessage(),
+            ]);
+        }
+    }
+
     private function getPageSections(Page $page): Collection
     {
         return $page->sections()
@@ -120,5 +170,33 @@ class MemberRewardRedemptionController extends Controller
             ])
             ->orderBy('sort_order')
             ->get();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function guestCc(): array
+    {
+        return $this->mailRecipients(config('mail.guest_cc'));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function guestBcc(): array
+    {
+        return $this->mailRecipients(config('mail.guest_bcc'));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function mailRecipients(mixed $value): array
+    {
+        return collect(explode(',', (string) $value))
+            ->map(fn(mixed $recipient): string => trim((string) $recipient))
+            ->filter()
+            ->values()
+            ->all();
     }
 }
