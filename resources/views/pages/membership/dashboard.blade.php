@@ -592,7 +592,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
 
         <div class="relative w-full max-w-[640px]">
             <div class="mb-4 flex justify-end gap-3">
-                <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/70 bg-white text-[#A88444] shadow-lg transition hover:bg-[#A88444] hover:text-white focus:outline-none focus:ring-2 focus:ring-white/70 tracking-[0.08em] font-medium" aria-label="Download membership card" title="Download membership card" data-member-card-download data-card-image="{{ $currentCardImage }}" data-member-name="{{ e($memberName) }}" data-member-points="{{ e($formatPointLabel($memberPoints, 'upper')) }}" data-member-tier="{{ e($tierLabelMap[$memberTier] ?? 'Dana') }}" data-valid-until="{{ e($validUntilDate) }}" data-download-name="{{ e($memberCardDownloadName) }}">
+                <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/70 bg-white text-[#A88444] shadow-lg transition hover:border-[#B8945B] hover:bg-white hover:text-[#B8945B] disabled:cursor-wait disabled:opacity-70 disabled:hover:border-white/70 disabled:hover:text-[#A88444] focus:outline-none focus:ring-2 focus:ring-white/70 tracking-[0.08em] font-medium" aria-label="Download membership card" title="Download membership card" data-member-card-download data-card-image="{{ $currentCardImage }}" data-member-name="{{ e($memberName) }}" data-member-points="{{ e($formatPointLabel($memberPoints, 'upper')) }}" data-member-tier="{{ e($tierLabelMap[$memberTier] ?? 'Dana') }}" data-valid-until="{{ e($validUntilDate) }}" data-download-name="{{ e($memberCardDownloadName) }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <path d="M7 10l5 5 5-5"></path>
@@ -1078,7 +1078,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                                 </p>
                                 @endif
 
-                                <div class="mt-auto pt-12">
+                                <div class="mt-auto pt-6">
                                     <div class="flex items-center justify-between gap-5">
                                         <p class="text-xs uppercase text-slate-950 sm:text-sm">
                                             @if ($pointsLabel)

@@ -20,6 +20,7 @@ class MembershipExpiryReminderNotification extends Notification
         return (new MailMessage)
             ->subject('Your Membership Tier Is About to Be Downgraded')
             ->replyTo(config('mail.guest_reply_to'))
+            ->cc($this->guestCc())
             ->bcc($this->guestBcc())
             ->view('emails.membership.expiry-reminder', [
                 'member' => $notifiable,
@@ -35,5 +36,15 @@ class MembershipExpiryReminderNotification extends Notification
         $bcc = trim((string) config('mail.guest_bcc'));
 
         return $bcc === '' ? [] : [$bcc];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function guestCc(): array
+    {
+        $cc = trim((string) config('mail.guest_cc'));
+
+        return $cc === '' ? [] : array_values(array_filter(array_map('trim', explode(',', $cc))));
     }
 }

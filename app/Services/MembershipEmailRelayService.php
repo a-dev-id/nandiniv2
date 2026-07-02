@@ -109,7 +109,7 @@ class MembershipEmailRelayService
 
         return [
             'to' => $payload['to'] ?? null,
-            'cc' => $payload['cc'] ?? [],
+            'cc' => $this->mergeRecipients($payload['cc'] ?? [], config('mail.guest_cc')),
             'bcc' => $payload['bcc'] ?? [],
             'subject' => (string) ($payload['subject'] ?? ''),
             'html_body' => $html,
@@ -122,6 +122,26 @@ class MembershipEmailRelayService
     private function htmlToText(string $html): string
     {
         return trim(html_entity_decode(strip_tags($html), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function mergeRecipients(mixed ...$values): array
+    {
+        return collect($values)
+            ->flatMap(function (mixed $value): array {
+                if (is_array($value)) {
+                    return $value;
+                }
+
+                return explode(',', (string) $value);
+            })
+            ->map(fn(mixed $value): string => trim((string) $value))
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
     }
 
     private function responseBody(object $response): mixed

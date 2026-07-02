@@ -262,7 +262,38 @@ $useShowMore = $model === 'experience'
         @endif
 
         {{-- GRID --}}
-        <div class="grid grid-cols-1 gap-x-10 gap-y-14 md:grid-cols-2 xl:grid-cols-3">
+        <div
+            @if ($model === 'gallery')
+            x-data="{
+                activeIndex: null,
+                images: [],
+                open(index) {
+                    this.images = Array.from($el.querySelectorAll('[data-gallery-lightbox-item]')).map((item) => ({
+                        src: item.dataset.gallerySrc,
+                        alt: item.dataset.galleryAlt || 'Gallery image',
+                    }));
+                    this.activeIndex = index;
+                    document.body.classList.add('overflow-hidden');
+                },
+                close() {
+                    this.activeIndex = null;
+                    document.body.classList.remove('overflow-hidden');
+                },
+                previous() {
+                    if (! this.images.length) return;
+                    this.activeIndex = (this.activeIndex - 1 + this.images.length) % this.images.length;
+                },
+                next() {
+                    if (! this.images.length) return;
+                    this.activeIndex = (this.activeIndex + 1) % this.images.length;
+                },
+            }"
+            x-on:keydown.escape.window="close()"
+            x-on:keydown.arrow-left.window="activeIndex !== null && previous()"
+            x-on:keydown.arrow-right.window="activeIndex !== null && next()"
+            @endif
+        >
+        <div class="{{ $model === 'gallery' ? 'columns-1 gap-4 md:columns-2 xl:columns-3' : 'grid grid-cols-1 gap-x-10 gap-y-14 md:grid-cols-2 xl:grid-cols-3' }}">
             @forelse ($items as $item)
             @php
             if ($model === 'gallery') {
@@ -322,21 +353,29 @@ $useShowMore = $model === 'experience'
             );
             @endphp
 
-            <article class="flex" @if ($useShowMore) x-show="{{ $loop->index }} < visibleCount" @endif>
-                <div class="flex h-full w-full flex-col {{ $usesOfferCardLayout ? 'border border-slate-200 bg-white' : '' }}">
+            <article class="{{ $model === 'gallery' ? 'mb-4 break-inside-avoid' : 'flex' }}" @if ($useShowMore) x-show="{{ $loop->index }} < visibleCount" @endif>
+                <div class="{{ $model === 'gallery' ? 'w-full' : 'flex h-full w-full flex-col' }} {{ $usesOfferCardLayout ? 'border border-slate-200 bg-white' : '' }}">
 
                     @if ($model === 'gallery')
-                    <div class="aspect-[4/3] overflow-hidden bg-slate-100 md:aspect-3/2">
+                    <button
+                        type="button"
+                        data-gallery-lightbox-item
+                        data-gallery-src="{{ asset('storage/' . ($desktopImage ?: $mobileImage)) }}"
+                        data-gallery-alt="{{ $desktopAlt }}"
+                        class="group block w-full overflow-hidden bg-slate-100 text-left"
+                        x-on:click="open({{ $loop->index }})"
+                        aria-label="Open {{ $desktopAlt }}"
+                    >
                         @if ($desktopImage || $mobileImage)
-                        <picture class="block h-full w-full">
+                        <picture class="block w-full">
                             @if ($mobileImage)
                             <source media="(max-width: 767px)" srcset="{{ asset('storage/' . $mobileImage) }}">
                             @endif
 
-                            <img src="{{ asset('storage/' . ($desktopImage ?: $mobileImage)) }}" alt="{{ $desktopAlt }}" class="h-full w-full object-cover transition-transform duration-700 ease-out hover:scale-105" loading="lazy" />
+                            <img src="{{ asset('storage/' . ($desktopImage ?: $mobileImage)) }}" alt="{{ $desktopAlt }}" class="h-auto w-full transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" />
                         </picture>
                         @endif
-                    </div>
+                    </button>
                     @else
                     <a href="{{ $url }}" class="block">
                         <div class="group aspect-[4/3] overflow-hidden bg-slate-100 md:aspect-3/2">
@@ -409,6 +448,44 @@ $useShowMore = $model === 'experience'
                 </p>
             </div>
             @endforelse
+        </div>
+
+        @if ($model === 'gallery')
+        <div
+            x-cloak
+            x-show="activeIndex !== null"
+            x-transition.opacity
+            class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 px-4 py-10"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Gallery image preview"
+        >
+            <button type="button" class="absolute right-5 top-5 z-20 flex h-10 w-10 items-center justify-center text-white transition hover:text-[#B8945B]" x-on:click="close()" aria-label="Close gallery preview">
+                <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
+                </svg>
+            </button>
+
+            <button type="button" class="absolute left-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-[#B8945B]" x-on:click="previous()" aria-label="Previous image">
+                <svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 5l-7 7 7 7" />
+                </svg>
+            </button>
+
+            <img
+                x-bind:src="images[activeIndex]?.src"
+                x-bind:alt="images[activeIndex]?.alt"
+                class="max-h-[86vh] max-w-[86vw] object-contain shadow-2xl"
+            >
+
+            <button type="button" class="absolute right-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-[#B8945B]" x-on:click="next()" aria-label="Next image">
+                <svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+        @endif
+
         </div>
 
         @if ($useShowMore)

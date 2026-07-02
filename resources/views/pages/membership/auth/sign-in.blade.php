@@ -164,8 +164,6 @@ $descriptionHasHtml = is_string($description) && $description !== strip_tags($de
                                 </a>
                             </div>
 
-                            <x-recaptcha />
-
                             {{-- Submit --}}
                             <button type="submit" class="inline-flex w-full items-center justify-center bg-[#A88444] px-5 py-2.5 text-xs font-medium uppercase text-white transition hover:bg-[#B8945B] tracking-[0.08em] sm:text-sm">
                                 Sign In

@@ -39,9 +39,7 @@ class MembershipAuthController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
-            'g-recaptcha-response' => Recaptcha::rules(),
         ]);
-        unset($credentials['g-recaptcha-response']);
 
         $remember = $request->boolean('remember');
 

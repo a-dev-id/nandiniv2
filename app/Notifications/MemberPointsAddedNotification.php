@@ -30,6 +30,7 @@ class MemberPointsAddedNotification extends Notification
         return (new MailMessage)
             ->subject('Your Points Have Been Added to Your Account')
             ->replyTo(config('mail.guest_reply_to'))
+            ->cc($this->guestCc())
             ->bcc($this->guestBcc())
             ->view('emails.membership.points-added', [
                 'member' => $notifiable,
@@ -51,5 +52,15 @@ class MemberPointsAddedNotification extends Notification
         $bcc = trim((string) config('mail.guest_bcc'));
 
         return $bcc === '' ? [] : [$bcc];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function guestCc(): array
+    {
+        $cc = trim((string) config('mail.guest_cc'));
+
+        return $cc === '' ? [] : array_values(array_filter(array_map('trim', explode(',', $cc))));
     }
 }

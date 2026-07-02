@@ -117,6 +117,8 @@ return [
 
     'inquiry_recipient' => env('INQUIRY_RECIPIENT_EMAIL', 'reservation@nandinibali.com'),
 
+    'guest_cc' => env('MAIL_GUEST_CC') ?: null,
+
     'guest_bcc' => env('MAIL_GUEST_BCC') ?: 'news@nandinibali.com',
 
     'guest_reply_to' => env('MAIL_GUEST_REPLY_TO') ?: 'reservation@nandinibali.com',

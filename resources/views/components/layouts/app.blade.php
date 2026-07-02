@@ -258,9 +258,11 @@
 
     <x-layouts.footer />
 
+    @unless (request()->routeIs('membership.login'))
     <x-inquiry-modal />
+    @endunless
 
-    @if (! config('features.disable_membership_feature'))
+    @if (! config('features.disable_membership_feature') && ! request()->routeIs('membership.login'))
     <x-redemption-modal />
     @endif
 
