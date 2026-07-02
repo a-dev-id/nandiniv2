@@ -191,6 +191,8 @@ class BookingSyncService
                 'name' => $guestName,
                 'email' => $email,
                 'phone_number' => $this->nullableString($payload['phone'] ?? null),
+                'booking_check_in' => $this->date($payload['check_in'] ?? null),
+                'booking_check_out' => $this->date($payload['check_out'] ?? null),
                 'password' => $temporaryPassword,
                 'must_change_password' => true,
                 'member_source' => Member::SOURCE_AUTO_JOIN,
@@ -212,6 +214,14 @@ class BookingSyncService
 
         if (! $member->name && filled($payload['guest_name'] ?? null)) {
             $updates['name'] = $this->nullableString($payload['guest_name']);
+        }
+
+        if (! $member->booking_check_in && filled($payload['check_in'] ?? null)) {
+            $updates['booking_check_in'] = $this->date($payload['check_in']);
+        }
+
+        if (! $member->booking_check_out && filled($payload['check_out'] ?? null)) {
+            $updates['booking_check_out'] = $this->date($payload['check_out']);
         }
 
         if ($updates !== []) {

@@ -43,6 +43,8 @@ class MemberEmailPreviewController extends Controller
             'tier' => Member::TIER_BRONZE,
             'points' => 125,
             'member_source' => Member::SOURCE_AUTO_JOIN,
+            'booking_check_in' => now()->subDays(3),
+            'booking_check_out' => now(),
         ]);
 
         $member->id = 1;
@@ -162,6 +164,18 @@ class MemberEmailPreviewController extends Controller
                     'member' => $member,
                     'redemption' => $usedRedemption,
                     'dashboardUrl' => route('membership.dashboard'),
+                ],
+            ],
+            'member-checkout-today' => [
+                'title' => 'Member Checkout Today',
+                'subject' => 'Member Checkout Today: Angga Gardens',
+                'view' => 'emails.membership.member-checkout-today',
+                'data' => [
+                    'member' => tap(clone $member, function (Member $member): void {
+                        $member->booking_check_in = now()->subDays(3);
+                        $member->booking_check_out = now();
+                    }),
+                    'checkoutDate' => now(),
                 ],
             ],
             'tier-downgraded' => [

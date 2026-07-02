@@ -42,6 +42,18 @@ class MembersTable
                     ->sortable()
                     ->placeholder('-'),
 
+                TextColumn::make('booking_check_in')
+                    ->label('Check In')
+                    ->date('d M Y')
+                    ->sortable()
+                    ->placeholder('-'),
+
+                TextColumn::make('booking_check_out')
+                    ->label('Check Out')
+                    ->date('d M Y')
+                    ->sortable()
+                    ->placeholder('-'),
+
                 TextColumn::make('tier_label')
                     ->label('Tier')
                     ->badge()

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Member;
+use App\Services\MemberCheckoutNotificationService;
 use App\Services\MembershipLifecycleService;
 use App\Services\OfferPublicationService;
 use Illuminate\Foundation\Inspiring;
@@ -70,6 +71,15 @@ Artisan::command('membership:process-lifecycle {--skip-reminders : Do not send 9
     $this->info("Expired memberships skipped: {$expiredSummary['skipped']}");
 })->purpose('Send membership expiry reminders and process yearly tier renewals/downgrades.');
 
+Artisan::command('membership:send-checkout-notifications {--date= : Checkout date to process in YYYY-MM-DD format}', function (MemberCheckoutNotificationService $service) {
+    $summary = $service->sendTodayNotifications($this->option('date'));
+
+    $this->info("Checkout date: {$summary['date']}");
+    $this->info("Checkout notifications sent: {$summary['sent']}");
+    $this->info("Checkout notifications failed: {$summary['failed']}");
+    $this->info("Checkout notifications already sent today: {$summary['skipped']}");
+})->purpose('Send reservation notifications for members checking out today.');
+
 Artisan::command('offers:sync-publication', function (OfferPublicationService $service) {
     $summary = $service->sync();
 
@@ -79,4 +89,5 @@ Artisan::command('offers:sync-publication', function (OfferPublicationService $s
 })->purpose('Activate and deactivate offers based on their valid date range.');
 
 Schedule::command('membership:process-lifecycle')->dailyAt('08:00');
+Schedule::command('membership:send-checkout-notifications')->dailyAt('07:00');
 Schedule::command('offers:sync-publication')->dailyAt('00:05');

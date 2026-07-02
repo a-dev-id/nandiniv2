@@ -76,6 +76,19 @@ class MemberForm
                                     ->columnSpanFull(),
                             ]),
 
+                        Section::make('Stay Dates')
+                            ->columns(2)
+                            ->schema([
+                                DatePicker::make('booking_check_in')
+                                    ->label('Check In')
+                                    ->native(false),
+
+                                DatePicker::make('booking_check_out')
+                                    ->label('Check Out')
+                                    ->native(false)
+                                    ->helperText('Used for the daily checkout notification. Update this date if the guest extends their stay.'),
+                            ]),
+
                         Section::make('Membership')
                             ->columns(2)
                             ->schema([
@@ -164,6 +177,12 @@ class MemberForm
                                     ->native(false),
 
                                 DateTimePicker::make('updated_at')
+                                    ->disabled()
+                                    ->dehydrated(false)
+                                    ->native(false),
+
+                                DateTimePicker::make('checkout_notification_sent_at')
+                                    ->label('Checkout Notice Sent At')
                                     ->disabled()
                                     ->dehydrated(false)
                                     ->native(false),

@@ -5,8 +5,10 @@ namespace App\Services;
 use App\Models\Member;
 use App\Support\AutoJoinBookingCutoff;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Throwable;
 
 class MemberAutoJoinService
 {
@@ -131,6 +133,8 @@ class MemberAutoJoinService
             'phone_number' => $this->extractPhone($clientInfo, $data),
             'country' => $this->extractCountry($clientInfo, $data),
             'address' => $this->extractAddress($clientInfo, $data),
+            'booking_check_in' => $this->extractDate(Arr::get($data, 'roomStay.from')),
+            'booking_check_out' => $this->extractDate(Arr::get($data, 'roomStay.to')),
 
             'password' => $temporaryPassword,
             'must_change_password' => true,
@@ -181,6 +185,15 @@ class MemberAutoJoinService
     protected function makeTemporaryPassword(): string
     {
         return Str::upper(Str::random(3)) . random_int(1000, 9999) . Str::lower(Str::random(2));
+    }
+
+    protected function extractDate(mixed $value): ?string
+    {
+        try {
+            return filled($value) ? Carbon::parse($value)->toDateString() : null;
+        } catch (Throwable) {
+            return null;
+        }
     }
 
     /**
