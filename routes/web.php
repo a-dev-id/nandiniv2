@@ -14,6 +14,7 @@ use App\Http\Controllers\HoneymoonController;
 use App\Http\Controllers\LittleThingsController;
 use App\Http\Controllers\AccommodationController;
 use App\Http\Controllers\Cron\BookingSyncController;
+use App\Http\Controllers\Cron\MemberCheckoutNotificationController;
 use App\Http\Controllers\Cron\MembershipLifecycleController;
 use App\Http\Controllers\Cron\OfferPublicationController;
 use App\Http\Controllers\Cron\TestWelcomeEmailController;
@@ -420,6 +421,9 @@ Route::get('/cron/bookings/sync/{token}', BookingSyncController::class)
 
 Route::get('/cron/members/lifecycle/{token}', MembershipLifecycleController::class)
     ->name('cron.members.lifecycle');
+
+Route::get('/cron/members/checkout-notifications/{token}', MemberCheckoutNotificationController::class)
+    ->name('cron.members.checkout-notifications');
 
 Route::get('/cron/offers/publication/{token}', OfferPublicationController::class)
     ->name('cron.offers.publication');
