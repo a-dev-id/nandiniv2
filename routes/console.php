@@ -2,6 +2,7 @@
 
 use App\Models\Member;
 use App\Services\MemberCheckoutNotificationService;
+use App\Services\MemberStayDateBackfillService;
 use App\Services\MembershipLifecycleService;
 use App\Services\OfferPublicationService;
 use Illuminate\Foundation\Inspiring;
@@ -79,6 +80,14 @@ Artisan::command('membership:send-checkout-notifications {--date= : Checkout dat
     $this->info("Checkout notifications failed: {$summary['failed']}");
     $this->info("Checkout notifications already sent today: {$summary['skipped']}");
 })->purpose('Send reservation notifications for members checking out today.');
+
+Artisan::command('membership:backfill-stay-dates {--dry-run : Count records without saving changes}', function (MemberStayDateBackfillService $service) {
+    $summary = $service->backfill((bool) $this->option('dry-run'));
+
+    $this->info("Members checked: {$summary['checked']}");
+    $this->info("Members updated: {$summary['updated']}");
+    $this->info("Members skipped: {$summary['skipped']}");
+})->purpose('Fill blank member check-in/check-out dates from synced WebHotelier bookings.');
 
 Artisan::command('offers:sync-publication', function (OfferPublicationService $service) {
     $summary = $service->sync();
