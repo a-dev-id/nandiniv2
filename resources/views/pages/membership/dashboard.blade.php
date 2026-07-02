@@ -51,7 +51,7 @@ $validUntilDate = $member?->membership_expires_at
 $location = $member?->country ?: '-';
 
 $memberPoints = (int) ($member?->points ?? 0);
-$pointTransactionImage = asset('images/membership/dollar.png');
+$pointTransactionImage = asset('images/membership/reward.png');
 
 $formatPointLabel = function ($points, string $case = 'title'): string {
 $numericPoints = (float) $points;
