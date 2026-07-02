@@ -913,7 +913,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                                     <td class="px-4 py-5">
                                         <div class="flex min-w-[240px] items-center gap-3">
                                             @if ($historyImage)
-                                            <img src="{{ $historyImage }}" alt="{{ $title }}" class="h-14 w-16 object-cover" loading="lazy">
+                                            <img src="{{ $historyImage }}" alt="{{ $title }}" class="h-14 w-16 {{ $isPointTransaction ? 'object-contain [filter:brightness(0)_saturate(100%)_invert(55%)_sepia(24%)_saturate(838%)_hue-rotate(3deg)_brightness(91%)_contrast(86%)]' : 'object-cover' }}" loading="lazy">
                                             @else
                                             <div class="flex h-14 w-20 items-center justify-center bg-[#F7F7F7] text-lg font-medium uppercase text-[#916B2C] sm:text-xl">
                                                 {{ strtoupper(mb_substr($title, 0, 1)) }}
