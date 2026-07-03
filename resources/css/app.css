@@ -7,9 +7,9 @@
 
 @font-face {
     font-family: "Span";
-    src: url("/fonts/Span-Regular.otf") format("opentype");
+    src: url("/fonts/Span-Semibold.otf") format("opentype");
     font-style: normal;
-    font-weight: 400;
+    font-weight: 600;
     font-display: swap;
 }
 
@@ -44,7 +44,7 @@
     h6 {
         font-family: var(--font-span);
         letter-spacing: 0.15em !important;
-        font-weight: 400 !important;
+        font-weight: 600 !important;
     }
 
     th {
