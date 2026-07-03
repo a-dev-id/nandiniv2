@@ -13,6 +13,8 @@ use Throwable;
 
 class BookingSyncService
 {
+    private const AUTOMATIC_SYNC_LOOKBACK_HOURS = 48;
+
     public function __construct(
         private readonly MembershipBookingApiService $api,
     ) {}
@@ -246,7 +248,9 @@ class BookingSyncService
             ->latest('finished_at')
             ->value('finished_at');
 
-        return $last ? Carbon::parse($last)->toDateTimeString() : null;
+        return $last
+            ? Carbon::parse($last)->subHours(self::AUTOMATIC_SYNC_LOOKBACK_HOURS)->toDateTimeString()
+            : null;
     }
 
     private function sendWelcomeEmail(Member $member, string $bookingNumber, array $payload): string
