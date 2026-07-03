@@ -35,7 +35,12 @@ class BookingSyncLogsTable
                 TextColumn::make('bookings_updated')->numeric()->sortable(),
                 TextColumn::make('members_created')->numeric()->sortable(),
                 TextColumn::make('members_updated')->numeric()->sortable(),
-                TextColumn::make('message')->searchable()->limit(80)->wrap()->placeholder('-'),
+                TextColumn::make('message')
+                    ->searchable()
+                    ->limit(80)
+                    ->wrap()
+                    ->placeholder('-')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')->dateTime('d M Y H:i')->sortable(),
             ])
             ->filters([
