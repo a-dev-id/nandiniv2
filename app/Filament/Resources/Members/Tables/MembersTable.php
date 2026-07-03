@@ -76,6 +76,12 @@ class MembersTable
                     ->sortable()
                     ->placeholder('-'),
 
+                TextColumn::make('last_login_at')
+                    ->label('Last Login')
+                    ->dateTime('d M Y H:i')
+                    ->sortable()
+                    ->placeholder('Never'),
+
                 TextColumn::make('created_at')
                     ->label('Joined')
                     ->date('d M Y')

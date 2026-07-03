@@ -7,6 +7,50 @@ use App\Models\SyncedWebhotelierBooking;
 
 class MemberStayDateBackfillService
 {
+    public function fillMissingDatesForMember(Member $member, bool $dryRun = false): bool
+    {
+        if ($member->booking_check_in && $member->booking_check_out) {
+            return false;
+        }
+
+        $booking = $member->syncedBookings()
+            ->where(function ($query): void {
+                $query
+                    ->whereNotNull('check_in')
+                    ->orWhereNotNull('check_out');
+            })
+            ->orderByDesc('check_in')
+            ->orderByDesc('check_out')
+            ->orderByDesc('id')
+            ->get()
+            ->first(fn (SyncedWebhotelierBooking $booking): bool => ($member->booking_check_in || $booking->check_in)
+                && ($member->booking_check_out || $booking->check_out));
+
+        if (! $booking) {
+            return false;
+        }
+
+        $updates = [];
+
+        if (! $member->booking_check_in && $booking->check_in) {
+            $updates['booking_check_in'] = $booking->check_in->toDateString();
+        }
+
+        if (! $member->booking_check_out && $booking->check_out) {
+            $updates['booking_check_out'] = $booking->check_out->toDateString();
+        }
+
+        if ($updates === []) {
+            return false;
+        }
+
+        if (! $dryRun) {
+            $member->forceFill($updates)->save();
+        }
+
+        return true;
+    }
+
     /**
      * @return array{checked: int, updated: int, skipped: int}
      */
@@ -44,34 +88,10 @@ class MemberStayDateBackfillService
                 foreach ($members as $member) {
                     $summary['checked']++;
 
-                    $booking = $member->syncedBookings
-                        ->first(fn (SyncedWebhotelierBooking $booking): bool => ($member->booking_check_in || $booking->check_in)
-                            && ($member->booking_check_out || $booking->check_out));
-
-                    if (! $booking) {
+                    if (! $this->fillMissingDatesForMember($member, $dryRun)) {
                         $summary['skipped']++;
 
                         continue;
-                    }
-
-                    $updates = [];
-
-                    if (! $member->booking_check_in && $booking->check_in) {
-                        $updates['booking_check_in'] = $booking->check_in->toDateString();
-                    }
-
-                    if (! $member->booking_check_out && $booking->check_out) {
-                        $updates['booking_check_out'] = $booking->check_out->toDateString();
-                    }
-
-                    if ($updates === []) {
-                        $summary['skipped']++;
-
-                        continue;
-                    }
-
-                    if (! $dryRun) {
-                        $member->forceFill($updates)->save();
                     }
 
                     $summary['updated']++;

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\SyncedWebhotelierBookings\Tables;
 
 use App\Models\Member;
 use App\Models\SyncedWebhotelierBooking;
+use App\Services\MemberStayDateBackfillService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DatePicker;
@@ -88,6 +89,8 @@ class SyncedWebhotelierBookingsTable
                             'member_id' => $member->getKey(),
                             'member_assigned_manually' => true,
                         ])->save();
+
+                        app(MemberStayDateBackfillService::class)->fillMissingDatesForMember($member);
 
                         Notification::make()
                             ->title('Booking moved to member')

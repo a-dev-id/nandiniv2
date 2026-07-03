@@ -65,6 +65,7 @@ class MembershipAuthController extends Controller
 
         if ($member instanceof Member) {
             $member->applyYearlyTierDowngrade();
+            $this->markMemberLoggedIn($member);
         }
 
         $request->session()->regenerate();
@@ -147,6 +148,7 @@ class MembershipAuthController extends Controller
         }
 
         $member->applyYearlyTierDowngrade();
+        $this->markMemberLoggedIn($member);
 
         Auth::guard('member')->login($member, true);
         $request->session()->regenerate();
@@ -413,6 +415,13 @@ class MembershipAuthController extends Controller
     {
         return $member->member_source === Member::SOURCE_MANUAL_REGISTER
             && blank($member->email_verified_at);
+    }
+
+    protected function markMemberLoggedIn(Member $member): void
+    {
+        $member->forceFill([
+            'last_login_at' => now(),
+        ])->save();
     }
 
     protected function sendVerificationEmail(Member $member): void

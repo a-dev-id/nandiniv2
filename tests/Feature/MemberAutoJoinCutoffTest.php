@@ -139,4 +139,42 @@ class MemberAutoJoinCutoffTest extends TestCase
         ]);
         $this->assertNotNull(SyncedWebhotelierBooking::where('booking_number', 'SYNC-1002')->value('member_id'));
     }
+
+    public function test_booking_sync_fills_missing_stay_dates_for_manually_assigned_member(): void
+    {
+        $member = Member::create([
+            'name' => 'Manual Match',
+            'email' => 'manual-match@example.com',
+        ]);
+
+        SyncedWebhotelierBooking::create([
+            'member_id' => $member->id,
+            'member_assigned_manually' => true,
+            'booking_number' => 'SYNC-1003',
+            'email' => 'guest-booking@example.com',
+        ]);
+
+        $api = $this->mock(MembershipBookingApiService::class, function ($mock): void {
+            $mock->shouldReceive('fetchBookings')->once()->andReturn([
+                [
+                    'booking_number' => 'SYNC-1003',
+                    'created_at' => '2026-07-02 00:00:00',
+                    'status' => 'confirmed',
+                    'email' => 'guest-booking@example.com',
+                    'guest_name' => 'Guest Booking',
+                    'check_in' => '2026-08-17',
+                    'check_out' => '2026-08-20',
+                ],
+            ]);
+            $mock->shouldReceive('debugData')->andReturn([]);
+        });
+
+        $summary = app(BookingSyncService::class, ['api' => $api])->sync('2026-07-02 00:00:00');
+
+        $member->refresh();
+
+        $this->assertTrue($summary['success']);
+        $this->assertSame('2026-08-17', $member->booking_check_in->toDateString());
+        $this->assertSame('2026-08-20', $member->booking_check_out->toDateString());
+    }
 }

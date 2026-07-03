@@ -113,6 +113,7 @@ class BookingSyncService
         ]);
 
         $member = null;
+        $memberWasUpdated = false;
 
         if ($booking->exists && $booking->member_assigned_manually && $booking->member_id) {
             $member = $booking->member;
@@ -130,6 +131,7 @@ class BookingSyncService
                 $summary['welcome_email_messages'][] = $this->sendWelcomeEmail($member, $bookingNumber, $payload);
             } elseif ($memberResult['updated']) {
                 $summary['members_updated']++;
+                $memberWasUpdated = true;
                 $summary['welcome_email_messages'][] = 'Welcome email skipped because member already exists.';
             } elseif ($memberResult['skipped'] ?? false) {
                 $summary['welcome_email_messages'][] = $memberResult['reason'];
@@ -162,6 +164,10 @@ class BookingSyncService
         $booking->save();
 
         $exists ? $summary['bookings_updated']++ : $summary['bookings_created']++;
+
+        if ($member && app(MemberStayDateBackfillService::class)->fillMissingDatesForMember($member) && ! $memberWasUpdated) {
+            $summary['members_updated']++;
+        }
     }
 
     private function firstOrCreateMember(string $email, array $payload, bool $canCreateMember): array

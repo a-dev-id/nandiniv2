@@ -8,10 +8,16 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class MembershipOverview extends StatsOverviewWidget
 {
+    private const ACTIVE_LOGIN_DAYS = 30;
+    private const INACTIVE_LOGIN_DAYS = 90;
+
     protected ?string $pollingInterval = '60s';
 
     protected function getStats(): array
     {
+        $activeSince = now()->subDays(self::ACTIVE_LOGIN_DAYS);
+        $inactiveBefore = now()->subDays(self::INACTIVE_LOGIN_DAYS);
+
         $tierCounts = Member::query()
             ->selectRaw('tier, COUNT(*) as aggregate')
             ->groupBy('tier')
@@ -20,6 +26,20 @@ class MembershipOverview extends StatsOverviewWidget
         return [
             Stat::make('Total Members', number_format(Member::query()->count()))
                 ->color('primary'),
+
+            Stat::make('Active Members', number_format(Member::query()->where('last_login_at', '>=', $activeSince)->count()))
+                ->description('Logged in during the last ' . self::ACTIVE_LOGIN_DAYS . ' days')
+                ->color('success'),
+
+            Stat::make('Inactive Members', number_format(Member::query()
+                ->where(function ($query) use ($inactiveBefore): void {
+                    $query
+                        ->whereNull('last_login_at')
+                        ->orWhere('last_login_at', '<', $inactiveBefore);
+                })
+                ->count()))
+                ->description('Never logged in or inactive for ' . self::INACTIVE_LOGIN_DAYS . '+ days')
+                ->color('danger'),
 
             Stat::make('Total Member Points', number_format((int) Member::query()->sum('points')))
                 ->color('primary'),

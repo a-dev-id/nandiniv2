@@ -181,6 +181,12 @@ class MemberForm
                                     ->dehydrated(false)
                                     ->native(false),
 
+                                DateTimePicker::make('last_login_at')
+                                    ->label('Last Login At')
+                                    ->disabled()
+                                    ->dehydrated(false)
+                                    ->native(false),
+
                                 DateTimePicker::make('checkout_notification_sent_at')
                                     ->label('Checkout Notice Sent At')
                                     ->disabled()
