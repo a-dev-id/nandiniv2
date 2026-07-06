@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Member;
+use App\Services\BlogNewsPublicationService;
 use App\Services\MemberCheckoutNotificationService;
 use App\Services\MemberStayDateBackfillService;
 use App\Services\MembershipLifecycleService;
@@ -97,6 +98,14 @@ Artisan::command('offers:sync-publication', function (OfferPublicationService $s
     $this->info("Expired offers deactivated: {$summary['deactivated_expired']}");
 })->purpose('Activate and deactivate offers based on their valid date range.');
 
+Artisan::command('blog-news:sync-publication', function (BlogNewsPublicationService $service) {
+    $summary = $service->sync();
+
+    $this->info("Blog & News activated: {$summary['activated']}");
+    $this->info("Future Blog & News deactivated: {$summary['deactivated_scheduled']}");
+})->purpose('Activate and deactivate Blog & News based on their published date.');
+
 Schedule::command('membership:process-lifecycle')->dailyAt('08:00');
 Schedule::command('membership:send-checkout-notifications')->dailyAt('07:00');
 Schedule::command('offers:sync-publication')->dailyAt('00:05');
+Schedule::command('blog-news:sync-publication')->dailyAt('00:10');

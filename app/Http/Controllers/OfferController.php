@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Offer;
 use App\Models\Page;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class OfferController extends Controller
@@ -27,9 +28,11 @@ class OfferController extends Controller
         ]);
     }
 
-    public function show(Offer $offer): View
+    public function show(Offer $offer): View|RedirectResponse
     {
-        $this->abortIfOfferIsNotPublished($offer);
+        if (! $this->isOfferPublished($offer)) {
+            return redirect()->route('offers.index', [], 301);
+        }
 
         $page = Page::query()
             ->where('id', 2)
@@ -50,15 +53,12 @@ class OfferController extends Controller
         ]);
     }
 
-    protected function abortIfOfferIsNotPublished(Offer $offer): void
+    protected function isOfferPublished(Offer $offer): bool
     {
         $today = today();
 
-        $isPublished =
-            $offer->is_active
+        return $offer->is_active
             && (blank($offer->valid_start_date) || $offer->valid_start_date->lte($today))
             && (blank($offer->valid_end_date) || $offer->valid_end_date->gte($today));
-
-        abort_unless($isPublished, 404);
     }
 }

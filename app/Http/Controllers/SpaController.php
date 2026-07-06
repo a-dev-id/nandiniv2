@@ -6,6 +6,7 @@ use App\Models\Page;
 use App\Models\Spa;
 use App\Support\MemberBookingVoucher;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Carbon;
 use Illuminate\View\View;
 
@@ -39,12 +40,16 @@ class SpaController extends Controller
         ]);
     }
 
-    public function show(string $slug): View
+    public function show(string $slug): View|RedirectResponse
     {
         $spa = Spa::query()
             ->published()
             ->where('slug', $slug)
-            ->firstOrFail();
+            ->first();
+
+        if (! $spa) {
+            return redirect()->route('spa.index', [], 301);
+        }
 
         $spa->setAttribute('show_url', route('spa.show', $spa->slug));
         $spa->setAttribute('booking_url', $this->resolveBookingUrl($spa));

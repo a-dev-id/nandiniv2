@@ -5,6 +5,7 @@ use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\AwardController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\AboutUsController;
+use App\Http\Controllers\Cron\BlogNewsPublicationController;
 use App\Http\Controllers\WeddingController;
 use App\Http\Controllers\SpaController;
 use App\Http\Controllers\SustainabilityController;
@@ -31,6 +32,7 @@ use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\MembershipProfileController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\SitemapController;
 use App\Services\WebhotelierPullService;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -47,6 +49,9 @@ Route::get('/', [HomeController::class, 'index'])
 
 Route::get('/explore', [PageController::class, 'explore'])
     ->name('explore');
+
+Route::get('/sitemap.xml', SitemapController::class)
+    ->name('sitemap');
 
 Route::get('/login', function () {
     if (config('features.disable_membership_feature')) {
@@ -158,7 +163,14 @@ Route::redirect('/the-royal-suites/presidential-royal-suite', '/the-royal-suite/
 
 Route::get('/{type}/{accommodation:slug}', [AccommodationController::class, 'show'])
     ->whereIn('type', ['jungle-villas', 'the-royal-suites'])
-    ->name('accommodations.show');
+    ->name('accommodations.show')
+    ->missing(fn() => redirect()->route(
+        request()->route('type') === 'the-royal-suites'
+            ? 'accommodations.suites'
+            : 'accommodations.villas',
+        [],
+        301
+    ));
 
 /*
 |--------------------------------------------------------------------------
@@ -169,7 +181,8 @@ Route::get('/offers', [OfferController::class, 'index'])
     ->name('offers.index');
 
 Route::get('/offer/{offer:slug}', [OfferController::class, 'show'])
-    ->name('offers.show');
+    ->name('offers.show')
+    ->missing(fn() => redirect()->route('offers.index', [], 301));
 
 /*
 |--------------------------------------------------------------------------
@@ -184,7 +197,8 @@ Route::get('/experiences/{categorySlug}', [ExperienceController::class, 'index']
     ->name('experiences.category');
 
 Route::get('/experience/{experience:slug}', [ExperienceController::class, 'show'])
-    ->name('experiences.show');
+    ->name('experiences.show')
+    ->missing(fn() => redirect()->route('experiences.index', [], 301));
 
 /*
 |--------------------------------------------------------------------------
@@ -427,6 +441,9 @@ Route::get('/cron/members/checkout-notifications/{token}', MemberCheckoutNotific
 
 Route::get('/cron/offers/publication/{token}', OfferPublicationController::class)
     ->name('cron.offers.publication');
+
+Route::get('/cron/blog-news/publication/{token}', BlogNewsPublicationController::class)
+    ->name('cron.blog-news.publication');
 
 Route::get('/cron/members/test-welcome-email/{token}', TestWelcomeEmailController::class)
     ->name('cron.members.test-welcome-email');

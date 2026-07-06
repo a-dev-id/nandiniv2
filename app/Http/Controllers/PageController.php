@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Experience;
 use App\Models\Offer;
 use App\Models\Page;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class PageController extends Controller
@@ -52,7 +53,7 @@ class PageController extends Controller
         ]);
     }
 
-    public function show(string $slug): View
+    public function show(string $slug): View|RedirectResponse
     {
         $page = Page::query()
             ->with([
@@ -69,7 +70,11 @@ class PageController extends Controller
             ])
             ->where('slug', $slug)
             ->where('is_active', true)
-            ->firstOrFail();
+            ->first();
+
+        if (! $page) {
+            return redirect()->route('home', [], 301);
+        }
 
         return view('pages.show', [
             'page' => $page,

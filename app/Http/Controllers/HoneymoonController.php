@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Honeymoon;
 use App\Models\Page;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class HoneymoonController extends Controller
@@ -50,13 +51,15 @@ class HoneymoonController extends Controller
         ]);
     }
 
-    public function show(string $slug): View
+    public function show(string $slug): View|RedirectResponse
     {
         $honeymoon = Honeymoon::query()
             ->where('slug', $slug)
-            ->firstOrFail();
+            ->first();
 
-        $this->abortIfHoneymoonIsNotPublished($honeymoon);
+        if (! $honeymoon || ! $this->isHoneymoonPublished($honeymoon)) {
+            return redirect()->route('honeymoon.index', [], 301);
+        }
 
         $page = Page::query()
             ->where('id', 7)
@@ -113,15 +116,12 @@ class HoneymoonController extends Controller
             ->get();
     }
 
-    protected function abortIfHoneymoonIsNotPublished(Honeymoon $honeymoon): void
+    protected function isHoneymoonPublished(Honeymoon $honeymoon): bool
     {
         $today = today();
 
-        $isPublished =
-            $honeymoon->is_active
+        return $honeymoon->is_active
             && (blank($honeymoon->valid_start_date) || $honeymoon->valid_start_date->lte($today))
             && (blank($honeymoon->valid_end_date) || $honeymoon->valid_end_date->gte($today));
-
-        abort_unless($isPublished, 404);
     }
 }

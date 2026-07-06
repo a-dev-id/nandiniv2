@@ -46,7 +46,7 @@ class BlogController extends Controller
         ]);
     }
 
-    public function show(string $slug): View
+    public function show(string $slug): View|RedirectResponse
     {
         $page = Page::query()
             ->where('id', 15)
@@ -62,7 +62,11 @@ class BlogController extends Controller
                     ->where('is_active', true)
                     ->orderBy('sort_order'),
             ])
-            ->firstOrFail();
+            ->first();
+
+        if (! $blog) {
+            return redirect()->route('blog.index', [], 301);
+        }
 
         $relatedBlogs = BlogNews::query()
             ->published()

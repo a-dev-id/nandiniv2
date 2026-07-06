@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Experience;
 use App\Models\Page;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class HolyRiverController extends Controller
@@ -46,7 +47,7 @@ class HolyRiverController extends Controller
         ]);
     }
 
-    public function show(string $slug): View
+    public function show(string $slug): View|RedirectResponse
     {
         $experience = Experience::query()
             ->where('slug', $slug)
@@ -59,7 +60,11 @@ class HolyRiverController extends Controller
                     ->where('is_active', true)
                     ->orderBy('sort_order');
             }])
-            ->firstOrFail();
+            ->first();
+
+        if (! $experience) {
+            return redirect()->route('holy-river.index', [], 301);
+        }
 
         $page = Page::query()
             ->where('id', 24)

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Accommodation;
 use App\Models\Page;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class AccommodationController extends Controller
@@ -126,13 +127,19 @@ class AccommodationController extends Controller
         ]);
     }
 
-    public function show(string $type, Accommodation $accommodation): View
+    public function show(string $type, Accommodation $accommodation): View|RedirectResponse
     {
-        abort_unless($accommodation->is_active, 404);
+        if (! $accommodation->is_active) {
+            return $this->redirectToAccommodationRoot($type);
+        }
 
-        abort_unless($type === $accommodation->url_prefix, 404);
+        if ($type !== $accommodation->url_prefix) {
+            return $this->redirectToAccommodationRoot($type);
+        }
 
-        abort_if($accommodation->slug === 'presidential-royal-suite', 404);
+        if ($accommodation->slug === 'presidential-royal-suite') {
+            return redirect()->route('accommodations.presidential-royal-suite.show', [], 301);
+        }
 
         $accommodation->load([
             'activeImages',
@@ -166,5 +173,16 @@ class AccommodationController extends Controller
             }])
             ->orderBy('sort_order')
             ->get();
+    }
+
+    private function redirectToAccommodationRoot(string $type): RedirectResponse
+    {
+        return redirect()->route(
+            $type === 'the-royal-suites'
+                ? 'accommodations.suites'
+                : 'accommodations.villas',
+            [],
+            301
+        );
     }
 }

@@ -22,12 +22,18 @@ class ExperienceController extends Controller
         }
 
         if ($categorySlug !== null) {
-            abort_if($categorySlug === 'holy-river', 404);
+            if ($categorySlug === 'holy-river') {
+                return redirect()->route('holy-river.index', [], 301);
+            }
 
-            ExperienceCategory::query()
+            $category = ExperienceCategory::query()
                 ->where('slug', $categorySlug)
                 ->where('is_active', true)
-                ->firstOrFail();
+                ->first();
+
+            if (! $category) {
+                return redirect()->route('experiences.index', [], 301);
+            }
         }
 
         $page = Page::query()
@@ -56,14 +62,15 @@ class ExperienceController extends Controller
         ]);
     }
 
-    public function show(Experience $experience): View
+    public function show(Experience $experience): View|RedirectResponse
     {
-        abort_if(! $experience->is_active, 404);
+        if (! $experience->is_active) {
+            return redirect()->route('experiences.index', [], 301);
+        }
 
-        abort_if(
-            $experience->category && $experience->category->slug === 'holy-river',
-            404
-        );
+        if ($experience->category && $experience->category->slug === 'holy-river') {
+            return redirect()->route('holy-river.index', [], 301);
+        }
 
         $experience->load(['category', 'prices' => function ($query) {
             $query
