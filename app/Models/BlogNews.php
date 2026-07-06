@@ -21,11 +21,14 @@ class BlogNews extends Model
         'description',
 
         'hero_image',
+        'hero_image_file_name',
         'hero_image_alt',
         'hero_mobile_image',
+        'hero_mobile_image_file_name',
         'hero_mobile_image_alt',
 
         'card_image',
+        'card_image_file_name',
         'card_image_alt',
 
         'author_name',

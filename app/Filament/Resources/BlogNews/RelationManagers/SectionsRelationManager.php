@@ -157,7 +157,13 @@ class SectionsRelationManager extends RelationManager
                                     ->placeholder('example-section-image')
                                     ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
                                     ->maxLength(120)
-                                    ->dehydrated(false),
+                                    ->afterStateHydrated(function (TextInput $component, Get $get, ?string $state): void {
+                                        if (filled($state) || blank($get('image'))) {
+                                            return;
+                                        }
+
+                                        $component->state(pathinfo((string) $get('image'), PATHINFO_FILENAME));
+                                    }),
 
                                 TextInput::make('image_alt')
                                     ->label('Desktop Alt Text')
@@ -191,7 +197,13 @@ class SectionsRelationManager extends RelationManager
                                     ->placeholder('example-section-mobile')
                                     ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
                                     ->maxLength(120)
-                                    ->dehydrated(false),
+                                    ->afterStateHydrated(function (TextInput $component, Get $get, ?string $state): void {
+                                        if (filled($state) || blank($get('mobile_image'))) {
+                                            return;
+                                        }
+
+                                        $component->state(pathinfo((string) $get('mobile_image'), PATHINFO_FILENAME));
+                                    }),
 
                                 TextInput::make('mobile_image_alt')
                                     ->label('Mobile Alt Text')

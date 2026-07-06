@@ -11,9 +11,11 @@ class BlogNewsSectionImage extends Model
         'blog_news_section_id',
 
         'image',
+        'image_file_name',
         'image_alt',
 
         'mobile_image',
+        'mobile_image_file_name',
         'mobile_image_alt',
 
         'caption',

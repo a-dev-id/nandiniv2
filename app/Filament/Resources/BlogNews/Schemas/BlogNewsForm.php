@@ -154,7 +154,13 @@ class BlogNewsForm
                                     ->placeholder('example-desktop-hero')
                                     ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
                                     ->maxLength(120)
-                                    ->dehydrated(false),
+                                    ->afterStateHydrated(function (TextInput $component, Get $get, ?string $state): void {
+                                        if (filled($state) || blank($get('hero_image'))) {
+                                            return;
+                                        }
+
+                                        $component->state(pathinfo((string) $get('hero_image'), PATHINFO_FILENAME));
+                                    }),
 
                                 TextInput::make('hero_image_alt')
                                     ->label('Desktop Hero Alt Text')
@@ -188,7 +194,13 @@ class BlogNewsForm
                                     ->placeholder('example-mobile-hero')
                                     ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
                                     ->maxLength(120)
-                                    ->dehydrated(false),
+                                    ->afterStateHydrated(function (TextInput $component, Get $get, ?string $state): void {
+                                        if (filled($state) || blank($get('hero_mobile_image'))) {
+                                            return;
+                                        }
+
+                                        $component->state(pathinfo((string) $get('hero_mobile_image'), PATHINFO_FILENAME));
+                                    }),
 
                                 TextInput::make('hero_mobile_image_alt')
                                     ->label('Mobile Hero Alt Text')
@@ -226,7 +238,13 @@ class BlogNewsForm
                                     ->placeholder('example-card-image')
                                     ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
                                     ->maxLength(120)
-                                    ->dehydrated(false),
+                                    ->afterStateHydrated(function (TextInput $component, Get $get, ?string $state): void {
+                                        if (filled($state) || blank($get('card_image'))) {
+                                            return;
+                                        }
+
+                                        $component->state(pathinfo((string) $get('card_image'), PATHINFO_FILENAME));
+                                    }),
 
                                 TextInput::make('card_image_alt')
                                     ->label('Card Image Alt Text')
