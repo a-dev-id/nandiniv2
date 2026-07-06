@@ -97,11 +97,11 @@ $metaImage = $blog->hero_image
             @endif
 
             @if (! empty($blog->description))
-            <div class="blog-detail-content prose prose-slate text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto [&_p]:mb-4 [&_p]:min-h-6 [&_p:last-child]:mb-0 [&_strong]:font-semibold text-slate-700 [&_ul]:my-6 [&_ol]:my-6 [&_li]:mb-1 [&_h2]:mt-10 [&_h1]:mb-3 [&_h2]:mb-3 [&_h3]:mb-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h3]:mt-8 [&_h3]:text-base [&_h3]:font-semibold sm:text-sm sm:[&_h2]:text-xl sm:[&_h3]:text-lg">
+            <div class="blog-detail-content prose prose-slate text-left text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto [&_p]:mb-4 [&_p]:min-h-6 [&_p:last-child]:mb-0 [&_strong]:font-semibold text-slate-700 [&_ul]:my-6 [&_ol]:my-6 [&_li]:mb-1 [&_h2]:mt-10 [&_h1]:mb-3 [&_h2]:mb-3 [&_h3]:mb-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h3]:mt-8 [&_h3]:text-base [&_h3]:font-semibold sm:text-sm sm:[&_h2]:text-xl sm:[&_h3]:text-lg">
                 {!! $blog->description !!}
             </div>
             @elseif (! empty($blog->excerpt))
-            <p class="text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto sm:text-sm">
+            <p class="text-left text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto sm:text-sm">
                 {{ $blog->excerpt }}
             </p>
             @endif
@@ -118,7 +118,10 @@ $metaImage = $blog->hero_image
 
     {{-- Blog Sections --}}
     @foreach ($sections as $section)
-    @if ($section->section_key === 'image_overlay_section')
+    @if ($section->section_key === 'intro_text_section')
+    <x-sections.intro-text-section :section="$section" />
+
+    @elseif ($section->section_key === 'image_overlay_section')
     <x-sections.image-overlay-section :section="$section" />
 
     @elseif ($section->section_key === 'split_media_section')

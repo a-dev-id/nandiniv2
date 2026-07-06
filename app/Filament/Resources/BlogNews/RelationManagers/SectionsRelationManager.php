@@ -64,6 +64,7 @@ class SectionsRelationManager extends RelationManager
                             ->native(false)
                             ->live()
                             ->options([
+                                'intro_text_section' => 'Intro / Text Section',
                                 'image_overlay_section' => 'Image Overlay Section',
                                 'contained_image_section' => 'Contained Image Section',
                                 'split_media_section' => 'Split Media Section',
@@ -324,6 +325,7 @@ class SectionsRelationManager extends RelationManager
                     ->label('Type')
                     ->badge()
                     ->formatStateUsing(fn(?string $state): string => match ($state) {
+                        'intro_text_section' => 'Intro Text',
                         'image_overlay_section' => 'Image Overlay',
                         'contained_image_section' => 'Contained Image',
                         'split_media_section' => 'Split Media',
@@ -335,6 +337,7 @@ class SectionsRelationManager extends RelationManager
                         default => $state ? Str::headline($state) : '-',
                     })
                     ->color(fn(?string $state): string => match ($state) {
+                        'intro_text_section' => 'gray',
                         'image_overlay_section' => 'info',
                         'contained_image_section' => 'info',
                         'split_media_section' => 'success',
