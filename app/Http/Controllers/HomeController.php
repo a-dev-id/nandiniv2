@@ -42,11 +42,7 @@ class HomeController extends Controller
 
         $experienceCategories = ExperienceCategory::query()
             ->where('is_active', true)
-            ->whereIn('slug', [
-                'jungle-romance',
-                'signature-dining-experiences',
-                'jungle-wellness-spa-rituals',
-            ])
+            ->whereNot('slug', 'holy-river')
             ->orderBy('sort_order')
             ->orderByDesc('id')
             ->get();

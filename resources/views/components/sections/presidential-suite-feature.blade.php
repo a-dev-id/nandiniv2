@@ -38,8 +38,7 @@ return trim((string) $text);
 };
 
 $title = $accommodation?->subtitle ?: $accommodation?->title;
-$description = $cleanText($accommodation?->description ?: $accommodation?->excerpt);
-$description = \Illuminate\Support\Str::limit($description, 360, '');
+$description = $cleanText($accommodation?->excerpt ?: $accommodation?->description);
 $url = $accommodation?->show_url ?? '#';
 
 $leadImage = $resolveImage($accommodation?->hero_image ?: $accommodation?->card_image);

@@ -13,20 +13,6 @@
 'variant' => 'cards',
 ])
 
-@once
-@push('css')
-<style>
-    .item-carousel-description-collapsed {
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 3;
-        overflow: hidden;
-    }
-
-</style>
-@endpush
-@endonce
-
 <section class="{{ $bottomPaddingClass }} {{ $wrapperClass }}">
     <div class="item-carousel-wrap mx-auto {{ $innerPaddingClass }} relative">
 
@@ -53,11 +39,6 @@
                     $descriptionSummary = html_entity_decode(strip_tags((string) ($item->description ?? '')), ENT_QUOTES | ENT_HTML5, 'UTF-8');
                     $summary = trim($excerptSummary) !== '' ? $excerptSummary : $descriptionSummary;
                     $summary = trim((string) preg_replace('/\s+/', ' ', $summary));
-                    $shortSummary = \Illuminate\Support\Str::words(
-                    preg_replace('/\.{3,}/', '', $summary) ?: $summary,
-                    24,
-                    '...'
-                    );
 
                     $reserveUrl = $item->resolved_button_url
                     ?? (! empty($item->booking_url)
@@ -92,9 +73,8 @@
                         </h3>
 
                         @if ($summary)
-                        <p x-data="{ expanded: false }" x-bind:aria-expanded="expanded.toString()" role="button" tabindex="0" class="mt-2 grow cursor-pointer text-xs leading-relaxed text-slate-600 sm:text-sm" @click="expanded = ! expanded" @keydown.enter.prevent="expanded = ! expanded" @keydown.space.prevent="expanded = ! expanded">
-                            <span x-show="! expanded">{{ $shortSummary }}</span>
-                            <span x-show="expanded">{{ $summary }}</span>
+                        <p class="mt-2 grow text-xs leading-relaxed text-slate-600 sm:text-sm">
+                            {{ $summary }}
                         </p>
                         @endif
 

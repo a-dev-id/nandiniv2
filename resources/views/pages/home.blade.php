@@ -45,8 +45,11 @@
 
     <section class="bg-white px-6 pt-14 text-center md:pt-20">
         <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
-            Luxury Jungle Villas & Royal Suites in Ubud, Bali
+            Private Jungle Villas & Royal Suites
         </h2>
+        <p class="mx-auto max-w-4xl text-xs leading-relaxed text-slate-600 mb-3 sm:text-sm">
+            Stay in private jungle villas in Ubud and spacious royal suites surrounded by rainforest, tropical greenery, and the calm atmosphere of Bali. Each accommodation at Nandini Jungle by Hanging Gardens is designed for comfort, privacy, and warm Balinese character, creating a refined jungle retreat for couples, families, and guests seeking space to reconnect with nature.
+        </p>
     </section>
 
     <x-sections.item-carousel :items="$villas" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" />
@@ -58,6 +61,9 @@
         <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
             Experiences Beyond the Stay
         </h2>
+        <p class="mx-auto max-w-4xl text-xs leading-relaxed text-slate-600 mb-3 sm:text-sm">
+            Enhance your stay at Nandini Jungle by Hanging Gardens with curated experiences in the heart of Bali's rainforest. From romantic dining and jungle celebrations to floating breakfast and calming spa rituals, each experience is designed to enrich your Ubud retreat with nature, romance, and authentic Balinese hospitality.
+        </p>
     </section>
 
     <x-sections.item-carousel :items="$experienceCategories" route-name="experiences.category" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" />
@@ -68,10 +74,10 @@
     @if ($offers->isNotEmpty())
     <section class="bg-white px-6 pt-10 text-center md:pt-14">
         <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
-            Exclusive Jungle Escapes
+            Curated Escapes at Nandini Jungle
         </h2>
         <p class="mx-auto max-w-4xl text-xs leading-relaxed text-slate-600 mb-3 sm:text-sm">
-            Discover exclusive Ubud offers at Nandini Jungle by Hanging Gardens. Book direct for the Best Rate Guarantee and find the perfect package for your Bali escape.
+            Discover exclusive offers at Nandini Jungle by Hanging Gardens, created for guests who want more than a short getaway. From extended stays to twin-island escapes, each package combines nature, comfort, and meaningful experiences for a memorable Bali jungle resort stay.
         </p>
     </section>
 
@@ -83,6 +89,9 @@
         <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
             Culinary Journeys
         </h2>
+        <p class="mx-auto max-w-4xl text-xs leading-relaxed text-slate-600 mb-3 sm:text-sm">
+            Dine surrounded by rainforest views and warm Balinese hospitality at Nandini Jungle by Hanging Gardens. From authentic flavors to afternoon tea and relaxed drinks, every culinary experience is crafted to complement your stay at a peaceful jungle resort in Ubud.
+        </p>
     </section>
 
     <x-sections.item-carousel :items="$diningSections" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" />
@@ -91,8 +100,11 @@
     @if ($spaSections->isNotEmpty())
     <section class="bg-white px-6 pt-10 text-center md:pt-14">
         <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
-            Essence Spa
+            Jungle Spa & Wellness
         </h2>
+        <p class="mx-auto max-w-4xl text-xs leading-relaxed text-slate-600 mb-3 sm:text-sm">
+            Restore body, mind, and spirit at Essence Spa, where each treatment is inspired by the natural surroundings of Nandini Jungle by Hanging Gardens. Set within a quiet rainforest environment, our spa experiences combine nature, relaxation, and Balinese wellness traditions for a calming wellness retreat in Ubud.
+        </p>
     </section>
 
     <x-sections.item-carousel :items="$spaSections" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" />
@@ -103,6 +115,9 @@
         <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
             Bali Adventure Journeys
         </h2>
+        <p class="mx-auto max-w-4xl text-xs leading-relaxed text-slate-600 mb-3 sm:text-sm">
+            Discover Bali's natural landscapes beyond Nandini Jungle by Hanging Gardens. From Ayung River rafting and ATV adventures to Mount Batur sunrise tours, each journey is designed for guests who want to explore more of the island while returning to the calm of their jungle retreat in Ubud.
+        </p>
     </section>
 
     <x-sections.item-carousel :items="$ubudJungleAdventures" route-name="experiences.show" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" />
