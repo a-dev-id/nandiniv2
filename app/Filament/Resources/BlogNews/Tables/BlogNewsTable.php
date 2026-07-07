@@ -6,10 +6,12 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class BlogNewsTable
@@ -117,6 +119,17 @@ class BlogNewsTable
                 //
             ])
             ->recordActions([
+                Action::make('preview')
+                    ->label('Preview')
+                    ->icon(Heroicon::OutlinedEye)
+                    ->url(fn($record): string => URL::temporarySignedRoute(
+                        'blog.preview',
+                        now()->addMinutes(30),
+                        ['blogNews' => $record],
+                    ))
+                    ->openUrlInNewTab()
+                    ->visible(fn($record): bool => filled($record->slug)),
+
                 EditAction::make(),
             ])
             ->toolbarActions([

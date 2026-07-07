@@ -285,6 +285,10 @@ Route::get('/blog-news/page/{page}', [BlogController::class, 'index'])
     ->whereNumber('page')
     ->name('blog.page');
 
+Route::get('/blog-news/preview/{blogNews:slug}', [BlogController::class, 'preview'])
+    ->middleware('signed')
+    ->name('blog.preview');
+
 Route::get('/blog-news/{slug}', [BlogController::class, 'show'])
     ->name('blog.show');
 

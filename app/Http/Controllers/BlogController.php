@@ -68,6 +68,27 @@ class BlogController extends Controller
             return redirect()->route('blog.index', [], 301);
         }
 
+        return $this->showBlog($page, $blog, $blog->activeSections);
+    }
+
+    public function preview(BlogNews $blogNews): View
+    {
+        $page = Page::query()
+            ->where('id', 15)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $blogNews->load([
+            'activeSections.images' => fn($query) => $query
+                ->where('is_active', true)
+                ->orderBy('sort_order'),
+        ]);
+
+        return $this->showBlog($page, $blogNews, $blogNews->activeSections);
+    }
+
+    private function showBlog(Page $page, BlogNews $blog, Collection $sections): View
+    {
         $relatedBlogs = BlogNews::query()
             ->published()
             ->blog()
@@ -80,7 +101,7 @@ class BlogController extends Controller
         return view('pages.blog-news.show', [
             'page' => $page,
             'blog' => $blog,
-            'sections' => $blog->activeSections,
+            'sections' => $sections,
             'relatedBlogs' => $relatedBlogs,
         ]);
     }
