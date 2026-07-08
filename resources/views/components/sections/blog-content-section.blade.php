@@ -109,38 +109,38 @@ $buttonUrl = $section?->button_url;
 @if ($section)
 <section class="my-12 md:my-14 {{ $backgroundClass }} {{ $sectionPaddingClass }}">
     @if ($contentLayout === 'split')
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 md:items-start md:gap-8">
-        <div class="{{ $imageOrderClass }}">
-            <div class="relative aspect-[16/9] w-full overflow-hidden bg-slate-100">
-                <picture class="block h-full w-full">
-                    @if ($mobileImageUrl)
-                    <source media="(max-width: 767px)" srcset="{{ $mobileImageUrl }}">
-                    @endif
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 md:items-stretch md:gap-8">
+        <div class="{{ $imageOrderClass }} relative aspect-[16/9] w-full overflow-hidden bg-slate-100 md:aspect-auto md:min-h-60">
+            <picture class="block h-full w-full">
+                @if ($mobileImageUrl)
+                <source media="(max-width: 767px)" srcset="{{ $mobileImageUrl }}">
+                @endif
 
-                    <img src="{{ $desktopImageUrl ?: $mobileImageUrl }}" alt="{{ $imageAlt }}" class="absolute inset-0 h-full w-full object-cover" loading="lazy">
-                </picture>
-            </div>
+                <img src="{{ $desktopImageUrl ?: $mobileImageUrl }}" alt="{{ $imageAlt }}" class="absolute inset-0 h-full w-full object-cover" loading="lazy">
+            </picture>
         </div>
 
-        <div class="{{ $textOrderClass }}">
-            <x-sections.blog-content-section-text
-                :title="$titleText"
-                :subtitle="$subtitleText"
-                :excerpt="$excerptText"
-                :description="$description"
-                :description-text="$descriptionText"
-                :text-align-class="$textAlignClass"
-                :text-color-class="$textColorClass"
-                :muted-text-color-class="$mutedTextColorClass"
-            />
+        <div class="{{ $textOrderClass }} flex h-full flex-col justify-center">
+            <div>
+                <x-sections.blog-content-section-text
+                    :title="$titleText"
+                    :subtitle="$subtitleText"
+                    :excerpt="$excerptText"
+                    :description="$description"
+                    :description-text="$descriptionText"
+                    :text-align-class="$textAlignClass"
+                    :text-color-class="$textColorClass"
+                    :muted-text-color-class="$mutedTextColorClass"
+                />
 
-            @if (! $noButton && $buttonLabel && $buttonUrl)
-            <div class="mt-8 flex {{ $buttonAlignClass }}">
-                <x-buttons.link-button href="{{ $buttonUrl }}" variant="solid">
-                    {{ $buttonLabel }}
-                </x-buttons.link-button>
+                @if (! $noButton && $buttonLabel && $buttonUrl)
+                <div class="mt-8 flex {{ $buttonAlignClass }}">
+                    <x-buttons.link-button href="{{ $buttonUrl }}" variant="solid">
+                        {{ $buttonLabel }}
+                    </x-buttons.link-button>
+                </div>
+                @endif
             </div>
-            @endif
         </div>
     </div>
     @else
