@@ -37,13 +37,9 @@ class SectionsRelationManager extends RelationManager
     protected static ?string $title = 'Content Sections';
 
     private const MEDIA_SECTION_KEYS = [
-        'image_overlay_section',
         'contained_image_section',
         'split_media_section',
         'split_media_reverse',
-        'three_images_section',
-        'two_images_section',
-        'two_images_reverse',
     ];
 
     public function form(Schema $schema): Schema
@@ -64,15 +60,10 @@ class SectionsRelationManager extends RelationManager
                             ->native(false)
                             ->live()
                             ->options([
-                                'intro_text_section' => 'Intro / Text Section',
-                                'image_overlay_section' => 'Image Overlay Section',
-                                'contained_image_section' => 'Contained Image Section',
-                                'split_media_section' => 'Split Media Section',
-                                'split_media_reverse' => 'Split Media Reverse',
-                                'three_images_section' => 'Three Images Section',
-                                'two_images_section' => 'Two Images Section',
-                                'two_images_reverse' => 'Two Images Reverse',
-                                'video_text_section' => 'Video Text Section',
+                                'intro_text_section' => 'Blog Text Section',
+                                'contained_image_section' => 'Blog Image Section',
+                                'split_media_section' => 'Blog Image + Text',
+                                'split_media_reverse' => 'Blog Text + Image',
                             ])
                             ->default('split_media_section'),
 
@@ -337,11 +328,11 @@ class SectionsRelationManager extends RelationManager
                     ->label('Type')
                     ->badge()
                     ->formatStateUsing(fn(?string $state): string => match ($state) {
-                        'intro_text_section' => 'Intro Text',
+                        'intro_text_section' => 'Blog Text',
                         'image_overlay_section' => 'Image Overlay',
-                        'contained_image_section' => 'Contained Image',
-                        'split_media_section' => 'Split Media',
-                        'split_media_reverse' => 'Split Media Reverse',
+                        'contained_image_section' => 'Blog Image',
+                        'split_media_section' => 'Blog Image + Text',
+                        'split_media_reverse' => 'Blog Text + Image',
                         'three_images_section' => 'Three Images',
                         'two_images_section' => 'Two Images',
                         'two_images_reverse' => 'Two Images Reverse',

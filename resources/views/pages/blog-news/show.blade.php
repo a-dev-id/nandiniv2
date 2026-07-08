@@ -144,6 +144,37 @@ $metaImage = $blog->hero_image
             </p>
             @endif
 
+            {{-- Blog Sections --}}
+            @foreach ($sections as $section)
+            @if ($section->section_key === 'intro_text_section')
+            <x-sections.blog-content-section :section="$section" layout="text" />
+
+            @elseif ($section->section_key === 'contained_image_section')
+            <x-sections.blog-content-section :section="$section" layout="stacked" />
+
+            @elseif ($section->section_key === 'split_media_section')
+            <x-sections.blog-content-section :section="$section" layout="split" />
+
+            @elseif ($section->section_key === 'split_media_reverse')
+            <x-sections.blog-content-section :section="$section" layout="split" reverse />
+
+            @elseif ($section->section_key === 'image_overlay_section')
+            <x-sections.image-overlay-section :section="$section" />
+
+            @elseif ($section->section_key === 'three_images_section')
+            <x-sections.three-images-section :section="$section" />
+
+            @elseif ($section->section_key === 'two_images_section')
+            <x-sections.two-images-section :section="$section" />
+
+            @elseif ($section->section_key === 'two_images_reverse')
+            <x-sections.two-images-section :section="$section" reverse />
+
+            @elseif ($section->section_key === 'video_text_section')
+            <x-sections.video-text-section :section="$section" />
+            @endif
+            @endforeach
+
             @if (! empty($buttonUrl))
             <div class="mt-10 mb-8">
                 <x-buttons.link-button href="{{ $buttonUrl }}" variant="solid">
@@ -153,38 +184,6 @@ $metaImage = $blog->hero_image
             @endif
         </div>
     </section>
-
-    {{-- Blog Sections --}}
-    @foreach ($sections as $section)
-    @if ($section->section_key === 'intro_text_section')
-    <x-sections.intro-text-section :section="$section" />
-
-    @elseif ($section->section_key === 'image_overlay_section')
-    <x-sections.image-overlay-section :section="$section" />
-
-    @elseif ($section->section_key === 'split_media_section')
-    <x-sections.split-media-section :section="$section" />
-
-    @elseif ($section->section_key === 'split_media_reverse')
-    <x-sections.split-media-section :section="$section" reverse />
-
-    @elseif ($section->section_key === 'three_images_section')
-    <x-sections.three-images-section :section="$section" />
-
-    @elseif ($section->section_key === 'two_images_section')
-    <x-sections.two-images-section :section="$section" />
-
-    @elseif ($section->section_key === 'two_images_reverse')
-    <x-sections.two-images-section :section="$section" reverse />
-
-    @elseif ($section->section_key === 'video_text_section')
-    <x-sections.video-text-section :section="$section" />
-    @endif
-
-    @if ($section->section_key === 'contained_image_section')
-    <x-sections.contained-image-section :section="$section" />
-    @endif
-    @endforeach
 
     {{-- Related Blog --}}
     @if ($relatedBlogs->isNotEmpty())
