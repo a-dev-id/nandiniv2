@@ -45,4 +45,27 @@ class VoucherCartTest extends TestCase
             'delivery_method' => 'email',
         ]);
     }
+
+    public function test_cart_uses_discounted_database_price(): void
+    {
+        $voucher = Voucher::factory()->create([
+            'selling_price' => 2000000,
+            'discount_percentage' => 25,
+        ]);
+
+        app(VoucherCartService::class)->add($voucher, [
+            'quantity' => 2,
+            'purchase_for' => 'self',
+            'recipient_name' => 'Recipient',
+            'recipient_email' => 'recipient@example.com',
+            'delivery_method' => 'email',
+        ]);
+
+        $cart = app(VoucherCartService::class)->refresh();
+
+        $this->assertSame(4000000, $cart['subtotal']);
+        $this->assertSame(1000000, $cart['discount']);
+        $this->assertSame(3000000, $cart['total']);
+        $this->assertSame(1500000, $cart['lines']->first()['unit_price']);
+    }
 }

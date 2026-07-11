@@ -23,7 +23,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -792,9 +792,8 @@ class SectionsRelationManager extends RelationManager
                     ->limit(60)
                     ->toggleable(),
 
-                IconColumn::make('is_active')
+                ToggleColumn::make('is_active')
                     ->label('Active')
-                    ->boolean()
                     ->sortable(),
 
                 TextColumn::make('sort_order')

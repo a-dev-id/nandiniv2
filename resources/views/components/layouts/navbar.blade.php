@@ -36,6 +36,7 @@ $logoutUrl = \Illuminate\Support\Facades\Route::has('membership.logout')
 
 $bookDirectUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://nandinijunglebyhanginggardens.reserve-online.net/?checkin=today');
 $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tour-list.com/DPSearch/?HotelCode=nandinihgs');
+$voucherUrl = route('voucher.index');
 $navbarStartsSolid = request()->routeIs('voucher.*') && ! request()->routeIs('voucher.index');
 @endphp
 
@@ -66,6 +67,10 @@ $navbarStartsSolid = request()->routeIs('voucher.*') && ! request()->routeIs('vo
                             </svg>
                         </a>
                     </div>
+
+                    <a id="navGiftVoucherBtn" href="{{ $voucherUrl }}" class="hidden lg:inline-flex items-center justify-center border bg-transparent px-3 py-1.5 text-[8px] font-medium uppercase tracking-[0.08em] transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white sm:px-4 sm:py-2 sm:text-sm lg:px-5 {{ $navbarStartsSolid ? 'border-slate-950 text-slate-950' : 'border-white text-white' }}">
+                        Gift Voucher
+                    </a>
                 </div>
 
                 {{-- CENTER LOGO --}}
@@ -355,6 +360,12 @@ $navbarStartsSolid = request()->routeIs('voucher.*') && ! request()->routeIs('vo
                         </div>
                     </div>
 
+                    <div class="border-t border-slate-300/70 pt-5">
+                        <a href="{{ $voucherUrl }}" class="inline-flex w-full items-center justify-center border border-slate-800 bg-transparent px-4 py-2.5 text-[12px] font-medium uppercase tracking-[0.08em] text-slate-700 transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white sm:text-[14px]">
+                            Gift Voucher
+                        </a>
+                    </div>
+
                     {{-- Inner Circle --}}
                     @if (! $membershipDisabled)
                     <div class="pt-2">
@@ -438,6 +449,7 @@ $navbarStartsSolid = request()->routeIs('voucher.*') && ! request()->routeIs('vo
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const navMemberBtn = document.getElementById('navMemberBtn');
+            const navGiftVoucherBtn = document.getElementById('navGiftVoucherBtn');
             const navProfileBtn = document.getElementById('navProfileBtn');
             const navProfileMenu = document.getElementById('navProfileMenu');
             const navProfileLabel = document.querySelector('[data-nav-profile-label]');
@@ -450,7 +462,7 @@ $navbarStartsSolid = request()->routeIs('voucher.*') && ! request()->routeIs('vo
             const offcanvasBackdrop = document.getElementById('offcanvasBackdrop');
 
             function updateMemberButtonOnScroll() {
-                if (!navMemberBtn && !navProfileAvatar) {
+                if (!navMemberBtn && !navProfileAvatar && !navGiftVoucherBtn) {
                     return;
                 }
 
@@ -470,6 +482,13 @@ $navbarStartsSolid = request()->routeIs('voucher.*') && ! request()->routeIs('vo
                 if (navProfileLabel) {
                     navProfileLabel.classList.toggle('text-slate-950', isScrolled);
                     navProfileLabel.classList.toggle('text-white', !isScrolled);
+                }
+
+                if (navGiftVoucherBtn) {
+                    navGiftVoucherBtn.classList.toggle('border-slate-950', isScrolled);
+                    navGiftVoucherBtn.classList.toggle('text-slate-950', isScrolled);
+                    navGiftVoucherBtn.classList.toggle('border-white', !isScrolled);
+                    navGiftVoucherBtn.classList.toggle('text-white', !isScrolled);
                 }
 
                 if (!navMemberBtn) {

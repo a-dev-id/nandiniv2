@@ -84,13 +84,15 @@ class VoucherCartService
             }
 
             $quantity = $this->normalizeQuantity($voucher, (int) $line['quantity']);
-            $unitPrice = (int) $voucher->selling_price;
+            $unitPrice = $voucher->discounted_price;
+            $originalUnitPrice = (int) $voucher->selling_price;
 
             $lines[$key] = array_merge($line, [
                 'quantity' => $quantity,
                 'voucher' => $voucher,
                 'unit_price' => $unitPrice,
                 'line_total' => $unitPrice * $quantity,
+                'original_line_total' => $originalUnitPrice * $quantity,
                 'currency' => $voucher->currency ?: 'IDR',
                 'price_type' => $voucher->price_type,
                 'unit_type' => $voucher->unit_type,
@@ -100,13 +102,14 @@ class VoucherCartService
         session()->put(self::SESSION_KEY, collect($lines)->map(fn(array $line): array => collect($line)->except('voucher')->all())->all());
 
         $collection = collect($lines);
-        $subtotal = (int) $collection->sum('line_total');
+        $subtotal = (int) $collection->sum('original_line_total');
+        $total = (int) $collection->sum('line_total');
 
         return [
             'lines' => $collection,
             'subtotal' => $subtotal,
-            'discount' => 0,
-            'total' => $subtotal,
+            'discount' => $subtotal - $total,
+            'total' => $total,
             'currency' => $collection->first()['currency'] ?? config('services.flywire.billing_currency', 'IDR'),
             'distinct_lines' => $collection->count(),
             'total_units' => (int) $collection->sum('quantity'),

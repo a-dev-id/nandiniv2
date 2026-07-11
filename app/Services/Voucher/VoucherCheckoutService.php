@@ -70,6 +70,8 @@ class VoucherCheckoutService
                         'voucher_type' => $voucher->voucher_type,
                         'face_value' => $voucher->face_value,
                         'selling_price' => $voucher->selling_price,
+                        'discount_percentage' => $voucher->discount_percentage,
+                        'discounted_price' => $voucher->discounted_price,
                         'currency' => $voucher->currency,
                         'price_type' => $voucher->price_type,
                         'unit_type' => $voucher->unit_type,

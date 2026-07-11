@@ -21,9 +21,15 @@
         <h2 class="mt-2 text-base uppercase leading-snug text-slate-700 sm:text-lg">{{ $voucher->title }}</h2>
         <p class="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{{ $voucher->excerpt }}</p>
         <div class="mt-auto pt-5">
-            <p class="text-sm font-semibold uppercase tracking-[0.08em] text-slate-700">{{ $money->format($voucher->selling_price, $voucher->currency) }}{{ $priceSuffix }}</p>
+            @if ($voucher->has_discount)
+                <div class="mb-1.5 flex items-center gap-2">
+                    <p class="text-xs tracking-[0.04em] text-slate-400 line-through">{{ $money->format($voucher->selling_price, $voucher->currency) }}</p>
+                    <span class="bg-[#A88444]/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#A88444]">Save {{ $voucher->discount_percentage }}%</span>
+                </div>
+            @endif
+            <p class="text-base font-semibold tracking-[0.06em] text-slate-700">{{ $money->format($voucher->discounted_price, $voucher->currency) }}{{ $priceSuffix }}</p>
             @if ($unitLabel)
-                <p class="mt-1 text-xs text-slate-600">{{ $unitLabel }}</p>
+                <p class="mt-1.5 text-xs text-slate-500">{{ $unitLabel }}</p>
             @endif
             <a href="{{ route('voucher.show', $voucher) }}" class="mt-4 inline-flex w-full items-center justify-center border border-[#A88444] bg-[#A88444] px-4 py-2.5 text-xs font-medium uppercase tracking-[0.08em] text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] sm:text-sm">
                 View Voucher

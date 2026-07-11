@@ -1,40 +1,38 @@
 @push('meta')
-<title>Nandini Jungle Vouchers</title>
-<meta name="description" content="Purchase elegant Nandini Jungle by Hanging Gardens vouchers for yourself or someone special.">
+@php
+    $metaTitle = $landingPage?->meta_title ?: $landingPage?->title ?: 'Nandini Jungle Vouchers';
+    $metaDescription = $landingPage?->meta_description ?: $landingPage?->excerpt ?: 'Purchase elegant Nandini Jungle by Hanging Gardens vouchers for yourself or someone special.';
+    $heroImageUrl = $landingPage?->hero_image ? asset('storage/' . $landingPage->hero_image) : asset('images/home/hero.jpg');
+@endphp
+<title>{{ $metaTitle }}</title>
+<meta name="description" content="{{ $metaDescription }}">
 <link rel="canonical" href="{{ route('voucher.index') }}">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Nandini Jungle Vouchers">
-<meta property="og:description" content="Purchase Nandini Jungle by Hanging Gardens vouchers for yourself or someone special.">
+<meta property="og:title" content="{{ $metaTitle }}">
+<meta property="og:description" content="{{ $metaDescription }}">
 @endpush
 
 <x-layouts.app>
     <section class="relative min-h-[76vh] bg-slate-950">
-        <img src="{{ asset('images/home/hero.jpg') }}" alt="Nandini Jungle by Hanging Gardens" class="absolute inset-0 h-full w-full object-cover opacity-65" onerror="this.style.display='none'">
+        <picture>
+            @if ($landingPage?->hero_mobile_image)
+                <source media="(max-width: 767px)" srcset="{{ asset('storage/' . $landingPage->hero_mobile_image) }}">
+            @endif
+            <img src="{{ $heroImageUrl }}" alt="{{ $landingPage?->hero_image_alt ?: 'Nandini Jungle by Hanging Gardens' }}" class="absolute inset-0 h-full w-full object-cover opacity-65" onerror="this.style.display='none'">
+        </picture>
         <div class="absolute inset-0 bg-black/35"></div>
-        <div class="relative mx-auto flex min-h-[76vh] max-w-6xl flex-col justify-end px-6 pb-16 pt-36 text-white md:pb-20">
-            <p class="text-xs uppercase tracking-[0.18em]">Nandini Jungle by Hanging Gardens</p>
-            <h1 class="mt-4 max-w-3xl text-3xl uppercase leading-tight sm:text-5xl">Nandini Jungle Vouchers</h1>
-            <p class="mt-5 max-w-2xl text-sm leading-7 text-white/90 sm:text-base">Purchase a spa ritual, dining moment, or jungle experience for yourself or someone special.</p>
-            <div class="mt-8 flex flex-wrap gap-3">
-                <a href="#featured-vouchers" class="inline-flex items-center justify-center border border-[#A88444] bg-[#A88444] px-5 py-3 text-xs font-medium uppercase tracking-[0.08em] text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] sm:text-sm">Browse Vouchers</a>
-            </div>
-        </div>
     </section>
 
     <section class="bg-white px-6 py-14 md:py-20">
         <div class="mx-auto max-w-6xl">
             <div class="mx-auto max-w-3xl text-center">
-                <h2 class="text-xl uppercase text-slate-700 sm:text-2xl">Reserve a Nandini Moment</h2>
-                <p class="mt-4 text-sm leading-7 text-slate-600">Choose a refined voucher for yourself or as a gift, add the voucher holder details, then complete payment securely through Flywire. Vouchers are issued only after confirmed payment.</p>
-            </div>
-
-            <div class="mt-10 grid gap-5 md:grid-cols-3">
-                @foreach (['Choose a voucher', 'Select self or gift', 'Receive by email'] as $step)
-                    <div class="border border-slate-200 bg-[#F7F7F7] p-6 text-center">
-                        <h3 class="text-base uppercase text-slate-700">{{ $step }}</h3>
-                        <p class="mt-3 text-sm leading-6 text-slate-600">A calm, secure purchase flow designed for personal use and thoughtful gifting.</p>
-                    </div>
-                @endforeach
+                <h2 class="text-xl uppercase text-slate-700 sm:text-2xl">{{ $landingPage?->title ?: 'Reserve a Nandini Moment' }}</h2>
+                @if ($landingPage?->subtitle)
+                    <p class="mt-3 text-base italic leading-7 text-slate-600">{{ $landingPage->subtitle }}</p>
+                @endif
+                <div class="mt-4 text-sm leading-7 text-slate-600 [&_p]:mb-4 [&_p:last-child]:mb-0">
+                    {!! $landingPage?->description ?: '<p>Choose a refined voucher for yourself or as a gift, add the voucher holder details, then complete payment securely through Flywire. Vouchers are issued only after confirmed payment.</p>' !!}
+                </div>
             </div>
         </div>
     </section>

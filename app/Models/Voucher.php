@@ -18,6 +18,7 @@ class Voucher extends Model
 
     protected $fillable = [
         'voucher_category_id',
+        'experience_id',
         'title',
         'slug',
         'sku',
@@ -31,6 +32,7 @@ class Voucher extends Model
         'voucher_type',
         'face_value',
         'selling_price',
+        'discount_percentage',
         'currency',
         'price_type',
         'unit_type',
@@ -52,6 +54,7 @@ class Voucher extends Model
     protected $casts = [
         'face_value' => 'integer',
         'selling_price' => 'integer',
+        'discount_percentage' => 'integer',
         'validity_days' => 'integer',
         'fixed_valid_from' => 'date',
         'fixed_valid_until' => 'date',
@@ -67,6 +70,11 @@ class Voucher extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(VoucherCategory::class, 'voucher_category_id');
+    }
+
+    public function experience(): BelongsTo
+    {
+        return $this->belongsTo(Experience::class);
     }
 
     public function scopeActive(Builder $query): Builder
@@ -91,6 +99,18 @@ class Voucher extends Model
 
     public function getPurchasableAttribute(): bool
     {
-        return (bool) $this->is_active && $this->selling_price > 0;
+        return (bool) $this->is_active && $this->discounted_price > 0;
+    }
+
+    public function getHasDiscountAttribute(): bool
+    {
+        return $this->discount_percentage > 0;
+    }
+
+    public function getDiscountedPriceAttribute(): int
+    {
+        $percentage = min(100, max(0, (int) $this->discount_percentage));
+
+        return (int) round($this->selling_price * (100 - $percentage) / 100);
     }
 }

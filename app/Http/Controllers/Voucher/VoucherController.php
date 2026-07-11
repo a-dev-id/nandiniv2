@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Voucher;
 
 use App\Http\Controllers\Controller;
+use App\Models\Page;
 use App\Models\Voucher;
 use App\Models\VoucherCategory;
 use App\Services\Voucher\Cart\VoucherCartService;
@@ -12,7 +13,13 @@ class VoucherController extends Controller
 {
     public function index(VoucherCartService $cart): View
     {
+        $landingPage = Page::query()
+            ->whereKey(config('domains.voucher_landing_page_id'))
+            ->where('is_active', true)
+            ->first();
+
         return view('voucher.index', [
+            'landingPage' => $landingPage,
             'categories' => VoucherCategory::query()
                 ->active()
                 ->whereHas('vouchers', fn($query) => $query->active())

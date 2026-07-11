@@ -6,6 +6,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -40,9 +41,9 @@ class ExperiencesTable
                     ->label('Featured')
                     ->boolean(),
 
-                IconColumn::make('is_active')
+                ToggleColumn::make('is_active')
                     ->label('Active')
-                    ->boolean(),
+                    ->sortable(),
 
                 TextColumn::make('created_at')
                     ->label('Created')

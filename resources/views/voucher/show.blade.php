@@ -33,7 +33,15 @@ $unitLabel = $money->unitLabel($voucher->unit_type);
                 </nav>
                 <h1 class="mt-5 text-2xl uppercase text-slate-700 sm:text-4xl">{{ $voucher->title }}</h1>
                 <p class="mt-4 text-sm leading-7 text-slate-600">{{ $voucher->excerpt }}</p>
-                <p class="mt-6 text-lg font-semibold uppercase tracking-[0.08em] text-slate-700">{{ $money->format($voucher->selling_price, $voucher->currency) }}{{ $priceSuffix }}</p>
+                <div class="mt-6">
+                    @if ($voucher->has_discount)
+                        <div class="mb-2 flex flex-wrap items-center gap-3">
+                            <p class="text-sm tracking-[0.04em] text-slate-400 line-through">{{ $money->format($voucher->selling_price, $voucher->currency) }}</p>
+                            <span class="bg-[#A88444]/10 px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-[#A88444]">Save {{ $voucher->discount_percentage }}%</span>
+                        </div>
+                    @endif
+                    <p class="text-2xl font-semibold tracking-[0.06em] text-slate-700">{{ $money->format($voucher->discounted_price, $voucher->currency) }}{{ $priceSuffix }}</p>
+                </div>
                 @if ($unitLabel)
                     <p class="mt-1 text-sm leading-6 text-slate-600">{{ $unitLabel }}</p>
                 @endif
@@ -94,10 +102,6 @@ $unitLabel = $money->unitLabel($voucher->unit_type);
                 <div>
                     <h3 class="text-base uppercase text-slate-700">Validity</h3>
                     <p class="mt-2 text-sm leading-6 text-slate-600">{{ $voucher->validity_type === 'days_after_issue' ? $voucher->validity_days . ' days after issue' : 'See voucher terms' }}</p>
-                </div>
-                <div>
-                    <h3 class="text-base uppercase text-slate-700">Inclusions</h3>
-                    <div class="mt-2 text-sm leading-6 text-slate-600">{!! $voucher->inclusions !!}</div>
                 </div>
                 <div>
                     <h3 class="text-base uppercase text-slate-700">Terms</h3>
