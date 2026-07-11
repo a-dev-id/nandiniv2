@@ -86,6 +86,16 @@ class Member extends Authenticatable
         return $this->hasMany(MemberRewardRedemption::class);
     }
 
+    public function voucherOrders(): HasMany
+    {
+        return $this->hasMany(VoucherOrder::class);
+    }
+
+    public function issuedVouchers(): HasMany
+    {
+        return $this->hasMany(IssuedVoucher::class);
+    }
+
     public function syncedBookings(): HasMany
     {
         return $this->hasMany(SyncedWebhotelierBooking::class);

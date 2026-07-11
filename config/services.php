@@ -91,6 +91,20 @@ return [
         'token' => env('MEMBERSHIP_EMAIL_RELAY_TOKEN'),
     ],
 
+    'flywire' => [
+        'enabled' => env('FLYWIRE_ENABLED', false),
+        'environment' => env('FLYWIRE_ENVIRONMENT', 'sandbox'),
+        'api_key' => env('FLYWIRE_API_KEY'),
+        'shared_secret' => env('FLYWIRE_SHARED_SECRET'),
+        'recipient_id' => env('FLYWIRE_RECIPIENT_ID'),
+        'billing_currency' => env('FLYWIRE_BILLING_CURRENCY', 'IDR'),
+        'base_url' => env('FLYWIRE_BASE_URL', 'https://api-platform-sandbox.flywire.com/payments/v1'),
+        'notification_url' => env('FLYWIRE_NOTIFICATION_URL'),
+        'return_url' => env('FLYWIRE_RETURN_URL'),
+        'cancel_url' => env('FLYWIRE_CANCEL_URL'),
+        'issue_on_statuses' => env('FLYWIRE_ISSUE_ON_STATUSES', ''),
+    ],
+
     'mail_test_token' => env('MAIL_TEST_TOKEN'),
 
 ];

@@ -68,11 +68,7 @@ $metaImage = $blog->hero_image
     @endphp
 
     @if ($heroImage)
-    <x-heroes.image-hero
-        :image-src="asset('storage/' . $heroImage)"
-        :mobile-image-src-manual="$heroMobileImage ? asset('storage/' . $heroMobileImage) : asset('storage/' . $heroImage)"
-        :alt-text="$heroAlt"
-    />
+    <x-heroes.image-hero :image-src="asset('storage/' . $heroImage)" :mobile-image-src-manual="$heroMobileImage ? asset('storage/' . $heroMobileImage) : asset('storage/' . $heroImage)" :alt-text="$heroAlt" />
     @endif
 
     {{-- Blog Content --}}
@@ -190,7 +186,7 @@ $metaImage = $blog->hero_image
     <section class="pt-14 md:pt-20">
         <div class="px-6 mb-10 text-center">
             <h2 class="text-lg leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-xl">
-                Related Articles
+                Other Articles
             </h2>
         </div>
 

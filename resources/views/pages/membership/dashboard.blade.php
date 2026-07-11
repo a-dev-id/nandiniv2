@@ -655,6 +655,10 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                     Point Redeem
                 </button>
 
+                <button type="button" class="min-w-0 flex-1 border border-slate-300 bg-white px-2 py-2.5 text-[8px] font-medium uppercase text-slate-700 transition hover:border-[#A88444] hover:text-[#A88444] sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="vouchers">
+                    My Vouchers
+                </button>
+
                 <button type="button" class="min-w-0 flex-1 border border-slate-300 bg-white px-2 py-2.5 text-[8px] font-medium uppercase text-slate-700 transition hover:border-[#A88444] hover:text-[#A88444] sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="history">
                     History
                 </button>
@@ -777,6 +781,54 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                         </tbody>
                     </table>
                 </div>
+            </div>
+
+            <div id="my-vouchers" class="hidden pt-8" data-dashboard-tab-panel="vouchers">
+                @php
+                $voucherOrders = collect($voucherOrders ?? []);
+                @endphp
+
+                @if ($voucherOrders->isNotEmpty())
+                <div class="overflow-x-auto border border-slate-200 bg-white">
+                    <table class="min-w-full divide-y divide-slate-200 text-left text-xs sm:text-sm">
+                        <thead class="bg-[#F7F7F7] text-[9px] uppercase text-slate-700 sm:text-[11px]">
+                            <tr>
+                                <th class="px-4 py-4">Order</th>
+                                <th class="px-4 py-4">Voucher</th>
+                                <th class="px-4 py-4">Recipient</th>
+                                <th class="px-4 py-4">Status</th>
+                                <th class="px-4 py-4">Expires</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-700">
+                            @foreach ($voucherOrders as $voucherOrder)
+                            @foreach ($voucherOrder->items as $voucherItem)
+                            @php
+                            $issued = $voucherItem->issuedVouchers->first();
+                            @endphp
+                            <tr>
+                                <td class="px-4 py-4 font-bold text-slate-700">{{ $voucherOrder->order_number }}</td>
+                                <td class="px-4 py-4">{{ $voucherItem->voucher_title }}</td>
+                                <td class="px-4 py-4">{{ $voucherItem->recipient_name }}</td>
+                                <td class="px-4 py-4">
+                                    <span class="inline-flex rounded-full bg-[#A88444]/10 px-3 py-1 text-[9px] font-bold uppercase text-[#916B2C] sm:text-[11px]">
+                                        {{ $issued ? str_replace('_', ' ', $issued->status) : str_replace('_', ' ', $voucherOrder->payment_status) }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-4">{{ $issued?->expires_at?->format('d M Y') ?? '-' }}</td>
+                            </tr>
+                            @endforeach
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                @else
+                <div class="bg-[#F7F7F7] px-6 py-12 text-center">
+                    <p class="text-xs uppercase text-slate-700 sm:text-sm">
+                        No voucher purchases found yet.
+                    </p>
+                </div>
+                @endif
             </div>
         </div>
     </section>

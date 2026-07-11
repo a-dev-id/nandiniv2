@@ -6,6 +6,16 @@ $socialLinks = [
 'tripadvisor' => 'https://www.tripadvisor.com/Hotel_Review-g21379722-d603743-Reviews-Nandini_Jungle_By_Hanging_Gardens-Buahan_Payangan_Gianyar_Regency_Bali.html',
 ];
 
+$mainDomainBase = rtrim(request()->getScheme() . '://' . config('domains.main'), '/');
+$mainRoute = function (string $name, array $parameters = []) use ($mainDomainBase): string {
+    if (! \Illuminate\Support\Facades\Route::has($name)) {
+        return $mainDomainBase;
+    }
+
+    return $mainDomainBase . route($name, $parameters, false);
+};
+$mainPath = fn (string $path): string => $mainDomainBase . '/' . ltrim($path, '/');
+
 $seoFooterPageLabels = [
     31 => 'Bali Jungle Resort Ubud',
     34 => 'Ubud Wellness Retreat',
@@ -17,7 +27,7 @@ $seoFooterLinks = \App\Models\Page::query()
     ->get(['id', 'slug'])
     ->sortBy(fn ($page) => array_search($page->id, array_keys($seoFooterPageLabels), true))
     ->map(fn ($page) => [
-        'href' => route('pages.show', ['slug' => $page->slug]),
+        'href' => $mainRoute('pages.show', ['slug' => $page->slug]),
         'label' => $seoFooterPageLabels[$page->id],
     ]);
 @endphp
@@ -33,7 +43,7 @@ $seoFooterLinks = \App\Models\Page::query()
 
                 {{-- LOGO --}}
                 <div class="lg:col-span-2 flex items-start">
-                    <a href="/" class="inline-flex tracking-[0.08em] font-medium">
+                    <a href="{{ $mainRoute('home') }}" class="inline-flex tracking-[0.08em] font-medium">
                         <img src="{{ asset('images/logo-njhg.png') }}" alt="Nandini Jungle by Hanging Gardens" class="w-36 lg:w-44 h-auto max-h-52 shrink-0 brightness-0 invert" loading="lazy" />
                     </a>
                 </div>
@@ -74,11 +84,11 @@ $seoFooterLinks = \App\Models\Page::query()
                 <div class="lg:col-span-2">
                     <h3 class="text-base uppercase mb-3 sm:text-lg">About</h3>
                     <ul class="space-y-3 text-xs text-white/90 sm:text-sm">
-                        <li><a href="{{ route('about-us.index') }}" class="hover:underline">About Us</a></li>
-                        <li><a href="{{ route('blog.index') }}" class="hover:underline">Blog &amp; News</a></li>
-                        <li><a href="{{ route('awards.index') }}" class="hover:underline">Awards</a></li>
-                        <li><a href="{{ route('gallery.index') }}" class="hover:underline">Gallery</a></li>
-                        <li><a href="{{ route('contact.index') }}" class="hover:underline">Contact Us</a></li>
+                        <li><a href="{{ $mainRoute('about-us.index') }}" class="hover:underline">About Us</a></li>
+                        <li><a href="{{ $mainRoute('blog.index') }}" class="hover:underline">Blog &amp; News</a></li>
+                        <li><a href="{{ $mainRoute('awards.index') }}" class="hover:underline">Awards</a></li>
+                        <li><a href="{{ $mainRoute('gallery.index') }}" class="hover:underline">Gallery</a></li>
+                        <li><a href="{{ $mainRoute('contact.index') }}" class="hover:underline">Contact Us</a></li>
                     </ul>
                 </div>
 
@@ -87,7 +97,7 @@ $seoFooterLinks = \App\Models\Page::query()
                     <h3 class="text-base uppercase mb-3 sm:text-lg">Others</h3>
                     <ul class="space-y-3 text-xs text-white/90 sm:text-sm">
                         <li>
-                            <a href="{{ route('sustainability.index') }}" class="hover:underline text-green-700 flex items-center gap-1 font-medium tracking-[0.08em]">
+                            <a href="{{ $mainRoute('sustainability.index') }}" class="hover:underline text-green-700 flex items-center gap-1 font-medium tracking-[0.08em]">
                                 <svg height="16px" width="16px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#35D39B">
                                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -107,7 +117,7 @@ $seoFooterLinks = \App\Models\Page::query()
                                 Sustainability
                             </a>
                         </li>
-                        <li><a href="{{ route('faq.index') }}" class="hover:underline">FAQ</a></li>
+                        <li><a href="{{ $mainRoute('faq.index') }}" class="hover:underline">FAQ</a></li>
                         <li>
                             <button type="button" class="text-left hover:underline" @click="gdsOpen = true">
                                 GDS Code
@@ -141,7 +151,7 @@ $seoFooterLinks = \App\Models\Page::query()
 
                 <div class="space-y-10">
                     <div class="flex items-center justify-center">
-                        <a href="/" class="inline-flex tracking-[0.08em] font-medium">
+                        <a href="{{ $mainRoute('home') }}" class="inline-flex tracking-[0.08em] font-medium">
                             <img src="{{ asset('images/logo-njhg.png') }}" alt="Nandini Jungle by Hanging Gardens" class="w-36 lg:w-44 h-auto max-h-52 shrink-0 brightness-0 invert" loading="lazy" />
                         </a>
                     </div>
@@ -183,12 +193,12 @@ $seoFooterLinks = \App\Models\Page::query()
                 <div class="mt-14">
                     <h3 class="text-base uppercase mb-3 sm:text-lg">About</h3>
                     <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs text-white/90 sm:text-sm">
-                        <a href="/about" class="hover:underline">About Us</a>
-                        <a href="/blog" class="hover:underline">Blog &amp; News</a>
-                        <a href="/awards" class="hover:underline">Awards</a>
-                        <a href="/gallery" class="hover:underline">Gallery</a>
-                        <a href="/press" class="hover:underline">Press Room</a>
-                        <a href="/contact" class="hover:underline">Contact Us</a>
+                        <a href="{{ $mainRoute('about-us.index') }}" class="hover:underline">About Us</a>
+                        <a href="{{ $mainRoute('blog.index') }}" class="hover:underline">Blog &amp; News</a>
+                        <a href="{{ $mainRoute('awards.index') }}" class="hover:underline">Awards</a>
+                        <a href="{{ $mainRoute('gallery.index') }}" class="hover:underline">Gallery</a>
+                        <a href="{{ $mainPath('/press') }}" class="hover:underline">Press Room</a>
+                        <a href="{{ $mainRoute('contact.index') }}" class="hover:underline">Contact Us</a>
                     </div>
                 </div>
 
@@ -196,7 +206,7 @@ $seoFooterLinks = \App\Models\Page::query()
                 <div class="mt-12">
                     <h3 class="text-base uppercase mb-3 sm:text-lg">Others</h3>
                     <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs text-white/90 sm:text-sm">
-                        <a href="/sustainability" class="hover:underline text-green-700 flex items-center gap-1 font-medium tracking-[0.08em]">
+                        <a href="{{ $mainRoute('sustainability.index') }}" class="hover:underline text-green-700 flex items-center gap-1 font-medium tracking-[0.08em]">
                             <svg height="16px" width="16px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#35D39B">
                                 <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                 <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -215,8 +225,8 @@ $seoFooterLinks = \App\Models\Page::query()
                             </svg>
                             Sustainability
                         </a>
-                        <a href="/careers" class="hover:underline">Careers</a>
-                        <a href="/faq" class="hover:underline">FAQ</a>
+                        <a href="{{ $mainPath('/careers') }}" class="hover:underline">Careers</a>
+                        <a href="{{ $mainRoute('faq.index') }}" class="hover:underline">FAQ</a>
                         <button type="button" class="hover:underline" @click="gdsOpen = true">
                             GDS Code
                         </button>

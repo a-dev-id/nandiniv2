@@ -395,9 +395,17 @@ class MembershipAuthController extends Controller
             ->orderByRaw('FIELD(id, ' . implode(',', $accommodationIds) . ')')
             ->get();
 
+        $voucherOrders = $member instanceof Member
+            ? $member->voucherOrders()
+                ->with(['items.issuedVouchers'])
+                ->latest()
+                ->get()
+            : collect();
+
         return view('pages.membership.dashboard', [
             'page' => $page,
             'accommodations' => $accommodations,
+            'voucherOrders' => $voucherOrders,
         ]);
     }
 

@@ -117,7 +117,7 @@ function initNavbarScroll() {
     }
 
     function handleScroll() {
-        const scrolled = window.scrollY > 30;
+        const scrolled = navbar.dataset.navbarMode === "solid" || window.scrollY > 30;
 
         if (scrolled) {
             toggleClasses(navbar, ["bg-white", "text-slate-700", "shadow"], ["bg-black/35", "backdrop-blur-md", "text-white"]);

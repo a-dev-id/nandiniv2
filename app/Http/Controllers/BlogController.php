@@ -93,8 +93,7 @@ class BlogController extends Controller
             ->published()
             ->blog()
             ->whereKeyNot($blog->id)
-            ->orderByDesc('published_at')
-            ->orderBy('sort_order')
+            ->inRandomOrder()
             ->limit(6)
             ->get();
 

@@ -12,29 +12,40 @@ $memberProfilePhotoUrl = $memberProfilePhoto
 ? (str_starts_with((string) $memberProfilePhoto, 'http') ? $memberProfilePhoto : asset('storage/' . $memberProfilePhoto))
 : null;
 
+$mainDomainBase = rtrim(request()->getScheme() . '://' . config('domains.main'), '/');
+$mainRoute = function (string $name, array $parameters = []) use ($mainDomainBase): string {
+    if (! \Illuminate\Support\Facades\Route::has($name)) {
+        return $mainDomainBase;
+    }
+
+    return $mainDomainBase . route($name, $parameters, false);
+};
+$mainPath = fn (string $path): string => $mainDomainBase . '/' . ltrim($path, '/');
+
 $dashboardUrl = \Illuminate\Support\Facades\Route::has('membership.dashboard')
-? route('membership.dashboard')
-: url('/membership/dashboard');
+? $mainRoute('membership.dashboard')
+: $mainPath('/membership/dashboard');
 
 $redemptionUrl = \Illuminate\Support\Facades\Route::has('membership.privilege-redemption')
-? route('membership.privilege-redemption')
-: url('/membership/privilege-redemption');
+? $mainRoute('membership.privilege-redemption')
+: $mainPath('/membership/privilege-redemption');
 
 $logoutUrl = \Illuminate\Support\Facades\Route::has('membership.logout')
-? route('membership.logout')
-: url('/membership/logout');
+? $mainRoute('membership.logout')
+: $mainPath('/membership/logout');
 
 $bookDirectUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://nandinijunglebyhanginggardens.reserve-online.net/?checkin=today');
 $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tour-list.com/DPSearch/?HotelCode=nandinihgs');
+$navbarStartsSolid = request()->routeIs('voucher.*') && ! request()->routeIs('voucher.index');
 @endphp
 
 <div>
-    <nav id="mainNavbar" class="fixed inset-x-0 top-0 z-50 bg-black/35 text-white transition-all duration-300">
+    <nav id="mainNavbar" data-navbar-mode="{{ $navbarStartsSolid ? 'solid' : 'transparent' }}" class="fixed inset-x-0 top-0 z-50 transition-all duration-300 {{ $navbarStartsSolid ? 'bg-white text-slate-700 shadow' : 'bg-black/35 text-white' }}">
         <div class="w-full px-4 sm:px-6 md:px-10 2xl:px-14 relative">
-            <div id="navInner" class="flex items-center h-20 lg:h-28 transition-all duration-300">
+            <div id="navInner" class="flex items-center h-20 transition-all duration-300 {{ $navbarStartsSolid ? 'lg:h-20' : 'lg:h-28' }}">
 
                 {{-- LEFT --}}
-                <div id="navLeft" class="flex items-center gap-4 lg:gap-6 transition-colors duration-300">
+                <div id="navLeft" class="flex items-center gap-4 lg:gap-6 transition-colors duration-300 {{ $navbarStartsSolid ? 'text-slate-700' : '' }}">
                     <button id="btnMenu" type="button" class="inline-flex items-center gap-3 transition-colors duration-300 tracking-[0.08em] font-medium" aria-label="Open menu">
                         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                             <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
@@ -42,7 +53,7 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                         <span class="hidden sm:inline text-[14px] uppercase sm:text-[16px]">Menu</span>
                     </button>
 
-                    <div id="navIcons" class="hidden md:flex items-center gap-5">
+                    <div id="navIcons" class="hidden md:flex items-center gap-5 {{ $navbarStartsSolid ? 'text-slate-700' : '' }}">
                         <a href="tel:+623618983111" class="hover:opacity-100" aria-label="Call">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4">
                                 <path d="M3.51089 2L7.15002 2.13169C7.91653 2.15942 8.59676 2.64346 8.89053 3.3702L9.96656 6.03213C10.217 6.65159 10.1496 7.35837 9.78693 7.91634L8.40831 10.0375C9.22454 11.2096 11.4447 13.9558 13.7955 15.5633L15.5484 14.4845C15.9939 14.2103 16.5273 14.1289 17.0314 14.2581L20.5161 15.1517C21.4429 15.3894 22.0674 16.2782 21.9942 17.2552L21.7705 20.2385C21.6919 21.2854 20.8351 22.1069 19.818 21.9887C6.39245 20.4276 -1.48056 1.99997 3.51089 2Z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -58,8 +69,8 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                 </div>
 
                 {{-- CENTER LOGO --}}
-                <a href="{{ route('home') }}" class="absolute left-1/2 -translate-x-1/2 flex items-center justify-center tracking-[0.08em] font-medium">
-                    <img id="navLogo" src="{{ asset('images/logo-njhg.png') }}" class="h-14 sm:h-16 lg:h-24 w-auto brightness-0 invert transition-all duration-300" alt="Nandini Jungle" width="250" height="104" />
+                <a href="{{ $mainRoute('home') }}" class="absolute left-1/2 -translate-x-1/2 flex items-center justify-center tracking-[0.08em] font-medium">
+                    <img id="navLogo" src="{{ asset('images/logo-njhg.png') }}" class="h-14 sm:h-16 w-auto transition-all duration-300 {{ $navbarStartsSolid ? 'lg:h-16' : 'lg:h-24 brightness-0 invert' }}" alt="Nandini Jungle" width="250" height="104" />
                 </a>
 
                 {{-- RIGHT --}}
@@ -68,11 +79,11 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                     @auth('member')
                     <div class="relative">
                         <button id="navProfileBtn" type="button" class="inline-flex items-center gap-3 tracking-[0.08em] font-medium" aria-label="Open member menu" aria-expanded="false">
-                            <span class="hidden sm:inline text-[11px] text-xs font-semibold transition-colors duration-300 sm:text-[13px] sm:text-sm" data-nav-profile-label>
+                            <span class="hidden sm:inline text-[11px] text-xs font-semibold transition-colors duration-300 sm:text-[13px] sm:text-sm {{ $navbarStartsSolid ? 'text-slate-950' : 'text-white' }}" data-nav-profile-label>
                                 Welcome! {{ $memberDisplayName }}
                             </span>
 
-                            <span class="inline-flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-white bg-white/10 text-[12px] font-bold uppercase text-white shadow-sm transition duration-300 hover:border-[#B8945B] sm:text-[14px]" data-nav-profile-avatar>
+                            <span class="inline-flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border text-[12px] font-bold uppercase shadow-sm transition duration-300 hover:border-[#B8945B] sm:text-[14px] {{ $navbarStartsSolid ? 'border-slate-950 bg-slate-950/5 text-slate-950' : 'border-white bg-white/10 text-white' }}" data-nav-profile-avatar>
                                 @if ($memberProfilePhotoUrl)
                                 <img src="{{ $memberProfilePhotoUrl }}" alt="{{ $memberName }}" class="h-full w-full object-cover" width="44" height="44" loading="lazy" decoding="async">
                                 @else
@@ -105,13 +116,13 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                     </div>
                     @else
                     {{-- Member: desktop/tablet only --}}
-                    <a id="navMemberBtn" href="{{ route('membership.index') }}" class="hidden sm:inline-flex items-center justify-center border transition duration-300 uppercase text-[8px] sm:text-sm px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 bg-transparent border-white text-white hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium">
+                    <a id="navMemberBtn" href="{{ $mainRoute('membership.index') }}" class="hidden sm:inline-flex items-center justify-center border transition duration-300 uppercase text-[8px] sm:text-sm px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 bg-transparent hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium {{ $navbarStartsSolid ? 'border-slate-950 text-slate-950' : 'border-white text-white' }}">
                         BE A MEMBER
                     </a>
 
                     {{-- Book --}}
                     <div class="relative">
-                        <button id="navBookBtn" type="button" class="inline-flex items-center justify-center border transition duration-300 uppercase text-[8px] sm:text-sm px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 bg-white border-white text-slate-700 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium">
+                        <button id="navBookBtn" type="button" class="inline-flex items-center justify-center border transition duration-300 uppercase text-[8px] sm:text-sm px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium {{ $navbarStartsSolid ? 'bg-[#A88444] border-[#A88444] text-white' : 'bg-white border-white text-slate-700' }}">
                             <span class="sm:hidden">Reserve</span>
                             <span class="hidden sm:inline">Reserve</span>
                         </button>
@@ -130,7 +141,7 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                     @endauth
                     @else
                     <div class="relative">
-                        <button id="navBookBtn" type="button" class="inline-flex items-center justify-center border transition duration-300 uppercase text-xs px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 bg-white border-white text-slate-700 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium">
+                        <button id="navBookBtn" type="button" class="inline-flex items-center justify-center border transition duration-300 uppercase text-xs px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 hover:bg-[#B8945B] hover:border-[#B8945B] hover:text-white tracking-[0.08em] font-medium {{ $navbarStartsSolid ? 'bg-[#A88444] border-[#A88444] text-white' : 'bg-white border-white text-slate-700' }}">
                             <span class="sm:hidden">Reserve</span>
                             <span class="hidden sm:inline">Reserve</span>
                         </button>
@@ -157,12 +168,12 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
 
     @php
     $loginUrl = \Illuminate\Support\Facades\Route::has('membership.login')
-    ? route('membership.login')
-    : url('/membership/sign-in');
+    ? $mainRoute('membership.login')
+    : $mainPath('/membership/sign-in');
 
     $registerUrl = \Illuminate\Support\Facades\Route::has('membership.register')
-    ? route('membership.register')
-    : url('/membership/join');
+    ? $mainRoute('membership.register')
+    : $mainPath('/membership/join');
 
     $socialLinks = [
     'instagram' => 'https://www.instagram.com/nandinijungleresort/',
@@ -194,7 +205,7 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
             {{-- LINKS --}}
             <div class="px-7 pb-8 grow overflow-y-auto min-h-0">
                 <nav class="space-y-5 text-left">
-                    <a href="{{ route('home') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('home') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Home
                     </a>
 
@@ -209,58 +220,58 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
 
                         <div id="ocVillas" data-oc-panel class="overflow-hidden text-left transition-all duration-300 ease-out" style="max-height: 0px; opacity: 0;">
                             <div class="pt-6 pb-5 ml-7 space-y-5">
-                                <a href="{{ route('accommodations.villas') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                <a href="{{ $mainRoute('accommodations.villas') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
                                     Jungle Villas
                                 </a>
 
-                                <a href="{{ route('accommodations.suites') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                <a href="{{ $mainRoute('accommodations.suites') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
                                     Royal Suites
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    <a href="{{ route('holy-river.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('holy-river.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Holy River
                     </a>
 
-                    <a href="{{ route('little-things.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('little-things.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         The Little Things
                     </a>
 
-                    <a href="{{ route('experiences.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('experiences.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Experiences
                     </a>
 
-                    <a href="{{ route('offers.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('offers.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Offers
                     </a>
 
-                    <a href="{{ route('dining.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('dining.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Dining
                     </a>
 
-                    <a href="{{ route('spa.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('spa.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Spa & Wellness
                     </a>
 
-                    <a href="{{ route('wedding.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('wedding.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Wedding
                     </a>
 
-                    <a href="{{ route('sustainability.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('sustainability.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Sustainability
                     </a>
 
-                    <a href="{{ route('gallery.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('gallery.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Gallery
                     </a>
 
-                    <a href="{{ route('blog.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('blog.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Blog & News
                     </a>
 
-                    <a href="{{ route('about-us.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('about-us.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         About Us
                     </a>
 
@@ -297,7 +308,7 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
 
                         <div id="ocMore" data-oc-panel class="overflow-hidden text-left transition-all duration-300 ease-out" style="max-height: 0px; opacity: 0;">
                             <div class="pt-6 pb-5 ml-7 space-y-5">
-                                <a href="{{ url('/honeymoon') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                <a href="{{ $mainPath('/honeymoon') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
                                     Honeymoon
                                 </a>
 
@@ -321,11 +332,11 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                                     Blog & News
                                 </a> --}}
 
-                                <a href="{{ route('awards.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                <a href="{{ $mainRoute('awards.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
                                     Awards
                                 </a>
 
-                                <a href="{{ route('contact.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                <a href="{{ $mainRoute('contact.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
                                     Contact
                                 </a>
 
@@ -333,7 +344,7 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                                     Gallery
                                 </a> --}}
 
-                                <a href="{{ route('faq.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                <a href="{{ $mainRoute('faq.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
                                     FAQ
                                 </a>
 
@@ -376,11 +387,11 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                         </h2>
 
                         <div class="space-y-5">
-                            <a href="{{ route('membership.index') }}" class="block text-[12px] leading-6 uppercase text-left hover:text-[#B8945B] tracking-[0.08em] font-medium sm:text-[14px]">
+                            <a href="{{ $mainRoute('membership.index') }}" class="block text-[12px] leading-6 uppercase text-left hover:text-[#B8945B] tracking-[0.08em] font-medium sm:text-[14px]">
                                 About Inner Circle Program
                             </a>
 
-                            <a href="{{ route('membership.privilege-redemption') }}" class="block text-[12px] leading-6 uppercase text-left hover:text-[#B8945B] tracking-[0.08em] font-medium sm:text-[14px]">
+                            <a href="{{ $mainRoute('membership.privilege-redemption') }}" class="block text-[12px] leading-6 uppercase text-left hover:text-[#B8945B] tracking-[0.08em] font-medium sm:text-[14px]">
                                 Redemption
                             </a>
                         </div>
@@ -443,7 +454,8 @@ $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tou
                     return;
                 }
 
-                const isScrolled = window.scrollY > 50;
+                const navbar = document.getElementById('mainNavbar');
+                const isScrolled = navbar?.dataset.navbarMode === 'solid' || window.scrollY > 50;
 
                 if (navProfileAvatar) {
                     navProfileAvatar.classList.remove('border-white', 'text-white', 'bg-white/10', 'border-slate-950', 'text-slate-950', 'bg-slate-950/5');

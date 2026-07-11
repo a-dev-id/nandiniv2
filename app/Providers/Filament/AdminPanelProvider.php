@@ -68,6 +68,9 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Membership'),
 
                 NavigationGroup::make()
+                    ->label('Vouchers'),
+
+                NavigationGroup::make()
                     ->label('General'),
 
                 NavigationGroup::make()
