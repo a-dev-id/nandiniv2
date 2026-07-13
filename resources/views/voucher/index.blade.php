@@ -2,7 +2,8 @@
 @php
     $metaTitle = $landingPage?->meta_title ?: $landingPage?->title ?: 'Nandini Jungle Vouchers';
     $metaDescription = $landingPage?->meta_description ?: $landingPage?->excerpt ?: 'Purchase elegant Nandini Jungle by Hanging Gardens vouchers for yourself or someone special.';
-    $heroImageUrl = $landingPage?->hero_image ? asset('storage/' . $landingPage->hero_image) : asset('images/home/hero.jpg');
+    $heroImagePath = $landingPage?->hero_image ?: $landingPage?->hero_mobile_image;
+    $heroImageUrl = $heroImagePath ? asset('storage/' . $heroImagePath) : null;
 @endphp
 <title>{{ $metaTitle }}</title>
 <meta name="description" content="{{ $metaDescription }}">
@@ -14,12 +15,14 @@
 
 <x-layouts.app>
     <section class="relative min-h-[76vh] bg-slate-950">
-        <picture>
-            @if ($landingPage?->hero_mobile_image)
-                <source media="(max-width: 767px)" srcset="{{ asset('storage/' . $landingPage->hero_mobile_image) }}">
-            @endif
-            <img src="{{ $heroImageUrl }}" alt="{{ $landingPage?->hero_image_alt ?: 'Nandini Jungle by Hanging Gardens' }}" class="absolute inset-0 h-full w-full object-cover opacity-65" onerror="this.style.display='none'">
-        </picture>
+        @if ($heroImageUrl)
+            <picture>
+                @if ($landingPage?->hero_mobile_image)
+                    <source media="(max-width: 767px)" srcset="{{ asset('storage/' . $landingPage->hero_mobile_image) }}">
+                @endif
+                <img src="{{ $heroImageUrl }}" alt="{{ $landingPage?->hero_image_alt ?: 'Nandini Jungle by Hanging Gardens' }}" class="absolute inset-0 h-full w-full object-cover opacity-65" onerror="this.style.display='none'">
+            </picture>
+        @endif
         <div class="absolute inset-0 bg-black/35"></div>
     </section>
 
