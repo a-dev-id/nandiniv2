@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::domain(config('domains.voucher'))
     ->name('voucher.')
-    ->middleware('web')
+    ->middleware(['web', 'voucher.enabled'])
     ->group(function (): void {
         Route::get('/', [VoucherController::class, 'index'])->name('index');
         Route::get('/category/{voucherCategory:slug}', [VoucherController::class, 'category'])->name('category.show');

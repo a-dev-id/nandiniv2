@@ -13,8 +13,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('page_section_images', function (Blueprint $table) {
-            $table->string('image_file_name')->nullable()->after('image');
-            $table->string('mobile_image_file_name')->nullable()->after('mobile_image');
+            if (! Schema::hasColumn('page_section_images', 'image_file_name')) {
+                $table->string('image_file_name')->nullable()->after('image');
+            }
+
+            if (! Schema::hasColumn('page_section_images', 'mobile_image_file_name')) {
+                $table->string('mobile_image_file_name')->nullable()->after('mobile_image');
+            }
         });
 
         DB::table('page_section_images')
@@ -48,10 +53,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('page_section_images', function (Blueprint $table) {
-            $table->dropColumn([
-                'image_file_name',
-                'mobile_image_file_name',
-            ]);
+            foreach (['image_file_name', 'mobile_image_file_name'] as $column) {
+                if (Schema::hasColumn('page_section_images', $column)) {
+                    $table->dropColumn($column);
+                }
+            }
         });
     }
 };

@@ -1,6 +1,7 @@
 @php
 $member = auth('member')->user();
 $membershipDisabled = (bool) config('features.disable_membership_feature');
+$voucherDisabled = (bool) config('features.disable_voucher_feature');
 $memberIsLoggedIn = $member instanceof \App\Models\Member;
 $memberName = $memberIsLoggedIn ? ($member->full_name ?: $member->name ?: 'Member') : 'Member';
 $memberFirstName = $memberIsLoggedIn ? trim((string) ($member->first_name ?: str($memberName)->before(' '))) : '';
@@ -68,9 +69,11 @@ $navbarStartsSolid = request()->routeIs('voucher.*') && ! request()->routeIs('vo
                         </a>
                     </div>
 
+                    @unless ($voucherDisabled)
                     <a id="navGiftVoucherBtn" href="{{ $voucherUrl }}" class="hidden lg:inline-flex items-center justify-center border bg-transparent px-3 py-1.5 text-[8px] font-medium uppercase tracking-[0.08em] transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white sm:px-4 sm:py-2 sm:text-sm lg:px-5 {{ $navbarStartsSolid ? 'border-slate-950 text-slate-950' : 'border-white text-white' }}">
                         Gift Voucher
                     </a>
+                    @endunless
                 </div>
 
                 {{-- CENTER LOGO --}}
@@ -360,11 +363,13 @@ $navbarStartsSolid = request()->routeIs('voucher.*') && ! request()->routeIs('vo
                         </div>
                     </div>
 
+                    @unless ($voucherDisabled)
                     <div class="border-t border-slate-300/70 pt-5">
                         <a href="{{ $voucherUrl }}" class="inline-flex w-full items-center justify-center border border-slate-800 bg-transparent px-4 py-2.5 text-[12px] font-medium uppercase tracking-[0.08em] text-slate-700 transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white sm:text-[14px]">
                             Gift Voucher
                         </a>
                     </div>
+                    @endunless
 
                     {{-- Inner Circle --}}
                     @if (! $membershipDisabled)

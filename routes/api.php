@@ -8,4 +8,5 @@ Route::match(['get', 'post'], '/webhotelier/reservation/{secret}', [WebhotelierR
     ->name('api.webhotelier.reservation');
 
 Route::post('/flywire/notifications', FlywireNotificationController::class)
+    ->middleware('voucher.enabled')
     ->name('api.flywire.notifications');

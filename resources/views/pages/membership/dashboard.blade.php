@@ -655,9 +655,11 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                     Point Redeem
                 </button>
 
+                @unless (config('features.disable_voucher_feature'))
                 <button type="button" class="min-w-0 flex-1 border border-slate-300 bg-white px-2 py-2.5 text-[8px] font-medium uppercase text-slate-700 transition hover:border-[#A88444] hover:text-[#A88444] sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="vouchers">
                     My Vouchers
                 </button>
+                @endunless
 
                 <button type="button" class="min-w-0 flex-1 border border-slate-300 bg-white px-2 py-2.5 text-[8px] font-medium uppercase text-slate-700 transition hover:border-[#A88444] hover:text-[#A88444] sm:flex-none sm:px-5 sm:text-[12px] tracking-[0.08em]" data-dashboard-tab="history">
                     History
@@ -783,6 +785,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                 </div>
             </div>
 
+            @unless (config('features.disable_voucher_feature'))
             <div id="my-vouchers" class="hidden pt-8" data-dashboard-tab-panel="vouchers">
                 @php
                 $voucherOrders = collect($voucherOrders ?? []);
@@ -830,6 +833,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                 </div>
                 @endif
             </div>
+            @endunless
         </div>
     </section>
 
@@ -1492,6 +1496,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                 slidesToShow: desktopSlides,
                 slidesToScroll: 1,
                 arrows: total > 1,
+                dots: total > 1,
                 infinite: total > desktopSlides,
                 prevArrow: jQuery('.dashboard-reward-carousel-prev'),
                 nextArrow: jQuery('.dashboard-reward-carousel-next'),
@@ -1549,6 +1554,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                 slidesToShow: desktopSlides,
                 slidesToScroll: 1,
                 arrows: total > 1,
+                dots: total > 1,
                 infinite: total > desktopSlides,
                 prevArrow: jQuery('.dashboard-accommodation-carousel-prev'),
                 nextArrow: jQuery('.dashboard-accommodation-carousel-next'),

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Accommodation;
 use App\Models\Experience;
 use App\Models\ExperienceCategory;
+use App\Models\GuestReview;
 use App\Models\Offer;
 use App\Models\Page;
 use App\Models\PageSection;
@@ -108,6 +109,13 @@ class HomeController extends Controller
             ->orderBy('sort_order')
             ->get();
 
+        $guestReviews = GuestReview::query()
+            ->published()
+            ->orderBy('sort_order')
+            ->orderByDesc('reviewed_at')
+            ->orderByDesc('id')
+            ->get();
+
         return view('pages.home', [
             'page' => $page,
             'offers' => $offers,
@@ -118,6 +126,7 @@ class HomeController extends Controller
             'spaSections' => $spaSections,
             'ubudJungleAdventures' => $ubudJungleAdventures,
             'sections' => $sections,
+            'guestReviews' => $guestReviews,
         ]);
     }
 }

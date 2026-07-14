@@ -35,7 +35,9 @@ return [
 : [];
 
 $whatsappUrl = 'https://wa.me/6281236871170';
-$showVoucherCartShortcut = request()->routeIs('voucher.*') && \Illuminate\Support\Facades\Route::has('voucher.cart.index');
+$showVoucherCartShortcut = ! config('features.disable_voucher_feature')
+    && request()->routeIs('voucher.*')
+    && \Illuminate\Support\Facades\Route::has('voucher.cart.index');
 $voucherCartCount = $showVoucherCartShortcut ? app(VoucherCartService::class)->countUnits() : 0;
 @endphp
 

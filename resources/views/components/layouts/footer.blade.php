@@ -42,14 +42,19 @@ $seoFooterLinks = \App\Models\Page::query()
             <div class="hidden lg:grid lg:grid-cols-12 lg:gap-10">
 
                 {{-- LOGO --}}
-                <div class="lg:col-span-2 flex items-start">
+                <div class="lg:col-span-3 flex flex-col items-center text-center">
                     <a href="{{ $mainRoute('home') }}" class="inline-flex tracking-[0.08em] font-medium">
                         <img src="{{ asset('images/logo-njhg.png') }}" alt="Nandini Jungle by Hanging Gardens" class="w-36 lg:w-44 h-auto max-h-52 shrink-0 brightness-0 invert" loading="lazy" />
                     </a>
+
+                    <div class="mt-8 flex items-center gap-4">
+                        <img src="{{ asset('images/OIP.webp') }}" class="h-8 w-auto" loading="lazy" alt="Blink">
+                        <img src="{{ asset('images/ot-design.png') }}" class="h-8 w-auto" loading="lazy" alt="OT Design">
+                    </div>
                 </div>
 
                 {{-- ADDRESS --}}
-                <div class="lg:col-span-3">
+                <div class="lg:order-4 lg:col-span-4">
                     <h3 class="text-base uppercase mb-3 sm:text-lg">Address</h3>
 
                     <div class="text-xs leading-7 text-white/90 sm:text-sm">
@@ -81,7 +86,7 @@ $seoFooterLinks = \App\Models\Page::query()
                 </div>
 
                 {{-- ABOUT --}}
-                <div class="lg:col-span-2">
+                <div class="lg:order-2 lg:col-span-2">
                     <h3 class="text-base uppercase mb-3 sm:text-lg">About</h3>
                     <ul class="space-y-3 text-xs text-white/90 sm:text-sm">
                         <li><a href="{{ $mainRoute('about-us.index') }}" class="hover:underline">About Us</a></li>
@@ -93,7 +98,7 @@ $seoFooterLinks = \App\Models\Page::query()
                 </div>
 
                 {{-- OTHERS --}}
-                <div class="lg:col-span-2">
+                <div class="lg:order-3 lg:col-span-3">
                     <h3 class="text-base uppercase mb-3 sm:text-lg">Others</h3>
                     <ul class="space-y-3 text-xs text-white/90 sm:text-sm">
                         <li>
@@ -129,26 +134,24 @@ $seoFooterLinks = \App\Models\Page::query()
                     </ul>
                 </div>
 
-                {{-- PARTNERS --}}
-                <div class="lg:col-span-3 flex justify-end">
-                    <div class="flex items-center justify-end gap-4">
-                        <img src="{{ asset('images/OIP.webp') }}" class="h-10 w-auto" loading="lazy" alt="Blink">
-                        <img src="{{ asset('images/ot-design.png') }}" class="h-10 w-auto" loading="lazy" alt="OT Design">
-                    </div>
-                </div>
             </div>
 
             {{-- TABLET + MOBILE LAYOUT --}}
-            <div class="lg:hidden text-center">
+            <div class="lg:hidden flex flex-col text-center">
 
-                <div class="space-y-10">
-                    <div class="flex items-center justify-center">
+                <div class="contents">
+                    <div class="order-1 flex flex-col items-center justify-center">
                         <a href="{{ $mainRoute('home') }}" class="inline-flex tracking-[0.08em] font-medium">
                             <img src="{{ asset('images/logo-njhg.png') }}" alt="Nandini Jungle by Hanging Gardens" class="w-36 lg:w-44 h-auto max-h-52 shrink-0 brightness-0 invert" loading="lazy" />
                         </a>
+
+                        <div class="mt-8 flex items-center justify-center gap-4">
+                            <img src="{{ asset('images/OIP.webp') }}" class="h-7 w-auto sm:h-8" loading="lazy" alt="Blink">
+                            <img src="{{ asset('images/ot-design.png') }}" class="h-7 w-auto sm:h-8" loading="lazy" alt="OT Design">
+                        </div>
                     </div>
 
-                    <div>
+                    <div class="order-4 mt-12">
                         <h3 class="text-base uppercase mb-3 sm:text-lg">Address</h3>
                         <div class="text-xs leading-7 text-white/90 sm:text-sm">
                             Banjar Susut, Desa Buahan,<br>
@@ -157,7 +160,7 @@ $seoFooterLinks = \App\Models\Page::query()
                         </div>
                     </div>
 
-                    <div>
+                    <div class="order-5 mt-10">
                         <h3 class="text-base uppercase mb-3 sm:text-lg">Phone</h3>
 
                         <div class="text-xs text-white/90 space-y-6 sm:text-sm">
@@ -173,7 +176,7 @@ $seoFooterLinks = \App\Models\Page::query()
                         </div>
                     </div>
 
-                    <div>
+                    <div class="order-6 mt-10">
                         <h3 class="text-base uppercase mb-3 sm:text-lg">Email</h3>
                         <a href="mailto:reservation@nandinibali.com" class="text-xs text-white/90 hover:underline break-all sm:text-sm">
                             reservation@nandinibali.com
@@ -182,7 +185,7 @@ $seoFooterLinks = \App\Models\Page::query()
                 </div>
 
                 {{-- ABOUT --}}
-                <div class="mt-14">
+                <div class="order-2 mt-14">
                     <h3 class="text-base uppercase mb-3 sm:text-lg">About</h3>
                     <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs text-white/90 sm:text-sm">
                         <a href="{{ $mainRoute('about-us.index') }}" class="hover:underline">About Us</a>
@@ -195,7 +198,7 @@ $seoFooterLinks = \App\Models\Page::query()
                 </div>
 
                 {{-- OTHERS --}}
-                <div class="mt-12">
+                <div class="order-3 mt-12">
                     <h3 class="text-base uppercase mb-3 sm:text-lg">Others</h3>
                     <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs text-white/90 sm:text-sm">
                         <a href="{{ $mainRoute('sustainability.index') }}" class="hover:underline text-green-700 flex items-center gap-1 font-medium tracking-[0.08em]">
@@ -228,13 +231,6 @@ $seoFooterLinks = \App\Models\Page::query()
                     </div>
                 </div>
 
-                {{-- PARTNERS --}}
-                <div class="mt-14">
-                    <div class="flex items-center justify-center gap-4">
-                        <img src="{{ asset('images/OIP.webp') }}" class="h-7 sm:h-8 w-auto" loading="lazy" alt="Blink">
-                        <img src="{{ asset('images/ot-design.png') }}" class="h-7 sm:h-8 w-auto" loading="lazy" alt="OT Design">
-                    </div>
-                </div>
             </div>
         </div>
 

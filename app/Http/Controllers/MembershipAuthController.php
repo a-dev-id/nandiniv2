@@ -395,7 +395,7 @@ class MembershipAuthController extends Controller
             ->orderByRaw('FIELD(id, ' . implode(',', $accommodationIds) . ')')
             ->get();
 
-        $voucherOrders = $member instanceof Member
+        $voucherOrders = ! config('features.disable_voucher_feature') && $member instanceof Member
             ? $member->voucherOrders()
                 ->with(['items.issuedVouchers'])
                 ->latest()

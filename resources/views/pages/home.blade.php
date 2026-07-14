@@ -52,7 +52,7 @@
         </p>
     </section>
 
-    <x-sections.item-carousel :items="$villas" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" />
+    <x-sections.item-carousel :items="$villas" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :mobile-arrows-on-image="true" />
 
     <x-sections.presidential-suite-feature :accommodation="$presidentialSuite" />
 
@@ -66,7 +66,7 @@
         </p>
     </section>
 
-    <x-sections.item-carousel :items="$experienceCategories" route-name="experiences.category" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" />
+    <x-sections.item-carousel :items="$experienceCategories" route-name="experiences.category" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" :mobile-arrows-on-image="true" />
     @endif
 
 
@@ -81,7 +81,7 @@
         </p>
     </section>
 
-    <x-sections.item-carousel :items="$offers" route-name="offers.show" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" />
+    <x-sections.item-carousel :items="$offers" route-name="offers.show" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" :mobile-arrows-on-image="true" />
     @endif
 
     @if ($diningSections->isNotEmpty())
@@ -94,7 +94,7 @@
         </p>
     </section>
 
-    <x-sections.item-carousel :items="$diningSections" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" />
+    <x-sections.item-carousel :items="$diningSections" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" :mobile-arrows-on-image="true" />
     @endif
 
     @if ($spaSections->isNotEmpty())
@@ -107,7 +107,7 @@
         </p>
     </section>
 
-    <x-sections.item-carousel :items="$spaSections" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" />
+    <x-sections.item-carousel :items="$spaSections" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" :mobile-arrows-on-image="true" />
     @endif
 
     @if ($ubudJungleAdventures->isNotEmpty())
@@ -120,7 +120,7 @@
         </p>
     </section>
 
-    <x-sections.item-carousel :items="$ubudJungleAdventures" route-name="experiences.show" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" />
+    <x-sections.item-carousel :items="$ubudJungleAdventures" route-name="experiences.show" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :show-reserve-button="false" :mobile-arrows-on-image="true" />
     @endif
 
     @foreach ($remainingSections as $section)
@@ -148,4 +148,6 @@
     <x-sections.two-images-section :section="$section" :reverse="true" />
     @endif
     @endforeach
+
+    <x-sections.guest-reviews :reviews="$guestReviews" />
 </x-layouts.app>

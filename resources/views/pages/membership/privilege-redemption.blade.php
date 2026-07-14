@@ -283,6 +283,7 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
                     slidesToShow: 3,
                     slidesToScroll: 1,
                     arrows: true,
+                    dots: true,
                     infinite: true,
                     prevArrow: $section.find('.reward-carousel-prev'),
                     nextArrow: $section.find('.reward-carousel-next'),

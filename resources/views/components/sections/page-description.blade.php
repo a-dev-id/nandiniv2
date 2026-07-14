@@ -9,11 +9,9 @@
 
         @if ($showAwards)
         <div class="mb-10 flex items-center justify-center gap-5 sm:gap-7 md:mb-12 md:gap-8" aria-label="Awards and recognition">
-            <div class="h-16 w-16 overflow-hidden rounded-full bg-black sm:h-20 sm:w-20">
-                <img src="{{ asset('images/awards-best-luxury-jungle-retreat.jpeg') }}" class="h-auto w-full" width="576" height="725" loading="lazy" alt="Best Luxury Jungle Retreat 2024">
-            </div>
+            <img src="{{ asset('images/awards-best-luxury-jungle-retreat.png') }}" class="h-20 w-auto sm:h-24" width="576" height="725" loading="lazy" alt="Best Luxury Jungle Retreat 2024">
             <img src="{{ asset('images/awards-best-luxury-jungle-retreat-2025.png') }}" class="h-20 w-auto sm:h-24" width="378" height="472" loading="lazy" alt="Best Luxury Jungle Retreat and Spa 2025">
-            <img src="{{ asset('images/tchotel_2026_W.png') }}" class="h-16 w-auto sm:h-20" width="160" height="160" loading="lazy" alt="Tripadvisor Travelers' Choice 2026">
+            <img src="{{ asset('https://static.tacdn.com/img2/travelers_choice/widgets/tchotel_2026_L.png') }}" class="h-20 w-auto sm:h-24" width="160" height="160" loading="lazy" alt="Tripadvisor Travelers' Choice 2026">
         </div>
         @endif
 

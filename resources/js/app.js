@@ -213,7 +213,7 @@ function initItemCarousel() {
                 arrows: true,
                 prevArrow: $wrap.find(".itemcarousel-prev"),
                 nextArrow: $wrap.find(".itemcarousel-next"),
-                dots: false,
+                dots: true,
                 speed: 450,
                 responsive: [
                     { breakpoint: 1024, settings: { slidesToShow: 2 } },
@@ -225,9 +225,43 @@ function initItemCarousel() {
 }
 
 function preloadSlickWhenNeeded() {
-    if (document.querySelector(".itemcarousel-slick, .dashboard-reward-carousel, .dashboard-accommodation-carousel, .reward-carousel-items")) {
+    if (document.querySelector(".itemcarousel-slick, .guest-review-slider, .dashboard-reward-carousel, .dashboard-accommodation-carousel, .reward-carousel-items")) {
         ensureSlick();
     }
+}
+
+function initGuestReviewSlider() {
+    const sliders = document.querySelectorAll(".guest-review-slider");
+
+    if (!sliders.length) {
+        return;
+    }
+
+    ensureSlick().then(($) => {
+        $(".guest-review-slider").each(function () {
+            const $slider = $(this);
+
+            if ($slider.hasClass("slick-initialized")) {
+                $slider.slick("refresh");
+                return;
+            }
+
+            const total = Number($slider.data("total") || 0);
+
+            $slider.slick({
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                adaptiveHeight: true,
+                arrows: total > 1,
+                dots: total > 1,
+                appendDots: $slider.closest("section").find(".guest-review-dots"),
+                infinite: total > 1,
+                prevArrow: $slider.closest("section").find(".guest-review-prev"),
+                nextArrow: $slider.closest("section").find(".guest-review-next"),
+                speed: 450,
+            });
+        });
+    });
 }
 
 function initDeferredYouTubeEmbeds() {
@@ -309,6 +343,7 @@ onPageReady(() => {
     initNavbarActions();
     preloadSlickWhenNeeded();
     initItemCarousel();
+    initGuestReviewSlider();
     initDeferredYouTubeEmbeds();
 });
 
