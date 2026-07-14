@@ -37,7 +37,7 @@
 
     <x-heroes.video-hero video-id="8aZOOwSdxwE" />
 
-    <x-sections.page-description :page="$page" />
+    <x-sections.page-description :page="$page" :show-awards="true" />
 
     @if ($leadContainedImage)
     <x-sections.contained-image-section :section="$leadContainedImage" />

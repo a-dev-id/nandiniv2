@@ -129,19 +129,11 @@ $seoFooterLinks = \App\Models\Page::query()
                     </ul>
                 </div>
 
-                {{-- BADGES --}}
+                {{-- PARTNERS --}}
                 <div class="lg:col-span-3 flex justify-end">
-                    <div class="space-y-5">
-                        <div class="flex items-center justify-end gap-6">
-                            <img src="{{ asset('images/awards-best-luxury-jungle-retreat.jpeg') }}" class="h-28 w-auto" loading="lazy" alt="Award 2024">
-                            <img src="{{ asset('images/awards-best-luxury-jungle-retreat-2025.png') }}" class="h-28 w-auto" loading="lazy" alt="Award 2025">
-                            <img src="{{ asset('images/tchotel_2026_W.png') }}" class="h-24 w-auto" loading="lazy" alt="Tripadvisor">
-                        </div>
-
-                        <div class="flex items-center justify-end gap-4">
-                            <img src="{{ asset('images/OIP.webp') }}" class="h-10 w-auto" loading="lazy" alt="Blink">
-                            <img src="{{ asset('images/ot-design.png') }}" class="h-10 w-auto" loading="lazy" alt="OT Design">
-                        </div>
+                    <div class="flex items-center justify-end gap-4">
+                        <img src="{{ asset('images/OIP.webp') }}" class="h-10 w-auto" loading="lazy" alt="Blink">
+                        <img src="{{ asset('images/ot-design.png') }}" class="h-10 w-auto" loading="lazy" alt="OT Design">
                     </div>
                 </div>
             </div>
@@ -236,15 +228,9 @@ $seoFooterLinks = \App\Models\Page::query()
                     </div>
                 </div>
 
-                {{-- AWARDS --}}
+                {{-- PARTNERS --}}
                 <div class="mt-14">
-                    <div class="flex items-center justify-center gap-6">
-                        <img src="{{ asset('images/awards-best-luxury-jungle-retreat.jpeg') }}" class="h-16 sm:h-20 w-auto" loading="lazy" alt="Award 2024">
-                        <img src="{{ asset('images/awards-best-luxury-jungle-retreat-2025.png') }}" class="h-16 sm:h-20 w-auto" loading="lazy" alt="Award 2025">
-                        <img src="{{ asset('images/tchotel_2026_W.png') }}" class="h-16 sm:h-20 w-auto" loading="lazy" alt="Tripadvisor">
-                    </div>
-
-                    <div class="mt-2 flex items-center justify-center gap-4">
+                    <div class="flex items-center justify-center gap-4">
                         <img src="{{ asset('images/OIP.webp') }}" class="h-7 sm:h-8 w-auto" loading="lazy" alt="Blink">
                         <img src="{{ asset('images/ot-design.png') }}" class="h-7 sm:h-8 w-auto" loading="lazy" alt="OT Design">
                     </div>
