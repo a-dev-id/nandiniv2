@@ -11,34 +11,27 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="{{ $metaTitle }}">
 <meta property="og:description" content="{{ $metaDescription }}">
+<meta property="og:url" content="{{ route('voucher.index') }}">
+<meta property="og:site_name" content="Nandini Jungle by Hanging Gardens">
+@if ($heroImageUrl)
+<meta property="og:image" content="{{ $heroImageUrl }}">
+<meta name="twitter:image" content="{{ $heroImageUrl }}">
+@endif
+<meta name="twitter:card" content="summary_large_image">
 @endpush
 
 <x-layouts.app>
-    <section class="relative min-h-[76vh] bg-slate-950">
-        @if ($heroImageUrl)
-            <picture>
-                @if ($landingPage?->hero_mobile_image)
-                    <source media="(max-width: 767px)" srcset="{{ asset('storage/' . $landingPage->hero_mobile_image) }}">
-                @endif
-                <img src="{{ $heroImageUrl }}" alt="{{ $landingPage?->hero_image_alt ?: 'Nandini Jungle by Hanging Gardens' }}" class="absolute inset-0 h-full w-full object-cover opacity-65" onerror="this.style.display='none'">
-            </picture>
-        @endif
-        <div class="absolute inset-0 bg-black/35"></div>
-    </section>
-
-    <section class="bg-white px-6 py-14 md:py-20">
-        <div class="mx-auto max-w-6xl">
-            <div class="mx-auto max-w-3xl text-center">
-                <h2 class="text-xl uppercase text-slate-700 sm:text-2xl">{{ $landingPage?->title ?: 'Reserve a Nandini Moment' }}</h2>
-                @if ($landingPage?->subtitle)
-                    <p class="mt-3 text-base italic leading-7 text-slate-600">{{ $landingPage->subtitle }}</p>
-                @endif
-                <div class="mt-4 text-sm leading-7 text-slate-600 [&_p]:mb-4 [&_p:last-child]:mb-0">
-                    {!! $landingPage?->description ?: '<p>Choose a refined voucher for yourself or as a gift, add the voucher holder details, then complete payment securely through Flywire. Vouchers are issued only after confirmed payment.</p>' !!}
-                </div>
+    @if ($landingPage)
+        <x-heroes.image-hero :page="$landingPage" />
+        <x-sections.page-description :page="$landingPage" />
+    @else
+        <section class="bg-white px-6 py-14 text-center md:py-20">
+            <div class="mx-auto max-w-3xl">
+                <h1 class="text-xl font-medium uppercase text-slate-700 sm:text-2xl">Gift Voucher</h1>
+                <p class="mt-4 text-sm leading-7 text-slate-600">Choose a refined voucher for yourself or someone special.</p>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 
     @if ($categories->isNotEmpty())
     <section class="bg-[#F7F7F7] px-6 py-14 md:py-20">

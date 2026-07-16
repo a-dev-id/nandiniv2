@@ -28,6 +28,7 @@ class Voucher extends Model
         'terms_conditions',
         'image',
         'card_image',
+        'gallery_images',
         'image_alt',
         'voucher_type',
         'face_value',
@@ -52,6 +53,7 @@ class Voucher extends Model
     ];
 
     protected $casts = [
+        'gallery_images' => 'array',
         'face_value' => 'integer',
         'selling_price' => 'integer',
         'discount_percentage' => 'integer',

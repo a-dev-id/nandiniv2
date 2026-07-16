@@ -51,10 +51,20 @@
                                     <div class="md:col-span-2">
                                         <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">Message or Note</label>
                                         <textarea name="personal_message" rows="3" class="mt-2 w-full border border-slate-300 px-4 py-3 text-sm">{{ $line['personal_message'] }}</textarea>
+                                        <input type="hidden" name="gift_from" value="{{ $line['gift_from'] ?? '' }}">
                                         <input type="hidden" name="delivery_method" value="email">
                                     </div>
                                     <div class="flex flex-wrap gap-3 md:col-span-2">
                                         <button class="inline-flex items-center justify-center border border-[#A88444] bg-[#A88444] px-4 py-2.5 text-xs uppercase tracking-[0.08em] text-white">Update</button>
+                                        <button
+                                            type="button"
+                                            class="inline-flex items-center justify-center border border-slate-700 px-4 py-2.5 text-xs uppercase tracking-[0.08em] text-slate-700 transition hover:border-[#A88444] hover:text-[#A88444]"
+                                            data-cart-voucher-preview
+                                            data-title="{{ $line['voucher']->title }}"
+                                            data-price="{{ $money->format($line['unit_price'], $line['currency']) }}{{ $money->priceTypeSuffix($line['price_type'] ?? null) }}"
+                                            data-image="{{ $line['voucher']->image ? asset('storage/' . $line['voucher']->image) : '' }}"
+                                            data-excerpt="{{ $line['voucher']->excerpt }}"
+                                        >Preview</button>
                                     </div>
                                 </form>
                                 <div class="flex flex-col justify-between bg-[#F7F7F7] p-5">
@@ -83,4 +93,67 @@
             @endif
         </div>
     </section>
+
+    <div class="fixed inset-0 z-[110] hidden overflow-y-auto bg-slate-950/70 px-4 py-6 sm:px-6" data-cart-preview-modal aria-hidden="true">
+        <div class="mx-auto max-w-3xl bg-white p-5 shadow-2xl sm:p-8" role="dialog" aria-modal="true" aria-labelledby="cart-preview-title">
+            <div class="flex justify-end">
+                <button type="button" class="text-xs uppercase tracking-[0.08em] text-slate-600 hover:text-[#A88444]" data-close-cart-preview>&times; Close preview</button>
+            </div>
+            <div class="mt-6 overflow-hidden border border-slate-200 bg-white">
+                <img src="" alt="" class="hidden h-64 w-full object-cover sm:h-80" data-cart-preview-image>
+                <div class="px-6 py-10 text-center sm:px-12">
+                    <p class="text-xs uppercase tracking-[0.18em] text-[#A88444]">Nandini Jungle by Hanging Gardens</p>
+                    <h2 id="cart-preview-title" class="mt-5 text-2xl uppercase text-slate-700 sm:text-3xl" data-cart-preview-title></h2>
+                    <p class="mt-4 text-xl font-semibold tracking-[0.06em] text-slate-700" data-cart-preview-price></p>
+                    <p class="mx-auto mt-6 max-w-xl text-sm italic leading-7 text-slate-600" data-cart-preview-message></p>
+                    <p class="mx-auto mt-10 max-w-xl border-t border-slate-200 pt-8 text-sm leading-7 text-slate-600" data-cart-preview-excerpt></p>
+                    <div class="mx-auto mt-8 max-w-xl border-t border-slate-200 pt-8 text-left text-xs leading-6 text-slate-500">
+                        <p><span class="font-semibold text-slate-700">Gift to:</span> <span data-cart-preview-recipient></span></p>
+                        <p class="mt-1"><span class="font-semibold text-slate-700">Gift from:</span> <span data-cart-preview-sender></span></p>
+                    </div>
+                </div>
+                <div class="border-t-4 border-[#A88444] bg-[#F7F7F7] px-6 py-5 text-center text-[10px] uppercase tracking-[0.12em] text-slate-500">Accommodation &nbsp; | &nbsp; Dining &nbsp; | &nbsp; Spa &nbsp; | &nbsp; Experiences</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.querySelector('[data-cart-preview-modal]');
+            const image = document.querySelector('[data-cart-preview-image]');
+
+            function closePreview() {
+                modal?.classList.add('hidden');
+                modal?.setAttribute('aria-hidden', 'true');
+                document.documentElement.classList.remove('overflow-hidden');
+            }
+
+            document.querySelectorAll('[data-cart-voucher-preview]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const form = button.closest('form');
+                    const imageUrl = button.dataset.image || '';
+                    document.querySelector('[data-cart-preview-title]').textContent = button.dataset.title || '';
+                    document.querySelector('[data-cart-preview-price]').textContent = button.dataset.price || '';
+                    document.querySelector('[data-cart-preview-excerpt]').textContent = button.dataset.excerpt || '';
+                    document.querySelector('[data-cart-preview-recipient]').textContent = form?.querySelector('[name="recipient_name"]')?.value || '';
+                    document.querySelector('[data-cart-preview-sender]').textContent = form?.querySelector('[name="gift_from"]')?.value || 'A special someone';
+                    document.querySelector('[data-cart-preview-message]').textContent = form?.querySelector('[name="personal_message"]')?.value || '';
+                    image.src = imageUrl;
+                    image.alt = button.dataset.title || '';
+                    image.classList.toggle('hidden', !imageUrl);
+                    modal?.classList.remove('hidden');
+                    modal?.setAttribute('aria-hidden', 'false');
+                    document.documentElement.classList.add('overflow-hidden');
+                });
+            });
+
+            document.querySelectorAll('[data-close-cart-preview]').forEach((button) => button.addEventListener('click', closePreview));
+            modal?.addEventListener('click', (event) => {
+                if (event.target === modal) closePreview();
+            });
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && modal && !modal.classList.contains('hidden')) closePreview();
+            });
+        });
+    </script>
 </x-layouts.app>

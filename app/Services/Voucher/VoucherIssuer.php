@@ -67,6 +67,8 @@ class VoucherIssuer
                     'status' => 'active',
                     'metadata' => [
                         'verification_url' => route('voucher.verify', ['token' => $token]),
+                        'gift_from' => $snapshot['gift_from'] ?? null,
+                        'personal_message' => $item->personal_message,
                     ],
                 ]);
             } catch (QueryException $e) {

@@ -14,7 +14,8 @@ class VoucherController extends Controller
     public function index(VoucherCartService $cart): View
     {
         $landingPage = Page::query()
-            ->where('id', 45)
+            ->where('id', 42)
+            ->where('is_active', true)
             ->first();
 
         return view('voucher.index', [

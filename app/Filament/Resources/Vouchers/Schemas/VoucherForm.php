@@ -7,6 +7,7 @@ use App\Models\VoucherCategory;
 use App\Support\FilamentWebpUpload;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -101,6 +102,28 @@ class VoucherForm
                             ->columnSpanFull()
                             ->schema([
                                 self::imageUpload('image', 'Main Image', 'vouchers/main', 1200, 900),
+                                Repeater::make('gallery_images')
+                                    ->label('Gallery Images')
+                                    ->addActionLabel('Add image')
+                                    ->reorderable()
+                                    ->collapsible()
+                                    ->itemLabel(fn (array $state): string => $state['image_alt'] ?? 'Gallery Image')
+                                    ->afterStateHydrated(function (Repeater $component, mixed $state): void {
+                                        $component->state(collect($state ?? [])->map(
+                                            fn (mixed $item): array => is_array($item)
+                                                ? $item
+                                                : ['image' => $item, 'image_alt' => null]
+                                        )->values()->all());
+                                    })
+                                    ->schema([
+                                        self::imageUpload('image', 'Image', 'vouchers/gallery', 1200, 900)
+                                            ->required(),
+                                        TextInput::make('image_alt')
+                                            ->label('Image Alt Text')
+                                            ->maxLength(255)
+                                            ->helperText('Briefly describe this image for accessibility.'),
+                                    ])
+                                    ->helperText('Optional. Add and reorder images for the voucher detail slider.'),
                                 self::imageUpload('card_image', 'Card Image', 'vouchers/cards', 1200, 900),
                                 TextInput::make('image_alt')->label('Image Alt Text')->maxLength(255),
                             ]),

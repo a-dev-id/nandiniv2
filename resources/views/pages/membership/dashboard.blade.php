@@ -1,3 +1,5 @@
+@section('redemption-modal', true)
+
 @push('meta')
 @php
 $metaTitle = $page->meta_title ?: $page->title;

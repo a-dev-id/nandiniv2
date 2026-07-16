@@ -1,3 +1,5 @@
+@section('inquiry-modal', true)
+
 @push('meta')
 @php
 $metaTitle = $experience->meta_title ?: $experience->title;

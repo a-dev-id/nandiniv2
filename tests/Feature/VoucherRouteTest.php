@@ -11,7 +11,10 @@ class VoucherRouteTest extends TestCase
 
     public function test_voucher_homepage_uses_voucher_domain(): void
     {
-        config(['domains.voucher' => 'voucher.nandinibali.test']);
+        config([
+            'domains.voucher' => 'voucher.nandinibali.test',
+            'features.disable_voucher_feature' => false,
+        ]);
 
         $this->get('http://voucher.nandinibali.test/')->assertOk();
         $this->assertSame('http://voucher.nandinibali.test', route('voucher.index'));

@@ -39,7 +39,11 @@ $logoUrl = rtrim(config('app.url'), '/') . '/images/logo-njhg.png';
                             </p>
 
                             <p style="margin:0 0 18px;font-size:15px;line-height:1.75;color:#344054;">
-                                Thank you for booking with Nandini Jungle by Hanging Gardens. Your Inner Circle membership has been created with the email address used for your reservation.
+                                @if ($manuallyCreated ?? false)
+                                    Your Nandini Inner Circle membership has been created. You can sign in using the details below.
+                                @else
+                                    Thank you for booking with Nandini Jungle by Hanging Gardens. Your Inner Circle membership has been created with the email address used for your reservation.
+                                @endif
                             </p>
 
                             <p style="margin:0 0 22px;font-size:15px;line-height:1.75;color:#344054;">
@@ -51,6 +55,12 @@ $logoUrl = rtrim(config('app.url'), '/') . '/images/logo-njhg.png';
                                     <td style="width:42%;padding:13px 0;border-bottom:1px solid #eee8df;color:#667085;font-size:12px;text-transform:uppercase;letter-spacing:1.4px;">Email</td>
                                     <td style="padding:13px 0;border-bottom:1px solid #eee8df;color:#344054;font-size:14px;text-align:right;">{{ $member->email }}</td>
                                 </tr>
+                                @if (($manuallyCreated ?? false) && filled($temporaryPassword ?? null))
+                                <tr>
+                                    <td style="width:42%;padding:13px 0;border-bottom:1px solid #eee8df;color:#667085;font-size:12px;text-transform:uppercase;letter-spacing:1.4px;">Temporary Password</td>
+                                    <td style="padding:13px 0;border-bottom:1px solid #eee8df;color:#344054;font-size:14px;text-align:right;">{{ $temporaryPassword }}</td>
+                                </tr>
+                                @endif
                                 @if ($bookingNumber)
                                 <tr>
                                     <td style="width:42%;padding:13px 0;border-bottom:1px solid #eee8df;color:#667085;font-size:12px;text-transform:uppercase;letter-spacing:1.4px;">Booking</td>
@@ -72,14 +82,18 @@ $logoUrl = rtrim(config('app.url'), '/') . '/images/logo-njhg.png';
                             </table>
 
                             <p style="margin:0 0 28px;font-size:15px;line-height:1.75;color:#344054;">
-                                Because this account was created automatically from your booking, please set or reset your password before signing in.
+                                @if ($manuallyCreated ?? false)
+                                    For your security, you will be asked to change this temporary password after your first sign-in.
+                                @else
+                                    Because this account was created automatically from your booking, please set or reset your password before signing in.
+                                @endif
                             </p>
 
                             <table role="presentation" cellspacing="0" cellpadding="0" align="center" style="margin:0 auto 22px;">
                                 <tr>
                                     <td align="center" bgcolor="#a88444">
-                                        <a href="{{ $passwordResetUrl }}" style="display:inline-block;padding:15px 26px;color:#ffffff;background:#a88444;font-size:12px;font-weight:bold;letter-spacing:2.5px;line-height:1;text-decoration:none;text-transform:uppercase;">
-                                            Set Your Password
+                                        <a href="{{ ($manuallyCreated ?? false) ? $loginUrl : $passwordResetUrl }}" style="display:inline-block;padding:15px 26px;color:#ffffff;background:#a88444;font-size:12px;font-weight:bold;letter-spacing:2.5px;line-height:1;text-decoration:none;text-transform:uppercase;">
+                                            {{ ($manuallyCreated ?? false) ? 'Sign In' : 'Set Your Password' }}
                                         </a>
                                     </td>
                                 </tr>

@@ -27,6 +27,7 @@ class VoucherCartService
             'recipient_name' => trim((string) $data['recipient_name']),
             'recipient_email' => strtolower(trim((string) $data['recipient_email'])),
             'personal_message' => trim((string) ($data['personal_message'] ?? '')),
+            'gift_from' => trim((string) ($data['gift_from'] ?? '')),
             'delivery_method' => $data['delivery_method'] ?? 'email',
             'delivery_date' => $data['delivery_date'] ?? null,
         ];
@@ -53,6 +54,7 @@ class VoucherCartService
             'recipient_name' => trim((string) ($data['recipient_name'] ?? $lines[$key]['recipient_name'])),
             'recipient_email' => strtolower(trim((string) ($data['recipient_email'] ?? $lines[$key]['recipient_email']))),
             'personal_message' => trim((string) ($data['personal_message'] ?? $lines[$key]['personal_message'] ?? '')),
+            'gift_from' => trim((string) ($data['gift_from'] ?? $lines[$key]['gift_from'] ?? '')),
             'delivery_method' => $data['delivery_method'] ?? $lines[$key]['delivery_method'],
             'delivery_date' => $data['delivery_date'] ?? $lines[$key]['delivery_date'],
         ]);

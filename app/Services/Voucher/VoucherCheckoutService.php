@@ -83,6 +83,7 @@ class VoucherCheckoutService
                         'fixed_valid_from' => $voucher->fixed_valid_from?->toDateString(),
                         'fixed_valid_until' => $voucher->fixed_valid_until?->toDateString(),
                         'allow_partial_redemption' => $voucher->allow_partial_redemption,
+                        'gift_from' => $line['gift_from'] ?? null,
                     ],
                 ]);
             }

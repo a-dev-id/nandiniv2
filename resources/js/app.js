@@ -225,9 +225,41 @@ function initItemCarousel() {
 }
 
 function preloadSlickWhenNeeded() {
-    if (document.querySelector(".itemcarousel-slick, .guest-review-slider, .dashboard-reward-carousel, .dashboard-accommodation-carousel, .reward-carousel-items")) {
+    if (document.querySelector(".itemcarousel-slick, .voucher-gallery, .guest-review-slider, .dashboard-reward-carousel, .dashboard-accommodation-carousel, .reward-carousel-items")) {
         ensureSlick();
     }
+}
+
+function initVoucherGallery() {
+    const galleries = document.querySelectorAll(".voucher-gallery");
+
+    if (!galleries.length) {
+        return;
+    }
+
+    ensureSlick().then(($) => {
+        $(".voucher-gallery").each(function () {
+            const $gallery = $(this);
+            const $wrap = $gallery.closest("[data-voucher-gallery-wrap]");
+            const total = Number($gallery.data("total") || 0);
+
+            if ($gallery.hasClass("slick-initialized")) {
+                $gallery.slick("refresh");
+                return;
+            }
+
+            $gallery.slick({
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                infinite: total > 1,
+                arrows: total > 1,
+                dots: total > 1,
+                prevArrow: $wrap.find(".voucher-gallery-prev"),
+                nextArrow: $wrap.find(".voucher-gallery-next"),
+                speed: 450,
+            });
+        });
+    });
 }
 
 function initGuestReviewSlider() {
@@ -343,6 +375,7 @@ onPageReady(() => {
     initNavbarActions();
     preloadSlickWhenNeeded();
     initItemCarousel();
+    initVoucherGallery();
     initGuestReviewSlider();
     initDeferredYouTubeEmbeds();
 });

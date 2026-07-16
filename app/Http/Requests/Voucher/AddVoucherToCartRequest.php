@@ -14,6 +14,7 @@ class AddVoucherToCartRequest extends FormRequest
             'recipient_name' => ['required', 'string', 'max:120'],
             'recipient_email' => ['required', 'email', 'max:191'],
             'personal_message' => ['nullable', 'string', 'max:800'],
+            'gift_from' => ['nullable', 'string', 'max:120'],
             'delivery_method' => ['required', 'in:email'],
             'delivery_date' => ['nullable', 'date', 'after_or_equal:today'],
         ];
