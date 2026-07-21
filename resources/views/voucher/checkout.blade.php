@@ -21,6 +21,7 @@
                 @if ($errors->any())
                     <div class="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ $errors->first() }}</div>
                 @endif
+                <h2 class="text-lg uppercase text-slate-700">Input your personal information</h2>
                 <div class="grid gap-5 sm:grid-cols-2">
                     <div>
                         <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">First Name</label>
@@ -35,17 +36,21 @@
                         <input name="purchaser_email" type="email" value="{{ old('purchaser_email', $purchaserDefaults['email'] ?? null) }}" class="mt-2 w-full border border-slate-300 px-4 py-3 text-sm" required>
                     </div>
                     <div>
-                        <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">Phone</label>
+                        <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">Phone/WhatsApp</label>
                         <input name="purchaser_phone" value="{{ old('purchaser_phone', $purchaserDefaults['phone'] ?? null) }}" class="mt-2 w-full border border-slate-300 px-4 py-3 text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">Billing Country</label>
-                        <input name="billing_country_code" value="{{ old('billing_country_code', 'ID') }}" maxlength="2" class="mt-2 w-full border border-slate-300 px-4 py-3 text-sm uppercase" required>
+                        <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">Country</label>
+                        <select name="billing_country_code" class="mt-2 w-full border border-slate-300 bg-white px-4 py-3 text-sm" required>
+                            <option value="">Select Country</option>
+                            @foreach ($countries as $code => $country)
+                                <option value="{{ $code }}" @selected(old('billing_country_code', $purchaserDefaults['country'] ?? null) === $code)>{{ $country }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
-                <label class="flex gap-3 text-sm leading-6 text-slate-600"><input type="checkbox" name="terms" value="1" class="mt-1" required> I accept the voucher terms and conditions.</label>
-                <label class="flex gap-3 text-sm leading-6 text-slate-600"><input type="checkbox" name="privacy" value="1" class="mt-1" required> I accept the privacy policy.</label>
-                <button class="inline-flex items-center justify-center border border-[#A88444] bg-[#A88444] px-5 py-3 text-xs uppercase tracking-[0.08em] text-white">Pay Securely with Flywire</button>
+                <p class="text-sm leading-6 text-slate-600">By clicking “Pay Now,” you agree to the voucher terms and conditions and acknowledge that your information will be handled in accordance with our privacy policy.</p>
+                <button class="inline-flex items-center justify-center border border-[#A88444] bg-[#A88444] px-5 py-3 text-xs uppercase tracking-[0.08em] text-white">Pay Now</button>
             </form>
 
             <aside class="border border-slate-200 bg-[#F7F7F7] p-6">
@@ -55,14 +60,35 @@
                         <div class="border-b border-slate-300 pb-4">
                             <p class="text-sm font-semibold text-slate-700">{{ $line['voucher']->title }} x {{ $line['quantity'] }}</p>
                             <p class="mt-1 text-xs text-slate-600">
-                                {{ ($line['purchase_for'] ?? 'gift') === 'self' ? 'For yourself' : 'Gift for' }}
-                                {{ $line['recipient_name'] }} &lt;{{ $line['recipient_email'] }}&gt;
+                                @if (($line['purchase_for'] ?? 'gift') === 'self')
+                                    For yourself — purchaser details will be used.
+                                @else
+                                    Gift for {{ $line['recipient_name'] }}{{ filled($line['recipient_email']) ? ' <'.$line['recipient_email'].'>' : '' }}
+                                @endif
                             </p>
-                            <p class="mt-2 text-sm text-slate-700">{{ $money->format($line['line_total'], $line['currency']) }}{{ $money->priceTypeSuffix($line['price_type'] ?? null) }}</p>
+                            <p class="mt-1 text-xs text-slate-600">{{ ($line['delivery_method'] ?? 'email') === 'print_at_resort' ? 'Print at resort (+ '.$money->format($line['delivery_fee'], $line['currency']).')' : 'Send to email' }}</p>
+                            @if (filled($line['hotel_note'] ?? null))
+                                <p class="mt-1 text-xs leading-5 text-slate-600">Hotel note: {{ $line['hotel_note'] }}</p>
+                            @endif
+                            <div class="mt-3 space-y-1 text-xs text-slate-600">
+                                <div class="flex justify-between gap-3"><span>Voucher subtotal</span><span>{{ $money->format($line['base_line_total'], $line['currency']) }}</span></div>
+                                @if (($line['delivery_fee'] ?? 0) > 0)
+                                    <div class="flex justify-between gap-3"><span>Additional charge</span><span>{{ $money->format($line['delivery_fee'], $line['currency']) }}</span></div>
+                                @endif
+                                <div class="flex justify-between gap-3"><span>Service ({{ $cart['service_charge_percentage'] }}%)</span><span>{{ $money->format($line['service_charge'], $line['currency']) }}</span></div>
+                                <div class="flex justify-between gap-3"><span>Tax ({{ $cart['tax_percentage'] }}%)</span><span>{{ $money->format($line['tax'], $line['currency']) }}</span></div>
+                                <div class="flex justify-between gap-3 pt-1 font-semibold text-slate-700"><span>Line total</span><span>{{ $money->format($line['line_total'], $line['currency']) }}</span></div>
+                            </div>
                         </div>
                     @endforeach
                 </div>
-                <div class="mt-5 flex justify-between text-base font-semibold text-slate-700"><span>Total</span><span>{{ $money->format($cart['total'], $cart['currency']) }}</span></div>
+                <div class="mt-5 space-y-3 text-sm text-slate-600">
+                    <div class="flex justify-between"><span>Subtotal</span><span>{{ $money->format($cart['subtotal'], $cart['currency']) }}</span></div>
+                    @if ($cart['discount'] > 0)
+                        <div class="flex justify-between gap-4 border-l-4 border-[#A88444] bg-[#A88444]/10 px-3 py-2.5 font-semibold text-[#8A682F]"><span>Extra 10% Discount</span><span>-{{ $money->format($cart['discount'], $cart['currency']) }}</span></div>
+                    @endif
+                </div>
+                <div class="mt-4 flex justify-between border-t border-slate-300 pt-4 text-base font-semibold text-slate-700"><span>Total Payment</span><span>{{ $money->format($cart['total'], $cart['currency']) }}</span></div>
             </aside>
         </div>
     </section>

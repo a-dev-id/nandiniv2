@@ -1,14 +1,14 @@
 @php
     $money = app(\App\Services\Voucher\MoneyFormatter::class);
     $image = $voucher->preview_image;
-    $priceSuffix = $money->priceTypeSuffix($voucher->price_type);
+    $priceSuffix = '++';
     $unitLabel = $money->unitLabel($voucher->unit_type);
 @endphp
 
-<article class="group flex h-full flex-col bg-white">
+<article class="group flex h-full w-full flex-col bg-white">
     <a href="{{ route('voucher.show', $voucher) }}" class="block overflow-hidden bg-slate-100">
         @if ($image)
-            <img src="{{ asset('storage/' . $image) }}" alt="{{ $voucher->image_alt ?: $voucher->title }}" class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-[1.03]" loading="lazy">
+            <img src="{{ Storage::disk('public')->url($image) }}" alt="{{ $voucher->image_alt ?: $voucher->title }}" class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-[1.03]" loading="lazy">
         @else
             <div class="flex aspect-[4/3] items-center justify-center bg-[#F7F7F7] px-6 text-center text-xs uppercase tracking-[0.08em] text-slate-500">
                 Nandini Voucher

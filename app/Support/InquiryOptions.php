@@ -66,6 +66,44 @@ class InquiryOptions
     }
 
     /**
+     * @return array<string, string>
+     */
+    public static function countryCodes(): array
+    {
+        if (class_exists(ResourceBundle::class)) {
+            $countries = ResourceBundle::create('en', 'ICUDATA-region')?->get('Countries');
+
+            if ($countries) {
+                $options = [];
+
+                foreach ($countries as $code => $name) {
+                    if (preg_match('/^[A-Z]{2}$/', (string) $code) === 1) {
+                        $options[(string) $code] = (string) $name;
+                    }
+                }
+
+                asort($options);
+
+                return $options;
+            }
+        }
+
+        return [
+            'AU' => 'Australia',
+            'CN' => 'China',
+            'FR' => 'France',
+            'DE' => 'Germany',
+            'IN' => 'India',
+            'ID' => 'Indonesia',
+            'JP' => 'Japan',
+            'MY' => 'Malaysia',
+            'SG' => 'Singapore',
+            'GB' => 'United Kingdom',
+            'US' => 'United States',
+        ];
+    }
+
+    /**
      * @return array<int, array{country: string, code: string, label: string}>
      */
     public static function phoneCodes(): array

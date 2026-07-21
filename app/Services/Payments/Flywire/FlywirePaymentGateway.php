@@ -6,6 +6,7 @@ use App\Contracts\Payments\PaymentGateway;
 use App\Data\Payments\PaymentResult;
 use App\Data\Payments\PaymentSessionResult;
 use App\Models\VoucherOrder;
+use RuntimeException;
 
 class FlywirePaymentGateway implements PaymentGateway
 {
@@ -20,6 +21,24 @@ class FlywirePaymentGateway implements PaymentGateway
                 sessionId: 'local-disabled-' . $order->order_number,
                 redirectUrl: route('voucher.order.thank-you', $order->order_number),
                 raw: ['disabled' => true],
+            );
+        }
+
+        if (config('services.flywire.integration', 'checkout') === 'checkout') {
+            $recipientCode = trim((string) config('services.flywire.recipient_code'));
+
+            if ($recipientCode === '') {
+                throw new RuntimeException('Flywire demo recipient code is not configured.');
+            }
+
+            return new PaymentSessionResult(
+                sessionId: 'checkout-' . $order->order_number,
+                redirectUrl: null,
+                raw: [
+                    'integration' => 'checkout',
+                    'environment' => $this->checkoutEnvironment(),
+                    'recipient_code' => $recipientCode,
+                ],
             );
         }
 
@@ -65,5 +84,12 @@ class FlywirePaymentGateway implements PaymentGateway
         if ((bool) config('services.flywire.enabled')) {
             $this->client->post('/checkout/sessions/' . rawurlencode($sessionId) . '/expire', []);
         }
+    }
+
+    private function checkoutEnvironment(): string
+    {
+        return in_array(config('services.flywire.environment'), ['prod', 'production'], true)
+            ? 'prod'
+            : 'demo';
     }
 }

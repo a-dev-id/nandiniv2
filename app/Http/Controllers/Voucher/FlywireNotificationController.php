@@ -31,7 +31,7 @@ class FlywireNotificationController extends Controller
         $fingerprint = hash('sha256', implode('|', [
             data_get($payload, 'id', ''),
             data_get($payload, 'event_id', ''),
-            data_get($payload, 'payment.id', data_get($payload, 'payment_id', '')),
+            data_get($payload, 'payment.id', data_get($payload, 'data.payment_id', data_get($payload, 'payment_id', ''))),
             $rawBody,
         ]));
 
@@ -39,38 +39,49 @@ class FlywireNotificationController extends Controller
             ['event_fingerprint' => $fingerprint],
             [
                 'gateway' => 'flywire',
-                'gateway_payment_id' => data_get($payload, 'payment.id', data_get($payload, 'payment_id')),
-                'event_type' => data_get($payload, 'type'),
-                'gateway_status' => data_get($payload, 'payment.status', data_get($payload, 'status')),
+                'gateway_payment_id' => data_get($payload, 'payment.id', data_get($payload, 'data.payment_id', data_get($payload, 'payment_id'))),
+                'event_type' => data_get($payload, 'event_type', data_get($payload, 'type')),
+                'gateway_status' => data_get($payload, 'payment.status', data_get($payload, 'data.status', data_get($payload, 'status'))),
                 'signature_valid' => true,
                 'payload' => $payload,
             ]
         );
 
         if ($event->processed_at) {
+            if ($event->voucher_order_id) {
+                $issuer->deliverUndeliveredForOrder((int) $event->voucher_order_id);
+            }
+
             return response()->json(['ok' => true, 'duplicate' => true]);
         }
 
         try {
             DB::transaction(function () use ($event, $payload, $mapper, $issuer): void {
-                $orderNumber = data_get($payload, 'external_reference')
+                $orderNumber = data_get($payload, 'data.external_reference')
+                    ?: data_get($payload, 'external_reference')
                     ?: data_get($payload, 'payment.external_reference')
                     ?: data_get($payload, 'reference');
 
+                $paymentId = data_get($payload, 'data.payment_id')
+                    ?: data_get($payload, 'payment.id')
+                    ?: data_get($payload, 'payment_id');
+
                 $order = VoucherOrder::query()
                     ->where('order_number', $orderNumber)
-                    ->orWhere('flywire_payment_id', data_get($payload, 'payment.id'))
+                    ->orWhere('flywire_payment_id', $paymentId)
                     ->lockForUpdate()
                     ->first();
 
-                $status = (string) (data_get($payload, 'payment.status') ?: data_get($payload, 'status', 'unknown'));
+                $status = (string) (data_get($payload, 'data.status')
+                    ?: data_get($payload, 'payment.status')
+                    ?: data_get($payload, 'status', 'unknown'));
 
                 if ($order) {
                     $order->forceFill([
                         'payment_status' => $mapper->paymentStatus($status),
                         'order_status' => $mapper->shouldIssue($status) ? 'processing' : $order->order_status,
-                        'flywire_payment_id' => data_get($payload, 'payment.id', $order->flywire_payment_id),
-                        'flywire_payment_reference' => data_get($payload, 'payment.reference', $order->flywire_payment_reference),
+                        'flywire_payment_id' => $paymentId ?: $order->flywire_payment_id,
+                        'flywire_payment_reference' => data_get($payload, 'data.payment_id', data_get($payload, 'payment.reference', $order->flywire_payment_reference)),
                         'flywire_status' => $status,
                     ])->save();
 

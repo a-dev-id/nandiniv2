@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class VoucherOrder extends Model
 {
@@ -62,6 +63,11 @@ class VoucherOrder extends Model
     public function paymentEvents(): HasMany
     {
         return $this->hasMany(VoucherPaymentEvent::class);
+    }
+
+    public function issuedVouchers(): HasManyThrough
+    {
+        return $this->hasManyThrough(IssuedVoucher::class, VoucherOrderItem::class);
     }
 
     public function scopePaid(Builder $query): Builder

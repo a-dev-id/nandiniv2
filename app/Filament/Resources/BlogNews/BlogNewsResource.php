@@ -22,7 +22,7 @@ class BlogNewsResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedNewspaper;
 
-    protected static string|UnitEnum|null $navigationGroup = 'General';
+    protected static string|UnitEnum|null $navigationGroup = 'Website Content';
 
     protected static ?string $navigationLabel = 'Blog & News';
 
@@ -30,7 +30,7 @@ class BlogNewsResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Blog & News';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 70;
 
     public static function form(Schema $schema): Schema
     {

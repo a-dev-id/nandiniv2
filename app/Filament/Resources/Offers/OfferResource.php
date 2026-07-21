@@ -21,7 +21,9 @@ class OfferResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
-    protected static string|UnitEnum|null $navigationGroup = 'General';
+    protected static string|UnitEnum|null $navigationGroup = 'Website Content';
+
+    protected static ?int $navigationSort = 60;
 
     public static function form(Schema $schema): Schema
     {

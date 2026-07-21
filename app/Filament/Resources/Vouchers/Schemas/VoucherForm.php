@@ -59,8 +59,9 @@ class VoucherForm
                                     ->minValue(0)
                                     ->maxValue(99)
                                     ->default(0)
+                                    ->dehydrateStateUsing(fn (mixed $state): int => max(0, (int) ($state ?? 0)))
                                     ->suffix('%')
-                                    ->helperText('The storefront and checkout automatically use the discounted price.'),
+                                    ->helperText('Enter 0 or leave empty to remove the discount.'),
                                 TextInput::make('currency')->required()->default('IDR')->maxLength(3),
                                 Select::make('price_type')->options(['plus_plus' => '++', 'net' => 'Nett', 'inclusive' => 'Inclusive'])->nullable(),
                                 Select::make('unit_type')->options(['per_person' => 'Per Person', 'per_couple' => 'Per Couple', 'per_booking' => 'Per Booking'])->nullable(),

@@ -21,7 +21,9 @@ class HoneymoonResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHeart;
 
-    protected static string|UnitEnum|null $navigationGroup = 'General';
+    protected static string|UnitEnum|null $navigationGroup = 'Website Content';
+
+    protected static ?int $navigationSort = 50;
 
     public static function form(Schema $schema): Schema
     {

@@ -3,7 +3,7 @@
     $metaTitle = $landingPage?->meta_title ?: $landingPage?->title ?: 'Nandini Jungle Vouchers';
     $metaDescription = $landingPage?->meta_description ?: $landingPage?->excerpt ?: 'Purchase elegant Nandini Jungle by Hanging Gardens vouchers for yourself or someone special.';
     $heroImagePath = $landingPage?->hero_image ?: $landingPage?->hero_mobile_image;
-    $heroImageUrl = $heroImagePath ? asset('storage/' . $heroImagePath) : null;
+    $heroImageUrl = $heroImagePath ? Storage::disk('public')->url($heroImagePath) : null;
 @endphp
 <title>{{ $metaTitle }}</title>
 <meta name="description" content="{{ $metaDescription }}">
@@ -33,50 +33,60 @@
         </section>
     @endif
 
-    @if ($categories->isNotEmpty())
-    <section class="bg-[#F7F7F7] px-6 py-14 md:py-20">
+    <section id="featured-vouchers" class="bg-[#F7F7F7] px-6 py-14 md:py-20">
         <div class="mx-auto max-w-6xl">
-            <h2 class="text-center text-xl uppercase text-slate-700 sm:text-2xl">Voucher Categories</h2>
-            <div class="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach ($categories as $category)
-                    @php
-                        $categoryDescription = trim(strip_tags((string) $category->description));
-                    @endphp
-                    <a href="{{ route('voucher.category.show', $category) }}" class="block border border-slate-200 bg-white p-6 transition hover:border-[#A88444]">
-                        <h3 class="text-base uppercase text-slate-700">{{ $category->name }}</h3>
-                        <p class="mt-3 text-sm leading-6 text-slate-600">{{ $categoryDescription ?: 'Explore available Nandini experiences.' }}</p>
-                    </a>
-                @endforeach
-            </div>
-        </div>
-    </section>
-    @endif
-
-    <section id="featured-vouchers" class="bg-white px-6 py-14 md:py-20">
-        <div class="mx-auto max-w-6xl">
-            <h2 class="text-center text-xl uppercase text-slate-700 sm:text-2xl">Featured Vouchers</h2>
+            <h2 class="text-center text-xl uppercase text-slate-700 sm:text-2xl">Most Popular</h2>
             @if ($featuredVouchers->isEmpty())
                 <p class="mt-8 text-center text-sm text-slate-600">Voucher sales will open soon.</p>
             @else
-                <div class="mt-9 grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
-                    @foreach ($featuredVouchers as $voucher)
-                        @include('voucher.partials.card', ['voucher' => $voucher])
-                    @endforeach
+                <div class="item-carousel-wrap relative mx-auto mt-9 px-0 lg:px-16">
+                    <div class="itemcarousel-slick">
+                        @foreach ($featuredVouchers as $voucher)
+                            <div class="flex h-full px-3">
+                                @include('voucher.partials.card', ['voucher' => $voucher])
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <button type="button" class="itemcarousel-prev fold-carousel-arrow fold-image-carousel-arrow home-mobile-image-arrow absolute left-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-[#A88444] text-white transition hover:bg-[#B8945B] md:h-12 md:w-12 lg:left-0" aria-label="Previous voucher">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="h-4 w-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+                        </svg>
+                    </button>
+
+                    <button type="button" class="itemcarousel-next fold-carousel-arrow fold-image-carousel-arrow home-mobile-image-arrow absolute right-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-[#A88444] text-white transition hover:bg-[#B8945B] md:h-12 md:w-12 lg:right-0" aria-label="Next voucher">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="h-4 w-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+                        </svg>
+                    </button>
                 </div>
             @endif
         </div>
     </section>
 
-    <section class="bg-[#F7F7F7] px-6 py-14 md:py-20">
-        <div class="mx-auto grid max-w-6xl gap-8 md:grid-cols-2">
-            <div>
-                <h2 class="text-xl uppercase text-slate-700 sm:text-2xl">Terms Summary</h2>
-                <p class="mt-4 text-sm leading-7 text-slate-600">Validity, inclusions, and redemption rules are shown on each voucher. Full terms are included in the issued voucher PDF.</p>
-            </div>
-            <div>
-                <h2 class="text-xl uppercase text-slate-700 sm:text-2xl">FAQ</h2>
-                <p class="mt-4 text-sm leading-7 text-slate-600">Vouchers are delivered after payment confirmation. You may purchase for yourself or send the voucher to another holder.</p>
-            </div>
+    <section class="bg-white px-6 py-14 md:py-20">
+        <div class="mx-auto max-w-6xl" x-data="{ visibleCount: 9 }">
+            <h2 class="text-center text-xl uppercase text-slate-700 sm:text-2xl">All Experiences</h2>
+
+            @if ($allVouchers->isEmpty())
+                <p class="mt-8 text-center text-sm text-slate-600">Voucher experiences will be available soon.</p>
+            @else
+                <div class="mt-9 grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+                    @foreach ($allVouchers as $voucher)
+                        <div x-cloak x-show="{{ $loop->index }} < visibleCount" x-transition.opacity class="flex h-full">
+                            @include('voucher.partials.card', ['voucher' => $voucher])
+                        </div>
+                    @endforeach
+                </div>
+
+                @if ($allVouchers->count() > 9)
+                    <div class="mt-14 flex justify-center">
+                        <button type="button" x-show="visibleCount < {{ $allVouchers->count() }}" x-on:click="visibleCount += 9" class="inline-flex items-center justify-center border border-slate-900 px-7 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-slate-700 transition hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white sm:text-sm">
+                            Show More
+                        </button>
+                    </div>
+                @endif
+            @endif
         </div>
     </section>
 </x-layouts.app>

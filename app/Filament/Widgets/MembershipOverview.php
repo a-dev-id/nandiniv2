@@ -11,6 +11,12 @@ class MembershipOverview extends StatsOverviewWidget
     private const ACTIVE_LOGIN_DAYS = 30;
     private const INACTIVE_LOGIN_DAYS = 90;
 
+    protected static ?int $sort = 20;
+
+    protected ?string $heading = 'Member Overview';
+
+    protected ?string $description = 'Membership activity, points, and tier distribution.';
+
     protected ?string $pollingInterval = '60s';
 
     protected function getStats(): array

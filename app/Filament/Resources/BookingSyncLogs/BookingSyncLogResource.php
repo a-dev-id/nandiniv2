@@ -23,9 +23,9 @@ class BookingSyncLogResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Booking Sync Logs';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Membership';
+    protected static string | UnitEnum | null $navigationGroup = 'Settings';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort = 40;
 
     public static function form(Schema $schema): Schema
     {

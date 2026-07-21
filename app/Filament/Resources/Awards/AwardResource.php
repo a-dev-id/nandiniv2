@@ -21,7 +21,7 @@ class AwardResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTrophy;
 
-    protected static string|UnitEnum|null $navigationGroup = 'General';
+    protected static string|UnitEnum|null $navigationGroup = 'Website Content';
 
     protected static ?string $navigationLabel = 'Awards';
 
@@ -29,7 +29,7 @@ class AwardResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Awards';
 
-    protected static ?int $navigationSort = 35;
+    protected static ?int $navigationSort = 100;
 
     public static function form(Schema $schema): Schema
     {

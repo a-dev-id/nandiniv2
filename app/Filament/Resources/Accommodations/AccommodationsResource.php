@@ -23,9 +23,11 @@ class AccommodationsResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
 
-    protected static string|UnitEnum|null $navigationGroup = 'General';
+    protected static string|UnitEnum|null $navigationGroup = 'Website Content';
 
     protected static ?string $navigationLabel = 'Accommodations';
+
+    protected static ?int $navigationSort = 20;
 
     protected static ?string $modelLabel = 'Accommodation';
 

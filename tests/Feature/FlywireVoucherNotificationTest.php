@@ -94,4 +94,48 @@ class FlywireVoucherNotificationTest extends TestCase
             'HTTP_X_FLYWIRE_DIGEST' => 'invalid',
         ], '{"id":"evt"}')->assertForbidden();
     }
+
+    public function test_version_two_notification_uses_nested_payment_data(): void
+    {
+        config([
+            'services.flywire.shared_secret' => 'secret',
+            'services.flywire.issue_on_statuses' => 'guaranteed',
+        ]);
+
+        $order = VoucherOrder::query()->create([
+            'order_number' => 'NDN-VCH-V2',
+            'purchaser_first_name' => 'Demo',
+            'purchaser_last_name' => 'Guest',
+            'purchaser_email' => 'demo@example.com',
+            'billing_country_code' => 'ID',
+            'currency' => 'IDR',
+            'subtotal' => 1000000,
+            'total_amount' => 1000000,
+            'payment_status' => 'processing',
+            'order_status' => 'pending_payment',
+        ]);
+
+        $payload = json_encode([
+            'event_type' => 'guaranteed',
+            'event_date' => now()->toIso8601ZuluString(),
+            'event_resource' => 'payments',
+            'data' => [
+                'payment_id' => 'FW-DEMO-1',
+                'external_reference' => $order->order_number,
+                'status' => 'guaranteed',
+            ],
+        ], JSON_THROW_ON_ERROR);
+        $digest = base64_encode(hash_hmac('sha256', $payload, 'secret', true));
+
+        $this->call('POST', '/api/flywire/notifications', [], [], [], [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_X_FLYWIRE_DIGEST' => $digest,
+        ], $payload)->assertOk();
+
+        $this->assertDatabaseHas('voucher_orders', [
+            'order_number' => $order->order_number,
+            'flywire_payment_id' => 'FW-DEMO-1',
+            'payment_status' => 'paid',
+        ]);
+    }
 }

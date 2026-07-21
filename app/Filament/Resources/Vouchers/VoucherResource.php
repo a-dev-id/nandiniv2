@@ -14,7 +14,6 @@ use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -28,7 +27,7 @@ class VoucherResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Vouchers';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 40;
 
     public static function form(Schema $schema): Schema
     {
@@ -46,8 +45,8 @@ class VoucherResource extends Resource
                 ->formatStateUsing(fn ($state, Voucher $record): string => app(\App\Services\Voucher\MoneyFormatter::class)->format($record->discounted_price, $record->currency) . app(\App\Services\Voucher\MoneyFormatter::class)->priceTypeSuffix($record->price_type))
                 ->description(fn (Voucher $record): ?string => $record->has_discount ? $record->discount_percentage . '% off ' . app(\App\Services\Voucher\MoneyFormatter::class)->format($record->selling_price, $record->currency) : null)
                 ->sortable(),
-            IconColumn::make('is_featured')->boolean(),
-            ToggleColumn::make('is_active'),
+            ToggleColumn::make('is_featured')->label('Featured'),
+            ToggleColumn::make('is_active')->label('Active'),
         ])->recordActions([EditAction::make()])->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }
 

@@ -21,9 +21,11 @@ class MiniPopupResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBellAlert;
 
-    protected static string|UnitEnum|null $navigationGroup = 'General';
+    protected static string|UnitEnum|null $navigationGroup = 'Website Content';
 
     protected static ?string $navigationLabel = 'Mini Popups';
+
+    protected static ?int $navigationSort = 110;
 
     public static function form(Schema $schema): Schema
     {

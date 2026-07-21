@@ -20,7 +20,9 @@ class InquiryResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Booking';
+    protected static string|UnitEnum|null $navigationGroup = 'Guest Operations';
+
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $navigationLabel = 'Inquiries';
 

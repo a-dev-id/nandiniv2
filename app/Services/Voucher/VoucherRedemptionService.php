@@ -9,13 +9,21 @@ use InvalidArgumentException;
 
 class VoucherRedemptionService
 {
+    public function __construct(private readonly VoucherEmailService $emails)
+    {
+    }
+
     public function redeem(IssuedVoucher $issuedVoucher, array $data, $user = null): VoucherRedemption
     {
-        return DB::transaction(function () use ($issuedVoucher, $data, $user): VoucherRedemption {
+        $redemption = DB::transaction(function () use ($issuedVoucher, $data, $user): VoucherRedemption {
             $voucher = IssuedVoucher::query()->lockForUpdate()->findOrFail($issuedVoucher->id);
 
             if (! in_array($voucher->status, ['active', 'partially_redeemed'], true)) {
                 throw new InvalidArgumentException('Voucher is not redeemable.');
+            }
+
+            if ($voucher->valid_from && $voucher->valid_from->isFuture()) {
+                throw new InvalidArgumentException('Voucher is not valid yet.');
             }
 
             if ($voucher->expires_at && $voucher->expires_at->isPast()) {
@@ -51,5 +59,9 @@ class VoucherRedemptionService
 
             return $redemption;
         });
+
+        $this->emails->sendRedeemed($redemption);
+
+        return $redemption;
     }
 }

@@ -33,7 +33,7 @@ class VoucherCategoryResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Vouchers';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 50;
 
     public static function form(Schema $schema): Schema
     {

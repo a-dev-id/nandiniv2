@@ -23,9 +23,15 @@ class VoucherPaymentEventResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBellAlert;
 
+    protected static ?string $navigationLabel = 'Payment Log';
+
+    protected static ?string $modelLabel = 'Payment Log Entry';
+
+    protected static ?string $pluralModelLabel = 'Payment Log';
+
     protected static string|UnitEnum|null $navigationGroup = 'Vouchers';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 90;
 
     public static function form(Schema $schema): Schema
     {

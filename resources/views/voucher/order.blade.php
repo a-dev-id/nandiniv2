@@ -23,7 +23,7 @@
                         <h2 class="text-lg uppercase text-slate-700">{{ $item->voucher_title }}</h2>
                         <p class="mt-2 text-sm text-slate-600">Voucher holder: {{ $item->recipient_name }} &lt;{{ $item->recipient_email }}&gt;</p>
                         <p class="mt-2 text-sm text-slate-600">Quantity: {{ $item->quantity }}</p>
-                        <p class="mt-2 text-sm text-slate-700">{{ $money->format($item->line_total, $item->currency) }}{{ $money->priceTypeSuffix($item->voucher_snapshot['price_type'] ?? null) }}</p>
+                        <p class="mt-2 text-sm text-slate-700">{{ $money->format($item->line_total, $item->currency) }}</p>
                         @if ($item->issuedVouchers->isNotEmpty())
                             <div class="mt-4 grid gap-3 sm:grid-cols-2">
                                 @foreach ($item->issuedVouchers as $issued)

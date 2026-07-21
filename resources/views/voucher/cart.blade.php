@@ -32,45 +32,73 @@
                                     <div class="md:col-span-2">
                                         <h2 class="text-lg uppercase text-slate-700">{{ $line['voucher']->title }}</h2>
                                         <p class="mt-1 text-sm text-slate-600">
-                                            {{ $money->format($line['unit_price'], $line['currency']) }}{{ $money->priceTypeSuffix($line['price_type'] ?? null) }} each
+                                            {{ $money->format($line['unit_price'], $line['currency']) }}++ each
                                         </p>
                                     </div>
                                     <div>
                                         <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">Quantity</label>
                                         <input name="quantity" type="number" value="{{ $line['quantity'] }}" min="1" class="mt-2 w-full border border-slate-300 px-4 py-3 text-sm">
                                     </div>
-                                    <div>
-                                        <input type="hidden" name="purchase_for" value="{{ $line['purchase_for'] ?? 'gift' }}">
-                                        <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">{{ ($line['purchase_for'] ?? 'gift') === 'self' ? 'Your Name' : 'Recipient Name' }}</label>
-                                        <input name="recipient_name" value="{{ $line['recipient_name'] }}" class="mt-2 w-full border border-slate-300 px-4 py-3 text-sm" required>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">{{ ($line['purchase_for'] ?? 'gift') === 'self' ? 'Your Email' : 'Recipient Email' }}</label>
-                                        <input name="recipient_email" type="email" value="{{ $line['recipient_email'] }}" class="mt-2 w-full border border-slate-300 px-4 py-3 text-sm" required>
-                                    </div>
+                                    <input type="hidden" name="purchase_for" value="{{ $line['purchase_for'] ?? 'gift' }}">
+                                    @if (($line['purchase_for'] ?? 'gift') === 'gift')
+                                        <div>
+                                            <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">Recipient Name</label>
+                                            <input name="recipient_name" value="{{ $line['recipient_name'] }}" class="mt-2 w-full border border-slate-300 px-4 py-3 text-sm" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">Recipient Email</label>
+                                            <input name="recipient_email" type="email" value="{{ $line['recipient_email'] }}" class="mt-2 w-full border border-slate-300 px-4 py-3 text-sm" {{ ($line['delivery_method'] ?? 'email') === 'email' ? 'required' : '' }}>
+                                        </div>
+                                    @endif
+                                    @if (($line['purchase_for'] ?? 'gift') === 'gift')
+                                        <div>
+                                            <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">Delivery Option</label>
+                                            <select name="delivery_method" class="mt-2 w-full border border-slate-300 bg-white px-4 py-3 text-sm" data-cart-delivery-method>
+                                                <option value="email" {{ ($line['delivery_method'] ?? 'email') === 'email' ? 'selected' : '' }}>Send to email</option>
+                                                <option value="print_at_resort" {{ ($line['delivery_method'] ?? 'email') === 'print_at_resort' ? 'selected' : '' }}>Print at resort (+ IDR 100,000)</option>
+                                            </select>
+                                        </div>
+                                    @else
+                                        <input type="hidden" name="delivery_method" value="email">
+                                    @endif
                                     <div class="md:col-span-2">
                                         <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">Message or Note</label>
-                                        <textarea name="personal_message" rows="3" class="mt-2 w-full border border-slate-300 px-4 py-3 text-sm">{{ $line['personal_message'] }}</textarea>
+                                        <textarea name="personal_message" rows="3" class="mt-2 w-full border border-slate-300 px-4 py-3 text-sm" placeholder="Add a message or note for this voucher">{{ $line['personal_message'] }}</textarea>
                                         <input type="hidden" name="gift_from" value="{{ $line['gift_from'] ?? '' }}">
-                                        <input type="hidden" name="delivery_method" value="email">
                                     </div>
+                                    @if (($line['purchase_for'] ?? 'gift') === 'gift')
+                                        <div class="md:col-span-2 {{ ($line['delivery_method'] ?? 'email') === 'print_at_resort' ? '' : 'hidden' }}" data-cart-hotel-note>
+                                            <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">Note for the Hotel Team</label>
+                                            <textarea name="hotel_note" rows="3" class="mt-2 w-full border border-slate-300 px-4 py-3 text-sm" placeholder="Used when print at resort is selected">{{ $line['hotel_note'] ?? '' }}</textarea>
+                                        </div>
+                                    @endif
                                     <div class="flex flex-wrap gap-3 md:col-span-2">
                                         <button class="inline-flex items-center justify-center border border-[#A88444] bg-[#A88444] px-4 py-2.5 text-xs uppercase tracking-[0.08em] text-white">Update</button>
-                                        <button
-                                            type="button"
-                                            class="inline-flex items-center justify-center border border-slate-700 px-4 py-2.5 text-xs uppercase tracking-[0.08em] text-slate-700 transition hover:border-[#A88444] hover:text-[#A88444]"
-                                            data-cart-voucher-preview
-                                            data-title="{{ $line['voucher']->title }}"
-                                            data-price="{{ $money->format($line['unit_price'], $line['currency']) }}{{ $money->priceTypeSuffix($line['price_type'] ?? null) }}"
-                                            data-image="{{ $line['voucher']->image ? asset('storage/' . $line['voucher']->image) : '' }}"
-                                            data-excerpt="{{ $line['voucher']->excerpt }}"
-                                        >Preview</button>
+                                        @if (($line['purchase_for'] ?? 'gift') === 'gift')
+                                            <button
+                                                type="button"
+                                                class="inline-flex items-center justify-center border border-slate-700 px-4 py-2.5 text-xs uppercase tracking-[0.08em] text-slate-700 transition hover:border-[#A88444] hover:text-[#A88444]"
+                                                data-cart-voucher-preview
+                                                data-title="{{ $line['voucher']->title }}"
+                                                data-price="{{ $money->format($line['unit_price'], $line['currency']) }}++"
+                                                data-image="{{ $line['voucher']->image ? Storage::disk('public')->url($line['voucher']->image) : '' }}"
+                                                data-excerpt="{{ $line['voucher']->excerpt }}"
+                                            >Preview</button>
+                                        @endif
                                     </div>
                                 </form>
                                 <div class="flex flex-col justify-between bg-[#F7F7F7] p-5">
                                     <div>
                                         <p class="text-xs uppercase tracking-[0.08em] text-slate-500">Line Total</p>
-                                        <p class="mt-2 text-lg font-semibold text-slate-700">{{ $money->format($line['line_total'], $line['currency']) }}{{ $money->priceTypeSuffix($line['price_type'] ?? null) }}</p>
+                                        <div class="mt-3 space-y-2 text-xs text-slate-600">
+                                            <div class="flex justify-between gap-3"><span>Voucher subtotal</span><span>{{ $money->format($line['base_line_total'], $line['currency']) }}</span></div>
+                                            @if (($line['delivery_fee'] ?? 0) > 0)
+                                                <div class="flex justify-between gap-3"><span>Additional charge</span><span>{{ $money->format($line['delivery_fee'], $line['currency']) }}</span></div>
+                                            @endif
+                                            <div class="flex justify-between gap-3"><span>Service ({{ $cart['service_charge_percentage'] }}%)</span><span>{{ $money->format($line['service_charge'], $line['currency']) }}</span></div>
+                                            <div class="flex justify-between gap-3"><span>Tax ({{ $cart['tax_percentage'] }}%)</span><span>{{ $money->format($line['tax'], $line['currency']) }}</span></div>
+                                        </div>
+                                        <p class="mt-3 border-t border-slate-300 pt-3 text-lg font-semibold text-slate-700">{{ $money->format($line['line_total'], $line['currency']) }}</p>
                                     </div>
                                     <form method="POST" action="{{ route('voucher.cart.remove', $line['key']) }}" class="mt-6">
                                         @csrf
@@ -85,8 +113,10 @@
 
                 <div class="mt-8 ml-auto max-w-sm border border-slate-200 bg-[#F7F7F7] p-6">
                     <div class="flex justify-between text-sm text-slate-600"><span>Subtotal</span><span>{{ $money->format($cart['subtotal'], $cart['currency']) }}</span></div>
-                    <div class="mt-3 flex justify-between text-sm text-slate-600"><span>Discount</span><span>{{ $money->format($cart['discount'], $cart['currency']) }}</span></div>
-                    <div class="mt-4 flex justify-between border-t border-slate-300 pt-4 text-base font-semibold text-slate-700"><span>Total</span><span>{{ $money->format($cart['total'], $cart['currency']) }}</span></div>
+                    @if ($cart['discount'] > 0)
+                        <div class="mt-3 flex justify-between gap-4 border-l-4 border-[#A88444] bg-[#A88444]/10 px-3 py-2.5 text-sm font-semibold text-[#8A682F]"><span>{{ $cart['global_discount_active'] ? 'Extra 10% Discount' : 'Discount' }}</span><span>-{{ $money->format($cart['discount'], $cart['currency']) }}</span></div>
+                    @endif
+                    <div class="mt-4 flex justify-between border-t border-slate-300 pt-4 text-base font-semibold text-slate-700"><span>Total Payment</span><span>{{ $money->format($cart['total'], $cart['currency']) }}</span></div>
                     <a href="{{ route('voucher.checkout.index') }}" class="mt-6 inline-flex w-full items-center justify-center border border-[#A88444] bg-[#A88444] px-5 py-3 text-xs uppercase tracking-[0.08em] text-white">Proceed to Checkout</a>
                     <a href="{{ route('voucher.index') }}" class="mt-3 inline-flex w-full items-center justify-center border border-slate-700 px-5 py-3 text-xs uppercase tracking-[0.08em] text-slate-700">Continue Shopping</a>
                 </div>
@@ -102,9 +132,9 @@
             <div class="mt-6 overflow-hidden border border-slate-200 bg-white">
                 <img src="" alt="" class="hidden h-64 w-full object-cover sm:h-80" data-cart-preview-image>
                 <div class="px-6 py-10 text-center sm:px-12">
-                    <p class="text-xs uppercase tracking-[0.18em] text-[#A88444]">Nandini Jungle by Hanging Gardens</p>
+                    <p class="font-serif text-sm uppercase tracking-[0.2em] text-slate-700">Gift Voucher</p>
+                    <p class="mt-2 text-xs uppercase tracking-[0.18em] text-[#A88444]">Nandini Jungle by Hanging Gardens</p>
                     <h2 id="cart-preview-title" class="mt-5 text-2xl uppercase text-slate-700 sm:text-3xl" data-cart-preview-title></h2>
-                    <p class="mt-4 text-xl font-semibold tracking-[0.06em] text-slate-700" data-cart-preview-price></p>
                     <p class="mx-auto mt-6 max-w-xl text-sm italic leading-7 text-slate-600" data-cart-preview-message></p>
                     <p class="mx-auto mt-10 max-w-xl border-t border-slate-200 pt-8 text-sm leading-7 text-slate-600" data-cart-preview-excerpt></p>
                     <div class="mx-auto mt-8 max-w-xl border-t border-slate-200 pt-8 text-left text-xs leading-6 text-slate-500">
@@ -112,7 +142,6 @@
                         <p class="mt-1"><span class="font-semibold text-slate-700">Gift from:</span> <span data-cart-preview-sender></span></p>
                     </div>
                 </div>
-                <div class="border-t-4 border-[#A88444] bg-[#F7F7F7] px-6 py-5 text-center text-[10px] uppercase tracking-[0.12em] text-slate-500">Accommodation &nbsp; | &nbsp; Dining &nbsp; | &nbsp; Spa &nbsp; | &nbsp; Experiences</div>
             </div>
         </div>
     </div>
@@ -121,6 +150,15 @@
         document.addEventListener('DOMContentLoaded', function () {
             const modal = document.querySelector('[data-cart-preview-modal]');
             const image = document.querySelector('[data-cart-preview-image]');
+
+            document.querySelectorAll('[data-cart-delivery-method]').forEach(function (select) {
+                const form = select.closest('form');
+                const hotelNote = form?.querySelector('[data-cart-hotel-note]');
+
+                select.addEventListener('change', function () {
+                    hotelNote?.classList.toggle('hidden', select.value !== 'print_at_resort');
+                });
+            });
 
             function closePreview() {
                 modal?.classList.add('hidden');
@@ -133,10 +171,9 @@
                     const form = button.closest('form');
                     const imageUrl = button.dataset.image || '';
                     document.querySelector('[data-cart-preview-title]').textContent = button.dataset.title || '';
-                    document.querySelector('[data-cart-preview-price]').textContent = button.dataset.price || '';
                     document.querySelector('[data-cart-preview-excerpt]').textContent = button.dataset.excerpt || '';
                     document.querySelector('[data-cart-preview-recipient]').textContent = form?.querySelector('[name="recipient_name"]')?.value || '';
-                    document.querySelector('[data-cart-preview-sender]').textContent = form?.querySelector('[name="gift_from"]')?.value || 'A special someone';
+                    document.querySelector('[data-cart-preview-sender]').textContent = form?.querySelector('[name="gift_from"]')?.value || 'A someone special';
                     document.querySelector('[data-cart-preview-message]').textContent = form?.querySelector('[name="personal_message"]')?.value || '';
                     image.src = imageUrl;
                     image.alt = button.dataset.title || '';

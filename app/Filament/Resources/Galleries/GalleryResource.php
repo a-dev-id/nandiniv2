@@ -21,7 +21,7 @@ class GalleryResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
 
-    protected static string|UnitEnum|null $navigationGroup = 'General';
+    protected static string|UnitEnum|null $navigationGroup = 'Website Content';
 
     protected static ?string $navigationLabel = 'Gallery';
 
@@ -29,7 +29,7 @@ class GalleryResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Gallery';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 80;
 
     public static function form(Schema $schema): Schema
     {

@@ -14,8 +14,8 @@ if ($page && ($page->hero_image || $page->hero_mobile_image)) {
 $desktopImage = $page->hero_image ?: $page->hero_mobile_image;
 $mobileImage = $page->hero_mobile_image ?: $page->hero_image;
 
-$desktopImageSrc = asset('storage/' . $desktopImage);
-$mobileImageSrc = asset('storage/' . $mobileImage);
+$desktopImageSrc = Storage::disk('public')->url($desktopImage);
+$mobileImageSrc = Storage::disk('public')->url($mobileImage);
 
 $alt = $page->hero_image_alt
 ?: $page->hero_mobile_image_alt

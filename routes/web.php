@@ -23,6 +23,7 @@ use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\LittleThingsController;
 use App\Http\Controllers\MailTestController;
 use App\Http\Controllers\MemberEmailPreviewController;
+use App\Http\Controllers\VoucherEmailPreviewController;
 use App\Http\Controllers\MemberRewardRedemptionController;
 use App\Http\Controllers\MembershipAuthController;
 use App\Http\Controllers\MembershipController;
@@ -339,6 +340,9 @@ Route::domain(config('domains.main'))->group(function (): void {
 
     Route::get('/member-email-preview/{token}/{template?}', MemberEmailPreviewController::class)
         ->name('member-email-preview.show');
+
+    Route::get('/voucher-email-preview/{token}/{template?}', VoucherEmailPreviewController::class)
+        ->name('voucher-email-preview.show');
 
     /*
     |--------------------------------------------------------------------------

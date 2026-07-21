@@ -116,7 +116,25 @@ class MembershipEmailRelayService
             'text_body' => (string) ($payload['text_body'] ?? $this->htmlToText($html)),
             'reply_to' => $payload['reply_to'] ?? config('mail.guest_reply_to'),
             'source' => parse_url((string) config('app.url'), PHP_URL_HOST) ?: 'nandinibali.com',
+            'attachments' => $this->normalizeAttachments($payload['attachments'] ?? []),
         ];
+    }
+
+    /**
+     * @return array<int, array{filename: string, content_type: string, content_base64: string}>
+     */
+    private function normalizeAttachments(mixed $attachments): array
+    {
+        return collect(is_array($attachments) ? $attachments : [])
+            ->filter(fn(mixed $attachment): bool => is_array($attachment))
+            ->map(fn(array $attachment): array => [
+                'filename' => basename((string) ($attachment['filename'] ?? 'attachment')),
+                'content_type' => (string) ($attachment['content_type'] ?? 'application/octet-stream'),
+                'content_base64' => (string) ($attachment['content_base64'] ?? ''),
+            ])
+            ->filter(fn(array $attachment): bool => $attachment['content_base64'] !== '')
+            ->values()
+            ->all();
     }
 
     private function htmlToText(string $html): string

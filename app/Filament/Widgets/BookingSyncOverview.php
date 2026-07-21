@@ -8,6 +8,12 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class BookingSyncOverview extends StatsOverviewWidget
 {
+    protected static ?int $sort = 10;
+
+    protected ?string $heading = 'Booking Synchronization';
+
+    protected ?string $description = 'Latest WebHotelier synchronization health and activity.';
+
     protected ?string $pollingInterval = '60s';
 
     protected function getStats(): array

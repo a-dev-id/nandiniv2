@@ -93,10 +93,12 @@ return [
 
     'flywire' => [
         'enabled' => env('FLYWIRE_ENABLED', false),
-        'environment' => env('FLYWIRE_ENVIRONMENT', 'sandbox'),
+        'integration' => env('FLYWIRE_INTEGRATION', 'checkout'),
+        'environment' => env('FLYWIRE_ENVIRONMENT', 'demo'),
         'api_key' => env('FLYWIRE_API_KEY'),
-        'shared_secret' => env('FLYWIRE_SHARED_SECRET'),
+        'shared_secret' => env('FLYWIRE_DEMO_SHARED_SECRET', env('FLYWIRE_SHARED_SECRET')),
         'recipient_id' => env('FLYWIRE_RECIPIENT_ID'),
+        'recipient_code' => env('FLYWIRE_RECIPIENT_CODE', env('FLYWIRE_RECIPIENT_ID')),
         'billing_currency' => env('FLYWIRE_BILLING_CURRENCY', 'IDR'),
         'base_url' => env('FLYWIRE_BASE_URL', 'https://api-platform-sandbox.flywire.com/payments/v1'),
         'notification_url' => env('FLYWIRE_NOTIFICATION_URL'),

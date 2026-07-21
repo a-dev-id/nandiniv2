@@ -12,6 +12,7 @@ class VoucherIssuer
     public function __construct(
         private readonly VoucherCodeGenerator $codes,
         private readonly VoucherValidityService $validity,
+        private readonly VoucherEmailService $emails,
     ) {
     }
 
@@ -36,6 +37,19 @@ class VoucherIssuer
                 'completed_at' => $order->completed_at ?: now(),
             ])->save();
         });
+
+        DB::afterCommit(function () use ($order): void {
+            $this->deliverUndeliveredForOrder($order->id);
+        });
+    }
+
+    public function deliverUndeliveredForOrder(int $orderId): void
+    {
+        VoucherOrder::query()
+            ->find($orderId)?->issuedVouchers()
+            ->whereNull('delivered_at')
+            ->with('orderItem.order')
+            ->each(fn(IssuedVoucher $voucher) => $this->emails->sendIssued($voucher));
     }
 
     private function createIssuedVoucher(VoucherOrder $order, $item): IssuedVoucher
@@ -69,6 +83,9 @@ class VoucherIssuer
                         'verification_url' => route('voucher.verify', ['token' => $token]),
                         'gift_from' => $snapshot['gift_from'] ?? null,
                         'personal_message' => $item->personal_message,
+                        'delivery_method' => $snapshot['delivery_method'] ?? $item->delivery_method ?? 'email',
+                        'delivery_fee' => $snapshot['delivery_fee'] ?? 0,
+                        'hotel_note' => $snapshot['hotel_note'] ?? null,
                     ],
                 ]);
             } catch (QueryException $e) {

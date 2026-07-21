@@ -21,7 +21,7 @@ class GuestReviewResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedStar;
 
-    protected static string|UnitEnum|null $navigationGroup = 'General';
+    protected static string|UnitEnum|null $navigationGroup = 'Website Content';
 
     protected static ?string $navigationLabel = 'Guest Reviews';
 
@@ -29,7 +29,7 @@ class GuestReviewResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Guest Reviews';
 
-    protected static ?int $navigationSort = 36;
+    protected static ?int $navigationSort = 90;
 
     public static function form(Schema $schema): Schema
     {

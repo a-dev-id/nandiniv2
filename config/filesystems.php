@@ -43,7 +43,7 @@ return [
             'root' => storage_path('app/public'),
             // 'root' => env('PUBLIC_STORAGE_ROOT', '../public_html/storage'),
             // 'root' => env('PUBLIC_STORAGE_ROOT'),
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/') . '/storage',
+            'url' => rtrim(env('MEDIA_URL', rtrim(env('APP_URL', 'http://localhost'), '/') . '/storage'), '/'),
             'visibility' => 'public',
             'throw' => false,
             'report' => false,

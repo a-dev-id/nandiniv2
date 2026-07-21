@@ -94,6 +94,14 @@ class Voucher extends Model
         return $query->orderBy('sort_order')->orderBy('title');
     }
 
+    public function scopeCheapestFirst(Builder $query): Builder
+    {
+        return $query
+            ->orderByRaw('selling_price * (100 - COALESCE(discount_percentage, 0)) ASC')
+            ->orderBy('sort_order')
+            ->orderBy('title');
+    }
+
     public function getPreviewImageAttribute(): ?string
     {
         return $this->card_image ?: $this->image;

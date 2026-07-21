@@ -123,4 +123,6 @@ return [
 
     'guest_reply_to' => env('MAIL_GUEST_REPLY_TO') ?: 'reservation@nandinibali.com',
 
+    'voucher_print_cc' => env('VOUCHER_PRINT_CC_EMAILS', 'reservation@nandinibali.com'),
+
 ];

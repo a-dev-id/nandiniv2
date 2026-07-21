@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Widgets\BookingSyncOverview;
 use App\Filament\Widgets\MembershipOverview;
+use App\Filament\Widgets\VoucherOverview;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -43,6 +44,7 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 MembershipOverview::class,
                 BookingSyncOverview::class,
+                VoucherOverview::class,
                 AccountWidget::class,
                 FilamentInfoWidget::class,
             ])
@@ -62,7 +64,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 NavigationGroup::make()
-                    ->label('Booking'),
+                    ->label('Guest Operations'),
 
                 NavigationGroup::make()
                     ->label('Membership'),
@@ -71,7 +73,7 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Vouchers'),
 
                 NavigationGroup::make()
-                    ->label('General'),
+                    ->label('Website Content'),
 
                 NavigationGroup::make()
                     ->label('Settings')

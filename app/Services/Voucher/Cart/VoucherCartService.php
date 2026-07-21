@@ -9,6 +9,11 @@ use InvalidArgumentException;
 
 class VoucherCartService
 {
+    public const PRINT_DELIVERY_FEE = 100000;
+    public const SERVICE_CHARGE_PERCENTAGE = 10;
+    public const TAX_PERCENTAGE = 11;
+    public const CART_DISCOUNT_PERCENTAGE = 10;
+
     private const SESSION_KEY = 'voucher.cart.lines';
 
     public function add(Voucher $voucher, array $data): string
@@ -17,18 +22,23 @@ class VoucherCartService
 
         $quantity = $this->normalizeQuantity($voucher, (int) ($data['quantity'] ?? 1));
         $key = (string) Str::uuid();
+        $purchaseFor = $data['purchase_for'] ?? 'gift';
+        $deliveryMethod = $purchaseFor === 'self' ? 'email' : ($data['delivery_method'] ?? 'email');
 
         $lines = $this->rawLines();
         $lines[$key] = [
             'key' => $key,
             'voucher_id' => $voucher->id,
             'quantity' => $quantity,
-            'purchase_for' => $data['purchase_for'] ?? 'gift',
-            'recipient_name' => trim((string) $data['recipient_name']),
-            'recipient_email' => strtolower(trim((string) $data['recipient_email'])),
+            'purchase_for' => $purchaseFor,
+            'recipient_name' => trim((string) ($data['recipient_name'] ?? '')),
+            'recipient_email' => strtolower(trim((string) ($data['recipient_email'] ?? ''))),
             'personal_message' => trim((string) ($data['personal_message'] ?? '')),
             'gift_from' => trim((string) ($data['gift_from'] ?? '')),
-            'delivery_method' => $data['delivery_method'] ?? 'email',
+            'delivery_method' => $deliveryMethod,
+            'hotel_note' => $purchaseFor === 'gift' && $deliveryMethod === 'print_at_resort'
+                ? trim((string) ($data['hotel_note'] ?? ''))
+                : '',
             'delivery_date' => $data['delivery_date'] ?? null,
         ];
 
@@ -47,16 +57,23 @@ class VoucherCartService
 
         $voucher = Voucher::query()->findOrFail($lines[$key]['voucher_id']);
         $this->assertPurchasable($voucher);
+        $purchaseFor = $data['purchase_for'] ?? $lines[$key]['purchase_for'] ?? 'gift';
+        $deliveryMethod = $purchaseFor === 'self'
+            ? 'email'
+            : ($data['delivery_method'] ?? $lines[$key]['delivery_method'] ?? 'email');
 
         $lines[$key] = array_merge($lines[$key], [
             'quantity' => $this->normalizeQuantity($voucher, (int) ($data['quantity'] ?? $lines[$key]['quantity'])),
-            'purchase_for' => $data['purchase_for'] ?? $lines[$key]['purchase_for'] ?? 'gift',
+            'purchase_for' => $purchaseFor,
             'recipient_name' => trim((string) ($data['recipient_name'] ?? $lines[$key]['recipient_name'])),
             'recipient_email' => strtolower(trim((string) ($data['recipient_email'] ?? $lines[$key]['recipient_email']))),
             'personal_message' => trim((string) ($data['personal_message'] ?? $lines[$key]['personal_message'] ?? '')),
             'gift_from' => trim((string) ($data['gift_from'] ?? $lines[$key]['gift_from'] ?? '')),
-            'delivery_method' => $data['delivery_method'] ?? $lines[$key]['delivery_method'],
-            'delivery_date' => $data['delivery_date'] ?? $lines[$key]['delivery_date'],
+            'delivery_method' => $deliveryMethod,
+            'hotel_note' => $purchaseFor === 'gift' && $deliveryMethod === 'print_at_resort'
+                ? trim((string) ($data['hotel_note'] ?? $lines[$key]['hotel_note'] ?? ''))
+                : '',
+            'delivery_date' => $data['delivery_date'] ?? $lines[$key]['delivery_date'] ?? null,
         ]);
 
         session()->put(self::SESSION_KEY, $lines);
@@ -77,6 +94,7 @@ class VoucherCartService
     public function refresh(): array
     {
         $lines = [];
+        $globalDiscountActive = (int) collect($this->rawLines())->sum('quantity') >= 2;
 
         foreach ($this->rawLines() as $key => $line) {
             $voucher = Voucher::query()->with('category')->find($line['voucher_id']);
@@ -86,15 +104,37 @@ class VoucherCartService
             }
 
             $quantity = $this->normalizeQuantity($voucher, (int) $line['quantity']);
-            $unitPrice = $voucher->discounted_price;
+            $priceBeforeCartDiscount = $voucher->discounted_price;
+            $cartDiscountApplies = $globalDiscountActive;
+            $unitPrice = $priceBeforeCartDiscount;
             $originalUnitPrice = (int) $voucher->selling_price;
+            $baseLineTotal = $unitPrice * $quantity;
+            $deliveryFee = ($line['delivery_method'] ?? 'email') === 'print_at_resort'
+                ? self::PRINT_DELIVERY_FEE
+                : 0;
+            $preTaxLineTotal = $baseLineTotal + $deliveryFee;
+            $lineServiceCharge = (int) round($preTaxLineTotal * self::SERVICE_CHARGE_PERCENTAGE / 100);
+            $lineTax = (int) round($preTaxLineTotal * self::TAX_PERCENTAGE / 100);
+            $lineTotalBeforeCartDiscount = $preTaxLineTotal + $lineServiceCharge + $lineTax;
+            $lineCartDiscount = $cartDiscountApplies
+                ? (int) round($lineTotalBeforeCartDiscount * self::CART_DISCOUNT_PERCENTAGE / 100)
+                : 0;
 
             $lines[$key] = array_merge($line, [
                 'quantity' => $quantity,
                 'voucher' => $voucher,
+                'price_before_cart_discount' => $priceBeforeCartDiscount,
+                'cart_discount_percentage' => $cartDiscountApplies ? self::CART_DISCOUNT_PERCENTAGE : 0,
+                'cart_discount' => $lineCartDiscount,
                 'unit_price' => $unitPrice,
-                'line_total' => $unitPrice * $quantity,
-                'original_line_total' => $originalUnitPrice * $quantity,
+                'base_line_total' => $baseLineTotal,
+                'delivery_fee' => $deliveryFee,
+                'pre_tax_line_total' => $preTaxLineTotal,
+                'service_charge' => $lineServiceCharge,
+                'tax' => $lineTax,
+                'line_total' => $lineTotalBeforeCartDiscount,
+                'line_total_after_discount' => $lineTotalBeforeCartDiscount - $lineCartDiscount,
+                'original_line_total' => ($originalUnitPrice * $quantity) + $deliveryFee,
                 'currency' => $voucher->currency ?: 'IDR',
                 'price_type' => $voucher->price_type,
                 'unit_type' => $voucher->unit_type,
@@ -104,13 +144,25 @@ class VoucherCartService
         session()->put(self::SESSION_KEY, collect($lines)->map(fn(array $line): array => collect($line)->except('voucher')->all())->all());
 
         $collection = collect($lines);
-        $subtotal = (int) $collection->sum('original_line_total');
-        $total = (int) $collection->sum('line_total');
+        $subtotal = (int) $collection->sum('line_total');
+        $preTaxTotal = (int) $collection->sum('pre_tax_line_total');
+        $cartDiscount = (int) $collection->sum('cart_discount');
+        $serviceCharge = (int) $collection->sum('service_charge');
+        $tax = (int) $collection->sum('tax');
+        $total = $subtotal - $cartDiscount;
 
         return [
             'lines' => $collection,
             'subtotal' => $subtotal,
-            'discount' => $subtotal - $total,
+            'discount' => $cartDiscount,
+            'cart_discount' => $cartDiscount,
+            'cart_discount_percentage' => self::CART_DISCOUNT_PERCENTAGE,
+            'global_discount_active' => $globalDiscountActive,
+            'pre_tax_total' => $preTaxTotal,
+            'service_charge' => $serviceCharge,
+            'service_charge_percentage' => self::SERVICE_CHARGE_PERCENTAGE,
+            'tax' => $tax,
+            'tax_percentage' => self::TAX_PERCENTAGE,
             'total' => $total,
             'currency' => $collection->first()['currency'] ?? config('services.flywire.billing_currency', 'IDR'),
             'distinct_lines' => $collection->count(),
