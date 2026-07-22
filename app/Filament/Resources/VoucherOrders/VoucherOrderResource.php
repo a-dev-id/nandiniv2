@@ -32,7 +32,9 @@ class VoucherOrderResource extends Resource
             Placeholder::make('order_number')->content(fn($record) => $record?->order_number),
             Placeholder::make('purchaser')->content(fn($record) => $record ? trim($record->purchaser_first_name . ' ' . $record->purchaser_last_name) . ' <' . $record->purchaser_email . '>' : null),
             Placeholder::make('payment_status')->content(fn($record) => $record?->payment_status),
-            Placeholder::make('flywire')->content(fn($record) => $record?->flywire_payment_reference ?: $record?->flywire_payment_id ?: '-'),
+            Placeholder::make('flywire')
+                ->label('Payment Reference')
+                ->content(fn($record) => $record?->flywire_payment_reference ?: $record?->flywire_payment_id ?: '-'),
         ])->columns(2);
     }
 

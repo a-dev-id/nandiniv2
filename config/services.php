@@ -100,6 +100,7 @@ return [
         'recipient_id' => env('FLYWIRE_RECIPIENT_ID'),
         'recipient_code' => env('FLYWIRE_RECIPIENT_CODE', env('FLYWIRE_RECIPIENT_ID')),
         'billing_currency' => env('FLYWIRE_BILLING_CURRENCY', 'IDR'),
+        'sandbox_payer_middle_name' => env('FLYWIRE_SANDBOX_PAYER_MIDDLE_NAME'),
         'base_url' => env('FLYWIRE_BASE_URL', 'https://api-platform-sandbox.flywire.com/payments/v1'),
         'notification_url' => env('FLYWIRE_NOTIFICATION_URL'),
         'return_url' => env('FLYWIRE_RETURN_URL'),

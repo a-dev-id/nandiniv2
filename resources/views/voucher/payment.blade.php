@@ -8,7 +8,7 @@
         <div class="mx-auto max-w-2xl border border-slate-200 bg-white p-7 text-center sm:p-10">
             <p class="text-xs uppercase tracking-[0.12em] text-[#A88444]">Secure Payment</p>
             <h1 class="mt-4 text-2xl uppercase text-slate-700 sm:text-3xl">Complete Your Voucher Purchase</h1>
-            <p class="mt-4 text-sm leading-7 text-slate-600">Flywire’s secure payment window should open automatically. If it does not, use the button below.</p>
+            <p class="mt-4 text-sm leading-7 text-slate-600">The secure payment window should open automatically. If it does not, use the button below.</p>
             <div class="mx-auto mt-7 max-w-sm border-y border-slate-200 py-5 text-sm text-slate-600">
                 <div class="flex justify-between gap-4"><span>Order</span><strong class="text-slate-700">{{ $order->order_number }}</strong></div>
                 <div class="mt-3 flex justify-between gap-4"><span>Total</span><strong class="text-slate-700">{{ $order->currency }} {{ number_format($order->total_amount) }}</strong></div>
@@ -34,7 +34,7 @@
 
                 function openFlywire() {
                     if (!window.FlywirePayment) {
-                        showError('Flywire could not be loaded. Please refresh the page and try again.');
+                        showError('The payment service could not be loaded. Please refresh the page and try again.');
                         return;
                     }
 

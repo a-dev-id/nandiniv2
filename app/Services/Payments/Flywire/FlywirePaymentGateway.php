@@ -28,7 +28,7 @@ class FlywirePaymentGateway implements PaymentGateway
             $recipientCode = trim((string) config('services.flywire.recipient_code'));
 
             if ($recipientCode === '') {
-                throw new RuntimeException('Flywire demo recipient code is not configured.');
+                throw new RuntimeException('The payment service is not configured.');
             }
 
             return new PaymentSessionResult(
@@ -47,13 +47,16 @@ class FlywirePaymentGateway implements PaymentGateway
             'external_reference' => $order->order_number,
             'amount' => $order->total_amount,
             'currency' => $order->currency,
-            'payer' => [
+            'payer' => array_filter([
                 'first_name' => $order->purchaser_first_name,
+                'middle_name' => $this->checkoutEnvironment() === 'demo'
+                    ? config('services.flywire.sandbox_payer_middle_name')
+                    : null,
                 'last_name' => $order->purchaser_last_name,
                 'email' => $order->purchaser_email,
                 'phone' => $order->purchaser_phone,
                 'country' => $order->billing_country_code,
-            ],
+            ], fn ($value): bool => $value !== null && $value !== ''),
             'notification_url' => config('services.flywire.notification_url'),
             'return_url' => route('voucher.payment.return', ['order' => $order->order_number]),
             'cancel_url' => config('services.flywire.cancel_url'),

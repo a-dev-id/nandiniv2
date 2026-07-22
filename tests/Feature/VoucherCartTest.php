@@ -179,4 +179,34 @@ class VoucherCartTest extends TestCase
         $response->assertSessionHasNoErrors();
         $this->assertSame(1, app(VoucherCartService::class)->countUnits());
     }
+
+    public function test_email_gift_cannot_be_added_without_required_recipient_details(): void
+    {
+        $voucher = Voucher::factory()->create(['selling_price' => 1000000]);
+
+        $response = $this->post(route('voucher.cart.add', $voucher), [
+            'quantity' => 1,
+            'purchase_for' => 'gift',
+            'delivery_method' => 'email',
+        ]);
+
+        $response->assertSessionHasErrors(['recipient_name', 'recipient_email']);
+        $this->assertSame(0, app(VoucherCartService::class)->countUnits());
+    }
+
+    public function test_email_gift_cannot_be_added_with_an_invalid_recipient_email(): void
+    {
+        $voucher = Voucher::factory()->create(['selling_price' => 1000000]);
+
+        $response = $this->post(route('voucher.cart.add', $voucher), [
+            'quantity' => 1,
+            'purchase_for' => 'gift',
+            'recipient_name' => 'Recipient',
+            'recipient_email' => 'not-an-email',
+            'delivery_method' => 'email',
+        ]);
+
+        $response->assertSessionHasErrors(['recipient_email']);
+        $this->assertSame(0, app(VoucherCartService::class)->countUnits());
+    }
 }

@@ -25,7 +25,7 @@ class FlywireClient
         $apiKey = (string) config('services.flywire.api_key');
 
         if ($baseUrl === '' || $apiKey === '') {
-            throw new RuntimeException('Flywire is not configured.');
+            throw new RuntimeException('The payment service is not configured.');
         }
 
         try {
@@ -44,13 +44,13 @@ class FlywireClient
             $json = $response->json();
 
             if (! is_array($json)) {
-                throw new RuntimeException('Flywire returned malformed JSON.');
+                throw new RuntimeException('The payment service returned an invalid response.');
             }
 
             return $json;
         } catch (ConnectionException|RequestException $e) {
             report($e);
-            throw new RuntimeException('Flywire request failed. Please try again.', previous: $e);
+            throw new RuntimeException('The payment request failed. Please try again.', previous: $e);
         }
     }
 }

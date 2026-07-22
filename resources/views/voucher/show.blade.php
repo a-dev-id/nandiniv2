@@ -190,7 +190,7 @@ $galleryImages = collect([[
                 </div>
                 <div>
                     <label for="gift_recipient_name" class="block text-xs uppercase tracking-[0.08em] text-slate-700">Gift to <span class="text-red-600">*</span></label>
-                    <input id="gift_recipient_name" class="mt-2 w-full border border-slate-300 px-4 py-2.5 text-sm focus:border-slate-300 focus:outline-none" value="{{ $purchaseFor === 'gift' ? $buyerName : '' }}" placeholder="Enter the recipient's name">
+                    <input id="gift_recipient_name" required class="mt-2 w-full border border-slate-300 px-4 py-2.5 text-sm focus:border-[#A88444] focus:outline-none" value="{{ $purchaseFor === 'gift' ? $buyerName : '' }}" placeholder="Enter the recipient's name">
                 </div>
                 <div>
                     <label for="gift_sender_name" class="block text-xs uppercase tracking-[0.08em] text-slate-700">Gift from (optional)</label>
@@ -199,7 +199,7 @@ $galleryImages = collect([[
             </div>
             <div class="mt-4" data-email-delivery-fields>
                 <label for="gift_recipient_email" class="block text-xs uppercase tracking-[0.08em] text-slate-700">Recipient email <span class="text-red-600">*</span></label>
-                <input id="gift_recipient_email" type="email" class="mt-2 w-full border border-slate-300 px-4 py-2.5 text-sm focus:border-slate-300 focus:outline-none" value="{{ $purchaseFor === 'gift' ? $buyerEmail : '' }}" placeholder="Enter the recipient's email address">
+                <input id="gift_recipient_email" type="email" required class="mt-2 w-full border border-slate-300 px-4 py-2.5 text-sm focus:border-[#A88444] focus:outline-none" value="{{ $purchaseFor === 'gift' ? $buyerEmail : '' }}" placeholder="Enter the recipient's email address">
             </div>
             <div class="mt-4">
                 <label for="gift_message" class="block text-xs uppercase tracking-[0.08em] text-slate-700">Message in the Voucher</label>
@@ -273,6 +273,7 @@ $galleryImages = collect([[
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const radios = document.querySelectorAll('[data-voucher-purchase-for]');
+            const voucherForm = document.getElementById('recipient_name')?.closest('form');
             const nameInput = document.getElementById('recipient_name');
             const emailInput = document.getElementById('recipient_email');
             const nameLabel = document.querySelector('[data-recipient-name-label]');
@@ -317,6 +318,7 @@ $galleryImages = collect([[
                 const isPrint = giftDeliveryMethod?.value === 'print_at_resort';
                 document.querySelectorAll('[data-email-delivery-fields]').forEach((field) => field.classList.toggle('hidden', isPrint));
                 document.querySelector('[data-print-delivery-fields]')?.classList.toggle('hidden', !isPrint);
+                if (giftEmail) giftEmail.required = !isPrint;
             }
 
             function updatePreview() {
@@ -332,10 +334,19 @@ $galleryImages = collect([[
             function saveGiftDetails() {
                 const error = document.querySelector('[data-gift-error]');
                 const isPrint = giftDeliveryMethod?.value === 'print_at_resort';
-                const isValid = Boolean(giftName?.value.trim() && (isPrint || (giftEmail?.checkValidity() && giftEmail.value.trim())));
+                const nameIsValid = Boolean(giftName?.value.trim());
+                const emailIsValid = isPrint || Boolean(giftEmail?.value.trim() && giftEmail.checkValidity());
+                const isValid = nameIsValid && emailIsValid;
 
                 error?.classList.toggle('hidden', isValid);
-                if (!isValid) return false;
+                giftName?.classList.toggle('border-red-500', !nameIsValid);
+                giftName?.setAttribute('aria-invalid', nameIsValid ? 'false' : 'true');
+                giftEmail?.classList.toggle('border-red-500', !emailIsValid);
+                giftEmail?.setAttribute('aria-invalid', emailIsValid ? 'false' : 'true');
+                if (!isValid) {
+                    (nameIsValid ? giftEmail : giftName)?.focus();
+                    return false;
+                }
 
                 nameInput.value = giftName.value.trim();
                 emailInput.value = isPrint ? selfEmailValue : giftEmail.value.trim();
@@ -400,10 +411,22 @@ $galleryImages = collect([[
                 updateGiftDeliveryFields();
                 updateGiftSummary();
             });
+            [giftName, giftEmail].forEach((input) => input?.addEventListener('input', function () {
+                input.classList.remove('border-red-500');
+                input.setAttribute('aria-invalid', 'false');
+                document.querySelector('[data-gift-error]')?.classList.add('hidden');
+            }));
             document.querySelectorAll('[data-close-gift-modal]').forEach((button) => button.addEventListener('click', () => setDialogState(giftModal, false)));
             document.querySelectorAll('[data-add-gift-to-cart]').forEach((button) => button.addEventListener('click', function () {
                 if (saveGiftDetails()) nameInput.closest('form')?.requestSubmit();
             }));
+            voucherForm?.addEventListener('submit', function (event) {
+                const isGift = document.querySelector('[data-voucher-purchase-for]:checked')?.value === 'gift';
+                if (isGift && !saveGiftDetails()) {
+                    event.preventDefault();
+                    setDialogState(giftModal, true);
+                }
+            });
             document.querySelectorAll('[data-open-gift-preview]').forEach((button) => button.addEventListener('click', function () {
                 updatePreview();
                 setDialogState(giftPreview, true);

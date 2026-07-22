@@ -14,6 +14,7 @@ use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -37,6 +38,10 @@ class VoucherResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
+            ImageColumn::make('preview_image')
+                ->label('Image')
+                ->square()
+                ->size(56),
             TextColumn::make('title')->searchable()->sortable()->description(fn($record) => $record->sku),
             TextColumn::make('category.name')->label('Category')->sortable(),
             TextColumn::make('voucher_type')->badge(),

@@ -35,7 +35,7 @@
                                 @endforeach
                             </div>
                         @else
-                            <p class="mt-4 bg-[#F7F7F7] p-4 text-sm text-slate-600">Vouchers will appear here after Flywire confirms payment.</p>
+                            <p class="mt-4 bg-[#F7F7F7] p-4 text-sm text-slate-600">Vouchers will appear here after your payment is confirmed.</p>
                         @endif
                     </article>
                 @endforeach
@@ -45,7 +45,7 @@
                 <dl class="mt-5 space-y-3 text-sm text-slate-600">
                     <div class="flex justify-between gap-4"><dt>Payment</dt><dd class="text-right">{{ str_replace('_', ' ', $order->payment_status) }}</dd></div>
                     <div class="flex justify-between gap-4"><dt>Order</dt><dd class="text-right">{{ str_replace('_', ' ', $order->order_status) }}</dd></div>
-                    <div class="flex justify-between gap-4"><dt>Flywire Ref</dt><dd class="text-right">{{ $order->flywire_payment_reference ?: '-' }}</dd></div>
+                    <div class="flex justify-between gap-4"><dt>Payment Reference</dt><dd class="text-right">{{ $order->flywire_payment_reference ?: '-' }}</dd></div>
                     <div class="flex justify-between gap-4 border-t border-slate-300 pt-3 font-semibold text-slate-700"><dt>Total</dt><dd>{{ $money->format($order->total_amount, $order->currency) }}</dd></div>
                 </dl>
                 @auth('member')

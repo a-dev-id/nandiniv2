@@ -22,7 +22,8 @@ class PaymentController extends Controller
         }
 
         if ((bool) config('services.flywire.enabled') && config('services.flywire.integration', 'checkout') === 'checkout') {
-            $environment = in_array(config('services.flywire.environment'), ['prod', 'production'], true) ? 'prod' : 'demo';
+            $isProduction = in_array(config('services.flywire.environment'), ['prod', 'production'], true);
+            $environment = $isProduction ? 'prod' : 'demo';
             $notificationUrl = config('services.flywire.notification_url');
             $notificationHost = parse_url((string) $notificationUrl, PHP_URL_HOST);
             $hasPublicNotificationUrl = filled($notificationUrl)
@@ -35,6 +36,7 @@ class PaymentController extends Controller
                 'recipientCode' => config('services.flywire.recipient_code'),
                 'amount' => $order->total_amount,
                 'firstName' => $order->purchaser_first_name,
+                'middleName' => $isProduction ? null : config('services.flywire.sandbox_payer_middle_name'),
                 'lastName' => $order->purchaser_last_name,
                 'email' => $order->purchaser_email,
                 'phone' => $order->purchaser_phone,
@@ -70,7 +72,7 @@ class PaymentController extends Controller
                 'orderNumber' => $orderNumber,
                 'token' => session('voucher.order_access.' . $orderNumber),
             ])
-                ->with('status', 'We are checking your payment status. Vouchers are issued after Flywire confirmation.');
+                ->with('status', 'We are checking your payment status. Vouchers are issued after payment confirmation.');
         }
 
         return redirect()->route('voucher.index');
