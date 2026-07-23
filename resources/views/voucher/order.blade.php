@@ -1,4 +1,7 @@
-@php($money = app(\App\Services\Voucher\MoneyFormatter::class))
+@php
+    $money = app(\App\Services\Voucher\MoneyFormatter::class);
+    $awaitingPayment = ! in_array($order->payment_status, ['paid', 'failed', 'cancelled'], true);
+@endphp
 @push('meta')
 <title>Voucher Order {{ $order->order_number }} | Nandini Jungle</title>
 <meta name="robots" content="noindex,nofollow">
@@ -9,8 +12,16 @@
         <div class="mx-auto max-w-6xl">
             <h1 class="text-2xl uppercase text-slate-700 sm:text-4xl">Thank You</h1>
             <p class="mt-4 text-sm leading-6 text-slate-600">Order {{ $order->order_number }}</p>
-            @if (session('status'))
+            @if ($awaitingPayment && session('status'))
                 <p class="mt-4 border border-[#A88444]/30 bg-white px-4 py-3 text-sm text-slate-700">{{ session('status') }}</p>
+            @endif
+            @if ($awaitingPayment)
+                <div class="mt-4 flex flex-wrap items-center justify-between gap-3 border border-[#A88444]/30 bg-white px-4 py-3 text-sm text-slate-700" data-payment-status-poll data-refresh-seconds="10" aria-live="polite">
+                    <p>Waiting for payment confirmation. Checking again in <span class="font-semibold text-[#A88444]" data-payment-countdown>10</span> seconds.</p>
+                    <button type="button" class="text-xs font-medium uppercase tracking-[0.08em] text-[#A88444] underline underline-offset-4" data-payment-check-now>Check now</button>
+                </div>
+            @elseif ($order->payment_status === 'paid')
+                <p class="mt-4 border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">Payment confirmed. Your voucher is ready.</p>
             @endif
         </div>
     </section>
@@ -54,4 +65,30 @@
             </aside>
         </div>
     </section>
+
+    @if ($awaitingPayment)
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const poll = document.querySelector('[data-payment-status-poll]');
+                const countdown = poll?.querySelector('[data-payment-countdown]');
+                const checkNow = poll?.querySelector('[data-payment-check-now]');
+                const refreshSeconds = Number.parseInt(poll?.dataset.refreshSeconds || '10', 10);
+                let secondsRemaining = refreshSeconds;
+
+                function refreshStatus() {
+                    window.location.reload();
+                }
+
+                checkNow?.addEventListener('click', refreshStatus);
+
+                window.setInterval(function () {
+                    if (document.hidden) return;
+
+                    secondsRemaining -= 1;
+                    if (countdown) countdown.textContent = String(Math.max(0, secondsRemaining));
+                    if (secondsRemaining <= 0) refreshStatus();
+                }, 1000);
+            });
+        </script>
+    @endif
 </x-layouts.app>

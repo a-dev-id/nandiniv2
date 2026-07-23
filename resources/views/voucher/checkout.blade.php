@@ -9,7 +9,7 @@
         <div class="mx-auto max-w-6xl">
             <h1 class="text-2xl uppercase text-slate-700 sm:text-4xl">Checkout</h1>
             @guest('member')
-                <p class="mt-4 text-sm leading-6 text-slate-600">Already an Inner Circle member? <a href="{{ route('membership.login') }}" class="text-[#A88444] underline">Sign in</a> before checkout to attach this order to your dashboard.</p>
+                <p class="mt-4 text-sm leading-6 text-slate-600">Already an Inner Circle member? <a href="{{ route('membership.login', ['redirect' => route('voucher.checkout.index')]) }}" class="text-[#A88444] underline">Sign in</a> before checkout to attach this order to your dashboard.</p>
             @endguest
         </div>
     </section>

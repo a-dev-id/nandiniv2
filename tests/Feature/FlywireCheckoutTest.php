@@ -46,13 +46,15 @@ class FlywireCheckoutTest extends TestCase
                 return $configuration['recipientFields'] === [
                     'booking_reference' => $order->order_number,
                 ]
+                    && $configuration['firstName'] === 'Test'
                     && $configuration['middleName'] === 'SANDBOX_TO_DELIVERED_STATUS'
+                    && $configuration['lastName'] === 'Guest'
                     && $configuration['requestRecipientInfo'] === true
                     && $configuration['skipCompletedSteps'] === true;
             });
     }
 
-    public function test_checkout_never_sends_sandbox_middle_name_in_production(): void
+    public function test_checkout_uses_real_payer_names_in_production(): void
     {
         config([
             'domains.voucher' => 'voucher.nandinibali.test',
@@ -84,6 +86,9 @@ class FlywireCheckoutTest extends TestCase
             ->get('http://voucher.nandinibali.test/payment/start/' . $order->order_number);
 
         $response->assertOk()
-            ->assertViewHas('configuration', fn (array $configuration): bool => ! array_key_exists('middleName', $configuration));
+            ->assertViewHas('configuration', fn (array $configuration): bool =>
+                $configuration['firstName'] === 'Test'
+                && $configuration['lastName'] === 'Guest'
+                && ! array_key_exists('middleName', $configuration));
     }
 }

@@ -17,9 +17,12 @@ class VoucherEmailServiceTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_gift_delivery_uses_receiver_to_purchaser_cc_env_bcc_and_pdf_attachment(): void
+    public function test_gift_delivery_and_separate_purchaser_confirmation_are_sent(): void
     {
-        config(['mail.guest_bcc' => 'news@nandinibali.com,manager@nandinibali.com']);
+        config([
+            'mail.guest_bcc' => 'news@nandinibali.com,manager@nandinibali.com',
+            'mail.voucher_purchase_cc' => 'reservation@nandinibali.com',
+        ]);
         [$order, $voucher] = $this->voucherFixture('receiver@example.com', 'buyer@example.com', 'Buyer');
 
         $this->mock(VoucherPdfService::class, function ($mock) use ($voucher): void {
@@ -32,10 +35,20 @@ class VoucherEmailServiceTest extends TestCase
                 'emails.voucher.gift-delivery',
                 Mockery::on(fn(array $data): bool => $data['voucher']->is($voucher) && $data['order']->is($order)),
                 Mockery::on(fn(array $payload): bool => $payload['to'] === 'receiver@example.com'
-                    && $payload['cc'] === ['buyer@example.com']
+                    && $payload['cc'] === []
                     && $payload['bcc'] === ['news@nandinibali.com', 'manager@nandinibali.com']
                     && $payload['attachments'][0]['filename'] === 'voucher.pdf'
                     && base64_decode($payload['attachments'][0]['content_base64'], true) === '%PDF-sample')
+            )->andReturn($this->success());
+            $mock->shouldReceive('sendView')->once()->with(
+                'emails.voucher.purchase-success',
+                Mockery::on(fn(array $data): bool => $data['voucher']->is($voucher)
+                    && $data['order']->is($order)
+                    && $data['isGift'] === true),
+                Mockery::on(fn(array $payload): bool => $payload['to'] === 'buyer@example.com'
+                    && $payload['cc'] === ['reservation@nandinibali.com']
+                    && $payload['bcc'] === ['news@nandinibali.com', 'manager@nandinibali.com']
+                    && $payload['attachments'][0]['filename'] === 'voucher.pdf')
             )->andReturn($this->success());
         });
 
@@ -73,6 +86,7 @@ class VoucherEmailServiceTest extends TestCase
     {
         config([
             'mail.voucher_print_cc' => 'reservation@nandinibali.com,frontoffice@example.com',
+            'mail.voucher_purchase_cc' => 'reservation@nandinibali.com',
             'mail.guest_bcc' => 'archive@nandinibali.com',
         ]);
         [$order, $voucher] = $this->voucherFixture('receiver@example.com', 'buyer@example.com', null);
@@ -98,6 +112,36 @@ class VoucherEmailServiceTest extends TestCase
         $this->assertTrue(app(VoucherEmailService::class)->sendIssued($voucher));
     }
 
+    public function test_empty_purchase_cc_disables_general_purchase_copy(): void
+    {
+        config([
+            'mail.voucher_purchase_cc' => '',
+            'mail.guest_bcc' => '',
+        ]);
+        [$order, $voucher] = $this->voucherFixture('receiver@example.com', 'buyer@example.com', 'Buyer');
+
+        $this->mock(VoucherPdfService::class, function ($mock) use ($voucher): void {
+            $mock->shouldReceive('filename')->once()->with($voucher)->andReturn('voucher.pdf');
+            $mock->shouldReceive('render')->once()->with($voucher)->andReturn('%PDF-sample');
+        });
+
+        $this->mock(MembershipEmailRelayService::class, function ($mock): void {
+            $mock->shouldReceive('sendView')->once()->with(
+                'emails.voucher.gift-delivery',
+                Mockery::type('array'),
+                Mockery::on(fn(array $payload): bool => $payload['cc'] === [])
+            )->andReturn($this->success());
+            $mock->shouldReceive('sendView')->once()->with(
+                'emails.voucher.purchase-success',
+                Mockery::type('array'),
+                Mockery::on(fn(array $payload): bool => $payload['to'] === 'buyer@example.com'
+                    && $payload['cc'] === [])
+            )->andReturn($this->success());
+        });
+
+        $this->assertTrue(app(VoucherEmailService::class)->sendIssued($voucher));
+    }
+
     public function test_gift_pdf_uses_the_new_heading_anonymous_sender_and_no_price(): void
     {
         [, $voucher] = $this->voucherFixture('receiver@example.com', 'buyer@example.com', null);
@@ -110,6 +154,54 @@ class VoucherEmailServiceTest extends TestCase
         $this->assertStringNotContainsString('IDR', $html);
         $this->assertStringNotContainsString('Original Value', $html);
         $this->assertStringNotContainsString('Remaining Value', $html);
+    }
+
+    public function test_notes_are_routed_to_the_correct_email_or_pdf(): void
+    {
+        [$order, $voucher] = $this->voucherFixture('receiver@example.com', 'buyer@example.com', 'Buyer');
+
+        $voucher->forceFill(['metadata' => [
+            'purchase_for' => 'self',
+            'delivery_method' => 'email',
+            'personal_message' => 'Private purchaser note.',
+        ]])->save();
+
+        $selfEmail = view('emails.voucher.purchase-success', compact('order', 'voucher'))->render();
+        $selfPdf = view('pdf.voucher', compact('voucher'))->render();
+
+        $this->assertStringContainsString('Private purchaser note.', $selfEmail);
+        $this->assertStringNotContainsString('Private purchaser note.', $selfPdf);
+        $this->assertStringNotContainsString('Gift from', $selfPdf);
+        $this->assertStringNotContainsString('A someone special', $selfPdf);
+
+        $voucher->forceFill(['metadata' => [
+            'purchase_for' => 'gift',
+            'delivery_method' => 'email',
+            'gift_from' => 'Buyer',
+            'personal_message' => 'A message for the voucher receiver.',
+        ]])->save();
+
+        $giftEmail = view('emails.voucher.gift-delivery', compact('order', 'voucher'))->render();
+        $giftPdf = view('pdf.voucher', compact('voucher'))->render();
+
+        $this->assertStringNotContainsString('A message for the voucher receiver.', $giftEmail);
+        $this->assertStringContainsString('A message for the voucher receiver.', $giftPdf);
+
+        $voucher->forceFill(['metadata' => [
+            'purchase_for' => 'gift',
+            'delivery_method' => 'print_at_resort',
+            'gift_from' => 'Buyer',
+            'personal_message' => 'Printed message for the receiver.',
+            'hotel_note' => 'Please prepare the printed voucher before arrival.',
+        ]])->save();
+
+        $printEmail = view('emails.voucher.purchase-success', compact('order', 'voucher'))->render();
+        $printPdf = view('pdf.voucher', compact('voucher'))->render();
+
+        $this->assertStringContainsString('Please prepare the printed voucher before arrival.', $printEmail);
+        $this->assertStringNotContainsString('Printed message for the receiver.', $printEmail);
+        $this->assertStringContainsString('Printed message for the receiver.', $printPdf);
+        $this->assertStringNotContainsString('Please prepare the printed voucher before arrival.', $printPdf);
     }
 
     public function test_voucher_email_previews_are_protected_and_render(): void
@@ -174,7 +266,11 @@ class VoucherEmailServiceTest extends TestCase
             'remaining_value' => 1000000,
             'currency' => 'IDR',
             'status' => 'active',
-            'metadata' => ['gift_from' => $giftFrom, 'personal_message' => 'Enjoy your stay!'],
+            'metadata' => [
+                'gift_from' => $giftFrom,
+                'purchase_for' => 'gift',
+                'personal_message' => 'Enjoy your stay!',
+            ],
         ]);
 
         return [$order, $voucher];

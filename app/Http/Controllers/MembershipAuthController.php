@@ -22,8 +22,12 @@ use Illuminate\View\View;
 
 class MembershipAuthController extends Controller
 {
-    public function showLoginForm(): View
+    public function showLoginForm(Request $request): View
     {
+        if ($request->query('redirect') === route('voucher.checkout.index')) {
+            $request->session()->put('url.intended', route('voucher.checkout.index'));
+        }
+
         $page = Page::query()
             ->where('id', 36)
             ->where('is_active', true)
@@ -74,7 +78,7 @@ class MembershipAuthController extends Controller
             return redirect()->route('membership.password.change');
         }
 
-        return redirect()->route('membership.dashboard');
+        return redirect()->intended(route('membership.dashboard'));
     }
 
     public function redirectToSocialProvider(string $provider): RedirectResponse
@@ -157,7 +161,7 @@ class MembershipAuthController extends Controller
             return redirect()->route('membership.password.change');
         }
 
-        return redirect()->route('membership.dashboard');
+        return redirect()->intended(route('membership.dashboard'));
     }
 
     public function showForgotPasswordForm(): View
@@ -357,7 +361,7 @@ class MembershipAuthController extends Controller
         ])->save();
 
         return redirect()
-            ->route('membership.dashboard')
+            ->intended(route('membership.dashboard'))
             ->with('status', 'Your password has been updated successfully.');
     }
 
@@ -397,7 +401,7 @@ class MembershipAuthController extends Controller
 
         $voucherOrders = ! config('features.disable_voucher_feature') && $member instanceof Member
             ? $member->voucherOrders()
-                ->with(['items.issuedVouchers'])
+                ->with(['items.issuedVouchers.voucher'])
                 ->latest()
                 ->get()
             : collect();

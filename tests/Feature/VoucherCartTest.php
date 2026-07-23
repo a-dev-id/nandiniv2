@@ -99,6 +99,7 @@ class VoucherCartTest extends TestCase
         $this->assertSame(341000, $cart['tax']);
         $this->assertSame(3375900, $cart['total']);
         $this->assertSame('Please prepare it before check-in.', $line['hotel_note']);
+        $this->assertSame('', $line['recipient_email']);
     }
 
     public function test_cart_discount_is_removed_when_cart_is_cleared(): void

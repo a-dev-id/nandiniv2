@@ -10,9 +10,22 @@ class BookingSyncOverview extends StatsOverviewWidget
 {
     protected static ?int $sort = 10;
 
-    protected ?string $heading = 'Booking Synchronization';
+    protected string $view = 'filament.widgets.collapsible-stats-overview';
 
-    protected ?string $description = 'Latest WebHotelier synchronization health and activity.';
+    public function getSectionHeading(): string
+    {
+        return 'Booking Synchronization';
+    }
+
+    public function getSectionDescription(): string
+    {
+        return 'Latest WebHotelier synchronization health and activity.';
+    }
+
+    public function getSectionCollapseId(): string
+    {
+        return 'booking-synchronization';
+    }
 
     protected ?string $pollingInterval = '60s';
 

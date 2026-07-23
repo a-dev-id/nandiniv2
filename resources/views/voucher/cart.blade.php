@@ -45,7 +45,7 @@
                                             <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">Recipient Name</label>
                                             <input name="recipient_name" value="{{ $line['recipient_name'] }}" class="mt-2 w-full border border-slate-300 px-4 py-3 text-sm" required>
                                         </div>
-                                        <div>
+                                        <div class="{{ ($line['delivery_method'] ?? 'email') === 'print_at_resort' ? 'hidden' : '' }}" data-cart-recipient-email>
                                             <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">Recipient Email</label>
                                             <input name="recipient_email" type="email" value="{{ $line['recipient_email'] }}" class="mt-2 w-full border border-slate-300 px-4 py-3 text-sm" {{ ($line['delivery_method'] ?? 'email') === 'email' ? 'required' : '' }}>
                                         </div>
@@ -81,7 +81,6 @@
                                                 data-cart-voucher-preview
                                                 data-title="{{ $line['voucher']->title }}"
                                                 data-price="{{ $money->format($line['unit_price'], $line['currency']) }}++"
-                                                data-image="{{ $line['voucher']->image ? Storage::disk('public')->url($line['voucher']->image) : '' }}"
                                                 data-excerpt="{{ $line['voucher']->excerpt }}"
                                             >Preview</button>
                                         @endif
@@ -129,18 +128,21 @@
             <div class="flex justify-end">
                 <button type="button" class="text-xs uppercase tracking-[0.08em] text-slate-600 hover:text-[#A88444]" data-close-cart-preview>&times; Close preview</button>
             </div>
-            <div class="mt-6 overflow-hidden border border-slate-200 bg-white">
-                <img src="" alt="" class="hidden h-64 w-full object-cover sm:h-80" data-cart-preview-image>
-                <div class="px-6 py-10 text-center sm:px-12">
-                    <p class="font-serif text-sm uppercase tracking-[0.2em] text-slate-700">Gift Voucher</p>
-                    <p class="mt-2 text-xs uppercase tracking-[0.18em] text-[#A88444]">Nandini Jungle by Hanging Gardens</p>
-                    <h2 id="cart-preview-title" class="mt-5 text-2xl uppercase text-slate-700 sm:text-3xl" data-cart-preview-title></h2>
-                    <p class="mx-auto mt-6 max-w-xl text-sm italic leading-7 text-slate-600" data-cart-preview-message></p>
-                    <p class="mx-auto mt-10 max-w-xl border-t border-slate-200 pt-8 text-sm leading-7 text-slate-600" data-cart-preview-excerpt></p>
-                    <div class="mx-auto mt-8 max-w-xl border-t border-slate-200 pt-8 text-left text-xs leading-6 text-slate-500">
-                        <p><span class="font-semibold text-slate-700">Gift to:</span> <span data-cart-preview-recipient></span></p>
-                        <p class="mt-1"><span class="font-semibold text-slate-700">Gift from:</span> <span data-cart-preview-sender></span></p>
+            <div class="mt-6 bg-[#F5F0E7] p-3 sm:p-5">
+                <div class="relative border border-[#B8945B] bg-[#FFFCF7] px-6 py-12 text-center outline outline-1 outline-offset-[-7px] outline-[#D8C6A8] sm:px-12 sm:py-16">
+                    <span class="absolute left-5 top-5 h-8 w-8 border-l border-t border-[#B8945B]" aria-hidden="true"></span><span class="absolute right-5 top-5 h-8 w-8 border-r border-t border-[#B8945B]" aria-hidden="true"></span>
+                    <span class="absolute bottom-5 left-5 h-8 w-8 border-b border-l border-[#B8945B]" aria-hidden="true"></span><span class="absolute bottom-5 right-5 h-8 w-8 border-b border-r border-[#B8945B]" aria-hidden="true"></span>
+                    <p class="font-serif text-xs uppercase tracking-[0.34em] text-[#A88444]">Nandini Jungle by Hanging Gardens</p>
+                    <p class="mt-5 text-[10px] uppercase tracking-[0.32em] text-slate-500">Gift Voucher</p>
+                    <h2 id="cart-preview-title" class="mx-auto mt-5 max-w-xl font-serif text-2xl font-normal uppercase leading-snug tracking-[0.12em] text-[#17233A] sm:text-3xl" data-cart-preview-title></h2>
+                    <div class="mx-auto mt-6 h-px w-20 bg-[#B8945B]"></div>
+                    <p class="mx-auto mt-7 max-w-lg font-serif text-base italic leading-8 text-slate-600" data-cart-preview-message></p>
+                    <p class="mx-auto mt-8 max-w-xl border-y border-[#D8C6A8] py-7 text-sm leading-7 text-slate-600" data-cart-preview-excerpt></p>
+                    <div class="mx-auto mt-8 grid max-w-xl gap-6 text-left text-xs sm:grid-cols-2">
+                        <p><span class="block text-[9px] uppercase tracking-[0.2em] text-[#A88444]">Gift to</span><span class="mt-2 block font-serif text-base text-[#17233A]" data-cart-preview-recipient></span></p>
+                        <p class="sm:text-right"><span class="block text-[9px] uppercase tracking-[0.2em] text-[#A88444]">Gift from</span><span class="mt-2 block font-serif text-base text-[#17233A]" data-cart-preview-sender></span></p>
                     </div>
+                    <p class="mt-10 text-[9px] uppercase tracking-[0.24em] text-slate-400">An invitation to experience the beauty of Bali</p>
                 </div>
             </div>
         </div>
@@ -149,15 +151,22 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const modal = document.querySelector('[data-cart-preview-modal]');
-            const image = document.querySelector('[data-cart-preview-image]');
 
             document.querySelectorAll('[data-cart-delivery-method]').forEach(function (select) {
                 const form = select.closest('form');
                 const hotelNote = form?.querySelector('[data-cart-hotel-note]');
+                const recipientEmailField = form?.querySelector('[data-cart-recipient-email]');
+                const recipientEmailInput = recipientEmailField?.querySelector('[name="recipient_email"]');
 
-                select.addEventListener('change', function () {
-                    hotelNote?.classList.toggle('hidden', select.value !== 'print_at_resort');
-                });
+                function updateDeliveryFields() {
+                    const isPrintAtResort = select.value === 'print_at_resort';
+                    hotelNote?.classList.toggle('hidden', !isPrintAtResort);
+                    recipientEmailField?.classList.toggle('hidden', isPrintAtResort);
+                    if (recipientEmailInput) recipientEmailInput.required = !isPrintAtResort;
+                }
+
+                select.addEventListener('change', updateDeliveryFields);
+                updateDeliveryFields();
             });
 
             function closePreview() {
@@ -169,15 +178,11 @@
             document.querySelectorAll('[data-cart-voucher-preview]').forEach(function (button) {
                 button.addEventListener('click', function () {
                     const form = button.closest('form');
-                    const imageUrl = button.dataset.image || '';
                     document.querySelector('[data-cart-preview-title]').textContent = button.dataset.title || '';
                     document.querySelector('[data-cart-preview-excerpt]').textContent = button.dataset.excerpt || '';
                     document.querySelector('[data-cart-preview-recipient]').textContent = form?.querySelector('[name="recipient_name"]')?.value || '';
                     document.querySelector('[data-cart-preview-sender]').textContent = form?.querySelector('[name="gift_from"]')?.value || 'A someone special';
                     document.querySelector('[data-cart-preview-message]').textContent = form?.querySelector('[name="personal_message"]')?.value || '';
-                    image.src = imageUrl;
-                    image.alt = button.dataset.title || '';
-                    image.classList.toggle('hidden', !imageUrl);
                     modal?.classList.remove('hidden');
                     modal?.setAttribute('aria-hidden', 'false');
                     document.documentElement.classList.add('overflow-hidden');

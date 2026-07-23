@@ -275,6 +275,32 @@ $activityHistories = collect();
 $activeRedemptions = collect();
 }
 
+$voucherOrders = collect($voucherOrders ?? []);
+$issuedVouchers = $voucherOrders
+->flatMap(fn ($voucherOrder) => $voucherOrder->items)
+->flatMap(fn ($voucherItem) => $voucherItem->issuedVouchers);
+
+$redeemedVouchers = $issuedVouchers
+->filter(fn ($issuedVoucher) => $issuedVoucher->status === 'redeemed')
+->values();
+
+$activityHistories = $activityHistories
+->merge($redeemedVouchers)
+->sortByDesc(function ($item) {
+try {
+$historyDate = data_get($item, 'redeemed_at')
+?: data_get($item, 'used_at')
+?: data_get($item, 'created_at');
+
+return $historyDate
+? \Carbon\Carbon::parse($historyDate)->timestamp
+: 0;
+} catch (\Throwable $e) {
+return 0;
+}
+})
+->values();
+
 $historyDisplayLimit = 3;
 
 $dashboardRewards = collect($rewards ?? []);
@@ -790,15 +816,17 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
             @unless (config('features.disable_voucher_feature'))
             <div id="my-vouchers" class="hidden pt-8" data-dashboard-tab-panel="vouchers">
                 @php
-                $voucherOrders = collect($voucherOrders ?? []);
+                $activeIssuedVouchers = $issuedVouchers
+                ->reject(fn ($issuedVoucher) => $issuedVoucher->status === 'redeemed')
+                ->values();
                 @endphp
 
-                @if ($voucherOrders->isNotEmpty())
+                @if ($activeIssuedVouchers->isNotEmpty())
                 <div class="overflow-x-auto border border-slate-200 bg-white">
                     <table class="min-w-full divide-y divide-slate-200 text-left text-xs sm:text-sm">
                         <thead class="bg-[#F7F7F7] text-[9px] uppercase text-slate-700 sm:text-[11px]">
                             <tr>
-                                <th class="px-4 py-4">Order</th>
+                                <th class="px-4 py-4">Voucher Number</th>
                                 <th class="px-4 py-4">Voucher</th>
                                 <th class="px-4 py-4">Recipient</th>
                                 <th class="px-4 py-4">Status</th>
@@ -806,23 +834,18 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-slate-700">
-                            @foreach ($voucherOrders as $voucherOrder)
-                            @foreach ($voucherOrder->items as $voucherItem)
-                            @php
-                            $issued = $voucherItem->issuedVouchers->first();
-                            @endphp
+                            @foreach ($activeIssuedVouchers as $issuedVoucher)
                             <tr>
-                                <td class="px-4 py-4 font-bold text-slate-700">{{ $voucherOrder->order_number }}</td>
-                                <td class="px-4 py-4">{{ $voucherItem->voucher_title }}</td>
-                                <td class="px-4 py-4">{{ $voucherItem->recipient_name }}</td>
+                                <td class="px-4 py-4 font-bold text-slate-700">{{ $issuedVoucher->voucher_code }}</td>
+                                <td class="px-4 py-4">{{ $issuedVoucher->title }}</td>
+                                <td class="px-4 py-4">{{ $issuedVoucher->recipient_name }}</td>
                                 <td class="px-4 py-4">
                                     <span class="inline-flex rounded-full bg-[#A88444]/10 px-3 py-1 text-[9px] font-bold uppercase text-[#916B2C] sm:text-[11px]">
-                                        {{ $issued ? str_replace('_', ' ', $issued->status) : str_replace('_', ' ', $voucherOrder->payment_status) }}
+                                        {{ str_replace('_', ' ', $issuedVoucher->status) }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-4">{{ $issued?->expires_at?->format('d M Y') ?? '-' }}</td>
+                                <td class="px-4 py-4">{{ $issuedVoucher->expires_at?->format('d M Y') ?? '-' }}</td>
                             </tr>
-                            @endforeach
                             @endforeach
                         </tbody>
                     </table>
@@ -848,7 +871,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                     <table class="min-w-full divide-y divide-slate-200 text-left text-xs sm:text-sm">
                         <thead class="bg-[#F7F7F7] text-[9px] uppercase text-slate-700 sm:text-[11px]">
                             <tr>
-                                <th class="px-4 py-4">Reward</th>
+                                <th class="px-4 py-4">Reward / Voucher</th>
                                 <th class="px-4 py-4">Code</th>
                                 <th class="px-4 py-4">Redeemed/Received On</th>
                                 <th class="px-4 py-4">Valid Until</th>
@@ -908,6 +931,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
 
                             $redemptionCode = $getHistoryValue($activity, [
                             'redemption_code',
+                            'voucher_code',
                             'redeem_code',
                             'code',
                             ], null);
@@ -961,6 +985,8 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                                 ? $pointTransactionImage
                                 : $resolveImage($getHistoryValue($activity, [
                                 'image',
+                                'voucher.card_image',
+                                'voucher.image',
                                 'reward.image',
                                 'reward.card_image',
                                 'reward.hero_image',

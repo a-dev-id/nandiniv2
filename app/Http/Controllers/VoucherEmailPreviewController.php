@@ -104,6 +104,7 @@ class VoucherEmailPreviewController extends Controller
             'status' => 'partially_redeemed',
             'metadata' => [
                 'gift_from' => 'Angga',
+                'purchase_for' => 'gift',
                 'personal_message' => 'Enjoy this indulgent escape together!',
                 'verification_url' => route('voucher.verify', ['token' => 'preview-token']),
             ],

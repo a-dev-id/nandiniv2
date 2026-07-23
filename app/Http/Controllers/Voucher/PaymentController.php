@@ -24,6 +24,9 @@ class PaymentController extends Controller
         if ((bool) config('services.flywire.enabled') && config('services.flywire.integration', 'checkout') === 'checkout') {
             $isProduction = in_array(config('services.flywire.environment'), ['prod', 'production'], true);
             $environment = $isProduction ? 'prod' : 'demo';
+            $sandboxPayerMiddleName = $isProduction
+                ? null
+                : config('services.flywire.sandbox_payer_middle_name');
             $notificationUrl = config('services.flywire.notification_url');
             $notificationHost = parse_url((string) $notificationUrl, PHP_URL_HOST);
             $hasPublicNotificationUrl = filled($notificationUrl)
@@ -36,7 +39,7 @@ class PaymentController extends Controller
                 'recipientCode' => config('services.flywire.recipient_code'),
                 'amount' => $order->total_amount,
                 'firstName' => $order->purchaser_first_name,
-                'middleName' => $isProduction ? null : config('services.flywire.sandbox_payer_middle_name'),
+                'middleName' => $sandboxPayerMiddleName,
                 'lastName' => $order->purchaser_last_name,
                 'email' => $order->purchaser_email,
                 'phone' => $order->purchaser_phone,

@@ -223,26 +223,29 @@ $galleryImages = collect([[
             <div class="flex justify-end">
                 <button type="button" class="text-xs uppercase tracking-[0.08em] text-slate-600 hover:text-[#A88444]" data-close-gift-preview>&times; Close preview</button>
             </div>
-            <div class="mt-6 overflow-hidden border border-slate-200 bg-white">
-                @if ($voucher->image)
-                    <img src="{{ Storage::disk('public')->url($voucher->image) }}" alt="{{ $voucher->image_alt ?: $voucher->title }}" class="h-64 w-full object-cover sm:h-80">
-                @endif
-                <div class="px-6 py-10 text-center sm:px-12">
-                    <p class="font-serif text-sm uppercase tracking-[0.2em] text-slate-700">Gift Voucher</p>
-                    <p class="mt-2 text-xs uppercase tracking-[0.18em] text-[#A88444]">Nandini Jungle by Hanging Gardens</p>
-                    <h2 class="mt-5 text-2xl uppercase text-slate-700 sm:text-3xl">{{ $voucher->title }}</h2>
-                    <p class="mx-auto mt-6 max-w-xl text-sm italic leading-7 text-slate-600" data-preview-message></p>
-                    <div class="mx-auto mt-10 max-w-xl border-t border-slate-200 pt-8 text-sm leading-7 text-slate-600 [&_p]:mb-4 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-1">
+            <div class="mt-6 bg-[#F5F0E7] p-3 sm:p-5">
+                <div class="relative border border-[#B8945B] bg-[#FFFCF7] px-6 py-12 text-center outline outline-1 outline-offset-[-7px] outline-[#D8C6A8] sm:px-12 sm:py-16">
+                    <span class="absolute left-5 top-5 h-8 w-8 border-l border-t border-[#B8945B]" aria-hidden="true"></span>
+                    <span class="absolute right-5 top-5 h-8 w-8 border-r border-t border-[#B8945B]" aria-hidden="true"></span>
+                    <span class="absolute bottom-5 left-5 h-8 w-8 border-b border-l border-[#B8945B]" aria-hidden="true"></span>
+                    <span class="absolute bottom-5 right-5 h-8 w-8 border-b border-r border-[#B8945B]" aria-hidden="true"></span>
+                    <p class="font-serif text-xs uppercase tracking-[0.34em] text-[#A88444]">Nandini Jungle by Hanging Gardens</p>
+                    <p class="mt-5 text-[10px] uppercase tracking-[0.32em] text-slate-500">Gift Voucher</p>
+                    <h2 class="mx-auto mt-5 max-w-xl font-serif text-2xl font-normal uppercase leading-snug tracking-[0.12em] text-[#17233A] sm:text-3xl">{{ $voucher->title }}</h2>
+                    <div class="mx-auto mt-6 h-px w-20 bg-[#B8945B]"></div>
+                    <p class="mx-auto mt-7 max-w-lg font-serif text-base italic leading-8 text-slate-600" data-preview-message></p>
+                    <div class="mx-auto mt-8 max-w-xl border-y border-[#D8C6A8] py-7 text-sm leading-7 text-slate-600 [&_p]:mb-4 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-1">
                         @if (filled($voucher->description))
                             {!! $voucher->description !!}
                         @else
                             <p>{{ $voucher->excerpt }}</p>
                         @endif
                     </div>
-                    <div class="mx-auto mt-8 max-w-xl border-t border-slate-200 pt-8 text-left text-xs leading-6 text-slate-500">
-                        <p><span class="font-semibold text-slate-700">Gift to:</span> <span data-preview-recipient></span></p>
-                        <p class="mt-1"><span class="font-semibold text-slate-700">Gift from:</span> <span data-preview-sender></span></p>
+                    <div class="mx-auto mt-8 grid max-w-xl gap-6 text-left text-xs sm:grid-cols-2">
+                        <p><span class="block text-[9px] uppercase tracking-[0.2em] text-[#A88444]">Gift to</span><span class="mt-2 block font-serif text-base text-[#17233A]" data-preview-recipient></span></p>
+                        <p class="sm:text-right"><span class="block text-[9px] uppercase tracking-[0.2em] text-[#A88444]">Gift from</span><span class="mt-2 block font-serif text-base text-[#17233A]" data-preview-sender></span></p>
                     </div>
+                    <p class="mt-10 text-[9px] uppercase tracking-[0.24em] text-slate-400">An invitation to experience the beauty of Bali</p>
                 </div>
             </div>
         </div>
@@ -349,7 +352,7 @@ $galleryImages = collect([[
                 }
 
                 nameInput.value = giftName.value.trim();
-                emailInput.value = isPrint ? selfEmailValue : giftEmail.value.trim();
+                emailInput.value = isPrint ? '' : giftEmail.value.trim();
                 emailInput.required = !isPrint;
                 personalMessage.value = giftMessage.value.trim() || defaultGiftMessage;
                 giftFromInput.value = giftSender.value.trim();

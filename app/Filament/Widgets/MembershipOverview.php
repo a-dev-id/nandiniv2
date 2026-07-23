@@ -13,9 +13,22 @@ class MembershipOverview extends StatsOverviewWidget
 
     protected static ?int $sort = 20;
 
-    protected ?string $heading = 'Member Overview';
+    protected string $view = 'filament.widgets.collapsible-stats-overview';
 
-    protected ?string $description = 'Membership activity, points, and tier distribution.';
+    public function getSectionHeading(): string
+    {
+        return 'Member Overview';
+    }
+
+    public function getSectionDescription(): string
+    {
+        return 'Membership activity, points, and tier distribution.';
+    }
+
+    public function getSectionCollapseId(): string
+    {
+        return 'member-overview';
+    }
 
     protected ?string $pollingInterval = '60s';
 

@@ -42,6 +42,10 @@ class FlywirePaymentGateway implements PaymentGateway
             );
         }
 
+        $sandboxPayerMiddleName = $this->checkoutEnvironment() === 'demo'
+            ? config('services.flywire.sandbox_payer_middle_name')
+            : null;
+
         $payload = [
             'recipient_id' => config('services.flywire.recipient_id'),
             'external_reference' => $order->order_number,
@@ -49,9 +53,7 @@ class FlywirePaymentGateway implements PaymentGateway
             'currency' => $order->currency,
             'payer' => array_filter([
                 'first_name' => $order->purchaser_first_name,
-                'middle_name' => $this->checkoutEnvironment() === 'demo'
-                    ? config('services.flywire.sandbox_payer_middle_name')
-                    : null,
+                'middle_name' => $sandboxPayerMiddleName,
                 'last_name' => $order->purchaser_last_name,
                 'email' => $order->purchaser_email,
                 'phone' => $order->purchaser_phone,

@@ -82,6 +82,13 @@ class VoucherIssuer
                     'metadata' => [
                         'verification_url' => route('voucher.verify', ['token' => $token]),
                         'gift_from' => $snapshot['gift_from'] ?? null,
+                        'purchase_for' => $snapshot['purchase_for'] ?? (
+                            ($snapshot['delivery_method'] ?? $item->delivery_method) === 'print_at_resort'
+                            || filled($snapshot['gift_from'] ?? null)
+                            || strcasecmp((string) $item->recipient_email, (string) $order->purchaser_email) !== 0
+                                ? 'gift'
+                                : 'self'
+                        ),
                         'personal_message' => $item->personal_message,
                         'delivery_method' => $snapshot['delivery_method'] ?? $item->delivery_method ?? 'email',
                         'delivery_fee' => $snapshot['delivery_fee'] ?? 0,

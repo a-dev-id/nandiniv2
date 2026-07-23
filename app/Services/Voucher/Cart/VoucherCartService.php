@@ -32,7 +32,9 @@ class VoucherCartService
             'quantity' => $quantity,
             'purchase_for' => $purchaseFor,
             'recipient_name' => trim((string) ($data['recipient_name'] ?? '')),
-            'recipient_email' => strtolower(trim((string) ($data['recipient_email'] ?? ''))),
+            'recipient_email' => $purchaseFor === 'gift' && $deliveryMethod === 'print_at_resort'
+                ? ''
+                : strtolower(trim((string) ($data['recipient_email'] ?? ''))),
             'personal_message' => trim((string) ($data['personal_message'] ?? '')),
             'gift_from' => trim((string) ($data['gift_from'] ?? '')),
             'delivery_method' => $deliveryMethod,
@@ -66,7 +68,9 @@ class VoucherCartService
             'quantity' => $this->normalizeQuantity($voucher, (int) ($data['quantity'] ?? $lines[$key]['quantity'])),
             'purchase_for' => $purchaseFor,
             'recipient_name' => trim((string) ($data['recipient_name'] ?? $lines[$key]['recipient_name'])),
-            'recipient_email' => strtolower(trim((string) ($data['recipient_email'] ?? $lines[$key]['recipient_email']))),
+            'recipient_email' => $purchaseFor === 'gift' && $deliveryMethod === 'print_at_resort'
+                ? ''
+                : strtolower(trim((string) ($data['recipient_email'] ?? $lines[$key]['recipient_email']))),
             'personal_message' => trim((string) ($data['personal_message'] ?? $lines[$key]['personal_message'] ?? '')),
             'gift_from' => trim((string) ($data['gift_from'] ?? $lines[$key]['gift_from'] ?? '')),
             'delivery_method' => $deliveryMethod,

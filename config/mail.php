@@ -125,4 +125,6 @@ return [
 
     'voucher_print_cc' => env('VOUCHER_PRINT_CC_EMAILS', 'reservation@nandinibali.com'),
 
+    'voucher_purchase_cc' => env('VOUCHER_PURCHASE_CC_EMAILS', ''),
+
 ];
