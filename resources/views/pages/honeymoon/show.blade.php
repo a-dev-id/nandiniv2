@@ -99,12 +99,12 @@
 
                             @if ($relatedOffer->excerpt)
                             <p class="mt-2 text-xs leading-relaxed text-slate-700 sm:text-sm">
-                                {{ \Illuminate\Support\Str::limit(strip_tags($relatedOffer->excerpt), 130) }}
+                                {{ strip_tags($relatedOffer->excerpt) }}
                             </p>
                             @endif
 
                             <p class="mt-2 text-xs uppercase text-[#916B2C] sm:text-sm">
-                                View Offer
+                                More Details
                             </p>
                         </div>
                     </a>

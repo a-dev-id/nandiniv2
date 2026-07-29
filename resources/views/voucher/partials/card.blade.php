@@ -19,7 +19,7 @@
     <div class="flex flex-1 flex-col border border-slate-200 border-t-0 p-5">
         <p class="text-[11px] uppercase tracking-[0.08em] text-[#A88444]">{{ $voucher->category?->name ?: 'Voucher' }}</p>
         <h2 class="mt-2 text-base uppercase leading-snug text-slate-700 sm:text-lg">{{ $voucher->title }}</h2>
-        <p class="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{{ $voucher->excerpt }}</p>
+        <p class="mt-3 text-sm leading-6 text-slate-600">{{ $voucher->excerpt }}</p>
         <div class="mt-auto pt-5">
             @if ($voucher->has_discount)
                 <div class="mb-1.5 flex items-center gap-2">

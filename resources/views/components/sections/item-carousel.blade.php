@@ -12,7 +12,7 @@
 'mobileArrowsOnImage' => false,
 'routeName' => null,
 'variant' => 'cards',
-'actionLabel' => 'Explore More',
+'actionLabel' => 'More Details',
 'footerHref' => null,
 'footerLabel' => 'Explore More',
 ])

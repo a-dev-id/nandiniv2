@@ -110,6 +110,12 @@ $buttonUrl = \Illuminate\Support\Facades\Route::has($section->button_route)
 } else {
 $buttonUrl = $section?->button_url;
 }
+
+$buttonLabel = \App\Support\DetailPageButtonLabel::resolve(
+$buttonLabel,
+$section?->button_route,
+$buttonUrl,
+);
 @endphp
 
 @if ($section)

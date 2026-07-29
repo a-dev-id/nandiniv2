@@ -60,6 +60,12 @@ $metaImage = $blog->hero_image
     ? html_entity_decode($blog->button_url, ENT_QUOTES | ENT_HTML5, 'UTF-8')
     : null;
 
+    $buttonLabel = \App\Support\DetailPageButtonLabel::resolve(
+        $buttonLabel,
+        null,
+        $buttonUrl,
+    );
+
     $shareUrl = url()->current();
     $shareTitle = $blog->title;
     $encodedShareUrl = rawurlencode($shareUrl);

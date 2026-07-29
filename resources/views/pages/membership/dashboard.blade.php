@@ -1158,7 +1158,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
 
                                 @if ($rewardDescription)
                                 <p class="mt-2 text-xs leading-relaxed text-gray-600 sm:text-sm">
-                                    {{ \Illuminate\Support\Str::limit(strip_tags($rewardDescription), 145) }}
+                                    {{ strip_tags($rewardDescription) }}
                                 </p>
                                 @endif
 

@@ -85,6 +85,12 @@ $sectionButtonUrl = $section?->button_url ?? null;
 
 $finalPrimaryLabel = $sectionButtonLabel ?: $primaryLabel;
 $finalPrimaryUrl = $sectionButtonUrl ?: $primaryUrl;
+
+$finalPrimaryLabel = \App\Support\DetailPageButtonLabel::resolve(
+$finalPrimaryLabel,
+$section?->button_route,
+$finalPrimaryUrl,
+);
 @endphp
 
 <section class="w-full bg-white px-0 py-0">

@@ -76,7 +76,7 @@ $galleryImages = $accommodation?->activeImages
 
         <div class="mt-5 flex justify-center">
             <x-buttons.link-button :href="$url" class="px-4 py-2">
-                Explore
+                More Details
             </x-buttons.link-button>
         </div>
     </div>

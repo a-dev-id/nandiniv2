@@ -29,7 +29,7 @@ $modelClass = match ($model) {
 default => Offer::class,
 };
 
-$buttonText = in_array($model, ['blog', 'news'], true) ? 'READ MORE' : 'DISCOVER';
+$buttonText = 'MORE DETAILS';
 
 $isPaginated = $items instanceof \Illuminate\Contracts\Pagination\Paginator;
 $paginator = $isPaginated ? $items : null;
@@ -221,20 +221,6 @@ $useShowMore = $model === 'experience'
 && $items->count() > $showMoreStep;
 @endphp
 
-@once
-@push('css')
-<style>
-    .offer-card-description-collapsed {
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 3;
-        overflow: hidden;
-    }
-
-</style>
-@endpush
-@endonce
-
 <section class="pb-16 md:pb-28">
     <div class="mx-auto px-3 lg:px-16" @if ($useShowMore) x-data="{ visibleCount: {{ $showMoreStep }} }" @endif>
 
@@ -346,11 +332,6 @@ $useShowMore = $model === 'experience'
 
             $usesOfferCardLayout = in_array($model, ['offer', 'experience'], true);
 
-            $shortExcerpt = \Illuminate\Support\Str::words(
-            preg_replace('/\.{3,}/', '', (string) $item->excerpt) ?: (string) $item->excerpt,
-            24,
-            '...'
-            );
             @endphp
 
             <article class="{{ $model === 'gallery' ? 'mb-4 break-inside-avoid' : 'flex' }}" @if ($useShowMore) x-show="{{ $loop->index }} < visibleCount" @endif>
@@ -400,15 +381,14 @@ $useShowMore = $model === 'experience'
                         </h3>
 
                         @if (! empty($item->excerpt))
-                        <p x-data="{ expanded: false }" x-bind:aria-expanded="expanded.toString()" role="button" tabindex="0" class="mt-2 grow cursor-pointer text-xs leading-relaxed text-slate-600 sm:text-sm" @click="expanded = ! expanded" @keydown.enter.prevent="expanded = ! expanded" @keydown.space.prevent="expanded = ! expanded">
-                            <span x-show="! expanded">{{ $shortExcerpt }}</span>
-                            <span x-show="expanded">{{ $item->excerpt }}</span>
+                        <p class="mt-2 grow text-xs leading-relaxed text-slate-600 sm:text-sm">
+                            {{ $item->excerpt }}
                         </p>
                         @endif
 
                         <div class="mt-9 flex flex-wrap items-center justify-start gap-4">
                             <a href="{{ $url }}" class="inline-flex min-w-[120px] items-center justify-center border border-slate-700 px-4 py-2.5 text-xs font-medium uppercase text-slate-700 transition hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em] sm:text-sm">
-                                Explore More
+                                More Details
                             </a>
 
                             @if ($model === 'offer' && $reserveUrl)

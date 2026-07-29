@@ -26,7 +26,11 @@ return [
 'description' => trim((string) $popup->description),
 'imageUrl' => $imageUrl,
 'imageAlt' => $popup->image_alt ?: $popup->title,
-'buttonLabel' => $popup->button_label,
+'buttonLabel' => \App\Support\DetailPageButtonLabel::resolve(
+$popup->button_label,
+$popup->button_route,
+$popup->resolved_button_url,
+),
 'buttonUrl' => $popup->resolved_button_url,
 ];
 })

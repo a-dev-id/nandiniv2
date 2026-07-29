@@ -45,6 +45,12 @@ $displayButtonLink = \Illuminate\Support\Facades\Route::has($section->button_rou
 } else {
 $displayButtonLink = $section?->button_url;
 }
+
+$displayButtonText = \App\Support\DetailPageButtonLabel::resolve(
+$displayButtonText,
+$section?->button_route,
+$displayButtonLink,
+);
 @endphp
 
 @if ($section)

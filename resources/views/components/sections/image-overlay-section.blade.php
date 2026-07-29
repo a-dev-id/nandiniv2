@@ -77,6 +77,12 @@ $buttonUrl = \Illuminate\Support\Facades\Route::has($section->button_route)
 $buttonUrl = $section?->button_url ?? null;
 }
 
+$buttonLabel = \App\Support\DetailPageButtonLabel::resolve(
+$buttonLabel,
+$section?->button_route,
+$buttonUrl,
+);
+
 /*
 |--------------------------------------------------------------------------
 | Text alignment from database

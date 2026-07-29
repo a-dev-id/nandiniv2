@@ -70,6 +70,12 @@ if ($galleryImages->count() > 1 && $galleryImages->count() < 6) { $thumbnailImag
         $secondaryButtonLabel = $secondaryButtonLabel !== '' ? $secondaryButtonLabel : 'Room + Flight';
         $secondaryButtonUrl = $accommodation?->room_flight_url ?: $secondaryButtonUrl;
         }
+
+        $secondaryButtonLabel = \App\Support\DetailPageButtonLabel::resolve(
+            $secondaryButtonLabel,
+            null,
+            $secondaryButtonUrl,
+        );
         @endphp
 
         @if ($accommodation)

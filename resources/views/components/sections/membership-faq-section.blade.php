@@ -73,6 +73,12 @@ $buttonUrl = \Illuminate\Support\Facades\Route::has($section->button_route)
 : '#';
 }
 
+$buttonLabel = \App\Support\DetailPageButtonLabel::resolve(
+$buttonLabel,
+$section?->button_route,
+$buttonUrl,
+);
+
 $defaultItems = [
 [
 'question' => 'How do I register?',
