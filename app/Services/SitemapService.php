@@ -58,6 +58,7 @@ class SitemapService
             ['route' => 'blog.index', 'changefreq' => 'daily', 'priority' => '0.8'],
             ['route' => 'awards.index', 'changefreq' => 'monthly', 'priority' => '0.6'],
             ['route' => 'gallery.index', 'changefreq' => 'monthly', 'priority' => '0.6'],
+            ['route' => 'guest-reviews.index', 'changefreq' => 'monthly', 'priority' => '0.6'],
             ['route' => 'faq.index', 'changefreq' => 'monthly', 'priority' => '0.5'],
             ['route' => 'contact.index', 'changefreq' => 'monthly', 'priority' => '0.6'],
         ];

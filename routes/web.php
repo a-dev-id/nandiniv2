@@ -16,6 +16,7 @@ use App\Http\Controllers\DiningController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\GuestReviewController;
 use App\Http\Controllers\HolyRiverController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HoneymoonController;
@@ -314,6 +315,14 @@ Route::domain(config('domains.main'))->group(function (): void {
     */
     Route::get('/gallery', [GalleryController::class, 'index'])
         ->name('gallery.index');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Guest Reviews
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/guest-reviews', [GuestReviewController::class, 'index'])
+        ->name('guest-reviews.index');
 
     /*
     |--------------------------------------------------------------------------

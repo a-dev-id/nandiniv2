@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <style>
         @page { margin: 22px; }
-        body { margin: 0; background: #f5f0e7; color: #344054; font-family: DejaVu Sans, sans-serif; font-size: 12px; }
+        body { margin: 0; background: #ffffff; color: #344054; font-family: DejaVu Sans, sans-serif; font-size: 12px; }
         .outer { border: 1px solid #b8945b; padding: 6px; }
         .inner { position: relative; min-height: 745px; border: 1px solid #d8c6a8; padding: 34px 42px 26px; background: #fffcf7; }
         .brand { color: #a88444; font-family: DejaVu Serif, serif; font-size: 10px; letter-spacing: 3px; text-align: center; text-transform: uppercase; }
@@ -69,7 +69,8 @@
                 <li>The voucher is valid for 12 months from the date of purchase.</li>
                 <li>Advance reservation is required. Contact reservation@nandinibali.com or WhatsApp +62 812 3687 1170.</li>
                 <li>The voucher is non-refundable, non-transferable, and cannot be exchanged for cash.</li>
-                <li>The voucher cannot be combined with other promotions unless otherwise stated. Blackout dates may apply.</li>
+                <li>The voucher cannot be combined with other promotions unless otherwise stated.</li>
+                <li>Blackout dates may apply.</li>
             </ul>
             <h2>Payment Terms</h2>
             <ul><li>All payments are non-refundable once successfully completed.</li></ul>

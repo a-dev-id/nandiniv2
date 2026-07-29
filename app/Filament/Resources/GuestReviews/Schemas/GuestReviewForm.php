@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\GuestReviews\Schemas;
 
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -35,10 +36,25 @@ class GuestReviewForm
                             ->placeholder('Example: Tripadvisor or Google')
                             ->maxLength(255),
 
-                        Textarea::make('review_text')
+                        Textarea::make('excerpt')
+                            ->label('Excerpt')
+                            ->required()
+                            ->rows(5)
+                            ->maxLength(1000)
+                            ->helperText('Short review text shown in the homepage slider.')
+                            ->columnSpanFull(),
+
+                        RichEditor::make('review_text')
                             ->label('Review')
                             ->required()
-                            ->rows(12)
+                            ->toolbarButtons([
+                                ['bold', 'italic', 'underline', 'strike', 'link'],
+                                ['h2', 'h3'],
+                                ['bulletList', 'orderedList'],
+                                ['blockquote'],
+                                ['undo', 'redo'],
+                            ])
+                            ->helperText('Full review shown on the Guest Reviews page.')
                             ->columnSpanFull(),
                     ]),
 
@@ -77,11 +93,10 @@ class GuestReviewForm
                                     ->default(true)
                                     ->required(),
 
-                                TextInput::make('sort_order')
-                                    ->label('Sort Order')
-                                    ->numeric()
-                                    ->default(0)
-                                    ->required(),
+                                Toggle::make('is_featured')
+                                    ->label('Featured')
+                                    ->helperText('Only featured reviews are shown on the homepage.')
+                                    ->default(false),
                             ]),
                     ]),
             ]);

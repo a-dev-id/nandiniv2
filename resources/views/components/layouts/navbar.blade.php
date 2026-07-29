@@ -38,7 +38,8 @@ $logoutUrl = \Illuminate\Support\Facades\Route::has('membership.logout')
 $bookDirectUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://nandinijunglebyhanginggardens.reserve-online.net/?checkin=today');
 $roomFlightUrl = \App\Support\MemberBookingVoucher::appendToUrl('https://ovs.tour-list.com/DPSearch/?HotelCode=nandinihgs');
 $voucherUrl = route('voucher.index');
-$navbarStartsSolid = request()->routeIs('voucher.*') && ! request()->routeIs('voucher.index');
+$navbarStartsSolid = (request()->routeIs('voucher.*') && ! request()->routeIs('voucher.index'))
+    || request()->routeIs('guest-reviews.*');
 @endphp
 
 <div>

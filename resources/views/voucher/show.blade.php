@@ -15,17 +15,17 @@ $shareImageUrl = $shareImagePath ? Storage::disk('public')->url($shareImagePath)
 $encodedShareUrl = rawurlencode($shareUrl);
 $encodedShareText = rawurlencode($voucher->title . ' | Nandini Jungle by Hanging Gardens');
 $galleryImages = collect([[
-        'image' => $voucher->image,
-        'image_alt' => $voucher->image_alt,
-    ]])
-    ->merge(collect($voucher->gallery_images ?? [])->map(
-        fn ($item) => is_array($item)
-            ? $item
-            : ['image' => $item, 'image_alt' => null]
-    ))
-    ->filter(fn ($item) => filled($item['image'] ?? null))
-    ->unique('image')
-    ->values();
+'image' => $voucher->image,
+'image_alt' => $voucher->image_alt,
+]])
+->merge(collect($voucher->gallery_images ?? [])->map(
+fn ($item) => is_array($item)
+? $item
+: ['image' => $item, 'image_alt' => null]
+))
+->filter(fn ($item) => filled($item['image'] ?? null))
+->unique('image')
+->values();
 @endphp
 @push('meta')
 <title>{{ $voucher->meta_title ?: $voucher->title . ' | Nandini Voucher' }}</title>
@@ -48,66 +48,77 @@ $galleryImages = collect([[
         <div class="mx-auto grid max-w-6xl gap-10 lg:grid-cols-2">
             <div class="min-w-0">
                 @if ($galleryImages->isNotEmpty())
-                    <div class="voucher-gallery-wrap relative" data-voucher-gallery-wrap>
-                        <div class="voucher-gallery" data-total="{{ $galleryImages->count() }}">
-                            @foreach ($galleryImages as $index => $galleryImage)
-                                <div>
-                                    <img src="{{ Storage::disk('public')->url($galleryImage['image']) }}" alt="{{ $galleryImage['image_alt'] ?: $voucher->image_alt ?: $voucher->title . ($index ? ' - image ' . ($index + 1) : '') }}" class="h-[30rem] w-full object-cover md:h-[38rem] lg:h-[44rem]">
-                                </div>
-                            @endforeach
+                <div class="voucher-gallery-wrap relative" data-voucher-gallery-wrap>
+                    <div class="voucher-gallery" data-total="{{ $galleryImages->count() }}">
+                        @foreach ($galleryImages as $index => $galleryImage)
+                        <div>
+                            <img src="{{ Storage::disk('public')->url($galleryImage['image']) }}" alt="{{ $galleryImage['image_alt'] ?: $voucher->image_alt ?: $voucher->title . ($index ? ' - image ' . ($index + 1) : '') }}" class="h-[30rem] w-full object-cover md:h-[38rem] lg:h-[44rem]">
                         </div>
-                        @if ($galleryImages->count() > 1)
-                            <button type="button" class="voucher-gallery-prev fold-carousel-arrow fold-image-carousel-arrow absolute left-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-[#A88444] text-white transition hover:bg-[#A88444] md:h-12 md:w-12" aria-label="Previous image">
-                                <svg class="h-4 w-4 md:h-5 md:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
-                            </button>
-                            <button type="button" class="voucher-gallery-next fold-carousel-arrow fold-image-carousel-arrow absolute right-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-[#A88444] text-white transition hover:bg-[#A88444] md:h-12 md:w-12" aria-label="Next image">
-                                <svg class="h-4 w-4 md:h-5 md:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                            </button>
-                        @endif
+                        @endforeach
                     </div>
+                    @if ($galleryImages->count() > 1)
+                    <button type="button" class="voucher-gallery-prev fold-carousel-arrow fold-image-carousel-arrow absolute left-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-[#A88444] text-white transition hover:bg-[#A88444] md:h-12 md:w-12" aria-label="Previous image">
+                        <svg class="h-4 w-4 md:h-5 md:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    <button type="button" class="voucher-gallery-next fold-carousel-arrow fold-image-carousel-arrow absolute right-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-[#A88444] text-white transition hover:bg-[#A88444] md:h-12 md:w-12" aria-label="Next image">
+                        <svg class="h-4 w-4 md:h-5 md:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                    @endif
+                </div>
                 @else
-                    <div class="flex h-[30rem] items-center justify-center bg-[#F7F7F7] text-sm uppercase tracking-[0.08em] text-slate-500 md:h-[38rem] lg:h-[44rem]">Nandini Gift Voucher</div>
+                <div class="flex h-[30rem] items-center justify-center bg-[#F7F7F7] text-sm uppercase tracking-[0.08em] text-slate-500 md:h-[38rem] lg:h-[44rem]">Nandini Gift Voucher</div>
                 @endif
             </div>
             <div>
                 <nav class="text-xs uppercase tracking-[0.08em] text-slate-500">
                     <a href="{{ route('voucher.index') }}" class="hover:text-[#A88444]">Vouchers</a>
                     @if ($voucher->category)
-                        <span class="mx-2">/</span>
-                        <a href="{{ route('voucher.category.show', $voucher->category) }}" class="hover:text-[#A88444]">{{ $voucher->category->name }}</a>
+                    <span class="mx-2">/</span>
+                    <a href="{{ route('voucher.category.show', $voucher->category) }}" class="hover:text-[#A88444]">{{ $voucher->category->name }}</a>
                     @endif
                 </nav>
                 <h1 class="mt-5 text-2xl uppercase text-slate-700 sm:text-4xl">{{ $voucher->title }}</h1>
                 <div class="mt-4 flex items-center gap-1 border-y border-slate-200 py-2.5" aria-label="Share this voucher">
                     <span class="mr-2 text-xs uppercase tracking-[0.08em] text-slate-500">Share:</span>
                     <a href="https://www.facebook.com/sharer/sharer.php?u={{ $encodedShareUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex h-7 w-7 items-center justify-center text-slate-600 transition hover:text-[#A88444]" aria-label="Share {{ $voucher->title }} on Facebook" title="Share on Facebook">
-                        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 22v-9h3l.45-3.5H13.5V7.26c0-1.01.28-1.7 1.73-1.7H17V2.43c-.31-.04-1.37-.13-2.61-.13-2.58 0-4.35 1.58-4.35 4.47V9.5H7.12V13h2.92v9h3.46Z" /></svg>
+                        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M13.5 22v-9h3l.45-3.5H13.5V7.26c0-1.01.28-1.7 1.73-1.7H17V2.43c-.31-.04-1.37-.13-2.61-.13-2.58 0-4.35 1.58-4.35 4.47V9.5H7.12V13h2.92v9h3.46Z" />
+                        </svg>
                     </a>
                     <a href="https://twitter.com/intent/tweet?text={{ $encodedShareText }}&amp;url={{ $encodedShareUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex h-7 w-7 items-center justify-center text-slate-600 transition hover:text-[#A88444]" aria-label="Share {{ $voucher->title }} on Twitter" title="Share on Twitter">
-                        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.9 2H22l-6.77 7.74L23.2 22h-6.24l-4.89-6.39L6.49 22H3.38l7.24-8.28L2.98 2h6.4l4.42 5.84L18.9 2Zm-1.09 17.84h1.72L8.44 4.05H6.6l11.21 15.79Z" /></svg>
+                        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M18.9 2H22l-6.77 7.74L23.2 22h-6.24l-4.89-6.39L6.49 22H3.38l7.24-8.28L2.98 2h6.4l4.42 5.84L18.9 2Zm-1.09 17.84h1.72L8.44 4.05H6.6l11.21 15.79Z" />
+                        </svg>
                     </a>
                     <a href="https://wa.me/?text={{ $encodedShareText }}%20{{ $encodedShareUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex h-7 w-7 items-center justify-center text-slate-600 transition hover:text-[#A88444]" aria-label="Share {{ $voucher->title }} on WhatsApp" title="Share on WhatsApp">
-                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M20.5 11.6a8.5 8.5 0 0 1-12.57 7.46L3.5 20.5l1.44-4.31A8.5 8.5 0 1 1 20.5 11.6Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M8.6 7.8c.25-.55.5-.56.73-.57h.62c.2 0 .4.07.5.35l.75 1.8c.08.25.04.43-.1.64l-.56.72c-.17.2-.3.39-.12.7.18.3.8 1.28 1.73 2.07 1.19 1.05 2.19 1.37 2.5 1.52.3.15.48.13.66-.08l.84-.98c.2-.23.4-.2.68-.1l1.72.81c.3.15.5.22.57.35.07.12.07.72-.17 1.41-.23.7-1.36 1.34-1.87 1.42-.48.08-1.1.12-1.77-.1-.41-.13-.94-.31-1.62-.6-.29-.13-5.04-1.86-6.87-6.45-.5-1.25.51-2.75.74-2.91Z" /></svg>
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.5 11.6a8.5 8.5 0 0 1-12.57 7.46L3.5 20.5l1.44-4.31A8.5 8.5 0 1 1 20.5 11.6Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.6 7.8c.25-.55.5-.56.73-.57h.62c.2 0 .4.07.5.35l.75 1.8c.08.25.04.43-.1.64l-.56.72c-.17.2-.3.39-.12.7.18.3.8 1.28 1.73 2.07 1.19 1.05 2.19 1.37 2.5 1.52.3.15.48.13.66-.08l.84-.98c.2-.23.4-.2.68-.1l1.72.81c.3.15.5.22.57.35.07.12.07.72-.17 1.41-.23.7-1.36 1.34-1.87 1.42-.48.08-1.1.12-1.77-.1-.41-.13-.94-.31-1.62-.6-.29-.13-5.04-1.86-6.87-6.45-.5-1.25.51-2.75.74-2.91Z" />
+                        </svg>
                     </a>
                 </div>
                 <div class="mt-4 text-sm leading-7 text-slate-600 [&_p]:mb-4 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-1">
                     @if (filled($voucher->description))
-                        {!! $voucher->description !!}
+                    {!! $voucher->description !!}
                     @else
-                        <p>{{ $voucher->excerpt }}</p>
+                    <p>{{ $voucher->excerpt }}</p>
                     @endif
                 </div>
                 <div class="mt-6">
                     @if ($voucher->has_discount)
-                        <div class="mb-2 flex flex-wrap items-center gap-3">
-                            <p class="text-sm tracking-[0.04em] text-slate-400 line-through">{{ $money->format($voucher->selling_price, $voucher->currency) }}</p>
-                            <span class="bg-[#A88444]/10 px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-[#A88444]">Save {{ $voucher->discount_percentage }}%</span>
-                        </div>
+                    <div class="mb-2 flex flex-wrap items-center gap-3">
+                        <p class="text-sm tracking-[0.04em] text-slate-400 line-through">{{ $money->format($voucher->selling_price, $voucher->currency) }}</p>
+                        <span class="bg-[#A88444]/10 px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-[#A88444]">Save {{ $voucher->discount_percentage }}%</span>
+                    </div>
                     @endif
                     <p class="text-2xl font-semibold tracking-[0.06em] text-slate-700">{{ $money->format($voucher->discounted_price, $voucher->currency) }}{{ $priceSuffix }}</p>
                 </div>
                 @if ($unitLabel)
-                    <p class="mt-1 text-sm leading-6 text-slate-600">{{ $unitLabel }}</p>
+                <p class="mt-1 text-sm leading-6 text-slate-600">{{ $unitLabel }}</p>
                 @endif
 
                 <form method="POST" action="{{ route('voucher.cart.add', $voucher) }}" class="mt-8 space-y-5">
@@ -116,11 +127,11 @@ $galleryImages = collect([[
                         <legend class="block text-xs uppercase tracking-[0.08em] text-slate-700">Who is this voucher for?</legend>
                         <div class="mt-2 grid gap-3 sm:grid-cols-2">
                             <label class="flex cursor-pointer items-center gap-3 border border-slate-300 px-4 py-3 text-sm text-slate-700 transition has-[:checked]:border-[#A88444] has-[:checked]:bg-[#A88444]/10">
-                                <input type="radio" name="purchase_for" value="self" class="h-4 w-4" {{ $purchaseFor === 'self' ? 'checked' : '' }} data-voucher-purchase-for>
+                                <input type="radio" name="purchase_for" value="self" class="h-4 w-4" {{ $purchaseFor==='self' ? 'checked' : '' }} data-voucher-purchase-for>
                                 For myself
                             </label>
                             <label class="flex cursor-pointer items-center gap-3 border border-slate-300 px-4 py-3 text-sm text-slate-700 transition has-[:checked]:border-[#A88444] has-[:checked]:bg-[#A88444]/10">
-                                <input type="radio" name="purchase_for" value="gift" class="h-4 w-4" {{ $purchaseFor === 'gift' ? 'checked' : '' }} data-voucher-purchase-for>
+                                <input type="radio" name="purchase_for" value="gift" class="h-4 w-4" {{ $purchaseFor==='gift' ? 'checked' : '' }} data-voucher-purchase-for>
                                 Gift for someone else
                             </label>
                         </div>
@@ -158,13 +169,13 @@ $galleryImages = collect([[
                     <input type="hidden" name="delivery_method" id="delivery_method" value="{{ $giftDeliveryMethod }}">
                     <input type="hidden" name="hotel_note" id="hotel_note" value="{{ old('hotel_note') }}">
                     @if ($errors->any())
-                        <div class="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ $errors->first() }}</div>
+                    <div class="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ $errors->first() }}</div>
                     @endif
                     <div class="flex flex-wrap gap-3">
                         <button type="submit" class="inline-flex items-center justify-center border border-[#A88444] bg-[#A88444] px-5 py-3 text-xs font-medium uppercase tracking-[0.08em] text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] sm:text-sm">Add to Cart</button>
                         <div class="relative flex max-w-sm items-center rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-xs leading-5 text-slate-600 shadow-md sm:text-sm" role="status">
                             <span class="absolute -left-1.5 top-1/2 h-3 w-3 -translate-y-1/2 rotate-45 border-b border-l border-slate-200 bg-white" aria-hidden="true"></span>
-                            Purchase more voucher to unlock an extra 10% off your cart.
+                            Purchase more vouchers to unlock an extra 10% off your cart.
                         </div>
                     </div>
                 </form>
@@ -184,8 +195,8 @@ $galleryImages = collect([[
                 <div class="sm:col-span-2">
                     <label for="gift_delivery_method" class="block text-xs uppercase tracking-[0.08em] text-slate-700">Gift voucher delivery option</label>
                     <select id="gift_delivery_method" class="mt-2 w-full border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-slate-300 focus:outline-none">
-                        <option value="email" {{ $giftDeliveryMethod === 'email' ? 'selected' : '' }}>Send to email</option>
-                        <option value="print_at_resort" {{ $giftDeliveryMethod === 'print_at_resort' ? 'selected' : '' }}>Print at resort (+ IDR 100,000)</option>
+                        <option value="email" {{ $giftDeliveryMethod==='email' ? 'selected' : '' }}>Send to email</option>
+                        <option value="print_at_resort" {{ $giftDeliveryMethod==='print_at_resort' ? 'selected' : '' }}>Print at resort (+ IDR 100,000)</option>
                     </select>
                 </div>
                 <div>
@@ -236,9 +247,9 @@ $galleryImages = collect([[
                     <p class="mx-auto mt-7 max-w-lg font-serif text-base italic leading-8 text-slate-600" data-preview-message></p>
                     <div class="mx-auto mt-8 max-w-xl border-y border-[#D8C6A8] py-7 text-sm leading-7 text-slate-600 [&_p]:mb-4 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-1">
                         @if (filled($voucher->description))
-                            {!! $voucher->description !!}
+                        {!! $voucher->description !!}
                         @else
-                            <p>{{ $voucher->excerpt }}</p>
+                        <p>{{ $voucher->excerpt }}</p>
                         @endif
                     </div>
                     <div class="mx-auto mt-8 grid max-w-xl gap-6 text-left text-xs sm:grid-cols-2">

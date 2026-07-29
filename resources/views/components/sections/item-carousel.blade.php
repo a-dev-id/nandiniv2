@@ -12,6 +12,9 @@
 'mobileArrowsOnImage' => false,
 'routeName' => null,
 'variant' => 'cards',
+'actionLabel' => 'Explore More',
+'footerHref' => null,
+'footerLabel' => 'Explore More',
 ])
 
 <section class="{{ $bottomPaddingClass }} {{ $wrapperClass }}">
@@ -81,7 +84,7 @@
 
                         <div class="fold-carousel-actions mt-9 flex flex-wrap items-center {{ $buttonAlignClass }} gap-4">
                             <a href="{{ $url }}" class="inline-flex min-w-[120px] items-center justify-center border border-slate-700 px-4 py-2.5 text-xs font-medium uppercase text-slate-700 transition hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em] sm:text-sm">
-                                Explore More
+                                {{ $actionLabel }}
                             </a>
 
                             @if ($showReserveButton && $reserveUrl)
@@ -111,4 +114,12 @@
         </button>
 
     </div>
+
+    @if ($footerHref)
+    <div class="mt-6 text-center">
+        <x-buttons.link-button :href="$footerHref" variant="solid" class="min-w-[145px]">
+            {{ $footerLabel }}
+        </x-buttons.link-button>
+    </div>
+    @endif
 </section>

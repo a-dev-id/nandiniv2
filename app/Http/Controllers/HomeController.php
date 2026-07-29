@@ -111,6 +111,7 @@ class HomeController extends Controller
 
         $guestReviews = GuestReview::query()
             ->published()
+            ->featured()
             ->orderBy('sort_order')
             ->orderByDesc('reviewed_at')
             ->orderByDesc('id')

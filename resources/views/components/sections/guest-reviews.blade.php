@@ -1,5 +1,6 @@
 @props([
     'reviews' => collect(),
+    'seeMoreHref' => null,
 ])
 
 @if ($reviews->isNotEmpty())
@@ -11,6 +12,18 @@
 
         <div class="guest-review-slider" data-total="{{ $reviews->count() }}">
             @foreach ($reviews as $review)
+            @php
+            $displayReview = trim((string) ($review->excerpt ?? ''));
+
+            if ($displayReview === '') {
+                $displayReview = html_entity_decode(
+                    strip_tags((string) $review->review_text),
+                    ENT_QUOTES | ENT_HTML5,
+                    'UTF-8'
+                );
+                $displayReview = trim((string) preg_replace('/\s+/', ' ', $displayReview));
+            }
+            @endphp
             <article class="px-4">
                 <div class="mx-auto flex max-w-4xl flex-col items-center">
                     <div class="mb-5 flex items-center justify-center gap-1 text-[#A88444]" aria-label="{{ $review->rating }} out of 5 stars">
@@ -22,7 +35,7 @@
                     </div>
 
                     <blockquote class="font-serif text-lg italic leading-relaxed text-slate-600 sm:text-xl md:text-2xl">
-                        “{{ $review->review_text }}”
+                        “{{ $displayReview }}”
                     </blockquote>
 
                     <div class="mt-8 text-lg font-semibold text-slate-900 sm:text-xl">
@@ -62,6 +75,14 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="m9 5 7 7-7 7" />
                 </svg>
             </button>
+        </div>
+        @endif
+
+        @if ($seeMoreHref)
+        <div class="mt-10 text-center">
+            <x-buttons.link-button :href="$seeMoreHref" variant="solid" class="min-w-[145px]">
+                See More
+            </x-buttons.link-button>
         </div>
         @endif
     </div>

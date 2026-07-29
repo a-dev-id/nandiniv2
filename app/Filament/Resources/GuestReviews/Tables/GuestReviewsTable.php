@@ -29,8 +29,8 @@ class GuestReviewsTable
                     ->sortable()
                     ->weight('semibold'),
 
-                TextColumn::make('review_text')
-                    ->label('Review')
+                TextColumn::make('excerpt')
+                    ->label('Excerpt')
                     ->searchable()
                     ->limit(70)
                     ->wrap(),
@@ -52,6 +52,10 @@ class GuestReviewsTable
 
                 ToggleColumn::make('is_active')
                     ->label('Active')
+                    ->sortable(),
+
+                ToggleColumn::make('is_featured')
+                    ->label('Featured')
                     ->sortable(),
 
                 TextColumn::make('sort_order')

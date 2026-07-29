@@ -6,6 +6,10 @@ $socialLinks = [
 'tripadvisor' => 'https://www.tripadvisor.com/Hotel_Review-g21379722-d603743-Reviews-Nandini_Jungle_By_Hanging_Gardens-Buahan_Payangan_Gianyar_Regency_Bali.html',
 ];
 
+$membershipDisabled = (bool) config('features.disable_membership_feature');
+$voucherDisabled = (bool) config('features.disable_voucher_feature');
+$voucherUrl = route('voucher.index');
+
 $mainDomainBase = rtrim(request()->getScheme() . '://' . config('domains.main'), '/');
 $mainRoute = function (string $name, array $parameters = []) use ($mainDomainBase): string {
     if (! \Illuminate\Support\Facades\Route::has($name)) {
@@ -122,6 +126,13 @@ $seoFooterLinks = \App\Models\Page::query()
                                 Sustainability
                             </a>
                         </li>
+                        @unless ($membershipDisabled)
+                        <li><a href="{{ $mainRoute('membership.index') }}" class="hover:underline">Membership</a></li>
+                        @endunless
+                        @unless ($voucherDisabled)
+                        <li><a href="{{ $voucherUrl }}" class="hover:underline">Gift Voucher</a></li>
+                        @endunless
+                        <li><a href="{{ $mainRoute('guest-reviews.index') }}" class="hover:underline">Guest Reviews</a></li>
                         <li><a href="{{ $mainRoute('faq.index') }}" class="hover:underline">FAQ</a></li>
                         <li>
                             <button type="button" class="text-left hover:underline" @click="gdsOpen = true">
@@ -220,6 +231,13 @@ $seoFooterLinks = \App\Models\Page::query()
                             </svg>
                             Sustainability
                         </a>
+                        @unless ($membershipDisabled)
+                        <a href="{{ $mainRoute('membership.index') }}" class="hover:underline">Membership</a>
+                        @endunless
+                        @unless ($voucherDisabled)
+                        <a href="{{ $voucherUrl }}" class="hover:underline">Gift Voucher</a>
+                        @endunless
+                        <a href="{{ $mainRoute('guest-reviews.index') }}" class="hover:underline">Guest Reviews</a>
                         <a href="{{ $mainPath('/careers') }}" class="hover:underline">Careers</a>
                         <a href="{{ $mainRoute('faq.index') }}" class="hover:underline">FAQ</a>
                         <button type="button" class="hover:underline" @click="gdsOpen = true">

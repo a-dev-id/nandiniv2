@@ -22,6 +22,12 @@
 <tr><td style="width:42%;padding:13px 0;border-bottom:1px solid #eee8df;color:#667085;font-size:12px;text-transform:uppercase;letter-spacing:1.4px;">{{ $label }}</td><td style="padding:13px 0;border-bottom:1px solid #eee8df;color:#344054;font-size:14px;text-align:right;{{ $label === 'Voucher Code' ? 'font-weight:bold;color:#0f1d33;' : '' }}">{{ $value }}</td></tr>
 @endforeach
 </table>
+@if ($isPrintAtResort)
+<div style="margin:0 0 24px;padding:18px 20px;background:#f8f5ef;border-left:3px solid #b8945b;color:#344054;">
+<p style="margin:0 0 8px;color:#b8945b;font-size:11px;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase;">Resort Printing Requested</p>
+<p style="margin:0;font-size:15px;line-height:1.7;">This voucher has been selected for resort printing.</p>
+</div>
+@endif
 @if (filled($emailNote))
 <div style="margin:0 0 24px;padding:18px 20px;background:#f8f5ef;border-left:3px solid #b8945b;color:#344054;">
 <p style="margin:0 0 8px;color:#b8945b;font-size:11px;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase;">{{ $emailNoteLabel }}</p>
