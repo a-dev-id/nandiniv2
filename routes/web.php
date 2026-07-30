@@ -468,6 +468,6 @@ Route::domain(config('domains.main'))->group(function (): void {
         ->name('cron.members.test-welcome-email');
 
     Route::get('/{slug}', [PageController::class, 'show'])
-        ->where('slug', '[A-Za-z0-9\-]+')
+        ->where('slug', '(?!up$)[A-Za-z0-9\-]+')
         ->name('pages.show');
 });

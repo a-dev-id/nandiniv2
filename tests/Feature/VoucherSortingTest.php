@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Voucher;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class VoucherSortingTest extends TestCase
@@ -23,7 +24,7 @@ class VoucherSortingTest extends TestCase
             'image' => 'vouchers/river-spa-main.webp',
         ]);
 
-        $this->get('http://voucher.nandinibali.test/voucher/' . $voucher->slug)
+        $this->get('http://voucher.nandinibali.test/voucher/'.$voucher->slug)
             ->assertOk()
             ->assertSee('property="og:image"', false)
             ->assertSee('/storage/vouchers/river-spa-card.webp', false)
@@ -42,7 +43,7 @@ class VoucherSortingTest extends TestCase
             'description' => '<p>The complete voucher description from the product catalogue.</p>',
         ]);
 
-        $this->get('http://voucher.nandinibali.test/voucher/' . $voucher->slug)
+        $this->get('http://voucher.nandinibali.test/voucher/'.$voucher->slug)
             ->assertOk()
             ->assertSee('The complete voucher description from the product catalogue.')
             ->assertSee('<p>The complete voucher description from the product catalogue.</p>', false);
@@ -70,5 +71,30 @@ class VoucherSortingTest extends TestCase
             [$cheapest->id, $discounted->id, $regular->id],
             Voucher::query()->cheapestFirst()->pluck('id')->all(),
         );
+    }
+
+    public function test_most_popular_slider_uses_the_first_seven_featured_vouchers_by_sort_order(): void
+    {
+        config([
+            'domains.voucher' => 'voucher.nandinibali.test',
+            'features.disable_voucher_feature' => false,
+        ]);
+
+        foreach (range(1, 8) as $position) {
+            Voucher::factory()->create([
+                'title' => 'Featured Voucher '.$position,
+                'is_featured' => true,
+                'sort_order' => $position,
+            ]);
+        }
+
+        $response = $this->get('http://voucher.nandinibali.test/')->assertOk();
+        $featuredSection = Str::before($response->getContent(), 'All Experiences');
+
+        foreach (range(1, 7) as $position) {
+            $this->assertStringContainsString('Featured Voucher '.$position, $featuredSection);
+        }
+
+        $this->assertStringNotContainsString('Featured Voucher 8', $featuredSection);
     }
 }

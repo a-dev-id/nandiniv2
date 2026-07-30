@@ -25,20 +25,36 @@
                 <div class="space-y-6">
                     @foreach ($cart['lines'] as $line)
                         <article class="border border-slate-200 p-5">
-                            <div class="grid gap-6 lg:grid-cols-[1fr_220px]">
+                            <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
                                 <form method="POST" action="{{ route('voucher.cart.update', $line['key']) }}" class="grid gap-5 md:grid-cols-2">
                                     @csrf
                                     @method('PUT')
                                     <div class="md:col-span-2">
                                         <h2 class="text-lg uppercase text-slate-700">{{ $line['voucher']->title }}</h2>
+                                        @if (filled(data_get($line, 'price_option.label')))
+                                            <p class="mt-1 text-sm font-medium text-slate-700">Room: {{ data_get($line, 'price_option.label') }}</p>
+                                        @endif
                                         <p class="mt-1 text-sm text-slate-600">
-                                            {{ $money->format($line['unit_price'], $line['currency']) }}++ each
+                                            {{ $money->format($line['base_unit_price'], $line['currency']) }}++ each
                                         </p>
                                     </div>
                                     <div>
                                         <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">Quantity</label>
                                         <input name="quantity" type="number" value="{{ $line['quantity'] }}" min="1" class="mt-2 w-full border border-slate-300 px-4 py-3 text-sm">
                                     </div>
+                                    @if ($line['voucher']->availablePriceOptions() !== [])
+                                        <div>
+                                            <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">Room Type</label>
+                                            <select name="price_option" class="mt-2 w-full border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700">
+                                                <option value="" @selected(blank($line['price_option_key']))>No room upgrade</option>
+                                                @foreach ($line['voucher']->availablePriceOptions() as $option)
+                                                    <option value="{{ $option['key'] }}" @selected($line['price_option_key'] === $option['key'])>
+                                                        {{ $option['label'] }}{{ $option['additional_price'] > 0 ? ' (+'.$money->format($option['additional_price'], $line['currency']).')' : '' }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    @endif
                                     <input type="hidden" name="purchase_for" value="{{ $line['purchase_for'] ?? 'gift' }}">
                                     @if (($line['purchase_for'] ?? 'gift') === 'gift')
                                         <div>
@@ -80,7 +96,7 @@
                                                 class="inline-flex items-center justify-center border border-slate-700 px-4 py-2.5 text-xs uppercase tracking-[0.08em] text-slate-700 transition hover:border-[#A88444] hover:text-[#A88444]"
                                                 data-cart-voucher-preview
                                                 data-title="{{ $line['voucher']->title }}"
-                                                data-price="{{ $money->format($line['unit_price'], $line['currency']) }}++"
+                                                data-price="{{ $money->format($line['base_unit_price'], $line['currency']) }}++"
                                                 data-excerpt="{{ $line['voucher']->excerpt }}"
                                             >Preview</button>
                                         @endif
@@ -90,7 +106,10 @@
                                     <div>
                                         <p class="text-xs uppercase tracking-[0.08em] text-slate-500">Line Total</p>
                                         <div class="mt-3 space-y-2 text-xs text-slate-600">
-                                            <div class="flex justify-between gap-3"><span>Voucher subtotal</span><span>{{ $money->format($line['base_line_total'], $line['currency']) }}</span></div>
+                                            <div class="flex justify-between gap-3"><span>Voucher subtotal</span><span>{{ $money->format($line['voucher_subtotal'], $line['currency']) }}</span></div>
+                                            @if (($line['room_upgrade_total'] ?? 0) > 0)
+                                                <div class="flex justify-between gap-3"><span>Room upgrade</span><span>+ {{ $money->format($line['room_upgrade_total'], $line['currency']) }}</span></div>
+                                            @endif
                                             @if (($line['delivery_fee'] ?? 0) > 0)
                                                 <div class="flex justify-between gap-3"><span>Additional charge</span><span>{{ $money->format($line['delivery_fee'], $line['currency']) }}</span></div>
                                             @endif

@@ -28,6 +28,8 @@ class FlywireNotificationController extends Controller
         $payload = json_decode($rawBody, true);
         abort_unless(is_array($payload), 400);
 
+        $status = $this->resolveStatus($payload);
+
         $fingerprint = hash('sha256', implode('|', [
             data_get($payload, 'id', ''),
             data_get($payload, 'event_id', ''),
@@ -41,7 +43,7 @@ class FlywireNotificationController extends Controller
                 'gateway' => 'flywire',
                 'gateway_payment_id' => data_get($payload, 'payment.id', data_get($payload, 'data.payment_id', data_get($payload, 'payment_id'))),
                 'event_type' => data_get($payload, 'event_type', data_get($payload, 'type')),
-                'gateway_status' => data_get($payload, 'payment.status', data_get($payload, 'data.status', data_get($payload, 'status'))),
+                'gateway_status' => $status,
                 'signature_valid' => true,
                 'payload' => $payload,
             ]
@@ -49,14 +51,23 @@ class FlywireNotificationController extends Controller
 
         if ($event->processed_at) {
             if ($event->voucher_order_id) {
-                $issuer->deliverUndeliveredForOrder((int) $event->voucher_order_id);
-            }
+                $orderAlreadyPaid = VoucherOrder::query()
+                    ->whereKey($event->voucher_order_id)
+                    ->where('payment_status', 'paid')
+                    ->exists();
 
-            return response()->json(['ok' => true, 'duplicate' => true]);
+                if ($orderAlreadyPaid || ! $mapper->shouldIssue($status)) {
+                    $issuer->deliverUndeliveredForOrder((int) $event->voucher_order_id);
+
+                    return response()->json(['ok' => true, 'duplicate' => true]);
+                }
+            } else {
+                return response()->json(['ok' => true, 'duplicate' => true]);
+            }
         }
 
         try {
-            DB::transaction(function () use ($event, $payload, $mapper, $issuer): void {
+            DB::transaction(function () use ($event, $payload, $status, $mapper, $issuer): void {
                 $orderNumber = data_get($payload, 'data.external_reference')
                     ?: data_get($payload, 'external_reference')
                     ?: data_get($payload, 'payment.external_reference')
@@ -71,10 +82,6 @@ class FlywireNotificationController extends Controller
                     ->orWhere('flywire_payment_id', $paymentId)
                     ->lockForUpdate()
                     ->first();
-
-                $status = (string) (data_get($payload, 'data.status')
-                    ?: data_get($payload, 'payment.status')
-                    ?: data_get($payload, 'status', 'unknown'));
 
                 if ($order) {
                     $order->forceFill([
@@ -106,5 +113,19 @@ class FlywireNotificationController extends Controller
         }
 
         return response()->json(['ok' => true]);
+    }
+
+    /**
+     * Flywire callback version 2 uses event_type for the payment status.
+     * Keep the older payload shapes as fallbacks for backwards compatibility.
+     *
+     * @param  array<string, mixed>  $payload
+     */
+    private function resolveStatus(array $payload): string
+    {
+        return (string) (data_get($payload, 'event_type')
+            ?: data_get($payload, 'data.status')
+            ?: data_get($payload, 'payment.status')
+            ?: data_get($payload, 'status', 'unknown'));
     }
 }

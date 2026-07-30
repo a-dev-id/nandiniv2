@@ -44,6 +44,7 @@ class PaymentController extends Controller
                 'email' => $order->purchaser_email,
                 'phone' => $order->purchaser_phone,
                 'country' => $order->billing_country_code,
+                'readonlyFields' => ['booking_reference'],
                 'recipientFields' => [
                     'booking_reference' => $order->order_number,
                 ],

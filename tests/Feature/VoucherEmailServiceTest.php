@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\IssuedVoucher;
 use App\Models\Voucher;
 use App\Models\VoucherOrder;
-use App\Models\VoucherRedemption;
 use App\Services\MembershipEmailRelayService;
 use App\Services\Voucher\VoucherEmailService;
 use App\Services\Voucher\VoucherPdfService;
@@ -33,8 +32,8 @@ class VoucherEmailServiceTest extends TestCase
         $this->mock(MembershipEmailRelayService::class, function ($mock) use ($order, $voucher): void {
             $mock->shouldReceive('sendView')->once()->with(
                 'emails.voucher.gift-delivery',
-                Mockery::on(fn(array $data): bool => $data['voucher']->is($voucher) && $data['order']->is($order)),
-                Mockery::on(fn(array $payload): bool => $payload['to'] === 'receiver@example.com'
+                Mockery::on(fn (array $data): bool => $data['voucher']->is($voucher) && $data['order']->is($order)),
+                Mockery::on(fn (array $payload): bool => $payload['to'] === 'receiver@example.com'
                     && $payload['cc'] === []
                     && $payload['bcc'] === ['news@nandinibali.com', 'manager@nandinibali.com']
                     && $payload['attachments'][0]['filename'] === 'voucher.pdf'
@@ -42,10 +41,10 @@ class VoucherEmailServiceTest extends TestCase
             )->andReturn($this->success());
             $mock->shouldReceive('sendView')->once()->with(
                 'emails.voucher.purchase-success',
-                Mockery::on(fn(array $data): bool => $data['voucher']->is($voucher)
+                Mockery::on(fn (array $data): bool => $data['voucher']->is($voucher)
                     && $data['order']->is($order)
                     && $data['isGift'] === true),
-                Mockery::on(fn(array $payload): bool => $payload['to'] === 'buyer@example.com'
+                Mockery::on(fn (array $payload): bool => $payload['to'] === 'buyer@example.com'
                     && $payload['cc'] === ['reservation@nandinibali.com']
                     && $payload['bcc'] === ['news@nandinibali.com', 'manager@nandinibali.com']
                     && $payload['attachments'][0]['filename'] === 'voucher.pdf')
@@ -70,10 +69,10 @@ class VoucherEmailServiceTest extends TestCase
         $this->mock(MembershipEmailRelayService::class, function ($mock) use ($order, $voucher, $redemption): void {
             $mock->shouldReceive('sendView')->once()->with(
                 'emails.voucher.redeemed',
-                Mockery::on(fn(array $data): bool => $data['voucher']->is($voucher)
+                Mockery::on(fn (array $data): bool => $data['voucher']->is($voucher)
                     && $data['order']->is($order)
                     && $data['redemption']->is($redemption)),
-                Mockery::on(fn(array $payload): bool => $payload['to'] === 'receiver@example.com'
+                Mockery::on(fn (array $payload): bool => $payload['to'] === 'receiver@example.com'
                     && $payload['cc'] === ['buyer@example.com']
                     && $payload['bcc'] === ['archive@nandinibali.com'])
             )->andReturn($this->success());
@@ -103,7 +102,7 @@ class VoucherEmailServiceTest extends TestCase
             $mock->shouldReceive('sendView')->once()->with(
                 'emails.voucher.purchase-success',
                 Mockery::type('array'),
-                Mockery::on(fn(array $payload): bool => $payload['to'] === 'buyer@example.com'
+                Mockery::on(fn (array $payload): bool => $payload['to'] === 'buyer@example.com'
                     && $payload['cc'] === ['reservation@nandinibali.com', 'frontoffice@example.com']
                     && $payload['bcc'] === ['archive@nandinibali.com'])
             )->andReturn($this->success());
@@ -129,12 +128,12 @@ class VoucherEmailServiceTest extends TestCase
             $mock->shouldReceive('sendView')->once()->with(
                 'emails.voucher.gift-delivery',
                 Mockery::type('array'),
-                Mockery::on(fn(array $payload): bool => $payload['cc'] === [])
+                Mockery::on(fn (array $payload): bool => $payload['cc'] === [])
             )->andReturn($this->success());
             $mock->shouldReceive('sendView')->once()->with(
                 'emails.voucher.purchase-success',
                 Mockery::type('array'),
-                Mockery::on(fn(array $payload): bool => $payload['to'] === 'buyer@example.com'
+                Mockery::on(fn (array $payload): bool => $payload['to'] === 'buyer@example.com'
                     && $payload['cc'] === [])
             )->andReturn($this->success());
         });
@@ -154,6 +153,24 @@ class VoucherEmailServiceTest extends TestCase
         $this->assertStringNotContainsString('IDR', $html);
         $this->assertStringNotContainsString('Original Value', $html);
         $this->assertStringNotContainsString('Remaining Value', $html);
+    }
+
+    public function test_email_and_pdf_use_the_saved_voucher_terms_snapshot(): void
+    {
+        [$order, $voucher] = $this->voucherFixture('receiver@example.com', 'buyer@example.com', 'Buyer');
+        $voucher->forceFill([
+            'terms_snapshot' => '<h3>Usage Terms</h3><ul><li>Valid only from 01 November to 19 December 2026.</li></ul><h3>Payment Terms</h3><ul><li>Production payment terms.</li></ul>',
+        ])->save();
+
+        $purchaseEmail = view('emails.voucher.purchase-success', compact('order', 'voucher'))->render();
+        $giftEmail = view('emails.voucher.gift-delivery', compact('order', 'voucher'))->render();
+        $pdf = view('pdf.voucher', compact('voucher'))->render();
+
+        foreach ([$purchaseEmail, $giftEmail, $pdf] as $html) {
+            $this->assertStringContainsString('Valid only from 01 November to 19 December 2026.', $html);
+            $this->assertStringContainsString('Production payment terms.', $html);
+            $this->assertStringNotContainsString('The voucher is valid for 12 months from the date of purchase.', $html);
+        }
     }
 
     public function test_notes_are_routed_to_the_correct_email_or_pdf(): void
@@ -231,7 +248,7 @@ class VoucherEmailServiceTest extends TestCase
     {
         $catalogueVoucher = Voucher::factory()->create(['face_value' => 1000000]);
         $order = VoucherOrder::query()->create([
-            'order_number' => 'NJV-EMAIL-' . fake()->unique()->numerify('####'),
+            'order_number' => 'NJV-EMAIL-'.fake()->unique()->numerify('####'),
             'purchaser_first_name' => 'Test',
             'purchaser_last_name' => 'Buyer',
             'purchaser_email' => $purchaserEmail,
@@ -257,7 +274,7 @@ class VoucherEmailServiceTest extends TestCase
         $voucher = IssuedVoucher::query()->create([
             'voucher_order_item_id' => $item->id,
             'voucher_id' => $catalogueVoucher->id,
-            'voucher_code' => 'NJV-' . fake()->unique()->numerify('########'),
+            'voucher_code' => 'NJV-'.fake()->unique()->numerify('########'),
             'verification_token_hash' => hash('sha256', fake()->uuid()),
             'recipient_name' => 'Gift Receiver',
             'recipient_email' => $recipientEmail,

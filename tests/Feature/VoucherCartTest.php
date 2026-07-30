@@ -34,6 +34,80 @@ class VoucherCartTest extends TestCase
         $this->assertSame(1500000, $cart['lines']->first()['unit_price']);
     }
 
+    public function test_cart_uses_the_selected_database_room_upgrade_price(): void
+    {
+        $voucher = Voucher::factory()->create([
+            'selling_price' => 1000000,
+            'price_options' => [
+                ['key' => 'jungle-view', 'label' => 'Jungle View Villa', 'additional_price' => 0],
+                ['key' => 'sunrise-view', 'label' => 'Sunrise View Villa', 'additional_price' => 300000],
+            ],
+        ]);
+
+        app(VoucherCartService::class)->add($voucher, [
+            'quantity' => 1,
+            'price_option' => 'sunrise-view',
+            'purchase_for' => 'self',
+            'delivery_method' => 'email',
+        ]);
+
+        $line = app(VoucherCartService::class)->refresh()['lines']->first();
+
+        $this->assertSame('Sunrise View Villa', $line['price_option']['label']);
+        $this->assertSame(300000, $line['price_option']['additional_price']);
+        $this->assertSame(1300000, $line['unit_price']);
+        $this->assertSame(1000000, $line['base_unit_price']);
+        $this->assertSame(300000, $line['room_upgrade_unit_price']);
+        $this->assertSame(1000000, $line['voucher_subtotal']);
+        $this->assertSame(300000, $line['room_upgrade_total']);
+        $this->assertSame(130000, $line['service_charge']);
+        $this->assertSame(143000, $line['tax']);
+        $this->assertSame(1573000, $line['line_total']);
+    }
+
+    public function test_cart_rejects_a_room_option_that_is_not_configured_on_the_voucher(): void
+    {
+        $voucher = Voucher::factory()->create([
+            'price_options' => [
+                ['key' => 'jungle-view', 'label' => 'Jungle View Villa', 'additional_price' => 0],
+            ],
+        ]);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The selected room option is not available.');
+
+        app(VoucherCartService::class)->add($voucher, [
+            'quantity' => 1,
+            'price_option' => 'tampered-option',
+            'purchase_for' => 'self',
+            'delivery_method' => 'email',
+        ]);
+    }
+
+    public function test_cart_uses_the_base_price_when_room_selection_is_omitted(): void
+    {
+        $voucher = Voucher::factory()->create([
+            'selling_price' => 1000000,
+            'price_options' => [
+                ['key' => 'jungle-view', 'label' => 'Jungle View Villa', 'additional_price' => 0],
+                ['key' => 'sunrise-view', 'label' => 'Sunrise View Villa', 'additional_price' => 300000],
+            ],
+        ]);
+
+        app(VoucherCartService::class)->add($voucher, [
+            'quantity' => 1,
+            'purchase_for' => 'self',
+            'delivery_method' => 'email',
+        ]);
+
+        $line = app(VoucherCartService::class)->refresh()['lines']->first();
+
+        $this->assertNull($line['price_option']);
+        $this->assertNull($line['price_option_key']);
+        $this->assertSame(1000000, $line['unit_price']);
+        $this->assertSame(0, $line['room_upgrade_total']);
+    }
+
     public function test_inactive_voucher_cannot_be_added(): void
     {
         $voucher = Voucher::factory()->create(['is_active' => false]);

@@ -10,8 +10,11 @@ use InvalidArgumentException;
 class VoucherCartService
 {
     public const PRINT_DELIVERY_FEE = 100000;
+
     public const SERVICE_CHARGE_PERCENTAGE = 10;
+
     public const TAX_PERCENTAGE = 11;
+
     public const CART_DISCOUNT_PERCENTAGE = 10;
 
     private const SESSION_KEY = 'voucher.cart.lines';
@@ -21,6 +24,7 @@ class VoucherCartService
         $this->assertPurchasable($voucher);
 
         $quantity = $this->normalizeQuantity($voucher, (int) ($data['quantity'] ?? 1));
+        $priceOption = $voucher->resolvePriceOption($data['price_option'] ?? null);
         $key = (string) Str::uuid();
         $purchaseFor = $data['purchase_for'] ?? 'gift';
         $deliveryMethod = $purchaseFor === 'self' ? 'email' : ($data['delivery_method'] ?? 'email');
@@ -30,6 +34,7 @@ class VoucherCartService
             'key' => $key,
             'voucher_id' => $voucher->id,
             'quantity' => $quantity,
+            'price_option_key' => $priceOption['key'] ?? null,
             'purchase_for' => $purchaseFor,
             'recipient_name' => trim((string) ($data['recipient_name'] ?? '')),
             'recipient_email' => $purchaseFor === 'gift' && $deliveryMethod === 'print_at_resort'
@@ -63,9 +68,15 @@ class VoucherCartService
         $deliveryMethod = $purchaseFor === 'self'
             ? 'email'
             : ($data['delivery_method'] ?? $lines[$key]['delivery_method'] ?? 'email');
+        $priceOption = $voucher->resolvePriceOption(
+            array_key_exists('price_option', $data)
+                ? $data['price_option']
+                : ($lines[$key]['price_option_key'] ?? null)
+        );
 
         $lines[$key] = array_merge($lines[$key], [
             'quantity' => $this->normalizeQuantity($voucher, (int) ($data['quantity'] ?? $lines[$key]['quantity'])),
+            'price_option_key' => $priceOption['key'] ?? null,
             'purchase_for' => $purchaseFor,
             'recipient_name' => trim((string) ($data['recipient_name'] ?? $lines[$key]['recipient_name'])),
             'recipient_email' => $purchaseFor === 'gift' && $deliveryMethod === 'print_at_resort'
@@ -107,11 +118,21 @@ class VoucherCartService
                 continue;
             }
 
+            try {
+                $priceOption = $voucher->resolvePriceOption($line['price_option_key'] ?? null);
+            } catch (InvalidArgumentException) {
+                continue;
+            }
+
             $quantity = $this->normalizeQuantity($voucher, (int) $line['quantity']);
-            $priceBeforeCartDiscount = $voucher->discounted_price;
+            $priceBeforeCartDiscount = $voucher->discountedPriceForOption($priceOption);
             $cartDiscountApplies = $globalDiscountActive;
             $unitPrice = $priceBeforeCartDiscount;
-            $originalUnitPrice = (int) $voucher->selling_price;
+            $baseVoucherUnitPrice = $voucher->discountedPriceForOption();
+            $roomUpgradeUnitPrice = max(0, $unitPrice - $baseVoucherUnitPrice);
+            $originalUnitPrice = $voucher->originalPriceForOption($priceOption);
+            $voucherSubtotal = $baseVoucherUnitPrice * $quantity;
+            $roomUpgradeTotal = $roomUpgradeUnitPrice * $quantity;
             $baseLineTotal = $unitPrice * $quantity;
             $deliveryFee = ($line['delivery_method'] ?? 'email') === 'print_at_resort'
                 ? self::PRINT_DELIVERY_FEE
@@ -127,10 +148,16 @@ class VoucherCartService
             $lines[$key] = array_merge($line, [
                 'quantity' => $quantity,
                 'voucher' => $voucher,
+                'price_option_key' => $priceOption['key'] ?? null,
+                'price_option' => $priceOption,
                 'price_before_cart_discount' => $priceBeforeCartDiscount,
                 'cart_discount_percentage' => $cartDiscountApplies ? self::CART_DISCOUNT_PERCENTAGE : 0,
                 'cart_discount' => $lineCartDiscount,
                 'unit_price' => $unitPrice,
+                'base_unit_price' => $baseVoucherUnitPrice,
+                'room_upgrade_unit_price' => $roomUpgradeUnitPrice,
+                'voucher_subtotal' => $voucherSubtotal,
+                'room_upgrade_total' => $roomUpgradeTotal,
                 'base_line_total' => $baseLineTotal,
                 'delivery_fee' => $deliveryFee,
                 'pre_tax_line_total' => $preTaxLineTotal,
@@ -145,7 +172,7 @@ class VoucherCartService
             ]);
         }
 
-        session()->put(self::SESSION_KEY, collect($lines)->map(fn(array $line): array => collect($line)->except('voucher')->all())->all());
+        session()->put(self::SESSION_KEY, collect($lines)->map(fn (array $line): array => collect($line)->except('voucher')->all())->all());
 
         $collection = collect($lines);
         $subtotal = (int) $collection->sum('line_total');

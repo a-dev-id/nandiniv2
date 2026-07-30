@@ -13,8 +13,7 @@ class VoucherIssuer
         private readonly VoucherCodeGenerator $codes,
         private readonly VoucherValidityService $validity,
         private readonly VoucherEmailService $emails,
-    ) {
-    }
+    ) {}
 
     public function issueForOrder(VoucherOrder $order): void
     {
@@ -49,7 +48,7 @@ class VoucherIssuer
             ->find($orderId)?->issuedVouchers()
             ->whereNull('delivered_at')
             ->with('orderItem.order')
-            ->each(fn(IssuedVoucher $voucher) => $this->emails->sendIssued($voucher));
+            ->each(fn (IssuedVoucher $voucher) => $this->emails->sendIssued($voucher));
     }
 
     private function createIssuedVoucher(VoucherOrder $order, $item): IssuedVoucher
@@ -93,6 +92,7 @@ class VoucherIssuer
                         'delivery_method' => $snapshot['delivery_method'] ?? $item->delivery_method ?? 'email',
                         'delivery_fee' => $snapshot['delivery_fee'] ?? 0,
                         'hotel_note' => $snapshot['hotel_note'] ?? null,
+                        'price_option' => $snapshot['price_option'] ?? null,
                     ],
                 ]);
             } catch (QueryException $e) {

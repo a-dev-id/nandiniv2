@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use InvalidArgumentException;
 
 class Voucher extends Model
 {
@@ -14,6 +15,7 @@ class Voucher extends Model
     use SoftDeletes;
 
     public const TYPES = ['monetary', 'accommodation', 'dining', 'spa', 'experience', 'custom'];
+
     public const VALIDITY_TYPES = ['days_after_issue', 'fixed_date', 'manual'];
 
     protected $fillable = [
@@ -33,6 +35,7 @@ class Voucher extends Model
         'voucher_type',
         'face_value',
         'selling_price',
+        'price_options',
         'discount_percentage',
         'currency',
         'price_type',
@@ -56,6 +59,7 @@ class Voucher extends Model
         'gallery_images' => 'array',
         'face_value' => 'integer',
         'selling_price' => 'integer',
+        'price_options' => 'array',
         'discount_percentage' => 'integer',
         'validity_days' => 'integer',
         'fixed_valid_from' => 'date',
@@ -119,8 +123,52 @@ class Voucher extends Model
 
     public function getDiscountedPriceAttribute(): int
     {
+        return $this->discountedPriceForOption();
+    }
+
+    public function availablePriceOptions(): array
+    {
+        return collect($this->price_options ?? [])
+            ->map(fn (mixed $option, int|string $index): array => [
+                'key' => (string) data_get($option, 'key', 'option-'.$index),
+                'label' => trim((string) data_get($option, 'label')),
+                'additional_price' => max(0, (int) data_get($option, 'additional_price', 0)),
+            ])
+            ->filter(fn (array $option): bool => $option['label'] !== '')
+            ->values()
+            ->all();
+    }
+
+    public function resolvePriceOption(?string $key = null): ?array
+    {
+        if (blank($key)) {
+            return null;
+        }
+
+        $options = $this->availablePriceOptions();
+
+        if ($options === []) {
+            throw new InvalidArgumentException('The selected room option is not available.');
+        }
+
+        foreach ($options as $option) {
+            if (hash_equals($option['key'], $key)) {
+                return $option;
+            }
+        }
+
+        throw new InvalidArgumentException('The selected room option is not available.');
+    }
+
+    public function originalPriceForOption(?array $option = null): int
+    {
+        return max(0, (int) $this->selling_price + (int) ($option['additional_price'] ?? 0));
+    }
+
+    public function discountedPriceForOption(?array $option = null): int
+    {
         $percentage = min(100, max(0, (int) $this->discount_percentage));
 
-        return (int) round($this->selling_price * (100 - $percentage) / 100);
+        return (int) round($this->originalPriceForOption($option) * (100 - $percentage) / 100);
     }
 }

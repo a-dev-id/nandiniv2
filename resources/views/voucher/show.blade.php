@@ -7,8 +7,14 @@ $purchaseFor = old('purchase_for', 'self');
 $defaultGiftMessage = '';
 $giftFrom = old('gift_from', $member?->full_name ?: $member?->name ?: '');
 $giftDeliveryMethod = old('delivery_method', 'email');
-$priceSuffix = '++';
+$priceSuffix = $money->priceTypeSuffix($voucher->price_type);
 $unitLabel = $money->unitLabel($voucher->unit_type);
+$priceOptions = $voucher->availablePriceOptions();
+$termsSections = app(\App\Services\Voucher\VoucherTermsFormatter::class)->sections($voucher->terms_conditions);
+$selectedPriceOptionKey = old('price_option');
+$selectedPriceOption = collect($priceOptions)->firstWhere('key', $selectedPriceOptionKey);
+$selectedOriginalPrice = $voucher->originalPriceForOption();
+$selectedDiscountedPrice = $voucher->discountedPriceForOption();
 $shareUrl = route('voucher.show', $voucher);
 $shareImagePath = $voucher->preview_image;
 $shareImageUrl = $shareImagePath ? Storage::disk('public')->url($shareImagePath) : asset('images/logo-njhg.png');
@@ -111,11 +117,11 @@ fn ($item) => is_array($item)
                 <div class="mt-6">
                     @if ($voucher->has_discount)
                     <div class="mb-2 flex flex-wrap items-center gap-3">
-                        <p class="text-sm tracking-[0.04em] text-slate-400 line-through">{{ $money->format($voucher->selling_price, $voucher->currency) }}</p>
+                        <p class="text-sm tracking-[0.04em] text-slate-400 line-through">{{ $money->format($selectedOriginalPrice, $voucher->currency) }}</p>
                         <span class="bg-[#A88444]/10 px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-[#A88444]">Save {{ $voucher->discount_percentage }}%</span>
                     </div>
                     @endif
-                    <p class="text-2xl font-semibold tracking-[0.06em] text-slate-700">{{ $money->format($voucher->discounted_price, $voucher->currency) }}{{ $priceSuffix }}</p>
+                    <p class="text-2xl font-semibold tracking-[0.06em] text-slate-700">{{ $money->format($selectedDiscountedPrice, $voucher->currency) }}{{ $priceSuffix }}</p>
                 </div>
                 @if ($unitLabel)
                 <p class="mt-1 text-sm leading-6 text-slate-600">{{ $unitLabel }}</p>
@@ -123,6 +129,21 @@ fn ($item) => is_array($item)
 
                 <form method="POST" action="{{ route('voucher.cart.add', $voucher) }}" class="mt-8 space-y-5">
                     @csrf
+                    @if ($priceOptions !== [])
+                    <div>
+                        <label for="price_option" class="block text-xs uppercase tracking-[0.08em] text-slate-700">Room Type</label>
+                        <select id="price_option" name="price_option" class="mt-2 w-full border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 focus:border-[#A88444] focus:outline-none" data-voucher-price-option>
+                            <option value="" @selected($selectedPriceOption === null)>Choose another room type</option>
+                            @foreach ($priceOptions as $option)
+                                <option
+                                    value="{{ $option['key'] }}"
+                                    @selected(($selectedPriceOption['key'] ?? null) === $option['key'])
+                                >{{ $option['label'] }}{{ $option['additional_price'] > 0 ? ' (+'.$money->format($option['additional_price'], $voucher->currency).')' : '' }}</option>
+                            @endforeach
+                        </select>
+                        <p class="mt-2 text-xs leading-5 text-slate-500">Optional. Choose a different room category to add its upgrade price.</p>
+                    </div>
+                    @endif
                     <fieldset>
                         <legend class="block text-xs uppercase tracking-[0.08em] text-slate-700">Who is this voucher for?</legend>
                         <div class="mt-2 grid gap-3 sm:grid-cols-2">
@@ -264,23 +285,14 @@ fn ($item) => is_array($item)
 
     <section class="bg-[#F7F7F7] px-6 py-14 md:py-20">
         <div class="mx-auto grid max-w-6xl gap-10 md:grid-cols-2 md:gap-12">
-            <div>
-                <h2 class="text-xl uppercase text-slate-700">Usage Terms</h2>
-                <ul class="mt-4 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-600">
-                    <li>The voucher is valid for 12 months from the date of purchase.</li>
-                    <li>Advance reservation is required. To redeem your voucher, please contact our Reservations Team via email at <a href="mailto:reservation@nandinibali.com" class="transition hover:text-[#A88444] hover:underline">reservation@nandinibali.com</a> or WhatsApp at <a href="https://wa.me/6281236871170" target="_blank" rel="noopener" class="transition hover:text-[#A88444] hover:underline">+62 812 3687 1170</a>.</li>
-                    <li>The voucher is non-refundable, non-transferable, and cannot be exchanged for cash, either in whole or in part.</li>
-                    <li>The voucher cannot be used in conjunction with any other promotions, discounts, special offers, or packages unless otherwise stated.</li>
-                    <li>Blackout dates may apply.</li>
-                </ul>
-            </div>
-
-            <div>
-                <h2 class="text-xl uppercase text-slate-700">Payment Terms</h2>
-                <ul class="mt-4 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-600">
-                    <li>Please note that all payments are non-refundable once successfully completed.</li>
-                </ul>
-            </div>
+            @foreach ($termsSections as $section)
+                <div @class(['md:col-span-2' => count($termsSections) === 1])>
+                    <h2 class="text-xl uppercase text-slate-700">{{ $section['title'] }}</h2>
+                    <div class="mt-4 text-sm leading-6 text-slate-600 [&_a]:transition [&_a:hover]:text-[#A88444] [&_a:hover]:underline [&_li]:mb-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-5">
+                        {!! $section['html'] !!}
+                    </div>
+                </div>
+            @endforeach
         </div>
     </section>
 

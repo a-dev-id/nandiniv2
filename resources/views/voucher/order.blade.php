@@ -18,7 +18,12 @@
             @if ($awaitingPayment)
                 <div class="mt-4 flex flex-wrap items-center justify-between gap-3 border border-[#A88444]/30 bg-white px-4 py-3 text-sm text-slate-700" data-payment-status-poll data-refresh-seconds="10" aria-live="polite">
                     <p>Waiting for payment confirmation. Checking again in <span class="font-semibold text-[#A88444]" data-payment-countdown>10</span> seconds.</p>
-                    <button type="button" class="text-xs font-medium uppercase tracking-[0.08em] text-[#A88444] underline underline-offset-4" data-payment-check-now>Check now</button>
+                    @if (filled(config('services.flywire.api_key')))
+                        <form method="POST" action="{{ route('voucher.order.check-payment', array_filter(['orderNumber' => $order->order_number, 'token' => request('token')])) }}">
+                            @csrf
+                            <button type="submit" class="text-xs font-medium uppercase tracking-[0.08em] text-[#A88444] underline underline-offset-4">Check now</button>
+                        </form>
+                    @endif
                 </div>
             @elseif ($order->payment_status === 'paid')
                 <p class="mt-4 border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">Payment confirmed. Your voucher is ready.</p>
@@ -32,6 +37,9 @@
                 @foreach ($order->items as $item)
                     <article class="border border-slate-200 p-5">
                         <h2 class="text-lg uppercase text-slate-700">{{ $item->voucher_title }}</h2>
+                        @if (filled(data_get($item->voucher_snapshot, 'price_option.label')))
+                            <p class="mt-2 text-sm font-medium text-slate-700">Room: {{ data_get($item->voucher_snapshot, 'price_option.label') }}</p>
+                        @endif
                         <p class="mt-2 text-sm text-slate-600">Voucher holder: {{ $item->recipient_name }} &lt;{{ $item->recipient_email }}&gt;</p>
                         <p class="mt-2 text-sm text-slate-600">Quantity: {{ $item->quantity }}</p>
                         <p class="mt-2 text-sm text-slate-700">{{ $money->format($item->line_total, $item->currency) }}</p>
@@ -71,15 +79,12 @@
             document.addEventListener('DOMContentLoaded', function () {
                 const poll = document.querySelector('[data-payment-status-poll]');
                 const countdown = poll?.querySelector('[data-payment-countdown]');
-                const checkNow = poll?.querySelector('[data-payment-check-now]');
                 const refreshSeconds = Number.parseInt(poll?.dataset.refreshSeconds || '10', 10);
                 let secondsRemaining = refreshSeconds;
 
                 function refreshStatus() {
                     window.location.reload();
                 }
-
-                checkNow?.addEventListener('click', refreshStatus);
 
                 window.setInterval(function () {
                     if (document.hidden) return;

@@ -29,5 +29,8 @@ Route::domain(config('domains.voucher'))
 
         Route::get('/order/{orderNumber}', [OrderController::class, 'show'])->name('order.show');
         Route::get('/order/{orderNumber}/thank-you', [OrderController::class, 'thankYou'])->name('order.thank-you');
+        Route::post('/order/{orderNumber}/check-payment', [OrderController::class, 'checkPayment'])
+            ->middleware('throttle:6,1')
+            ->name('order.check-payment');
         Route::get('/verify/{token}', VoucherVerificationController::class)->middleware('throttle:20,1')->name('verify');
     });

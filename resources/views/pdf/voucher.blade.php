@@ -32,7 +32,10 @@
     </style>
 </head>
 <body>
-@php($isGiftVoucher = data_get($voucher->metadata, 'purchase_for') === 'gift')
+@php
+    $isGiftVoucher = data_get($voucher->metadata, 'purchase_for') === 'gift';
+    $termsSections = app(\App\Services\Voucher\VoucherTermsFormatter::class)->sections($voucher->terms_snapshot);
+@endphp
 <div class="outer">
     <div class="inner">
         <div class="brand">Nandini Jungle by Hanging Gardens</div>
@@ -50,6 +53,9 @@
 
         <table class="details">
             <tr><td class="label">Voucher Code</td><td class="value code">{{ $voucher->voucher_code }}</td></tr>
+            @if (filled(data_get($voucher->metadata, 'price_option.label')))
+                <tr><td class="label">Room Type</td><td class="value">{{ data_get($voucher->metadata, 'price_option.label') }}</td></tr>
+            @endif
             <tr><td class="label">Valid From</td><td class="value">{{ $voucher->valid_from?->format('d F Y') ?? 'Immediately' }}</td></tr>
             <tr><td class="label">Valid Until</td><td class="value">{{ $voucher->expires_at?->format('d F Y') ?? 'No expiry date' }}</td></tr>
         </table>
@@ -64,16 +70,10 @@
         </table>
 
         <div class="terms">
-            <h2>Usage Terms</h2>
-            <ul>
-                <li>The voucher is valid for 12 months from the date of purchase.</li>
-                <li>Advance reservation is required. Contact reservation@nandinibali.com or WhatsApp +62 812 3687 1170.</li>
-                <li>The voucher is non-refundable, non-transferable, and cannot be exchanged for cash.</li>
-                <li>The voucher cannot be combined with other promotions unless otherwise stated.</li>
-                <li>Blackout dates may apply.</li>
-            </ul>
-            <h2>Payment Terms</h2>
-            <ul><li>All payments are non-refundable once successfully completed.</li></ul>
+            @foreach ($termsSections as $section)
+                <h2>{{ $section['title'] }}</h2>
+                {!! strip_tags($section['html'], '<p><br><strong><b><em><i><ul><ol><li><a>') !!}
+            @endforeach
         </div>
 
         <div class="footer">An invitation to experience the beauty of Bali</div>

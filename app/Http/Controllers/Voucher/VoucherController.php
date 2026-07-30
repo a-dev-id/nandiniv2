@@ -19,7 +19,7 @@ class VoucherController extends Controller
 
         return view('voucher.index', [
             'landingPage' => $landingPage,
-            'featuredVouchers' => Voucher::query()->with('category')->active()->featured()->ordered()->limit(5)->get(),
+            'featuredVouchers' => Voucher::query()->with('category')->active()->featured()->ordered()->limit(7)->get(),
             'allVouchers' => Voucher::query()->with('category')->active()->cheapestFirst()->get(),
             'cartCount' => $cart->countUnits(),
         ]);
@@ -46,7 +46,7 @@ class VoucherController extends Controller
                 ->with('category')
                 ->active()
                 ->whereKeyNot($voucher->id)
-                ->when($voucher->voucher_category_id, fn($query) => $query->where('voucher_category_id', $voucher->voucher_category_id))
+                ->when($voucher->voucher_category_id, fn ($query) => $query->where('voucher_category_id', $voucher->voucher_category_id))
                 ->ordered()
                 ->limit(3)
                 ->get(),

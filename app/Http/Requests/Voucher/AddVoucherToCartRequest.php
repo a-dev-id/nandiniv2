@@ -11,6 +11,7 @@ class AddVoucherToCartRequest extends FormRequest
     {
         return [
             'quantity' => ['required', 'integer', 'min:1', 'max:99'],
+            'price_option' => ['nullable', 'string', 'max:64'],
             'purchase_for' => ['required', 'in:self,gift'],
             'recipient_name' => [Rule::requiredIf(fn (): bool => $this->input('purchase_for') === 'gift'), 'nullable', 'string', 'max:120'],
             'recipient_email' => [Rule::requiredIf(fn (): bool => $this->input('purchase_for') === 'gift' && $this->input('delivery_method') === 'email'), 'nullable', 'email', 'max:191'],

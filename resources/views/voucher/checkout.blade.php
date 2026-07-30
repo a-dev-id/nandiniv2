@@ -59,6 +59,9 @@
                     @foreach ($cart['lines'] as $line)
                         <div class="border-b border-slate-300 pb-4">
                             <p class="text-sm font-semibold text-slate-700">{{ $line['voucher']->title }} x {{ $line['quantity'] }}</p>
+                            @if (filled(data_get($line, 'price_option.label')))
+                                <p class="mt-1 text-xs font-medium text-slate-700">Room: {{ data_get($line, 'price_option.label') }}</p>
+                            @endif
                             <p class="mt-1 text-xs text-slate-600">
                                 @if (($line['purchase_for'] ?? 'gift') === 'self')
                                     For yourself — purchaser details will be used.
@@ -71,7 +74,10 @@
                                 <p class="mt-1 text-xs leading-5 text-slate-600">Hotel note: {{ $line['hotel_note'] }}</p>
                             @endif
                             <div class="mt-3 space-y-1 text-xs text-slate-600">
-                                <div class="flex justify-between gap-3"><span>Voucher subtotal</span><span>{{ $money->format($line['base_line_total'], $line['currency']) }}</span></div>
+                                <div class="flex justify-between gap-3"><span>Voucher subtotal</span><span>{{ $money->format($line['voucher_subtotal'], $line['currency']) }}</span></div>
+                                @if (($line['room_upgrade_total'] ?? 0) > 0)
+                                    <div class="flex justify-between gap-3"><span>Room upgrade</span><span>+ {{ $money->format($line['room_upgrade_total'], $line['currency']) }}</span></div>
+                                @endif
                                 @if (($line['delivery_fee'] ?? 0) > 0)
                                     <div class="flex justify-between gap-3"><span>Additional charge</span><span>{{ $money->format($line['delivery_fee'], $line['currency']) }}</span></div>
                                 @endif

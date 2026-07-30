@@ -12,6 +12,7 @@ class VoucherOrderStatusPollingTest extends TestCase
 
     public function test_pending_order_page_polls_for_payment_confirmation(): void
     {
+        config(['services.flywire.api_key' => null]);
         [$order, $token] = $this->orderWithAccess('processing', 'pending_payment');
 
         $this->get(route('voucher.order.thank-you', [
@@ -20,7 +21,21 @@ class VoucherOrderStatusPollingTest extends TestCase
         ]))
             ->assertOk()
             ->assertSee('data-payment-status-poll', false)
-            ->assertSee('Checking again in');
+            ->assertSee('Checking again in')
+            ->assertDontSee('Check now');
+    }
+
+    public function test_pending_order_page_shows_manual_check_when_api_key_is_configured(): void
+    {
+        config(['services.flywire.api_key' => 'production-api-key']);
+        [$order, $token] = $this->orderWithAccess('processing', 'pending_payment');
+
+        $this->get(route('voucher.order.thank-you', [
+            'orderNumber' => $order->order_number,
+            'token' => $token,
+        ]))
+            ->assertOk()
+            ->assertSee('Check now');
     }
 
     public function test_paid_order_page_stops_polling_and_shows_confirmation(): void

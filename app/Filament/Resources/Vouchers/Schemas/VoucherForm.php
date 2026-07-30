@@ -52,7 +52,13 @@ class VoucherForm
                             ->columns(2)
                             ->schema([
                                 Select::make('voucher_type')->options(array_combine(Voucher::TYPES, Voucher::TYPES))->required()->default('custom'),
-                                TextInput::make('selling_price')->label('Original Price')->numeric()->required()->minValue(0)->prefix('IDR'),
+                                TextInput::make('selling_price')
+                                    ->label('Base / Original Price')
+                                    ->numeric()
+                                    ->required()
+                                    ->minValue(0)
+                                    ->prefix('IDR')
+                                    ->helperText('This is the price of the standard room option.'),
                                 TextInput::make('discount_percentage')
                                     ->label('Discount')
                                     ->numeric()
@@ -65,6 +71,40 @@ class VoucherForm
                                 TextInput::make('currency')->required()->default('IDR')->maxLength(3),
                                 Select::make('price_type')->options(['plus_plus' => '++', 'net' => 'Nett', 'inclusive' => 'Inclusive'])->nullable(),
                                 Select::make('unit_type')->options(['per_person' => 'Per Person', 'per_couple' => 'Per Couple', 'per_booking' => 'Per Booking'])->nullable(),
+                                Repeater::make('price_options')
+                                    ->label('Room Price Options')
+                                    ->columnSpanFull()
+                                    ->columns(2)
+                                    ->addActionLabel('Add room option')
+                                    ->reorderable()
+                                    ->collapsible()
+                                    ->itemLabel(fn (array $state): string => $state['label'] ?? 'Room Option')
+                                    ->afterStateHydrated(function (Repeater $component, mixed $state): void {
+                                        $component->state(collect($state ?? [])->map(
+                                            fn (mixed $item): array => array_merge(
+                                                ['key' => (string) Str::uuid(), 'label' => null, 'additional_price' => 0],
+                                                is_array($item) ? $item : [],
+                                            )
+                                        )->values()->all());
+                                    })
+                                    ->schema([
+                                        Hidden::make('key')->default(fn (): string => (string) Str::uuid()),
+                                        TextInput::make('label')
+                                            ->label('Room Name')
+                                            ->required()
+                                            ->maxLength(191)
+                                            ->live(onBlur: true)
+                                            ->placeholder('Jungle View Villa'),
+                                        TextInput::make('additional_price')
+                                            ->label('Additional Price')
+                                            ->numeric()
+                                            ->required()
+                                            ->default(0)
+                                            ->minValue(0)
+                                            ->prefix('IDR')
+                                            ->helperText('Use 0 for the base room; enter only the upgrade amount for other rooms.'),
+                                    ])
+                                    ->helperText('Optional. When added, customers choose one room from a dropdown before adding the voucher to their cart.'),
                             ]),
 
                         Section::make('Validity and Purchase Limits')

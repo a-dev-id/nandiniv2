@@ -15,8 +15,7 @@ class VoucherCheckoutService
         private readonly VoucherCartService $cart,
         private readonly VoucherOrderService $orders,
         private readonly PaymentGateway $gateway,
-    ) {
-    }
+    ) {}
 
     public function createOrderAndPayment(array $data, $member = null): VoucherOrder
     {
@@ -67,7 +66,7 @@ class VoucherCheckoutService
                     'unit_price' => $line['unit_price'],
                     'line_total' => $line['line_total_after_discount'],
                     'currency' => $line['currency'],
-                    'recipient_name' => $line['recipient_name'] ?: trim($data['purchaser_first_name'] . ' ' . $data['purchaser_last_name']),
+                    'recipient_name' => $line['recipient_name'] ?: trim($data['purchaser_first_name'].' '.$data['purchaser_last_name']),
                     'recipient_email' => $line['recipient_email'] ?: strtolower($data['purchaser_email']),
                     'personal_message' => $line['personal_message'] ?: null,
                     'delivery_method' => $line['delivery_method'],
@@ -79,6 +78,9 @@ class VoucherCheckoutService
                         'voucher_type' => $voucher->voucher_type,
                         'face_value' => $voucher->face_value,
                         'selling_price' => $voucher->selling_price,
+                        'price_option' => $line['price_option'],
+                        'selected_original_price' => $voucher->originalPriceForOption($line['price_option']),
+                        'selected_discounted_price' => $line['unit_price'],
                         'discount_percentage' => $voucher->discount_percentage,
                         'discounted_price' => $voucher->discounted_price,
                         'currency' => $voucher->currency,
@@ -120,7 +122,7 @@ class VoucherCheckoutService
             ]),
         ])->save();
 
-        session()->put('voucher.order_access.' . $order->order_number, $accessToken);
+        session()->put('voucher.order_access.'.$order->order_number, $accessToken);
         $this->cart->clear();
 
         return $order->fresh('items');
