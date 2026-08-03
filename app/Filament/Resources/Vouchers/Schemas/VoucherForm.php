@@ -69,7 +69,7 @@ class VoucherForm
                                     ->suffix('%')
                                     ->helperText('Enter 0 or leave empty to remove the discount.'),
                                 TextInput::make('currency')->required()->default('IDR')->maxLength(3),
-                                Select::make('price_type')->options(['plus_plus' => '++', 'net' => 'Nett', 'inclusive' => 'Inclusive'])->nullable(),
+                                Select::make('price_type')->options(['plus_plus' => '++', 'net' => 'Net', 'inclusive' => 'Inclusive'])->nullable(),
                                 Select::make('unit_type')->options(['per_person' => 'Per Person', 'per_couple' => 'Per Couple', 'per_booking' => 'Per Booking'])->nullable(),
                                 Repeater::make('price_options')
                                     ->label('Room Price Options')
@@ -80,12 +80,14 @@ class VoucherForm
                                     ->collapsible()
                                     ->itemLabel(fn (array $state): string => $state['label'] ?? 'Room Option')
                                     ->afterStateHydrated(function (Repeater $component, mixed $state): void {
-                                        $component->state(collect($state ?? [])->map(
+                                        self::hydrateRepeaterItems(
+                                            $component,
+                                            $state,
                                             fn (mixed $item): array => array_merge(
                                                 ['key' => (string) Str::uuid(), 'label' => null, 'additional_price' => 0],
                                                 is_array($item) ? $item : [],
-                                            )
-                                        )->values()->all());
+                                            ),
+                                        );
                                     })
                                     ->schema([
                                         Hidden::make('key')->default(fn (): string => (string) Str::uuid()),
@@ -150,11 +152,13 @@ class VoucherForm
                                     ->collapsible()
                                     ->itemLabel(fn (array $state): string => $state['image_alt'] ?? 'Gallery Image')
                                     ->afterStateHydrated(function (Repeater $component, mixed $state): void {
-                                        $component->state(collect($state ?? [])->map(
+                                        self::hydrateRepeaterItems(
+                                            $component,
+                                            $state,
                                             fn (mixed $item): array => is_array($item)
                                                 ? $item
-                                                : ['image' => $item, 'image_alt' => null]
-                                        )->values()->all());
+                                                : ['image' => $item, 'image_alt' => null],
+                                        );
                                     })
                                     ->schema([
                                         self::imageUpload('image', 'Image', 'vouchers/gallery', 1200, 900)
@@ -192,6 +196,24 @@ class VoucherForm
                 targetWidth: $width,
                 targetHeight: $height,
             ));
+    }
+
+    private static function hydrateRepeaterItems(Repeater $component, mixed $state, callable $normalize): void
+    {
+        $items = [];
+
+        foreach (is_array($state) ? $state : [] as $item) {
+            $itemKey = $component->generateUuid();
+            $item = $normalize($item);
+
+            if ($itemKey === null) {
+                $items[] = $item;
+            } else {
+                $items[$itemKey] = $item;
+            }
+        }
+
+        $component->rawState($items);
     }
 
     private static function editorToolbar(): array

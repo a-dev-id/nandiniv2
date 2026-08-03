@@ -219,6 +219,41 @@ class VoucherCartTest extends TestCase
         $this->assertSame(1210000, $cart['total']);
     }
 
+    public function test_net_price_does_not_add_service_charge_or_tax(): void
+    {
+        $voucher = Voucher::factory()->create([
+            'selling_price' => 100,
+            'price_type' => 'net',
+        ]);
+
+        app(VoucherCartService::class)->add($voucher, [
+            'quantity' => 1,
+            'purchase_for' => 'self',
+            'delivery_method' => 'email',
+        ]);
+
+        $cart = app(VoucherCartService::class)->refresh();
+        $line = $cart['lines']->first();
+
+        $this->assertFalse($line['additional_charges_apply']);
+        $this->assertSame(0, $line['service_charge']);
+        $this->assertSame(0, $line['tax']);
+        $this->assertSame(100, $line['line_total']);
+        $this->assertSame(100, $cart['total']);
+
+        $this->get(route('voucher.cart.index'))
+            ->assertOk()
+            ->assertSee('IDR 100 Net each')
+            ->assertDontSee('IDR 100++ each')
+            ->assertDontSee('Service (10%)')
+            ->assertDontSee('Tax (11%)');
+
+        $this->get(route('voucher.checkout.index'))
+            ->assertOk()
+            ->assertDontSee('Service (10%)')
+            ->assertDontSee('Tax (11%)');
+    }
+
     public function test_self_purchase_always_uses_email_delivery(): void
     {
         $voucher = Voucher::factory()->create(['selling_price' => 1000000]);

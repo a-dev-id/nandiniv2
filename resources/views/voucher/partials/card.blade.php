@@ -1,7 +1,7 @@
 @php
     $money = app(\App\Services\Voucher\MoneyFormatter::class);
     $image = $voucher->preview_image;
-    $priceSuffix = '++';
+    $priceSuffix = $money->priceTypeSuffix($voucher->price_type);
     $unitLabel = $money->unitLabel($voucher->unit_type);
 @endphp
 

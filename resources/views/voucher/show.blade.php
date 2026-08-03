@@ -11,7 +11,8 @@ $priceSuffix = $money->priceTypeSuffix($voucher->price_type);
 $unitLabel = $money->unitLabel($voucher->unit_type);
 $priceOptions = $voucher->availablePriceOptions();
 $termsSections = app(\App\Services\Voucher\VoucherTermsFormatter::class)->sections($voucher->terms_conditions);
-$selectedPriceOptionKey = old('price_option');
+$defaultPriceOption = collect($priceOptions)->firstWhere('label', 'Jungle View Villa');
+$selectedPriceOptionKey = old('price_option', $defaultPriceOption['key'] ?? null);
 $selectedPriceOption = collect($priceOptions)->firstWhere('key', $selectedPriceOptionKey);
 $selectedOriginalPrice = $voucher->originalPriceForOption();
 $selectedDiscountedPrice = $voucher->discountedPriceForOption();
@@ -133,12 +134,8 @@ fn ($item) => is_array($item)
                     <div>
                         <label for="price_option" class="block text-xs uppercase tracking-[0.08em] text-slate-700">Room Type</label>
                         <select id="price_option" name="price_option" class="mt-2 w-full border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 focus:border-[#A88444] focus:outline-none" data-voucher-price-option>
-                            <option value="" @selected($selectedPriceOption === null)>Choose another room type</option>
                             @foreach ($priceOptions as $option)
-                                <option
-                                    value="{{ $option['key'] }}"
-                                    @selected(($selectedPriceOption['key'] ?? null) === $option['key'])
-                                >{{ $option['label'] }}{{ $option['additional_price'] > 0 ? ' (+'.$money->format($option['additional_price'], $voucher->currency).')' : '' }}</option>
+                            <option value="{{ $option['key'] }}" @selected(($selectedPriceOption['key'] ?? null)===$option['key'])>{{ $option['label'] }} (+{{ $money->format($option['additional_price'], $voucher->currency) }})</option>
                             @endforeach
                         </select>
                         <p class="mt-2 text-xs leading-5 text-slate-500">Optional. Choose a different room category to add its upgrade price.</p>
@@ -196,7 +193,7 @@ fn ($item) => is_array($item)
                         <button type="submit" class="inline-flex items-center justify-center border border-[#A88444] bg-[#A88444] px-5 py-3 text-xs font-medium uppercase tracking-[0.08em] text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] sm:text-sm">Add to Cart</button>
                         <div class="relative flex max-w-sm items-center rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-xs leading-5 text-slate-600 shadow-md sm:text-sm" role="status">
                             <span class="absolute -left-1.5 top-1/2 h-3 w-3 -translate-y-1/2 rotate-45 border-b border-l border-slate-200 bg-white" aria-hidden="true"></span>
-                            Purchase more vouchers to unlock an extra 10% off your cart.
+                            Purchase more vouchers to unlock an extra 10% off
                         </div>
                     </div>
                 </form>
@@ -286,12 +283,12 @@ fn ($item) => is_array($item)
     <section class="bg-[#F7F7F7] px-6 py-14 md:py-20">
         <div class="mx-auto grid max-w-6xl gap-10 md:grid-cols-2 md:gap-12">
             @foreach ($termsSections as $section)
-                <div @class(['md:col-span-2' => count($termsSections) === 1])>
-                    <h2 class="text-xl uppercase text-slate-700">{{ $section['title'] }}</h2>
-                    <div class="mt-4 text-sm leading-6 text-slate-600 [&_a]:transition [&_a:hover]:text-[#A88444] [&_a:hover]:underline [&_li]:mb-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-5">
-                        {!! $section['html'] !!}
-                    </div>
+            <div @class(['md:col-span-2'=> count($termsSections) === 1])>
+                <h2 class="text-xl uppercase text-slate-700">{{ $section['title'] }}</h2>
+                <div class="mt-4 text-sm leading-6 text-slate-600 [&_a]:transition [&_a:hover]:text-[#A88444] [&_a:hover]:underline [&_li]:mb-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-5">
+                    {!! $section['html'] !!}
                 </div>
+            </div>
             @endforeach
         </div>
     </section>

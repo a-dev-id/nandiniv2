@@ -77,7 +77,7 @@ $metaImage = $offer->hero_image
             </p>
             @endif
 
-            @if ($validStartDate || $validEndDate)
+            {{-- @if ($validStartDate || $validEndDate)
             <div class="mb-10 text-slate-700">
                 <p class="text-xs leading-relaxed sm:text-sm">
                     Stay Period
@@ -93,7 +93,7 @@ $metaImage = $offer->hero_image
                     @endif
                 </p>
             </div>
-            @endif
+            @endif --}}
 
             @if (! empty($offer->description))
             <div class="prose prose-slate text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto [&_p]:mb-1 [&_p]:min-h-6 [&_p:last-child]:mb-0 [&_strong]:font-semibold text-slate-700 [&_ul]:my-6 [&_ol]:my-6 [&_li]:mb-1 [&_h2]:mt-10 [&_h1]:mb-3 [&_h2]:mb-3 [&_h3]:mb-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h3]:mt-8 [&_h3]:text-base [&_h3]:font-semibold sm:text-sm sm:[&_h2]:text-xl sm:[&_h3]:text-lg">

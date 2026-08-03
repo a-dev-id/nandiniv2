@@ -138,8 +138,13 @@ class VoucherCartService
                 ? self::PRINT_DELIVERY_FEE
                 : 0;
             $preTaxLineTotal = $baseLineTotal + $deliveryFee;
-            $lineServiceCharge = (int) round($preTaxLineTotal * self::SERVICE_CHARGE_PERCENTAGE / 100);
-            $lineTax = (int) round($preTaxLineTotal * self::TAX_PERCENTAGE / 100);
+            $additionalChargesApply = in_array($voucher->price_type, ['++', 'plus_plus'], true);
+            $lineServiceCharge = $additionalChargesApply
+                ? (int) round($preTaxLineTotal * self::SERVICE_CHARGE_PERCENTAGE / 100)
+                : 0;
+            $lineTax = $additionalChargesApply
+                ? (int) round($preTaxLineTotal * self::TAX_PERCENTAGE / 100)
+                : 0;
             $lineTotalBeforeCartDiscount = $preTaxLineTotal + $lineServiceCharge + $lineTax;
             $lineCartDiscount = $cartDiscountApplies
                 ? (int) round($lineTotalBeforeCartDiscount * self::CART_DISCOUNT_PERCENTAGE / 100)
@@ -161,6 +166,7 @@ class VoucherCartService
                 'base_line_total' => $baseLineTotal,
                 'delivery_fee' => $deliveryFee,
                 'pre_tax_line_total' => $preTaxLineTotal,
+                'additional_charges_apply' => $additionalChargesApply,
                 'service_charge' => $lineServiceCharge,
                 'tax' => $lineTax,
                 'line_total' => $lineTotalBeforeCartDiscount,

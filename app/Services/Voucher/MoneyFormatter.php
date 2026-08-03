@@ -19,7 +19,7 @@ class MoneyFormatter
 
         return match ($value) {
             '++', 'plus_plus' => '++',
-            'net', 'nett' => ' Nett',
+            'net', 'nett' => ' Net',
             'inclusive' => ' Inclusive',
             default => '',
         };

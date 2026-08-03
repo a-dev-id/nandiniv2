@@ -81,8 +81,10 @@
                                 @if (($line['delivery_fee'] ?? 0) > 0)
                                     <div class="flex justify-between gap-3"><span>Additional charge</span><span>{{ $money->format($line['delivery_fee'], $line['currency']) }}</span></div>
                                 @endif
-                                <div class="flex justify-between gap-3"><span>Service ({{ $cart['service_charge_percentage'] }}%)</span><span>{{ $money->format($line['service_charge'], $line['currency']) }}</span></div>
-                                <div class="flex justify-between gap-3"><span>Tax ({{ $cart['tax_percentage'] }}%)</span><span>{{ $money->format($line['tax'], $line['currency']) }}</span></div>
+                                @if ($line['additional_charges_apply'])
+                                    <div class="flex justify-between gap-3"><span>Service ({{ $cart['service_charge_percentage'] }}%)</span><span>{{ $money->format($line['service_charge'], $line['currency']) }}</span></div>
+                                    <div class="flex justify-between gap-3"><span>Tax ({{ $cart['tax_percentage'] }}%)</span><span>{{ $money->format($line['tax'], $line['currency']) }}</span></div>
+                                @endif
                                 <div class="flex justify-between gap-3 pt-1 font-semibold text-slate-700"><span>Line total</span><span>{{ $money->format($line['line_total'], $line['currency']) }}</span></div>
                             </div>
                         </div>

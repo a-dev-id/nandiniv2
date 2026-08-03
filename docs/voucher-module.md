@@ -42,23 +42,25 @@ Do not put the production secret in `FLYWIRE_DEMO_SHARED_SECRET`. The Checkout i
 
 For local notifications, expose the voucher domain through an HTTPS tunnel and set `FLYWIRE_NOTIFICATION_URL` to that tunnel URL. Do not hardcode tunnel URLs.
 
-For the current shared-hosting staging domains, use:
+For the live shared-hosting domains, use:
 
 ```env
 APP_ENV=production
 APP_DEBUG=false
-APP_URL=https://staging.nandinibali.com
-MAIN_DOMAIN=staging.nandinibali.com
-MEMBERSHIP_DOMAIN=staging.nandinibali.com
-VOUCHER_DOMAIN=voucher.staging.nandinibali.com
-SESSION_DOMAIN=.staging.nandinibali.com
+APP_URL=https://nandinibali.com
+MEDIA_URL=https://nandinibali.com/storage
+MAIN_DOMAIN=nandinibali.com
+MEMBERSHIP_DOMAIN=nandinibali.com
+VOUCHER_DOMAIN=voucher.nandinibali.com
+SESSION_DOMAIN=.nandinibali.com
 SESSION_SECURE_COOKIE=true
-FLYWIRE_NOTIFICATION_URL=https://voucher.staging.nandinibali.com/api/flywire/notifications
-FLYWIRE_RETURN_URL=https://voucher.staging.nandinibali.com/payment/return
-FLYWIRE_CANCEL_URL=https://voucher.staging.nandinibali.com/cart
+GOOGLE_REDIRECT_URI=https://nandinibali.com/membership/sign-in/google/callback
+FLYWIRE_NOTIFICATION_URL=https://voucher.nandinibali.com/api/flywire/notifications
+FLYWIRE_RETURN_URL=https://voucher.nandinibali.com/payment/return
+FLYWIRE_CANCEL_URL=https://voucher.nandinibali.com/cart
 ```
 
-Change the staging hostnames to `nandinibali.com` and `voucher.nandinibali.com` when deploying to the live domains. Both domains must have valid SSL before enabling production payments.
+Both domains must have valid SSL before enabling production payments.
 
 ## Production checklist
 

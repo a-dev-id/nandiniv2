@@ -38,6 +38,26 @@ class VoucherPurchaseExperienceTest extends TestCase
             ->assertSee('itemcarousel-next fold-carousel-arrow fold-image-carousel-arrow home-mobile-image-arrow', false);
     }
 
+    public function test_net_price_label_is_consistent_on_voucher_listing_and_detail_pages(): void
+    {
+        $voucher = Voucher::factory()->create([
+            'selling_price' => 100,
+            'price_type' => 'net',
+        ]);
+
+        $this->get('http://voucher.nandinibali.test/')
+            ->assertOk()
+            ->assertSee('IDR 100 Net')
+            ->assertDontSee('IDR 100++')
+            ->assertDontSee('IDR 100 Nett');
+
+        $this->get('http://voucher.nandinibali.test/voucher/'.$voucher->slug)
+            ->assertOk()
+            ->assertSee('IDR 100 Net')
+            ->assertDontSee('IDR 100++')
+            ->assertDontSee('IDR 100 Nett');
+    }
+
     public function test_room_voucher_displays_the_configured_price_option_dropdown(): void
     {
         $voucher = Voucher::factory()->create([
@@ -49,7 +69,9 @@ class VoucherPurchaseExperienceTest extends TestCase
             ],
         ]);
 
-        $this->get('http://voucher.nandinibali.test/voucher/'.$voucher->slug)
+        $response = $this->get('http://voucher.nandinibali.test/voucher/'.$voucher->slug);
+
+        $response
             ->assertOk()
             ->assertSee('IDR 7,438,017++')
             ->assertSee('Room Type')
@@ -57,11 +79,16 @@ class VoucherPurchaseExperienceTest extends TestCase
             ->assertSee('name="price_option"', false)
             ->assertDontSee('name="price_option" required', false)
             ->assertDontSee('data-selected-price=', false)
-            ->assertSee('Choose another room type')
-            ->assertSee('value="" selected', false)
-            ->assertSee('Jungle View Villa')
+            ->assertDontSee('Choose another room type')
+            ->assertDontSee('<option value=""', false)
+            ->assertSee('Jungle View Villa (+IDR 0)')
             ->assertSee('Sunrise View Villa (+IDR 330,579)')
             ->assertSee('Panoramic Jungle View Villa (+IDR 661,157)');
+
+        $this->assertMatchesRegularExpression(
+            '/<option\s+value="jungle-view"\s+selected\s*>/',
+            $response->getContent()
+        );
 
         app(VoucherCartService::class)->add($voucher, [
             'quantity' => 1,
@@ -75,6 +102,8 @@ class VoucherPurchaseExperienceTest extends TestCase
             ->assertSee('IDR 7,438,017++ each')
             ->assertSee('Room upgrade')
             ->assertSee('+ IDR 330,579')
+            ->assertDontSee('No room upgrade')
+            ->assertSee('Jungle View Villa (+IDR 0)')
             ->assertSee('IDR 9,400,002');
     }
 

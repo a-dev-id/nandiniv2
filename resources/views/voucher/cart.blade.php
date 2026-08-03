@@ -35,7 +35,7 @@
                                             <p class="mt-1 text-sm font-medium text-slate-700">Room: {{ data_get($line, 'price_option.label') }}</p>
                                         @endif
                                         <p class="mt-1 text-sm text-slate-600">
-                                            {{ $money->format($line['base_unit_price'], $line['currency']) }}++ each
+                                            {{ $money->format($line['base_unit_price'], $line['currency']) }}{{ $money->priceTypeSuffix($line['price_type']) }} each
                                         </p>
                                     </div>
                                     <div>
@@ -46,10 +46,9 @@
                                         <div>
                                             <label class="block text-xs uppercase tracking-[0.08em] text-slate-700">Room Type</label>
                                             <select name="price_option" class="mt-2 w-full border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700">
-                                                <option value="" @selected(blank($line['price_option_key']))>No room upgrade</option>
                                                 @foreach ($line['voucher']->availablePriceOptions() as $option)
                                                     <option value="{{ $option['key'] }}" @selected($line['price_option_key'] === $option['key'])>
-                                                        {{ $option['label'] }}{{ $option['additional_price'] > 0 ? ' (+'.$money->format($option['additional_price'], $line['currency']).')' : '' }}
+                                                        {{ $option['label'] }} (+{{ $money->format($option['additional_price'], $line['currency']) }})
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -96,7 +95,7 @@
                                                 class="inline-flex items-center justify-center border border-slate-700 px-4 py-2.5 text-xs uppercase tracking-[0.08em] text-slate-700 transition hover:border-[#A88444] hover:text-[#A88444]"
                                                 data-cart-voucher-preview
                                                 data-title="{{ $line['voucher']->title }}"
-                                                data-price="{{ $money->format($line['base_unit_price'], $line['currency']) }}++"
+                                                data-price="{{ $money->format($line['base_unit_price'], $line['currency']) }}{{ $money->priceTypeSuffix($line['price_type']) }}"
                                                 data-excerpt="{{ $line['voucher']->excerpt }}"
                                             >Preview</button>
                                         @endif
@@ -113,8 +112,10 @@
                                             @if (($line['delivery_fee'] ?? 0) > 0)
                                                 <div class="flex justify-between gap-3"><span>Additional charge</span><span>{{ $money->format($line['delivery_fee'], $line['currency']) }}</span></div>
                                             @endif
-                                            <div class="flex justify-between gap-3"><span>Service ({{ $cart['service_charge_percentage'] }}%)</span><span>{{ $money->format($line['service_charge'], $line['currency']) }}</span></div>
-                                            <div class="flex justify-between gap-3"><span>Tax ({{ $cart['tax_percentage'] }}%)</span><span>{{ $money->format($line['tax'], $line['currency']) }}</span></div>
+                                            @if ($line['additional_charges_apply'])
+                                                <div class="flex justify-between gap-3"><span>Service ({{ $cart['service_charge_percentage'] }}%)</span><span>{{ $money->format($line['service_charge'], $line['currency']) }}</span></div>
+                                                <div class="flex justify-between gap-3"><span>Tax ({{ $cart['tax_percentage'] }}%)</span><span>{{ $money->format($line['tax'], $line['currency']) }}</span></div>
+                                            @endif
                                         </div>
                                         <p class="mt-3 border-t border-slate-300 pt-3 text-lg font-semibold text-slate-700">{{ $money->format($line['line_total'], $line['currency']) }}</p>
                                     </div>

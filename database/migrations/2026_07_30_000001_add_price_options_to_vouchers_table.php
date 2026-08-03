@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasColumn('vouchers', 'price_options')) {
+            return;
+        }
+
         Schema::table('vouchers', function (Blueprint $table): void {
             $table->json('price_options')->nullable()->after('selling_price');
         });
@@ -15,6 +19,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (! Schema::hasColumn('vouchers', 'price_options')) {
+            return;
+        }
+
         Schema::table('vouchers', function (Blueprint $table): void {
             $table->dropColumn('price_options');
         });
