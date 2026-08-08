@@ -7,6 +7,7 @@ $socialLinks = [
 ];
 
 $membershipDisabled = (bool) config('features.disable_membership_feature');
+$affiliateDisabled = (bool) config('features.disable_affiliate_feature');
 $voucherDisabled = (bool) config('features.disable_voucher_feature');
 $voucherUrl = route('voucher.index');
 
@@ -132,6 +133,10 @@ $seoFooterLinks = \App\Models\Page::query()
                         @unless ($voucherDisabled)
                         <li><a href="{{ $voucherUrl }}" class="hover:underline">Gift Voucher</a></li>
                         @endunless
+                        <li><a href="{{ $mainRoute('events.index') }}" class="hover:underline">Events</a></li>
+                        @unless ($affiliateDisabled)
+                        <li><a href="{{ route('affiliate.landing') }}" class="hover:underline">Affiliate Program</a></li>
+                        @endunless
                         <li><a href="{{ $mainRoute('guest-reviews.index') }}" class="hover:underline">Guest Reviews</a></li>
                         <li><a href="{{ $mainRoute('faq.index') }}" class="hover:underline">FAQ</a></li>
                         <li>
@@ -236,6 +241,10 @@ $seoFooterLinks = \App\Models\Page::query()
                         @endunless
                         @unless ($voucherDisabled)
                         <a href="{{ $voucherUrl }}" class="hover:underline">Gift Voucher</a>
+                        @endunless
+                        <a href="{{ $mainRoute('events.index') }}" class="hover:underline">Events</a>
+                        @unless ($affiliateDisabled)
+                        <a href="{{ route('affiliate.landing') }}" class="hover:underline">Affiliate Program</a>
                         @endunless
                         <a href="{{ $mainRoute('guest-reviews.index') }}" class="hover:underline">Guest Reviews</a>
                         <a href="{{ $mainPath('/careers') }}" class="hover:underline">Careers</a>

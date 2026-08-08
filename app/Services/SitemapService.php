@@ -57,6 +57,7 @@ class SitemapService
             ['route' => 'about-us.index', 'changefreq' => 'monthly', 'priority' => '0.7'],
             ['route' => 'blog.index', 'changefreq' => 'daily', 'priority' => '0.8'],
             ['route' => 'awards.index', 'changefreq' => 'monthly', 'priority' => '0.6'],
+            ['route' => 'events.index', 'changefreq' => 'weekly', 'priority' => '0.7'],
             ['route' => 'gallery.index', 'changefreq' => 'monthly', 'priority' => '0.6'],
             ['route' => 'guest-reviews.index', 'changefreq' => 'monthly', 'priority' => '0.6'],
             ['route' => 'faq.index', 'changefreq' => 'monthly', 'priority' => '0.5'],
@@ -71,7 +72,7 @@ class SitemapService
         }
 
         return collect($urls)
-            ->map(fn(array $url) => $this->entry(route($url['route']), null, $url['changefreq'], $url['priority']))
+            ->map(fn (array $url) => $this->entry(route($url['route']), null, $url['changefreq'], $url['priority']))
             ->all();
     }
 
@@ -86,7 +87,7 @@ class SitemapService
             ->orderBy('sort_order')
             ->orderBy('title')
             ->get(['slug', 'updated_at'])
-            ->map(fn(Page $page) => $this->entry(
+            ->map(fn (Page $page) => $this->entry(
                 route('pages.show', $page->slug),
                 $page->updated_at,
                 'monthly',
@@ -101,7 +102,7 @@ class SitemapService
             ->orderBy('sort_order')
             ->orderByDesc('valid_start_date')
             ->get(['slug', 'updated_at'])
-            ->map(fn(Offer $offer) => $this->entry(route('offers.show', $offer->slug), $offer->updated_at, 'weekly', '0.8'));
+            ->map(fn (Offer $offer) => $this->entry(route('offers.show', $offer->slug), $offer->updated_at, 'weekly', '0.8'));
     }
 
     private function blogUrls(): Collection
@@ -111,7 +112,7 @@ class SitemapService
             ->orderByDesc('published_at')
             ->orderByDesc('id')
             ->get(['slug', 'published_at', 'updated_at'])
-            ->map(fn(BlogNews $blog) => $this->entry(
+            ->map(fn (BlogNews $blog) => $this->entry(
                 route('blog.show', $blog->slug),
                 $blog->updated_at ?? $blog->published_at,
                 'monthly',
@@ -124,8 +125,8 @@ class SitemapService
         return Accommodation::query()
             ->published()
             ->get(['slug', 'accommodation_type', 'updated_at'])
-            ->reject(fn(Accommodation $accommodation) => $accommodation->slug === 'presidential-royal-suite')
-            ->map(fn(Accommodation $accommodation) => $this->entry(
+            ->reject(fn (Accommodation $accommodation) => $accommodation->slug === 'presidential-royal-suite')
+            ->map(fn (Accommodation $accommodation) => $this->entry(
                 route('accommodations.show', [
                     'type' => $accommodation->url_prefix,
                     'accommodation' => $accommodation->slug,
@@ -144,7 +145,7 @@ class SitemapService
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get(['slug', 'updated_at'])
-            ->map(fn(ExperienceCategory $category) => $this->entry(
+            ->map(fn (ExperienceCategory $category) => $this->entry(
                 route('experiences.category', $category->slug),
                 $category->updated_at,
                 'monthly',
@@ -175,7 +176,7 @@ class SitemapService
             ->orderBy('sort_order')
             ->orderByDesc('valid_start_date')
             ->get(['slug', 'updated_at'])
-            ->map(fn(Honeymoon $honeymoon) => $this->entry(route('honeymoon.show', $honeymoon->slug), $honeymoon->updated_at, 'weekly', '0.7'));
+            ->map(fn (Honeymoon $honeymoon) => $this->entry(route('honeymoon.show', $honeymoon->slug), $honeymoon->updated_at, 'weekly', '0.7'));
     }
 
     private function spaUrls(): Collection
@@ -185,7 +186,7 @@ class SitemapService
             ->orderBy('sort_order')
             ->orderByDesc('valid_start_date')
             ->get(['slug', 'updated_at'])
-            ->map(fn(Spa $spa) => $this->entry(route('spa.show', $spa->slug), $spa->updated_at, 'weekly', '0.7'));
+            ->map(fn (Spa $spa) => $this->entry(route('spa.show', $spa->slug), $spa->updated_at, 'weekly', '0.7'));
     }
 
     private function entry(string $loc, Carbon|string|null $lastmod, string $changefreq, string $priority): array

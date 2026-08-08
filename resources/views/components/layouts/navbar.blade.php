@@ -1,7 +1,11 @@
 @php
 $member = auth('member')->user();
 $membershipDisabled = (bool) config('features.disable_membership_feature');
+$affiliateDisabled = (bool) config('features.disable_affiliate_feature');
 $voucherDisabled = (bool) config('features.disable_voucher_feature');
+$affiliateContext = request()->routeIs('affiliate.*');
+$navigationAffiliate = $affiliateContext ? auth('affiliate')->user() : null;
+$affiliateDisplayName = trim((string) ($navigationAffiliate?->name ?: 'Affiliate'));
 $memberIsLoggedIn = $member instanceof \App\Models\Member;
 $memberName = $memberIsLoggedIn ? ($member->full_name ?: $member->name ?: 'Member') : 'Member';
 $memberFirstName = $memberIsLoggedIn ? trim((string) ($member->first_name ?: str($memberName)->before(' '))) : '';
@@ -70,7 +74,7 @@ $navbarStartsSolid = (request()->routeIs('voucher.*') && ! request()->routeIs('v
                         </a>
                     </div>
 
-                    @unless ($voucherDisabled)
+                    @unless ($voucherDisabled || $affiliateContext)
                     <a id="navGiftVoucherBtn" href="{{ $voucherUrl }}" class="hidden lg:inline-flex items-center justify-center border bg-transparent px-3 py-1.5 text-[8px] font-medium uppercase tracking-[0.08em] transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white sm:px-4 sm:py-2 sm:text-sm lg:px-5 {{ $navbarStartsSolid ? 'border-slate-950 text-slate-950' : 'border-white text-white' }}">
                         Gift Voucher
                     </a>
@@ -84,6 +88,42 @@ $navbarStartsSolid = (request()->routeIs('voucher.*') && ! request()->routeIs('v
 
                 {{-- RIGHT --}}
                 <div class="ml-auto flex items-center gap-3 sm:gap-4">
+                    @if ($affiliateContext)
+                        @if ($navigationAffiliate)
+                            <div class="relative">
+                                <button id="navProfileBtn" type="button" class="inline-flex items-center justify-center gap-2 border px-3 py-2 text-[10px] font-medium uppercase tracking-[0.08em] transition duration-300 sm:px-4 sm:text-sm {{ $navbarStartsSolid ? 'border-slate-950 text-slate-950' : 'border-white text-white' }}" aria-label="Open affiliate menu" aria-expanded="false" data-nav-affiliate-profile-trigger>
+                                    <span class="max-w-32 truncate sm:max-w-48" data-nav-profile-label>{{ $affiliateDisplayName }}</span>
+                                    <svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                                    </svg>
+                                </button>
+
+                                <div id="navProfileMenu" class="absolute right-0 top-full z-[80] mt-2 hidden w-52 border border-slate-200 bg-white shadow-xl">
+                                    <a href="{{ route('affiliate.dashboard') }}" class="block px-4 py-3 text-center text-xs font-medium uppercase tracking-[0.08em] text-slate-700 transition hover:bg-[#B8945B] hover:text-white sm:text-sm">
+                                        Dashboard
+                                    </a>
+                                    <a href="{{ route('affiliate.profile') }}" class="block border-t border-slate-100 px-4 py-3 text-center text-xs font-medium uppercase tracking-[0.08em] text-slate-700 transition hover:bg-[#B8945B] hover:text-white sm:text-sm">
+                                        Profile
+                                    </a>
+                                    <form method="POST" action="{{ route('affiliate.logout') }}" class="border-t border-slate-100">
+                                        @csrf
+                                        <button type="submit" class="block w-full px-4 py-3 text-center text-xs font-medium uppercase tracking-[0.08em] text-slate-700 transition hover:bg-[#B8945B] hover:text-white sm:text-sm">
+                                            Logout
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        @else
+                            @if (config('features.affiliate_registration_enabled'))
+                                <a id="navMemberBtn" href="{{ route('affiliate.register') }}" class="hidden items-center justify-center border bg-transparent px-3 py-2 text-[10px] font-medium uppercase tracking-[0.08em] transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white sm:inline-flex sm:px-4 sm:text-sm lg:px-5 {{ $navbarStartsSolid ? 'border-slate-950 text-slate-950' : 'border-white text-white' }}">
+                                    Join Affiliate
+                                </a>
+                            @endif
+                            <a id="navAffiliateLoginBtn" href="{{ route('affiliate.login') }}" class="inline-flex items-center justify-center border border-[#A88444] bg-[#A88444] px-3 py-2 text-[10px] font-medium uppercase tracking-[0.08em] text-white transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white sm:px-4 sm:text-sm lg:px-5">
+                                Login
+                            </a>
+                        @endif
+                    @else
                     @if (! $membershipDisabled)
                     @auth('member')
                     <div class="relative">
@@ -165,6 +205,7 @@ $navbarStartsSolid = (request()->routeIs('voucher.*') && ! request()->routeIs('v
                             </a>
                         </div>
                     </div>
+                    @endif
                     @endif
                 </div>
 
@@ -258,6 +299,10 @@ $navbarStartsSolid = (request()->routeIs('voucher.*') && ! request()->routeIs('v
 
                     <a href="{{ $mainRoute('dining.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Dining
+                    </a>
+
+                    <a href="{{ $mainRoute('events.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                        Events
                     </a>
 
                     <a href="{{ $mainRoute('spa.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
@@ -364,41 +409,23 @@ $navbarStartsSolid = (request()->routeIs('voucher.*') && ! request()->routeIs('v
                         </div>
                     </div>
 
-                    @unless ($voucherDisabled)
-                    <div class="border-t border-slate-300/70 pt-5">
-                        <a href="{{ $voucherUrl }}" class="inline-flex w-full items-center justify-center border border-slate-800 bg-transparent px-4 py-2.5 text-[12px] font-medium uppercase tracking-[0.08em] text-slate-700 transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white sm:text-[14px]">
+                    <div class="space-y-5 border-y border-slate-300/70 py-5">
+                        @unless ($voucherDisabled)
+                        <a href="{{ $voucherUrl }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium text-slate-600 transition duration-300 hover:text-[#B8945B] sm:text-[14px]">
                             Gift Voucher
                         </a>
+                        @endunless
+
+                        @unless ($affiliateDisabled)
+                        <a id="navAffiliateSidebarBtn" href="{{ route('affiliate.landing') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium text-slate-600 transition duration-300 hover:text-[#B8945B] sm:text-[14px]">
+                            Affiliate
+                        </a>
+                        @endunless
                     </div>
-                    @endunless
 
                     {{-- Inner Circle --}}
                     @if (! $membershipDisabled)
-                    <div class="pt-2">
-
-
-                        @guest('member')
-                        <div class="h-px bg-slate-300/70 mb-6"></div>
-                        <div class="grid grid-cols-1 gap-3 pt-5">
-                            <h2 class="text-lg leading-6 uppercase text-left mb-3 sm:text-xl">
-                                Be a member
-                            </h2>
-
-                            <a href="{{ $loginUrl }}" class="inline-flex w-full items-center justify-center border border-slate-800 bg-transparent px-4 py-2.5 text-[12px] font-medium uppercase text-slate-700 transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em] sm:text-[14px]">
-                                Sign In
-                            </a>
-
-                            <a href="{{ $registerUrl }}" class="inline-flex w-full items-center justify-center border border-[#A88444] bg-[#A88444] px-4 py-2.5 text-[12px] font-medium uppercase text-white transition duration-300 hover:bg-[#B8945B] hover:border-[#B8945B] tracking-[0.08em] sm:text-[14px]">
-                                Join Now
-                            </a>
-                        </div>
-                        @endguest
-
-                        <div class="my-6 pt-2">
-                            <div class="h-px bg-slate-300/70"></div>
-                        </div>
-
-
+                    <div class="pt-6">
                         <h2 class="text-lg leading-6 uppercase text-left mb-3 sm:text-xl">
                             Inner Circle
                         </h2>
@@ -413,6 +440,21 @@ $navbarStartsSolid = (request()->routeIs('voucher.*') && ! request()->routeIs('v
                             </a>
                         </div>
 
+                        @guest('member')
+                        <div class="grid grid-cols-1 gap-3 pt-8">
+                            <h2 class="text-lg leading-6 uppercase text-left mb-3 sm:text-xl">
+                                Be a member
+                            </h2>
+
+                            <a href="{{ $loginUrl }}" class="inline-flex w-full items-center justify-center border border-slate-800 bg-transparent px-4 py-2.5 text-[12px] font-medium uppercase text-slate-700 transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white tracking-[0.08em] sm:text-[14px]">
+                                Sign In
+                            </a>
+
+                            <a href="{{ $registerUrl }}" class="inline-flex w-full items-center justify-center border border-[#A88444] bg-[#A88444] px-4 py-2.5 text-[12px] font-medium uppercase text-white transition duration-300 hover:bg-[#B8945B] hover:border-[#B8945B] tracking-[0.08em] sm:text-[14px]">
+                                Join Now
+                            </a>
+                        </div>
+                        @endguest
                     </div>
                     @endif
 
@@ -460,6 +502,7 @@ $navbarStartsSolid = (request()->routeIs('voucher.*') && ! request()->routeIs('v
             const navProfileMenu = document.getElementById('navProfileMenu');
             const navProfileLabel = document.querySelector('[data-nav-profile-label]');
             const navProfileAvatar = document.querySelector('[data-nav-profile-avatar]');
+            const navAffiliateProfileTrigger = document.querySelector('[data-nav-affiliate-profile-trigger]');
 
             const btnMenu = document.getElementById('btnMenu');
             const btnCloseMenu = document.getElementById('btnCloseMenu');
@@ -468,7 +511,7 @@ $navbarStartsSolid = (request()->routeIs('voucher.*') && ! request()->routeIs('v
             const offcanvasBackdrop = document.getElementById('offcanvasBackdrop');
 
             function updateMemberButtonOnScroll() {
-                if (!navMemberBtn && !navProfileAvatar && !navGiftVoucherBtn) {
+                if (!navMemberBtn && !navProfileAvatar && !navGiftVoucherBtn && !navAffiliateProfileTrigger) {
                     return;
                 }
 
@@ -488,6 +531,13 @@ $navbarStartsSolid = (request()->routeIs('voucher.*') && ! request()->routeIs('v
                 if (navProfileLabel) {
                     navProfileLabel.classList.toggle('text-slate-950', isScrolled);
                     navProfileLabel.classList.toggle('text-white', !isScrolled);
+                }
+
+                if (navAffiliateProfileTrigger) {
+                    navAffiliateProfileTrigger.classList.toggle('border-slate-950', isScrolled);
+                    navAffiliateProfileTrigger.classList.toggle('text-slate-950', isScrolled);
+                    navAffiliateProfileTrigger.classList.toggle('border-white', !isScrolled);
+                    navAffiliateProfileTrigger.classList.toggle('text-white', !isScrolled);
                 }
 
                 if (navGiftVoucherBtn) {

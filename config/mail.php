@@ -117,6 +117,10 @@ return [
 
     'inquiry_recipient' => env('INQUIRY_RECIPIENT_EMAIL', 'reservation@nandinibali.com'),
 
+    'affiliate_registration_recipient' => env('AFFILIATE_REGISTRATION_RECIPIENT', 'reservation@nandinibali.com'),
+
+    'affiliate_registration_cc' => env('AFFILIATE_REGISTRATION_CC', 'news@nandinibali.com'),
+
     'guest_cc' => env('MAIL_GUEST_CC') ?: null,
 
     'guest_bcc' => env('MAIL_GUEST_BCC') ?: 'news@nandinibali.com',

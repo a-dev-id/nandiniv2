@@ -156,7 +156,7 @@ return [
     |
     */
 
-    'domain' => env('SESSION_DOMAIN') ?: '.' . ltrim((string) env('MAIN_DOMAIN', 'nandinibali.com'), '.'),
+    'domain' => env('SESSION_DOMAIN') ?: '.'.ltrim((string) env('MAIN_DOMAIN', 'nandinibali.test'), '.'),
 
     /*
     |--------------------------------------------------------------------------

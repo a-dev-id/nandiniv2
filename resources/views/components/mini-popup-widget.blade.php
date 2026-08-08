@@ -2,6 +2,7 @@
 use App\Models\MiniPopup;
 use App\Services\Voucher\Cart\VoucherCartService;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 
@@ -17,7 +18,7 @@ $imageUrl = null;
 if ($image !== '') {
 $imageUrl = Str::startsWith($image, ['http://', 'https://'])
 ? $image
-: asset('storage/' . ltrim($image, '/'));
+: Storage::disk('public')->url(ltrim($image, '/'));
 }
 
 return [

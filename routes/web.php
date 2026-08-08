@@ -2,17 +2,20 @@
 
 use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\AccommodationController;
+use App\Http\Controllers\AffiliateInternalExportController;
 use App\Http\Controllers\AwardController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Cron\BlogNewsPublicationController;
 use App\Http\Controllers\Cron\BookingSyncController;
+use App\Http\Controllers\Cron\EventScheduleController;
 use App\Http\Controllers\Cron\MemberCheckoutNotificationController;
 use App\Http\Controllers\Cron\MembershipLifecycleController;
 use App\Http\Controllers\Cron\OfferPublicationController;
 use App\Http\Controllers\Cron\TestWelcomeEmailController;
 use App\Http\Controllers\Cron\WebhotelierSyncController;
 use App\Http\Controllers\DiningController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GalleryController;
@@ -24,7 +27,6 @@ use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\LittleThingsController;
 use App\Http\Controllers\MailTestController;
 use App\Http\Controllers\MemberEmailPreviewController;
-use App\Http\Controllers\VoucherEmailPreviewController;
 use App\Http\Controllers\MemberRewardRedemptionController;
 use App\Http\Controllers\MembershipAuthController;
 use App\Http\Controllers\MembershipController;
@@ -34,6 +36,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SpaController;
 use App\Http\Controllers\SustainabilityController;
+use App\Http\Controllers\VoucherEmailPreviewController;
 use App\Http\Controllers\WeddingController;
 use App\Services\WebhotelierPullService;
 use Illuminate\Support\Facades\Artisan;
@@ -168,7 +171,7 @@ Route::domain(config('domains.main'))->group(function (): void {
     Route::get('/{type}/{accommodation:slug}', [AccommodationController::class, 'show'])
         ->whereIn('type', ['jungle-villas', 'the-royal-suites'])
         ->name('accommodations.show')
-        ->missing(fn() => redirect()->route(
+        ->missing(fn () => redirect()->route(
             request()->route('type') === 'the-royal-suites'
                 ? 'accommodations.suites'
                 : 'accommodations.villas',
@@ -186,7 +189,7 @@ Route::domain(config('domains.main'))->group(function (): void {
 
     Route::get('/offer/{offer:slug}', [OfferController::class, 'show'])
         ->name('offers.show')
-        ->missing(fn() => redirect()->route('offers.index', [], 301));
+        ->missing(fn () => redirect()->route('offers.index', [], 301));
 
     /*
     |--------------------------------------------------------------------------
@@ -202,7 +205,7 @@ Route::domain(config('domains.main'))->group(function (): void {
 
     Route::get('/experience/{experience:slug}', [ExperienceController::class, 'show'])
         ->name('experiences.show')
-        ->missing(fn() => redirect()->route('experiences.index', [], 301));
+        ->missing(fn () => redirect()->route('experiences.index', [], 301));
 
     /*
     |--------------------------------------------------------------------------
@@ -310,6 +313,17 @@ Route::domain(config('domains.main'))->group(function (): void {
 
     /*
     |--------------------------------------------------------------------------
+    | Events
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/events-entertainments', [EventController::class, 'index'])
+        ->name('events.index');
+
+    Route::redirect('/events-entertainment', '/events-entertainments', 301);
+    Route::redirect('/events', '/events-entertainments', 301);
+
+    /*
+    |--------------------------------------------------------------------------
     | Gallery
     |--------------------------------------------------------------------------
     */
@@ -397,7 +411,7 @@ Route::domain(config('domains.main'))->group(function (): void {
             return response()->json([
                 'success' => true,
                 'step' => '02_retrieve_booking',
-                'endpoint' => '/reservation/' . $reservationId,
+                'endpoint' => '/reservation/'.$reservationId,
                 'reservation_id' => $reservationId,
                 'response' => $service->retrieveBooking($reservationId),
             ]);
@@ -405,7 +419,7 @@ Route::domain(config('domains.main'))->group(function (): void {
             return response()->json([
                 'success' => false,
                 'step' => '02_retrieve_booking',
-                'endpoint' => '/reservation/' . $reservationId,
+                'endpoint' => '/reservation/'.$reservationId,
                 'reservation_id' => $reservationId,
                 'message' => $e->getMessage(),
             ], 500);
@@ -426,7 +440,7 @@ Route::domain(config('domains.main'))->group(function (): void {
             return response()->json([
                 'success' => true,
                 'step' => '04_mark_booking_as_synced',
-                'endpoint' => '/reservation/sync/' . $reservationId,
+                'endpoint' => '/reservation/sync/'.$reservationId,
                 'reservation_id' => $reservationId,
                 'response' => $service->markBookingAsSynced($reservationId),
             ]);
@@ -434,7 +448,7 @@ Route::domain(config('domains.main'))->group(function (): void {
             return response()->json([
                 'success' => false,
                 'step' => '04_mark_booking_as_synced',
-                'endpoint' => '/reservation/sync/' . $reservationId,
+                'endpoint' => '/reservation/sync/'.$reservationId,
                 'reservation_id' => $reservationId,
                 'message' => $e->getMessage(),
             ], 500);
@@ -450,6 +464,7 @@ Route::domain(config('domains.main'))->group(function (): void {
         ->name('cron.webhotelier.sync');
 
     Route::get('/cron/bookings/sync/{token}', BookingSyncController::class)
+        ->withoutMiddleware(\Illuminate\Session\Middleware\StartSession::class)
         ->name('cron.bookings.sync');
 
     Route::get('/cron/members/lifecycle/{token}', MembershipLifecycleController::class)
@@ -464,6 +479,9 @@ Route::domain(config('domains.main'))->group(function (): void {
     Route::get('/cron/blog-news/publication/{token}', BlogNewsPublicationController::class)
         ->name('cron.blog-news.publication');
 
+    Route::get('/cron/events/schedule/{token}', EventScheduleController::class)
+        ->name('cron.events.schedule');
+
     Route::get('/cron/members/test-welcome-email/{token}', TestWelcomeEmailController::class)
         ->name('cron.members.test-welcome-email');
 
@@ -471,3 +489,4 @@ Route::domain(config('domains.main'))->group(function (): void {
         ->where('slug', '(?!up$)[A-Za-z0-9\-]+')
         ->name('pages.show');
 });
+Route::domain(config('domains.main'))->middleware('auth:web')->get('/affiliate-operations/export/{type}', AffiliateInternalExportController::class)->name('affiliate.operations.export');

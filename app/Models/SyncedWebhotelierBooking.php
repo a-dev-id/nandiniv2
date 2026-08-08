@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class SyncedWebhotelierBooking extends Model
 {
@@ -24,6 +25,7 @@ class SyncedWebhotelierBooking extends Model
         'booking_total',
         'status',
         'source_name',
+        'affiliate_code',
         'remote_updated_at',
         'last_synced_at',
     ];
@@ -41,5 +43,10 @@ class SyncedWebhotelierBooking extends Model
     public function member(): BelongsTo
     {
         return $this->belongsTo(Member::class);
+    }
+
+    public function affiliateBooking(): HasOne
+    {
+        return $this->hasOne(AffiliateBooking::class);
     }
 }

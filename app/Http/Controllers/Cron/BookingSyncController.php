@@ -41,6 +41,8 @@ class BookingSyncController extends Controller
                 'bookings_updated' => $summary['bookings_updated'],
                 'members_created' => $summary['members_created'],
                 'members_updated' => $summary['members_updated'],
+                'affiliate_bookings' => $summary['affiliate_bookings'],
+                'affiliate_booking_warnings' => $summary['affiliate_booking_warnings'],
                 'since_used' => $summary['since_used'],
                 'membership_api_url_called' => $summary['membership_api_url_called'],
                 'membership_api_success' => $summary['membership_api_success'],

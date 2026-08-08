@@ -22,10 +22,10 @@ class MembershipBookingApiService
     {
         $this->ensureConfigured();
 
-        $url = rtrim((string) config('services.membership_api.url'), '/') . '/api/bookings/sync';
+        $url = rtrim((string) config('services.membership_api.url'), '/').'/api/bookings/sync';
         $query = array_filter(['since' => $since], fn ($value) => $value !== null && $value !== '');
 
-        $this->lastUrlCalled = $url . ($query === [] ? '' : '?' . Arr::query($query));
+        $this->lastUrlCalled = $url.($query === [] ? '' : '?'.Arr::query($query));
         $this->lastSuccess = false;
         $this->lastBookingsCount = 0;
         $this->lastMessage = null;
@@ -39,7 +39,7 @@ class MembershipBookingApiService
             $this->lastMessage = 'Unable to connect to the booking sync API.';
 
             Log::warning('Membership booking API connection failed.', [
-                'message' => $e->getMessage(),
+                'exception' => $e::class,
             ]);
 
             throw new RuntimeException('Unable to connect to the booking sync API.');
@@ -58,9 +58,7 @@ class MembershipBookingApiService
         if ($response->status() === 422) {
             $this->lastMessage = $payload['message'] ?? 'Booking sync API rejected the sync request.';
 
-            Log::warning('Membership booking API validation response.', [
-                'message' => $payload['message'] ?? null,
-            ]);
+            Log::warning('Membership booking API validation response.', ['status' => 422]);
 
             throw new RuntimeException('Booking sync API rejected the sync request.');
         }
@@ -80,7 +78,6 @@ class MembershipBookingApiService
 
             Log::warning('Membership booking API returned an unsuccessful response.', [
                 'status' => $response->status(),
-                'message' => $payload['message'] ?? null,
             ]);
 
             throw new RuntimeException('Booking sync API returned an unsuccessful response.');

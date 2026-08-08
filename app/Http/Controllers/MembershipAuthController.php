@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Accommodation;
 use App\Models\Member;
 use App\Models\Page;
-use App\Models\Accommodation;
 use App\Rules\Recaptcha;
 use App\Services\MembershipEmailRelayService;
 use Illuminate\Auth\Events\PasswordReset;
@@ -15,10 +15,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\URL;
-use Laravel\Socialite\Facades\Socialite;
-use Throwable;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Laravel\Socialite\Facades\Socialite;
+use Throwable;
 
 class MembershipAuthController extends Controller
 {
@@ -72,6 +72,7 @@ class MembershipAuthController extends Controller
             $this->markMemberLoggedIn($member);
         }
 
+        $this->endAffiliateSession($request);
         $request->session()->regenerate();
 
         if ($member instanceof Member && $member->must_change_password) {
@@ -89,7 +90,7 @@ class MembershipAuthController extends Controller
             return redirect()
                 ->route('membership.login')
                 ->withErrors([
-                    'email' => ucfirst($provider) . ' sign in is not configured yet.',
+                    'email' => ucfirst($provider).' sign in is not configured yet.',
                 ]);
         }
 
@@ -104,7 +105,7 @@ class MembershipAuthController extends Controller
             return redirect()
                 ->route('membership.login')
                 ->withErrors([
-                    'email' => ucfirst($provider) . ' sign in is not configured yet.',
+                    'email' => ucfirst($provider).' sign in is not configured yet.',
                 ]);
         }
 
@@ -114,7 +115,7 @@ class MembershipAuthController extends Controller
             return redirect()
                 ->route('membership.login')
                 ->withErrors([
-                    'email' => 'Unable to sign in with ' . ucfirst($provider) . '. Please try again.',
+                    'email' => 'Unable to sign in with '.ucfirst($provider).'. Please try again.',
                 ]);
         }
 
@@ -124,7 +125,7 @@ class MembershipAuthController extends Controller
             return redirect()
                 ->route('membership.login')
                 ->withErrors([
-                    'email' => ucfirst($provider) . ' did not share an email address. Please use email and password instead.',
+                    'email' => ucfirst($provider).' did not share an email address. Please use email and password instead.',
                 ]);
         }
 
@@ -154,6 +155,7 @@ class MembershipAuthController extends Controller
         $member->applyYearlyTierDowngrade();
         $this->markMemberLoggedIn($member);
 
+        $this->endAffiliateSession($request);
         Auth::guard('member')->login($member, true);
         $request->session()->regenerate();
 
@@ -287,7 +289,7 @@ class MembershipAuthController extends Controller
         $member = Member::create([
             'first_name' => $validated['first_name'],
             'last_name' => $validated['last_name'],
-            'name' => trim($validated['first_name'] . ' ' . $validated['last_name']),
+            'name' => trim($validated['first_name'].' '.$validated['last_name']),
             'email' => strtolower($validated['email']),
             'phone_number' => $validated['phone_number'] ?? null,
             'country' => $validated['country'],
@@ -396,7 +398,7 @@ class MembershipAuthController extends Controller
         $accommodations = Accommodation::query()
             ->published()
             ->whereIn('id', $accommodationIds)
-            ->orderByRaw('FIELD(id, ' . implode(',', $accommodationIds) . ')')
+            ->orderByRaw('FIELD(id, '.implode(',', $accommodationIds).')')
             ->get();
 
         $voucherOrders = ! config('features.disable_voucher_feature') && $member instanceof Member
@@ -427,6 +429,12 @@ class MembershipAuthController extends Controller
     {
         return $member->member_source === Member::SOURCE_MANUAL_REGISTER
             && blank($member->email_verified_at);
+    }
+
+    private function endAffiliateSession(Request $request): void
+    {
+        Auth::guard('affiliate')->logout();
+        $request->session()->forget('affiliate.pending-review-notice-shown');
     }
 
     protected function markMemberLoggedIn(Member $member): void

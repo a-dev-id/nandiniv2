@@ -42,6 +42,7 @@ return [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT_URI'),
+        'affiliate_redirect' => env('GOOGLE_AFFILIATE_REDIRECT_URI'),
     ],
 
     'recaptcha' => [
@@ -68,6 +69,7 @@ return [
         'url' => env('MEMBERSHIP_API_URL', 'https://membership.nandiniapps.cloud'),
         'token' => env('MEMBERSHIP_API_TOKEN'),
         'booking_sync_cron_token' => env('BOOKING_SYNC_CRON_TOKEN'),
+        'booking_sync_max_age_hours' => (int) env('BOOKING_SYNC_MAX_AGE_HOURS', 25),
         'timeout' => env('MEMBERSHIP_API_TIMEOUT', 20),
     ],
 
@@ -81,6 +83,10 @@ return [
 
     'blog_news' => [
         'publication_cron_token' => env('BLOG_NEWS_PUBLICATION_CRON_TOKEN'),
+    ],
+
+    'events' => [
+        'schedule_cron_token' => env('EVENT_SCHEDULE_CRON_TOKEN'),
     ],
 
     'welcome_email' => [

@@ -2,9 +2,15 @@
 
 namespace App\Services;
 
+use App\Enums\AffiliateCommissionState;
+use App\Models\AffiliateBooking;
 use App\Models\BookingSyncLog;
 use App\Models\Member;
 use App\Models\SyncedWebhotelierBooking;
+use App\Services\Affiliate\Booking\SyncAffiliateBookingService;
+use App\Services\Affiliate\Booking\SyncedWebhotelierAffiliateBookingSource;
+use App\Services\Affiliate\AffiliateNotificationService;
+use App\Services\Affiliate\Operations\AffiliateOperationalStateService;
 use App\Support\AutoJoinBookingCutoff;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +23,9 @@ class BookingSyncService
 
     public function __construct(
         private readonly MembershipBookingApiService $api,
+        private readonly SyncedWebhotelierAffiliateBookingSource $affiliateBookingSource,
+        private readonly SyncAffiliateBookingService $affiliateBookingSync,
+        private readonly AffiliateNotificationService $affiliateNotifications,
     ) {}
 
     public function sync(?string $sinceOverride = null): array
@@ -26,6 +35,8 @@ class BookingSyncService
             'status' => BookingSyncLog::STATUS_RUNNING,
             'message' => 'Booking sync started.',
         ]);
+        $state = app(AffiliateOperationalStateService::class);
+        $state->attempted('booking_sync', 'Booking synchronization started.');
 
         $summary = [
             'success' => false,
@@ -35,6 +46,8 @@ class BookingSyncService
             'bookings_updated' => 0,
             'members_created' => 0,
             'members_updated' => 0,
+            'affiliate_bookings' => [],
+            'affiliate_booking_warnings' => [],
             'since_used' => null,
             'membership_api_url_called' => null,
             'membership_api_success' => false,
@@ -48,6 +61,7 @@ class BookingSyncService
             $summary['since_used'] = $since;
 
             $bookings = $this->api->fetchBookings($since);
+            $voucherFieldDetected = collect($bookings)->contains(fn ($payload): bool => is_array($payload) && array_key_exists('voucher_code', $payload));
             $summary = array_merge($summary, $this->api->debugData());
             $summary['bookings_received'] = count($bookings);
 
@@ -59,6 +73,8 @@ class BookingSyncService
 
                     $this->syncBooking($payload, $summary);
                 }
+
+                $this->recalculatePendingAffiliateBookings($summary);
             });
 
             $summary['success'] = true;
@@ -76,6 +92,10 @@ class BookingSyncService
                     'members_updated',
                 ])),
                 'message' => $logMessage,
+            ]);
+            $state->succeeded('booking_sync', 'Booking synchronization completed; '.number_format($summary['bookings_received']).' booking(s) received.', [
+                'bookings_received' => $summary['bookings_received'],
+                'voucher_field_detected' => $voucherFieldDetected,
             ]);
 
             return $summary;
@@ -96,6 +116,7 @@ class BookingSyncService
                 'members_updated' => $summary['members_updated'],
                 'message' => $logMessage,
             ]);
+            $state->failed('booking_sync', 'Booking synchronization failed with '.$e::class.'.', ['error_class' => $e::class]);
 
             return $summary;
         }
@@ -157,6 +178,7 @@ class BookingSyncService
             'booking_total' => $this->decimal($payload['booking_total'] ?? null),
             'status' => $this->nullableString($payload['status'] ?? null),
             'source_name' => $this->nullableString($payload['source_name'] ?? null),
+            'affiliate_code' => $this->nullableString($payload['voucher_code'] ?? null),
             'remote_updated_at' => $this->dateTime($payload['remote_updated_at'] ?? null),
             'last_synced_at' => now(),
         ];
@@ -167,9 +189,53 @@ class BookingSyncService
 
         $exists ? $summary['bookings_updated']++ : $summary['bookings_created']++;
 
+        $affiliateResult = $this->affiliateBookingSync->sync(
+            $this->affiliateBookingSource->normalize($booking->fresh())
+        );
+        $summary['affiliate_bookings'][$affiliateResult->state] =
+            ($summary['affiliate_bookings'][$affiliateResult->state] ?? 0) + 1;
+
+        if ($affiliateResult->state === 'created' && $affiliateResult->booking) {
+            $this->affiliateNotifications->afterCommitNewBooking($affiliateResult->booking);
+        }
+
+        foreach ($affiliateResult->warnings as $warning) {
+            $warningKey = $this->affiliateBookingWarningKey($warning);
+            $summary['affiliate_booking_warnings'][$warningKey] =
+                ($summary['affiliate_booking_warnings'][$warningKey] ?? 0) + 1;
+        }
+
         if ($member && app(MemberStayDateBackfillService::class)->fillMissingDatesForMember($member) && ! $memberWasUpdated) {
             $summary['members_updated']++;
         }
+    }
+
+    private function recalculatePendingAffiliateBookings(array &$summary): void
+    {
+        AffiliateBooking::query()
+            ->with('syncedWebhotelierBooking')
+            ->where('commission_state', AffiliateCommissionState::CalculationUnavailable->value)
+            ->whereHas('syncedWebhotelierBooking', fn ($query) => $query->whereNotNull('booking_total'))
+            ->each(function (AffiliateBooking $affiliateBooking) use (&$summary): void {
+                $sourceBooking = $affiliateBooking->syncedWebhotelierBooking;
+
+                if (! $sourceBooking) {
+                    return;
+                }
+
+                $result = $this->affiliateBookingSync->sync(
+                    $this->affiliateBookingSource->normalize($sourceBooking)
+                );
+
+                $summary['affiliate_bookings'][$result->state] =
+                    ($summary['affiliate_bookings'][$result->state] ?? 0) + 1;
+
+                foreach ($result->warnings as $warning) {
+                    $warningKey = $this->affiliateBookingWarningKey($warning);
+                    $summary['affiliate_booking_warnings'][$warningKey] =
+                        ($summary['affiliate_booking_warnings'][$warningKey] ?? 0) + 1;
+                }
+            });
     }
 
     private function firstOrCreateMember(string $email, array $payload, bool $canCreateMember): array
@@ -286,8 +352,7 @@ class BookingSyncService
             if (! $result['success']) {
                 Log::warning('Booking sync auto-join welcome email relay failed.', [
                     'member_id' => $member->id,
-                    'email' => $member->email,
-                    'relay_response' => $result,
+                    'result' => 'delivery_failed',
                 ]);
 
                 return 'Welcome email failed.';
@@ -301,8 +366,7 @@ class BookingSyncService
         } catch (Throwable $e) {
             Log::warning('Booking sync auto-join welcome email failed.', [
                 'member_id' => $member->id,
-                'email' => $member->email,
-                'message' => $e->getMessage(),
+                'exception' => $e::class,
             ]);
 
             return 'Welcome email failed.';
@@ -318,10 +382,37 @@ class BookingSyncService
             ->all();
 
         if ($messages === []) {
-            return (string) $summary['message'];
+            return trim((string) $summary['message'].' '.$this->affiliateBookingSummary($summary));
         }
 
-        return trim((string) $summary['message'] . ' ' . implode(' ', $messages));
+        return trim((string) $summary['message'].' '.implode(' ', $messages).' '.$this->affiliateBookingSummary($summary));
+    }
+
+    private function affiliateBookingSummary(array $summary): string
+    {
+        $results = collect($summary['affiliate_bookings'] ?? [])
+            ->map(fn (int $count, string $state): string => $state.': '.$count)
+            ->implode(', ');
+
+        $warnings = collect($summary['affiliate_booking_warnings'] ?? [])
+            ->map(fn (int $count, string $warning): string => $warning.': '.$count)
+            ->implode(', ');
+
+        return trim(
+            ($results === '' ? '' : 'Affiliate booking results: '.$results.'.').' '.
+            ($warnings === '' ? '' : 'Affiliate booking warnings: '.$warnings.'.')
+        );
+    }
+
+    private function affiliateBookingWarningKey(string $warning): string
+    {
+        return match (true) {
+            str_contains($warning, 'room revenue') => 'missing_room_revenue',
+            str_contains($warning, 'Unknown source status') => 'unknown_source_status',
+            str_contains($warning, 'date') || str_contains($warning, 'nights') => 'date_or_nights_warning',
+            str_contains($warning, 'Affiliate') => 'attribution_warning',
+            default => 'validation_warning',
+        };
     }
 
     private function normalizeEmail(mixed $email): string
