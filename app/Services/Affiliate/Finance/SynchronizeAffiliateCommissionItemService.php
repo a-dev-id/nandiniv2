@@ -4,6 +4,7 @@ namespace App\Services\Affiliate\Finance;
 
 use App\Enums\AffiliateCommissionItemStatus;
 use App\Enums\AffiliateCommissionPeriodStatus;
+use App\Enums\AffiliateCommissionState;
 use App\Models\AffiliateBooking;
 use App\Models\AffiliateCommissionItem;
 use App\Models\AffiliateCommissionPeriod;
@@ -18,6 +19,8 @@ class SynchronizeAffiliateCommissionItemService
         $item = AffiliateCommissionItem::query()->with('period', 'affiliate')->where('affiliate_booking_id', $booking->id)->lockForUpdate()->first();
 
         if (! $item) {
+            $this->recordPendingPayment($booking);
+
             return;
         }
 
@@ -82,6 +85,39 @@ class SynchronizeAffiliateCommissionItemService
             'new_status' => $item->status->value,
             'currency' => $item->currency,
             'original_commission_amount' => $item->original_commission_amount,
+        ], $item);
+    }
+
+    private function recordPendingPayment(AffiliateBooking $booking): void
+    {
+        if ($booking->effectiveBookingStatus()->value !== 'completed'
+            || $booking->commission_state !== AffiliateCommissionState::PendingValidation
+            || $booking->room_revenue_amount === null
+            || $booking->estimated_commission_amount === null
+            || blank($booking->currency)) {
+            return;
+        }
+
+        $period = $this->periodFor($booking);
+        $item = AffiliateCommissionItem::query()->create([
+            'commission_period_id' => $period->id,
+            'affiliate_booking_id' => $booking->id,
+            'affiliate_id' => $booking->affiliate_id,
+            'currency' => mb_strtoupper($booking->currency),
+            'room_revenue_snapshot' => $booking->room_revenue_amount,
+            'commission_rate_snapshot' => $booking->commission_rate_snapshot,
+            'original_commission_amount' => $booking->estimated_commission_amount,
+            'approved_commission_amount' => $booking->estimated_commission_amount,
+            'status' => AffiliateCommissionItemStatus::Approved,
+            'reviewed_at' => now(),
+            'approved_at' => now(),
+        ]);
+        $this->audit->record($booking->affiliate, 'affiliate_commission.recorded_for_payment', null, [
+            'commission_period_id' => $period->id,
+            'commission_item_id' => $item->id,
+            'affiliate_booking_id' => $booking->id,
+            'currency' => $item->currency,
+            'commission_amount' => $item->approved_commission_amount,
         ], $item);
     }
 

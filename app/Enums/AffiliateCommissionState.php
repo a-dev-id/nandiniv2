@@ -18,4 +18,14 @@ enum AffiliateCommissionState: string
             self::CalculationUnavailable => 'Pending calculation',
         };
     }
+
+    public function badgeColor(): string
+    {
+        return match ($this) {
+            self::Estimated => 'info',
+            self::PendingValidation => 'warning',
+            self::Ineligible => 'danger',
+            self::CalculationUnavailable => 'gray',
+        };
+    }
 }

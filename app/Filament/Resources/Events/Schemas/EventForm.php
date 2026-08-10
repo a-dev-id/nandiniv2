@@ -89,7 +89,7 @@ class EventForm
                                     ->helperText('Optional custom schedule shown on the event card. Times entered in 24-hour format are displayed with AM/PM.'),
 
                                 Toggle::make('status')
-                                    ->label('Published')
+                                    ->label('Active')
                                     ->default(false)
                                     ->inline(false)
                                     ->formatStateUsing(fn (EventStatus|string|null $state): bool => match (true) {
@@ -99,6 +99,7 @@ class EventForm
                                     ->dehydrateStateUsing(fn (bool $state): string => $state
                                         ? EventStatus::Published->value
                                         : EventStatus::Draft->value)
+                                    ->onColor('warning')
                                     ->helperText('Turn on to display this event on the public Events page.'),
                             ]),
                     ]),

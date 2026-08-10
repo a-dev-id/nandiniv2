@@ -24,7 +24,7 @@ use UnitEnum;
 
 class AffiliatePayoutResource extends Resource
 {
-    protected static bool $shouldRegisterNavigation = true;
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $model = AffiliatePayout::class;
 
@@ -72,6 +72,9 @@ class AffiliatePayoutResource extends Resource
                 TextEntry::make('payment_details_masked_snapshot')->label('Masked Payment Details'),
                 TextEntry::make('status')->badge()->formatStateUsing(fn (AffiliatePayoutStatus $state): string => $state->label()),
                 TextEntry::make('due_at')->dateTime('d M Y'), TextEntry::make('processing_at')->dateTime('d M Y H:i')->placeholder('—'), TextEntry::make('paid_at')->dateTime('d M Y H:i')->placeholder('—'),
+                TextEntry::make('source_currency')->label('Original Currency')->placeholder('—'),
+                TextEntry::make('source_amount')->label('Original Commission')->placeholder('—'),
+                TextEntry::make('exchange_rate_snapshot')->label('Exchange Rate Used')->placeholder('—'),
                 TextEntry::make('payment_reference')->placeholder('—'), TextEntry::make('failure_reason')->placeholder('—')->columnSpanFull(), TextEntry::make('cancellation_reason')->placeholder('—')->columnSpanFull(),
             ])->columns(2),
         ]);

@@ -41,10 +41,10 @@ class BookingsRelationManager extends RelationManager
                 TextColumn::make('check_in_date')->label('Check-in')->date('d M Y'),
                 TextColumn::make('check_out_date')->label('Check-out')->date('d M Y'),
                 TextColumn::make('stay_nights')->label('Nights')->numeric(),
-                TextColumn::make('booking_status')->label('Status')->badge()->formatStateUsing(fn (AffiliateBookingStatus $state): string => $state->label()),
+                TextColumn::make('booking_status')->label('Status')->badge()->formatStateUsing(fn (AffiliateBookingStatus $state): string => $state->label())->color(fn (AffiliateBookingStatus $state): string => $state->badgeColor()),
                 TextColumn::make('room_revenue_amount')->label('Room Revenue')->state(fn (AffiliateBooking $record): string => $record->room_revenue_amount === null ? 'Unavailable' : app(AffiliateMoneyFormatter::class)->format($record->room_revenue_amount, $record->currency)),
                 TextColumn::make('estimated_commission_amount')->label('Estimated Commission')->state(fn (AffiliateBooking $record): string => $record->estimated_commission_amount === null ? 'Pending calculation' : app(AffiliateMoneyFormatter::class)->format($record->estimated_commission_amount, $record->currency)),
-                TextColumn::make('commission_state')->label('Commission State')->badge()->formatStateUsing(fn (AffiliateCommissionState $state): string => $state->label()),
+                TextColumn::make('commission_state')->label('Commission State')->badge()->formatStateUsing(fn (AffiliateCommissionState $state): string => $state->label())->color(fn (AffiliateCommissionState $state): string => $state->badgeColor()),
                 TextColumn::make('last_synced_at')->label('Last Synchronized')->dateTime('d M Y H:i'),
             ])
             ->recordActions([ViewAction::make()->url(fn (AffiliateBooking $record): string => AffiliateBookingResource::getUrl('view', ['record' => $record]))]);

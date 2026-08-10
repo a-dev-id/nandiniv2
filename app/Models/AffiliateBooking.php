@@ -100,7 +100,10 @@ class AffiliateBooking extends Model
     {
         if ($this->commission_state === AffiliateCommissionState::Ineligible) {
             return $this->effectiveBookingStatus()->isIneligible()
-                ? $this->effectiveBookingStatus()->label()
+                ? match ($this->effectiveBookingStatus()) {
+                    AffiliateBookingStatus::Cancelled => 'Cancelled stay',
+                    default => $this->effectiveBookingStatus()->label(),
+                }
                 : AffiliateCommissionState::Ineligible->label();
         }
 

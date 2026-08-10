@@ -31,8 +31,8 @@
                 @endforeach
             </div>
 
-            <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                @foreach (['estimated' => 'Estimated Commission', 'pending_validation' => 'Pending Validation', 'approved_unpaid' => 'Approved Unpaid', 'paid' => 'Paid Commission'] as $key => $label)
+            <div class="mt-4 grid gap-4 sm:grid-cols-3">
+                @foreach (['estimated' => 'Estimated', 'pending' => 'Pending', 'paid' => 'Paid'] as $key => $label)
                     <div class="border border-slate-200 bg-white px-5 py-5"><p class="text-xs font-medium uppercase tracking-[0.08em] text-slate-500">{{ $label }}</p>@forelse ($summary[$key] as $total)<p class="mt-3 text-lg font-medium text-slate-950">{{ $money->format($total['amount'], $total['currency']) }}</p>@empty<p class="mt-3 text-sm text-slate-500">No balance</p>@endforelse</div>
                 @endforeach
             </div>

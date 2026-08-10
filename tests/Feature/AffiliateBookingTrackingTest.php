@@ -200,6 +200,7 @@ class AffiliateBookingTrackingTest extends TestCase
         AffiliateProgramSetting::current()->update(['affiliate_commission_percentage' => '15.00']);
         $this->sync($this->data($affiliate, ['externalBookingId' => 'usd', 'roomRevenueAmount' => '1000.00', 'currency' => 'USD']));
         $this->sync($this->data($affiliate, ['externalBookingId' => 'idr', 'roomRevenueAmount' => '2000.00', 'currency' => 'IDR', 'sourceUpdatedAt' => CarbonImmutable::now()->addMinute()]));
+        $this->sync($this->data($affiliate, ['externalBookingId' => 'completed-idr', 'bookingStatus' => 'checked_out', 'roomRevenueAmount' => '5000.00', 'currency' => 'IDR']));
 
         $idr = AffiliateBooking::where('external_booking_id', 'idr')->sole();
         $this->assertSame('10.00', $idr->commission_rate_snapshot);
@@ -384,14 +385,14 @@ class AffiliateBookingTrackingTest extends TestCase
         $this->assertFalse(AffiliateBookingResource::canDelete($booking));
     }
 
-    public function test_existing_membership_api_sync_uses_booking_total_for_estimated_commission(): void
+    public function test_existing_membership_api_sync_uses_room_subtotal_for_estimated_commission(): void
     {
         [, $affiliate] = $this->affiliate(AffiliateStatus::Approved, 'api4826');
         Member::query()->create(['name' => 'Existing Member', 'email' => 'existing@example.com']);
         $this->mock(AffiliateNotificationService::class, function ($mock) use ($affiliate): void {
             $mock->shouldReceive('afterCommitNewBooking')->once()->withArgs(
                 fn (AffiliateBooking $booking): bool => $booking->affiliate_id === $affiliate->id
-                    && $booking->estimated_commission_amount === '999999.90'
+                    && $booking->estimated_commission_amount === '750000.00'
             );
         });
         $api = $this->mock(MembershipBookingApiService::class, function ($mock) use ($affiliate): void {
@@ -403,6 +404,7 @@ class AffiliateBookingTrackingTest extends TestCase
                 'check_out' => '2026-09-13',
                 'room_name' => 'Jungle View Villa',
                 'currency' => 'IDR',
+                'room_subtotal' => '7500000.00',
                 'booking_total' => '9999999.00',
                 'status' => 'confirmed',
                 'voucher_code' => $affiliate->affiliate_code,
@@ -418,10 +420,12 @@ class AffiliateBookingTrackingTest extends TestCase
         $this->assertArrayNotHasKey('missing_room_revenue', $summary['affiliate_booking_warnings']);
         $booking = AffiliateBooking::query()->sole();
         $this->assertNotNull($booking->synced_webhotelier_booking_id);
-        $this->assertSame('9999999.00', $booking->room_revenue_amount);
-        $this->assertSame('999999.90', $booking->estimated_commission_amount);
+        $this->assertSame('7500000.00', $booking->room_revenue_amount);
+        $this->assertSame('750000.00', $booking->estimated_commission_amount);
         $this->assertSame(AffiliateCommissionState::Estimated, $booking->commission_state);
-        $this->assertSame('9999999.00', SyncedWebhotelierBooking::query()->sole()->booking_total);
+        $sourceBooking = SyncedWebhotelierBooking::query()->sole();
+        $this->assertSame('7500000.00', $sourceBooking->room_subtotal);
+        $this->assertSame('9999999.00', $sourceBooking->booking_total);
     }
 
     public function test_normal_booking_sync_repairs_an_existing_pending_affiliate_commission(): void
@@ -445,7 +449,7 @@ class AffiliateBookingTrackingTest extends TestCase
         );
         $this->assertSame(AffiliateCommissionState::CalculationUnavailable, AffiliateBooking::query()->sole()->commission_state);
 
-        $sourceBooking->forceFill(['booking_total' => '2000000.00'])->save();
+        $sourceBooking->forceFill(['room_subtotal' => '2000000.00'])->save();
         $api = $this->mock(MembershipBookingApiService::class, function ($mock): void {
             $mock->shouldReceive('fetchBookings')->once()->andReturn([]);
             $mock->shouldReceive('debugData')->andReturn([]);

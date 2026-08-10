@@ -44,7 +44,7 @@ class EventsTable
                     }),
 
                 ToggleColumn::make('status')
-                    ->label('Published')
+                    ->label('Active')
                     ->getStateUsing(fn (Event $record): bool => $record->status === EventStatus::Published)
                     ->updateStateUsing(function (Event $record, bool $state): bool {
                         $record->update([
@@ -55,7 +55,7 @@ class EventsTable
 
                         return $state;
                     })
-                    ->onColor('success')
+                    ->onColor('warning')
                     ->offColor('gray'),
 
                 TextColumn::make('schedule_text')

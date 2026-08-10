@@ -14,15 +14,15 @@ use UnitEnum;
 
 class AffiliateClickAnalytics extends Page
 {
-    protected static bool $shouldRegisterNavigation = true;
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBarSquare;
 
     protected static ?string $navigationLabel = 'Click Analytics';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Affiliate Management';
+    protected static string|UnitEnum|null $navigationGroup = 'Affiliate';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 30;
 
     protected static ?string $title = 'Affiliate Click Analytics';
 

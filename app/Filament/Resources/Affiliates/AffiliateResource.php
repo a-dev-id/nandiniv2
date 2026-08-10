@@ -44,7 +44,7 @@ class AffiliateResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Affiliate Members';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Affiliate Management';
+    protected static string|UnitEnum|null $navigationGroup = 'Affiliate';
 
     protected static ?int $navigationSort = 10;
 

@@ -24,4 +24,15 @@ enum AffiliateBookingStatus: string
     {
         return in_array($this, [self::Cancelled, self::NoShow, self::Refunded], true);
     }
+
+    public function badgeColor(): string
+    {
+        return match ($this) {
+            self::Confirmed => 'info',
+            self::InHouse => 'primary',
+            self::Completed => 'success',
+            self::Cancelled, self::NoShow => 'danger',
+            self::Refunded, self::Unknown => 'gray',
+        };
+    }
 }

@@ -22,15 +22,15 @@ use UnitEnum;
 
 class AffiliateOperationalReports extends Page
 {
-    protected static bool $shouldRegisterNavigation = true;
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentChartBar;
 
     protected static ?string $navigationLabel = 'Reports';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Affiliate Management';
+    protected static string|UnitEnum|null $navigationGroup = 'Affiliate';
 
-    protected static ?int $navigationSort = 19;
+    protected static ?int $navigationSort = 70;
 
     protected static ?string $title = 'Affiliate Operational Reports';
 

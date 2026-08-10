@@ -14,6 +14,7 @@ $reviewTimeMessage = preg_replace('/^Thank you for registering\.\s*/i', '', (str
         approvedWelcomeOpen: @js($showApprovedWelcomeModal),
         doNotShowApprovedWelcomeAgain: false,
         copied: null,
+        historyLoading: null,
         closeApprovedWelcome() {
             if (this.doNotShowApprovedWelcomeAgain) {
                 this.$refs.approvedWelcomeDismissForm.submit();
@@ -26,6 +27,39 @@ $reviewTimeMessage = preg_replace('/^Thank you for registering\.\s*/i', '', (str
             await navigator.clipboard.writeText(value);
             this.copied = key;
             window.setTimeout(() => { if (this.copied === key) this.copied = null }, 2000);
+        },
+        async loadHistoryPage(event, historyType) {
+            const link = event.target.closest('a');
+
+            if (! link || ! link.href || this.historyLoading) return;
+
+            event.preventDefault();
+            this.historyLoading = historyType;
+            const currentScrollPosition = window.scrollY;
+
+            try {
+                const response = await fetch(link.href, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                });
+
+                if (! response.ok) throw new Error('Unable to load history.');
+
+                const documentFragment = new DOMParser().parseFromString(await response.text(), 'text/html');
+                const selector = `[data-history=${historyType}]`;
+                const replacement = documentFragment.querySelector(selector);
+                const current = document.querySelector(selector);
+
+                if (! replacement || ! current) throw new Error('History section was not found.');
+
+                current.innerHTML = replacement.innerHTML;
+                window.requestAnimationFrame(() => window.scrollTo({
+                    top: currentScrollPosition,
+                    left: 0,
+                    behavior: 'auto',
+                }));
+            } finally {
+                this.historyLoading = null;
+            }
         }
     }">
         <section class="min-h-[70vh] px-5 py-12 sm:px-8 sm:py-16 lg:px-10">
@@ -274,7 +308,7 @@ $reviewTimeMessage = preg_replace('/^Thank you for registering\.\s*/i', '', (str
 
                     @if ($bookingAnalytics['bookings']->isEmpty())
                     <div class="mt-6 border-l-4 border-[#A88444] bg-white px-5 py-6 sm:px-7">
-                        <h3 class="text-lg font-medium uppercase leading-snug text-slate-700 sm:text-xl">No bookings in this view.</h3>
+                        <h3 class="text-lg font-medium uppercase leading-snug text-slate-700 sm:text-xl">No bookings yet</h3>
                         <p class="mt-3 max-w-2xl text-xs leading-relaxed text-gray-600 sm:text-sm">Attributed stays will appear here after they are received from the booking system.</p>
                     </div>
                     @else
@@ -305,8 +339,14 @@ $reviewTimeMessage = preg_replace('/^Thank you for registering\.\s*/i', '', (str
                                     @elseif ($booking->commission_state === \App\Enums\AffiliateCommissionState::CalculationUnavailable)
                                     <p class="mt-2 text-sm font-medium text-slate-700">Pending calculation</p>
                                     @else
-                                    <p class="mt-2 text-sm font-medium text-slate-950">{{ $money->format($booking->estimated_commission_amount, $booking->currency) }}</p>
+                                    @php
+                                    $preferredCurrency = $affiliate->paymentProfile?->preferred_currency?->value ?? $booking->currency;
+                                    $bookingConversion = $currencyConverter->convert((string) $booking->estimated_commission_amount, $booking->currency, $preferredCurrency, false);
+                                    @endphp
+                                    <p class="mt-2 text-sm font-medium text-slate-950">{{ $bookingConversion ? $money->format($bookingConversion['amount'], $preferredCurrency) : $money->format($booking->estimated_commission_amount, $booking->currency) }}</p>
+                                    @if ($booking->commission_state !== \App\Enums\AffiliateCommissionState::PendingValidation)
                                     <p class="mt-1 text-xs leading-5 text-slate-600">{{ $booking->commission_state->label() }}</p>
+                                    @endif
                                     @endif
                                 </div>
                             </div>
@@ -340,17 +380,18 @@ $reviewTimeMessage = preg_replace('/^Thank you for registering\.\s*/i', '', (str
                     </div>
                     @endforeach
 
-                    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <div class="mt-6 grid gap-4 sm:grid-cols-3">
                         @foreach ([
-                        'estimated' => 'Estimated Commission',
-                        'pending_validation' => 'Pending Validation',
-                        'approved_unpaid' => 'Approved Unpaid',
-                        'paid' => 'Paid Commission',
+                        'estimated' => 'Estimated',
+                        'pending' => 'Pending',
+                        'paid' => 'Paid',
                         ] as $key => $label)
                         <div class="border border-slate-200 bg-white px-5 py-5">
                             <p class="text-xs font-medium uppercase tracking-[0.08em] text-slate-500">{{ $label }}</p>
                             @forelse ($finance['summary'][$key] as $total)
                             <p class="mt-3 text-lg font-medium text-slate-950">{{ $money->format($total['amount'], $total['currency']) }}</p>
+                            @if ($total['estimated_conversion'] ?? false)<p class="mt-1 text-xs text-slate-500">Estimated using Nandini's current exchange rate</p>@endif
+                            @if ($total['conversion_unavailable'] ?? false)<p class="mt-1 text-xs text-amber-700">Preferred-currency exchange rate is not configured</p>@endif
                             @empty
                             <p class="mt-3 text-base font-medium text-slate-500">No balance</p>
                             @endforelse
@@ -362,6 +403,7 @@ $reviewTimeMessage = preg_replace('/^Thank you for registering\.\s*/i', '', (str
                         <h3 class="text-lg font-medium uppercase leading-snug text-slate-700 sm:text-xl">Commission history</h3>
                         <a href="{{ route('affiliate.payment-details.edit') }}" class="text-sm font-medium text-[#8B6B35] underline-offset-4 hover:underline">Payment details</a>
                     </div>
+                    <div data-history="commission" @click.prevent="loadHistoryPage($event, 'commission')" :class="historyLoading === 'commission' ? 'opacity-50 pointer-events-none' : ''" class="transition-opacity">
                     <div class="overflow-x-auto">
                         <table class="w-full min-w-[52rem] text-left text-sm">
                             <thead class="border-b border-slate-200 text-xs uppercase tracking-[0.08em] text-slate-500">
@@ -381,12 +423,21 @@ $reviewTimeMessage = preg_replace('/^Thank you for registering\.\s*/i', '', (str
                                 $status = $booking->commission_state === \App\Enums\AffiliateCommissionState::Ineligible
                                 ? $booking->commissionStatusLabel()
                                 : ($item?->status?->label() ?? $booking->commission_state->label());
+                                $preferredCurrency = $affiliate->paymentProfile?->preferred_currency?->value ?? $booking->currency;
+                                $paidPayout = $item?->payoutItem?->payout;
+                                $historyConversion = $commissionAmount === null ? null : ($paidPayout && $paidPayout->exchange_rate_snapshot
+                                    ? ['amount' => number_format(round((float) $commissionAmount / (float) $paidPayout->exchange_rate_snapshot, 2), 2, '.', ''), 'currency' => $paidPayout->currency, 'estimated' => false]
+                                    : (($currentConversion = $currencyConverter->convert((string) $commissionAmount, $booking->currency, $preferredCurrency, false))
+                                        ? ['amount' => $currentConversion['amount'], 'currency' => $preferredCurrency, 'estimated' => $preferredCurrency !== $booking->currency]
+                                        : null));
                                 @endphp
                                 <tr>
                                     <td class="py-4 pr-4">{{ $booking->external_booking_reference ?: $booking->external_booking_id }}</td>
                                     <td class="py-4 pr-4">{{ $booking->check_in_date->format('d M Y') }} – {{ $booking->check_out_date->format('d M Y') }}</td>
                                     <td class="py-4 pr-4">{{ $booking->roomTypesLabel() }}</td>
-                                    <td class="py-4 pr-4">{{ $commissionAmount !== null ? $money->format($commissionAmount, $booking->currency) : 'Pending calculation' }}</td>
+                                    <td class="py-4 pr-4">
+                                        {{ $commissionAmount !== null ? $money->format($historyConversion['amount'] ?? $commissionAmount, $historyConversion['currency'] ?? $booking->currency) : 'Pending calculation' }}
+                                    </td>
                                     <td class="py-4">{{ $status }}</td>
                                 </tr>
                                 @empty
@@ -397,11 +448,13 @@ $reviewTimeMessage = preg_replace('/^Thank you for registering\.\s*/i', '', (str
                             </tbody>
                         </table>
                     </div>
-                    @if ($finance['commissionHistory']->hasPages()) <div class="mt-5">{{ $finance['commissionHistory']->links() }}</div> @endif
+                    @if ($finance['commissionHistory']->hasPages()) <div class="mt-5">{{ $finance['commissionHistory']->links('vendor.pagination.affiliate') }}</div> @endif
+                    </div>
 
                     <h3 class="mt-10 border-b border-slate-200 pb-4 text-lg font-medium uppercase leading-snug text-slate-700 sm:text-xl">Payout history</h3>
+                    <div data-history="payout" @click.prevent="loadHistoryPage($event, 'payout')" :class="historyLoading === 'payout' ? 'opacity-50 pointer-events-none' : ''" class="transition-opacity">
                     <div class="overflow-x-auto">
-                        <table class="w-full min-w-[44rem] text-left text-sm">
+                        <table class="w-full min-w-[54rem] text-left text-sm">
                             <thead class="border-b border-slate-200 text-xs uppercase tracking-[0.08em] text-slate-500">
                                 <tr>
                                     <th class="py-3 pr-4 font-medium">Payout Number</th>
@@ -409,7 +462,8 @@ $reviewTimeMessage = preg_replace('/^Thank you for registering\.\s*/i', '', (str
                                     <th class="py-3 pr-4 font-medium">Currency</th>
                                     <th class="py-3 pr-4 font-medium">Payment Method</th>
                                     <th class="py-3 pr-4 font-medium">Status</th>
-                                    <th class="py-3 font-medium">Payment Date</th>
+                                    <th class="py-3 pr-4 font-medium">Payment Date</th>
+                                    <th class="py-3 font-medium">Payment Reference</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 text-slate-700">
@@ -420,17 +474,19 @@ $reviewTimeMessage = preg_replace('/^Thank you for registering\.\s*/i', '', (str
                                     <td class="py-4 pr-4">{{ $payout->currency }}</td>
                                     <td class="py-4 pr-4">{{ $payout->payment_details_masked_snapshot }}</td>
                                     <td class="py-4 pr-4">{{ $payout->status->label() }}</td>
-                                    <td class="py-4">{{ $payout->paid_at?->format('d M Y') ?? '—' }}</td>
+                                    <td class="py-4 pr-4">{{ $payout->paid_at?->format('d M Y') ?? '—' }}</td>
+                                    <td class="py-4">{{ $payout->paid_at ? ($payout->payment_reference ?: '—') : '—' }}</td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="6" class="py-5 text-slate-500">No payout history yet.</td>
+                                    <td colspan="7" class="py-5 text-slate-500">No payout history yet.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
-                    @if ($finance['payoutHistory']->hasPages()) <div class="mt-5">{{ $finance['payoutHistory']->links() }}</div> @endif
+                    @if ($finance['payoutHistory']->hasPages()) <div class="mt-5">{{ $finance['payoutHistory']->links('vendor.pagination.affiliate') }}</div> @endif
+                    </div>
                 </section>
                 @elseif ($affiliate->isRejected())
                 <div class="mt-8 max-w-3xl border-l-4 border-slate-400 bg-white px-5 py-5 sm:px-6" data-affiliate-status="rejected">

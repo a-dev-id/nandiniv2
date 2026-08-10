@@ -25,7 +25,7 @@ use UnitEnum;
 
 class AffiliateProgramSettingResource extends Resource
 {
-    protected static bool $shouldRegisterNavigation = true;
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $model = AffiliateProgramSetting::class;
 

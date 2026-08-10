@@ -37,7 +37,8 @@ class FeaturesRelationManager extends RelationManager
                     ->label('Icon')
                     ->disk('public')
                     ->square()
-                    ->size(42),
+                    ->size(42)
+                    ->extraImgAttributes(['class' => 'brightness-0 dark:invert']),
 
                 TextColumn::make('label')
                     ->label('Feature')
@@ -47,6 +48,8 @@ class FeaturesRelationManager extends RelationManager
 
                 ToggleColumn::make('is_active')
                     ->label('Active')
+                    ->onColor('warning')
+                    ->offColor('gray')
                     ->sortable(),
 
                 TextColumn::make('sort_order')

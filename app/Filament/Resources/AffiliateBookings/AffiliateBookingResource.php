@@ -28,9 +28,9 @@ class AffiliateBookingResource extends Resource
 
     protected static ?string $modelLabel = 'Affiliate Booking';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Affiliate Management';
+    protected static string|UnitEnum|null $navigationGroup = 'Affiliate';
 
-    protected static ?int $navigationSort = 15;
+    protected static ?int $navigationSort = 40;
 
     public static function table(Table $table): Table
     {
@@ -52,8 +52,8 @@ class AffiliateBookingResource extends Resource
                 TextEntry::make('stay_nights')->label('Nights')->numeric(),
                 TextEntry::make('check_in_date')->label('Check-in')->date('d M Y'),
                 TextEntry::make('check_out_date')->label('Check-out')->date('d M Y'),
-                TextEntry::make('booking_status')->label('Booking Status')->badge()->formatStateUsing(fn (AffiliateBookingStatus $state): string => $state->label()),
-                TextEntry::make('manual_booking_status')->label('Manual Outcome')->badge()->placeholder('Uses synced status')->formatStateUsing(fn (AffiliateBookingStatus $state): string => $state->label()),
+                TextEntry::make('booking_status')->label('Booking Status')->badge()->formatStateUsing(fn (AffiliateBookingStatus $state): string => $state->label())->color(fn (AffiliateBookingStatus $state): string => $state->badgeColor()),
+                TextEntry::make('manual_booking_status')->label('Manual Outcome')->badge()->placeholder('Uses synced status')->formatStateUsing(fn (AffiliateBookingStatus $state): string => $state->label())->color(fn (AffiliateBookingStatus $state): string => $state->badgeColor()),
                 TextEntry::make('manual_status_reason')->label('Internal Manual Reason')->placeholder('None')->columnSpanFull(),
                 TextEntry::make('manualStatusSetter.name')->label('Set By')->placeholder('None'),
                 TextEntry::make('manual_status_set_at')->label('Set At')->dateTime('d M Y H:i:s')->placeholder('None'),
@@ -63,7 +63,7 @@ class AffiliateBookingResource extends Resource
                 TextEntry::make('currency')->placeholder('Unavailable'),
                 TextEntry::make('commission_rate_snapshot')->label('Commission Rate')->suffix('%'),
                 TextEntry::make('estimated_commission_amount')->label('Estimated Commission')->state(fn (AffiliateBooking $record): string => $record->estimated_commission_amount === null ? 'Pending calculation' : app(AffiliateMoneyFormatter::class)->format($record->estimated_commission_amount, $record->currency)),
-                TextEntry::make('commission_state')->label('Commission State')->badge()->formatStateUsing(fn (AffiliateCommissionState $state, AffiliateBooking $record): string => $record->commissionStatusLabel()),
+                TextEntry::make('commission_state')->label('Commission State')->badge()->formatStateUsing(fn (AffiliateCommissionState $state, AffiliateBooking $record): string => $record->commissionStatusLabel())->color(fn (AffiliateCommissionState $state): string => $state->badgeColor()),
                 TextEntry::make('calculation_unavailable_reason')->label('Calculation Note')->placeholder('None')->columnSpanFull(),
             ])->columns(2),
             Section::make('Synchronization')->schema([

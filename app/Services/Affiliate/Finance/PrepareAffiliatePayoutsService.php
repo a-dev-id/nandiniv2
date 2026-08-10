@@ -21,6 +21,7 @@ class PrepareAffiliatePayoutsService
         private readonly DecimalMoney $money,
         private readonly AffiliatePayoutNumberGenerator $numbers,
         private readonly AffiliateAuditService $audit,
+        private readonly AffiliateCurrencyConverter $currencies,
     ) {}
 
     /** @return array{created: int, carried: int, missing_profile: int, missing_threshold: int, account_review: int} */
@@ -93,13 +94,19 @@ class PrepareAffiliatePayoutsService
                 return;
             }
 
+            $payoutCurrency = $profile->preferred_currency->value;
+            $conversion = $this->currencies->convert($total, $first->currency, $payoutCurrency);
+
             $payout = AffiliatePayout::query()->create([
                 'payout_number' => $this->numbers->next(),
                 'affiliate_id' => $affiliate->id,
-                'currency' => $first->currency,
-                'gross_commission_amount' => $total,
+                'currency' => $payoutCurrency,
+                'source_currency' => $first->currency,
+                'source_amount' => $total,
+                'exchange_rate_snapshot' => $conversion['rate'],
+                'gross_commission_amount' => $conversion['amount'],
                 'adjustment_amount' => '0.00',
-                'net_payout_amount' => $total,
+                'net_payout_amount' => $conversion['amount'],
                 'payment_method_snapshot' => $profile->payment_method->value,
                 'payment_details_masked_snapshot' => $profile->maskedDetails(),
                 'status' => AffiliatePayoutStatus::Draft,

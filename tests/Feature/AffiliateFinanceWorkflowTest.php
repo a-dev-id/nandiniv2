@@ -11,6 +11,7 @@ use App\Enums\AffiliatePayoutStatus;
 use App\Enums\AffiliateRegistrationSource;
 use App\Enums\AffiliateStatus;
 use App\Models\Affiliate;
+use App\Models\AffiliateExchangeRate;
 use App\Models\AffiliateAuditEvent;
 use App\Models\AffiliateBooking;
 use App\Models\AffiliateCommissionItem;
@@ -23,6 +24,7 @@ use App\Services\MembershipEmailRelayService;
 use App\Services\Affiliate\Finance\AffiliateCommissionReviewService;
 use App\Services\Affiliate\Finance\AffiliatePaymentProfileService;
 use App\Services\Affiliate\Finance\AffiliatePayoutWorkflowService;
+use App\Services\Affiliate\Finance\PayAffiliateCommissionService;
 use App\Services\Affiliate\Finance\PrepareAffiliateCommissionPeriodService;
 use App\Services\Affiliate\Finance\PrepareAffiliatePayoutsService;
 use App\Services\Affiliate\Finance\SynchronizeAffiliateCommissionItemService;
@@ -362,7 +364,7 @@ class AffiliateFinanceWorkflowTest extends TestCase
         $this->actingAs($user, 'affiliate')->get('http://affiliate.nandinibali.test/dashboard')
             ->assertOk()
             ->assertSee('Commission summary')
-            ->assertSee('Approved Unpaid')
+            ->assertSee('Pending')
             ->assertSee('IDR')
             ->assertDontSee('999999.00')
             ->assertDontSee('PRIVATE INTERNAL REASON')
@@ -389,6 +391,80 @@ class AffiliateFinanceWorkflowTest extends TestCase
         $this->actingAs($finance, 'web')->get(route('filament.admin.resources.affiliate-commission-periods.index'))->assertOk();
         $this->actingAs($finance, 'web')->get(route('filament.admin.resources.affiliate-payouts.index'))->assertOk();
         $this->actingAs($sales, 'web')->get(route('filament.admin.resources.affiliate-payouts.index'))->assertForbidden();
+    }
+
+    public function test_pending_commission_can_be_marked_paid_in_one_step(): void
+    {
+        [$affiliateUser, $affiliate] = $this->affiliate();
+        $this->wiseProfile($affiliate);
+        $item = $this->approvedFinalizedItem($affiliate, '347687.80');
+        $finance = $this->staff(Role::FINANCE);
+
+        $payout = app(PayAffiliateCommissionService::class)->pay(
+            $item,
+            $finance,
+            '2026-08-10',
+            'TEST-PAYMENT-001',
+            'Simplified payment workflow test.',
+        );
+
+        $this->assertSame(AffiliatePayoutStatus::Paid, $payout->status);
+        $this->assertSame('347687.80', $payout->net_payout_amount);
+        $this->assertSame('TEST-PAYMENT-001', $payout->payment_reference);
+        $this->assertSame(AffiliateCommissionItemStatus::Paid, $item->fresh()->status);
+        $this->assertDatabaseHas('affiliate_payout_items', [
+            'affiliate_payout_id' => $payout->id,
+            'affiliate_commission_item_id' => $item->id,
+            'amount' => '347687.80',
+        ]);
+        $this->assertDatabaseHas('affiliate_audit_events', ['event' => 'affiliate_commission.paid_directly']);
+        $this->actingAs($affiliateUser, 'affiliate')
+            ->get('http://affiliate.nandinibali.test/dashboard')
+            ->assertOk()
+            ->assertSee('Payment Reference')
+            ->assertSee('TEST-PAYMENT-001');
+
+        $this->expectException(DomainException::class);
+        app(PayAffiliateCommissionService::class)->pay($item->fresh(), $finance, '2026-08-10', 'DUPLICATE');
+    }
+
+    public function test_manual_exchange_rate_converts_and_locks_usd_payout(): void
+    {
+        [$affiliateUser, $affiliate] = $this->affiliate('usd-affiliate@example.com', 'usdfinance4826');
+        $this->wiseProfile($affiliate)->update(['preferred_currency' => 'USD']);
+        AffiliateExchangeRate::query()->create([
+            'base_currency' => 'IDR',
+            'quote_currency' => 'USD',
+            'base_units_per_quote' => '16478.100000',
+            'is_active' => true,
+            'effective_at' => now(),
+        ]);
+        $item = $this->approvedFinalizedItem($affiliate, '347687.80', 'IDR', 'usd');
+        $finance = $this->staff(Role::FINANCE);
+
+        $this->actingAs($affiliateUser, 'affiliate')
+            ->get('http://affiliate.nandinibali.test/dashboard')
+            ->assertOk()
+            ->assertSee('USD 21.10')
+            ->assertSee('Estimated using Nandini');
+
+        $payout = app(PayAffiliateCommissionService::class)->pay(
+            $item,
+            $finance,
+            '2026-08-10',
+            'USD-PAYMENT-001',
+        );
+
+        $this->assertSame('USD', $payout->currency);
+        $this->assertSame('21.10', $payout->net_payout_amount);
+        $this->assertSame('IDR', $payout->source_currency);
+        $this->assertSame('347687.80', $payout->source_amount);
+        $this->assertSame('16478.100000', $payout->exchange_rate_snapshot);
+
+        AffiliateExchangeRate::query()->where('quote_currency', 'USD')->update(['base_units_per_quote' => '17000.000000']);
+
+        $this->assertSame('21.10', $payout->fresh()->net_payout_amount);
+        $this->assertSame('16478.100000', $payout->fresh()->exchange_rate_snapshot);
     }
 
     private function affiliate(string $email = 'affiliate@example.com', string $code = 'finance4826', AffiliateStatus $status = AffiliateStatus::Approved): array

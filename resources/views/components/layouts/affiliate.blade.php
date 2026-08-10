@@ -27,7 +27,6 @@
                 </a>
 
                 @if ($navigationAffiliate->isApproved())
-                    <a href="{{ route('affiliate.reports.index') }}" class="text-xs font-medium uppercase tracking-[0.08em] text-slate-700 transition hover:text-[#A88444] sm:text-sm">Reports</a>
                     <a href="{{ route('affiliate.marketing-materials.index') }}" class="text-xs font-medium uppercase tracking-[0.08em] text-slate-700 transition hover:text-[#A88444] sm:text-sm">Marketing Materials</a>
                     <a href="{{ route('affiliate.payment-details.edit') }}" class="text-xs font-medium uppercase tracking-[0.08em] text-slate-700 transition hover:text-[#A88444] sm:text-sm">Payment Details</a>
                 @endif

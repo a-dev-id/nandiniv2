@@ -28,9 +28,9 @@ class AffiliatePaymentProfileResource extends Resource
 
     protected static ?string $navigationLabel = 'Payment Profiles';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Affiliate Finance';
+    protected static string|UnitEnum|null $navigationGroup = 'Affiliate';
 
-    protected static ?int $navigationSort = 22;
+    protected static ?int $navigationSort = 60;
 
     public static function table(Table $table): Table
     {

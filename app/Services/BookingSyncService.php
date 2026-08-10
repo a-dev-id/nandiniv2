@@ -175,6 +175,7 @@ class BookingSyncService
             'room_name' => $this->nullableString($payload['room_name'] ?? null),
             'rate_name' => $this->nullableString($payload['rate_name'] ?? null),
             'currency' => $this->nullableString($payload['currency'] ?? null),
+            'room_subtotal' => $this->decimal($payload['room_subtotal'] ?? null),
             'booking_total' => $this->decimal($payload['booking_total'] ?? null),
             'status' => $this->nullableString($payload['status'] ?? null),
             'source_name' => $this->nullableString($payload['source_name'] ?? null),
@@ -215,7 +216,7 @@ class BookingSyncService
         AffiliateBooking::query()
             ->with('syncedWebhotelierBooking')
             ->where('commission_state', AffiliateCommissionState::CalculationUnavailable->value)
-            ->whereHas('syncedWebhotelierBooking', fn ($query) => $query->whereNotNull('booking_total'))
+            ->whereHas('syncedWebhotelierBooking', fn ($query) => $query->whereNotNull('room_subtotal'))
             ->each(function (AffiliateBooking $affiliateBooking) use (&$summary): void {
                 $sourceBooking = $affiliateBooking->syncedWebhotelierBooking;
 

@@ -37,23 +37,22 @@ class AffiliateCommissionItemResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
 
-    protected static ?string $navigationLabel = 'Commission Validation';
+    protected static ?string $navigationLabel = 'Commissions';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Affiliate Finance';
+    protected static string|UnitEnum|null $navigationGroup = 'Affiliate';
 
-    protected static ?int $navigationSort = 21;
+    protected static ?int $navigationSort = 50;
 
     public static function table(Table $table): Table
     {
         return $table->defaultSort('id', 'desc')->columns([
-            TextColumn::make('period.period_start_date')->label('Period')->date('M Y')->sortable(),
             TextColumn::make('affiliate.name')->searchable()->sortable(),
             TextColumn::make('booking.check_out_date')->label('Check-out')->date('d M Y')->sortable(),
             TextColumn::make('booking.room_types')->label('Room Type')->state(fn (AffiliateCommissionItem $record): string => $record->booking->roomTypesLabel())->wrap(),
             TextColumn::make('currency'),
             TextColumn::make('original_commission_amount')->label('Original Commission')->state(fn (AffiliateCommissionItem $record): string => app(AffiliateMoneyFormatter::class)->format($record->original_commission_amount, $record->currency)),
             TextColumn::make('approved_commission_amount')->label('Approved Amount')->state(fn (AffiliateCommissionItem $record): string => $record->approved_commission_amount === null ? '—' : app(AffiliateMoneyFormatter::class)->format($record->approved_commission_amount, $record->currency)),
-            TextColumn::make('status')->badge()->formatStateUsing(fn (AffiliateCommissionItemStatus $state): string => $state->label()),
+            TextColumn::make('status')->badge()->formatStateUsing(fn (AffiliateCommissionItemStatus $state): string => $state->label())->color(fn (AffiliateCommissionItemStatus $state): string => $state->badgeColor()),
             IconColumn::make('source_changed_after_review')->label('Source Changed')->boolean(),
         ])->filters([
             SelectFilter::make('commission_period_id')->label('Period')->relationship('period', 'period_start_date'),
@@ -101,7 +100,7 @@ class AffiliateCommissionItemResource extends Resource
                 TextEntry::make('commission_rate_snapshot')->label('Commission Rate')->suffix('%'),
                 TextEntry::make('original_commission_amount')->label('Original Commission'),
                 TextEntry::make('approved_commission_amount')->label('Approved Commission')->placeholder('Not approved'),
-                TextEntry::make('status')->badge()->formatStateUsing(fn (AffiliateCommissionItemStatus $state): string => $state->label()),
+                TextEntry::make('status')->badge()->formatStateUsing(fn (AffiliateCommissionItemStatus $state): string => $state->label())->color(fn (AffiliateCommissionItemStatus $state): string => $state->badgeColor()),
                 TextEntry::make('hold_reason')->placeholder('—')->columnSpanFull(),
                 TextEntry::make('exclusion_reason')->placeholder('—')->columnSpanFull(),
                 TextEntry::make('adjustment_reason')->placeholder('—')->columnSpanFull(),

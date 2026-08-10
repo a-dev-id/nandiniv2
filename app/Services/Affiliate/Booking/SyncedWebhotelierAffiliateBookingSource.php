@@ -9,8 +9,8 @@ class SyncedWebhotelierAffiliateBookingSource implements AffiliateBookingSource
 {
     public function normalize(SyncedWebhotelierBooking $booking): AffiliateBookingData
     {
-        $roomRevenue = $booking->booking_total !== null
-            ? (string) $booking->booking_total
+        $roomRevenue = $booking->room_subtotal !== null
+            ? (string) $booking->room_subtotal
             : null;
 
         return new AffiliateBookingData(

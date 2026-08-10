@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS `synced_webhotelier_bookings` (
   `room_name` VARCHAR(255) NULL,
   `rate_name` VARCHAR(255) NULL,
   `currency` VARCHAR(10) NULL,
+  `room_subtotal` DECIMAL(14, 2) NULL,
   `booking_total` DECIMAL(14, 2) NULL,
   `status` VARCHAR(255) NULL,
   `source_name` VARCHAR(255) NULL,

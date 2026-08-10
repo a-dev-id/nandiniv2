@@ -22,8 +22,8 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -41,9 +41,9 @@ class AffiliateMarketingAssetResource extends Resource
 
     protected static ?string $navigationLabel = 'Marketing Assets';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Affiliate Management';
+    protected static string|UnitEnum|null $navigationGroup = 'Affiliate';
 
-    protected static ?int $navigationSort = 18;
+    protected static ?int $navigationSort = 20;
 
     public static function form(Schema $schema): Schema
     {
@@ -81,8 +81,8 @@ class AffiliateMarketingAssetResource extends Resource
                     ->columnSpanFull(),
             ]),
             Section::make('Visibility')->columns(2)->schema([
-                Toggle::make('is_active')->default(false),
-                Toggle::make('is_featured')->default(false),
+                Toggle::make('is_active')->default(false)->onColor('warning'),
+                Toggle::make('is_featured')->default(false)->onColor('warning'),
                 DateTimePicker::make('available_from')->native(false)->beforeOrEqual('available_until'),
                 DateTimePicker::make('available_until')->native(false)->afterOrEqual('available_from'),
             ]),
@@ -95,8 +95,8 @@ class AffiliateMarketingAssetResource extends Resource
             TextColumn::make('title')->searchable()->weight('semibold'),
             TextColumn::make('asset_type')->label('Type')->badge()->formatStateUsing(fn (AffiliateMarketingAssetType $state): string => $state->label()),
             TextColumn::make('file_name')->label('File or Link')->formatStateUsing(fn (?string $state, AffiliateMarketingAsset $record): string => $state ?: ($record->external_url ? 'External link' : 'Unavailable'))->limit(32),
-            IconColumn::make('is_active')->label('Active')->boolean(),
-            IconColumn::make('is_featured')->label('Featured')->boolean(),
+            ToggleColumn::make('is_active')->label('Active')->onColor('warning')->offColor('gray'),
+            ToggleColumn::make('is_featured')->label('Featured')->onColor('warning')->offColor('gray'),
             TextColumn::make('availability')->state(fn (AffiliateMarketingAsset $record): string => match (true) {
                 ! $record->is_active => 'Inactive',
                 $record->available_until?->isPast() === true => 'Expired',

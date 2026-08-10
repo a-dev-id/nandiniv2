@@ -14,18 +14,21 @@ use Illuminate\Support\Facades\DB;
 
 class AffiliateFinanceAnalyticsService
 {
+    public function __construct(private readonly AffiliateCurrencyConverter $currencies) {}
+
     public function forAffiliate(Affiliate $affiliate): array
     {
+        $preferredCurrency = $affiliate->paymentProfile?->preferred_currency?->value ?? 'IDR';
+
         return [
             'summary' => [
-                'estimated' => $this->bookingTotals($affiliate, [AffiliateCommissionState::Estimated]),
-                'pending_validation' => $this->pendingTotals($affiliate),
-                'approved_unpaid' => $this->itemTotals($affiliate, [AffiliateCommissionItemStatus::Approved, AffiliateCommissionItemStatus::IncludedInPayout]),
-                'paid' => $this->itemTotals($affiliate, [AffiliateCommissionItemStatus::Paid]),
+                'estimated' => $this->convertTotals($this->bookingTotals($affiliate, [AffiliateCommissionState::Estimated]), $preferredCurrency),
+                'pending' => $this->convertTotals($this->pendingTotals($affiliate), $preferredCurrency),
+                'paid' => $this->paidPayoutTotals($affiliate),
             ],
             'commissionHistory' => AffiliateBooking::query()
                 ->where('affiliate_id', $affiliate->id)
-                ->with(['rooms', 'commissionItem'])
+                ->with(['rooms', 'commissionItem.payoutItem.payout'])
                 ->orderByDesc('check_out_date')
                 ->paginate(10, ['*'], 'commission_page')
                 ->withQueryString(),
@@ -36,6 +39,47 @@ class AffiliateFinanceAnalyticsService
                 ->withQueryString(),
             'notices' => $this->notices($affiliate),
         ];
+    }
+
+    private function convertTotals(array $totals, string $preferredCurrency): array
+    {
+        $converted = collect($totals)->map(function (array $total) use ($preferredCurrency): array {
+            $conversion = $this->currencies->convert($total['amount'], $total['currency'], $preferredCurrency, false);
+
+            return $conversion ? [
+                'currency' => $preferredCurrency,
+                'amount' => $conversion['amount'],
+                'estimated_conversion' => $total['currency'] !== $preferredCurrency,
+                'original_currency' => $total['currency'],
+                'original_amount' => $total['amount'],
+            ] : [
+                ...$total,
+                'estimated_conversion' => false,
+                'conversion_unavailable' => true,
+            ];
+        });
+
+        return $converted->groupBy('currency')->map(function (Collection $rows, string $currency): array {
+            return [
+                'currency' => $currency,
+                'amount' => app(DecimalMoney::class)->sum($rows->pluck('amount')),
+                'estimated_conversion' => $rows->contains('estimated_conversion', true),
+                'conversion_unavailable' => $rows->contains('conversion_unavailable', true),
+            ];
+        })->values()->all();
+    }
+
+    private function paidPayoutTotals(Affiliate $affiliate): array
+    {
+        return AffiliatePayout::query()
+            ->where('affiliate_id', $affiliate->id)
+            ->where('status', \App\Enums\AffiliatePayoutStatus::Paid)
+            ->select('currency', DB::raw('SUM(net_payout_amount) amount'))
+            ->groupBy('currency')
+            ->orderBy('currency')
+            ->get()
+            ->map(fn ($row): array => ['currency' => $row->currency, 'amount' => (string) $row->getRawOriginal('amount')])
+            ->all();
     }
 
     private function bookingTotals(Affiliate $affiliate, array $states): array
@@ -50,7 +94,12 @@ class AffiliateFinanceAnalyticsService
     private function pendingTotals(Affiliate $affiliate): array
     {
         $totals = collect($this->bookingTotalsWithoutItem($affiliate));
-        $items = collect($this->itemTotals($affiliate, [AffiliateCommissionItemStatus::PendingReview, AffiliateCommissionItemStatus::Held]));
+        $items = collect($this->itemTotals($affiliate, [
+            AffiliateCommissionItemStatus::PendingReview,
+            AffiliateCommissionItemStatus::Held,
+            AffiliateCommissionItemStatus::Approved,
+            AffiliateCommissionItemStatus::IncludedInPayout,
+        ]));
 
         return $totals->concat($items)->groupBy('currency')->map(fn (Collection $rows, string $currency): array => [
             'currency' => $currency,

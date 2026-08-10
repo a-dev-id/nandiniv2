@@ -47,6 +47,7 @@ class AffiliateAuthController extends Controller
         Auth::guard('member')->logout();
         $request->session()->regenerate();
         $request->session()->forget('affiliate.pending-review-notice-shown');
+        $request->session()->forget('affiliate.approved-welcome-notice-shown');
         $request->session()->forget('url.intended');
 
         return redirect()->route('affiliate.dashboard');
@@ -123,6 +124,7 @@ class AffiliateAuthController extends Controller
         Auth::guard('affiliate')->login($affiliate, true);
         $request->session()->regenerate();
         $request->session()->forget('affiliate.pending-review-notice-shown');
+        $request->session()->forget('affiliate.approved-welcome-notice-shown');
         $request->session()->forget('url.intended');
 
         return redirect()->route('affiliate.dashboard');
@@ -132,6 +134,7 @@ class AffiliateAuthController extends Controller
     {
         Auth::guard('affiliate')->logout();
         $request->session()->forget('affiliate.pending-review-notice-shown');
+        $request->session()->forget('affiliate.approved-welcome-notice-shown');
         $request->session()->regenerateToken();
 
         return redirect()->route('affiliate.landing');

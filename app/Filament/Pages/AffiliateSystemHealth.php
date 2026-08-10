@@ -11,7 +11,7 @@ use UnitEnum;
 
 class AffiliateSystemHealth extends Page
 {
-    protected static bool $shouldRegisterNavigation = true;
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHeart;
 

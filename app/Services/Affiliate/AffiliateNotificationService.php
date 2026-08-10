@@ -34,7 +34,7 @@ class AffiliateNotificationService
                 ],
                 'actionLabel' => 'Open Affiliate Dashboard',
                 'actionUrl' => route('affiliate.dashboard'),
-            ]);
+            ], includeBcc: false);
         }
 
         DB::afterCommit(fn () => $this->sendRegistrationRequestToStaff($affiliate));
@@ -125,15 +125,23 @@ class AffiliateNotificationService
         $method = AffiliatePaymentMethod::from($payout->payment_method_snapshot)->label();
 
         $this->afterCommit($affiliate, 'affiliate_payout.paid_notification_dispatched', [
-            'subject' => 'Your Nandini Partner Circle payout was recorded',
+            'subject' => 'Your Nandini Partner Circle commission has been paid',
             'eyebrow' => 'Nandini Partner Circle',
-            'heading' => 'Payout Recorded',
-            'paragraphs' => ['Finance has recorded your externally processed affiliate payout as paid.'],
+            'heading' => 'Commission Paid',
+            'paragraphs' => [
+                'Your Nandini Partner Circle commission payment has been completed.',
+                'Please review the payment details below. Depending on your bank or payment provider, the funds may take additional time to appear in your account.',
+                'If you do not receive the payment after the normal processing time, please contact us and include the payment reference shown below.',
+            ],
             'details' => [
                 'Payout number' => $payout->payout_number,
                 'Amount' => $payout->currency.' '.number_format((float) $payout->net_payout_amount, 2),
+                ...($payout->source_currency && $payout->source_currency !== $payout->currency ? [
+                    'Exchange rate used' => '1 '.$payout->currency.' = '.$payout->source_currency.' '.number_format((float) $payout->exchange_rate_snapshot, 6),
+                ] : []),
                 'Payment method' => $method,
                 'Payment date' => $payout->paid_at->timezone(config('app.timezone'))->format('d M Y'),
+                'Payment reference' => $payout->payment_reference,
             ],
             'actionLabel' => 'Open Affiliate Dashboard',
             'actionUrl' => route('affiliate.dashboard'),
@@ -185,11 +193,19 @@ class AffiliateNotificationService
         array $email,
         array $metadata = [],
         mixed $subject = null,
+        bool $includeBcc = true,
     ): void {
-        DB::afterCommit(fn () => $this->send($affiliate, $event, $email, $metadata, $subject));
+        DB::afterCommit(fn () => $this->send($affiliate, $event, $email, $metadata, $subject, $includeBcc));
     }
 
-    private function send(Affiliate $affiliate, string $event, array $email, array $metadata, mixed $subject): void
+    private function send(
+        Affiliate $affiliate,
+        string $event,
+        array $email,
+        array $metadata,
+        mixed $subject,
+        bool $includeBcc,
+    ): void
     {
         try {
             $result = $this->relay->sendView('emails.affiliate.notification', [
@@ -197,7 +213,7 @@ class AffiliateNotificationService
                 ...$email,
             ], [
                 'to' => $affiliate->email,
-                'bcc' => $this->guestBcc(),
+                'bcc' => $includeBcc ? $this->affiliateBcc() : [],
                 'subject' => $email['subject'],
             ]);
 
@@ -295,10 +311,11 @@ class AffiliateNotificationService
         }
     }
 
-    private function guestBcc(): array
+    private function affiliateBcc(): array
     {
-        $bcc = trim((string) config('mail.guest_bcc'));
-
-        return $bcc === '' ? [] : [$bcc];
+        return array_values(array_filter(array_map(
+            fn (string $address): string => trim($address),
+            explode(',', (string) config('mail.affiliate_notification_bcc')),
+        )));
     }
 }

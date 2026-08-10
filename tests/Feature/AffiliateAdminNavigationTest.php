@@ -30,18 +30,30 @@ class AffiliateAdminNavigationTest extends TestCase
 
     public function test_part_six_operational_tools_are_registered_in_their_final_navigation_groups(): void
     {
-        foreach ([AffiliateMarketingAssetResource::class, AffiliateOperationalReports::class, AffiliateClickAnalytics::class] as $page) {
+        foreach ([AffiliateResource::class, AffiliateMarketingAssetResource::class, AffiliateBookingResource::class, AffiliateCommissionItemResource::class, AffiliatePaymentProfileResource::class] as $page) {
             $this->assertTrue($page::shouldRegisterNavigation());
-            $this->assertSame('Affiliate Management', $page::getNavigationGroup());
+            $this->assertSame('Affiliate', $page::getNavigationGroup());
         }
 
-        foreach ([AffiliateFinanceOverview::class, AffiliateCommissionPeriodResource::class, AffiliateCommissionItemResource::class, AffiliatePaymentProfileResource::class, AffiliatePayoutResource::class, AffiliatePayoutMinimumResource::class] as $page) {
-            $this->assertTrue($page::shouldRegisterNavigation());
+        foreach ([AffiliateClickAnalytics::class, AffiliateOperationalReports::class, AffiliateFinanceOverview::class] as $page) {
+            $this->assertFalse($page::shouldRegisterNavigation());
+        }
+
+        $this->assertSame([10, 20, 40, 50, 60], collect([
+            AffiliateResource::class,
+            AffiliateMarketingAssetResource::class,
+            AffiliateBookingResource::class,
+            AffiliateCommissionItemResource::class,
+            AffiliatePaymentProfileResource::class,
+        ])->map(fn (string $page): int => $page::getNavigationSort())->all());
+
+        foreach ([AffiliateCommissionPeriodResource::class, AffiliatePayoutResource::class, AffiliatePayoutMinimumResource::class] as $page) {
+            $this->assertFalse($page::shouldRegisterNavigation());
             $this->assertSame('Affiliate Finance', $page::getNavigationGroup());
         }
 
         foreach ([AffiliateSystemHealth::class, AffiliateProgramSettingResource::class] as $page) {
-            $this->assertTrue($page::shouldRegisterNavigation());
+            $this->assertFalse($page::shouldRegisterNavigation());
             $this->assertSame('Affiliate System', $page::getNavigationGroup());
         }
     }

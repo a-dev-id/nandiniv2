@@ -121,6 +121,8 @@ return [
 
     'affiliate_registration_cc' => env('AFFILIATE_REGISTRATION_CC', 'news@nandinibali.com'),
 
+    'affiliate_notification_bcc' => env('AFFILIATE_NOTIFICATION_BCC', 'news@nandinibali.com'),
+
     'guest_cc' => env('MAIL_GUEST_CC') ?: null,
 
     'guest_bcc' => env('MAIL_GUEST_BCC') ?: 'news@nandinibali.com',

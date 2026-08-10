@@ -128,7 +128,8 @@ class AffiliateWorkflowTest extends TestCase
                 ->with(
                     'emails.affiliate.verify-email',
                     \Mockery::on(fn (array $data): bool => str_contains($data['verificationUrl'], '/verify-email/')),
-                    \Mockery::on(fn (array $payload): bool => $payload['to'] === 'angga@example.com'),
+                    \Mockery::on(fn (array $payload): bool => $payload['to'] === 'angga@example.com'
+                        && empty($payload['bcc'] ?? [])),
                 )
                 ->andReturn(['success' => true, 'status' => 200, 'response' => ['ok' => true], 'error' => null]);
             $mock->shouldReceive('sendView')
@@ -136,7 +137,8 @@ class AffiliateWorkflowTest extends TestCase
                 ->with(
                     'emails.affiliate.notification',
                     \Mockery::on(fn (array $data): bool => $data['heading'] === 'Registration Received'),
-                    \Mockery::on(fn (array $payload): bool => $payload['to'] === 'angga@example.com'),
+                    \Mockery::on(fn (array $payload): bool => $payload['to'] === 'angga@example.com'
+                        && empty($payload['bcc'] ?? [])),
                 )
                 ->andReturn(['success' => true, 'status' => 200, 'response' => ['ok' => true], 'error' => null]);
             $mock->shouldReceive('sendView')
@@ -148,6 +150,7 @@ class AffiliateWorkflowTest extends TestCase
                         && $data['details']['Email'] === 'angga@example.com'),
                     \Mockery::on(fn (array $payload): bool => $payload['to'] === 'reservation@nandinibali.com'
                         && $payload['cc'] === ['news@nandinibali.com']
+                        && empty($payload['bcc'] ?? [])
                         && $payload['reply_to'] === 'angga@example.com'),
                 )
                 ->andReturn(['success' => true, 'status' => 200, 'response' => ['ok' => true], 'error' => null]);

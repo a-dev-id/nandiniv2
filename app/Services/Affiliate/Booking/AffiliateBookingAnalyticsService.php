@@ -47,10 +47,7 @@ class AffiliateBookingAnalyticsService
 
         $base = AffiliateBooking::query()->where('affiliate_id', $affiliate->id);
         $commissionTotals = (clone $base)
-            ->whereIn('commission_state', [
-                AffiliateCommissionState::Estimated->value,
-                AffiliateCommissionState::PendingValidation->value,
-            ])
+            ->where('commission_state', AffiliateCommissionState::Estimated->value)
             ->whereNotNull('estimated_commission_amount')
             ->whereNotNull('currency')
             ->select('currency', DB::raw('SUM(estimated_commission_amount) as amount'))

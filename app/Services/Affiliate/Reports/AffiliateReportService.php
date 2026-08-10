@@ -3,6 +3,8 @@
 namespace App\Services\Affiliate\Reports;
 
 use App\Enums\AffiliateCommissionItemStatus;
+use App\Enums\AffiliateCommissionState;
+use App\Services\Affiliate\Finance\DecimalMoney;
 use App\Models\Affiliate;
 use App\Models\AffiliateBooking;
 use App\Models\AffiliateBookingRoom;
@@ -11,6 +13,7 @@ use App\Models\AffiliateCommissionItem;
 use App\Models\AffiliatePayout;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
 class AffiliateReportService
 {
@@ -28,9 +31,8 @@ class AffiliateReportService
             'unique_clicks' => (clone $clicks)->where('is_unique', true)->count(),
             'tracked_bookings' => (clone $bookings)->count(),
             'room_nights' => (int) AffiliateBookingRoom::query()->whereHas('booking', fn (Builder $query): Builder => $query->where('affiliate_id', $affiliate->id)->whereBetween('check_out_date', [$range->from->toDateString(), $range->to->toDateString()]))->sum(DB::raw('stay_nights * room_quantity')),
-            'estimated' => $this->bookingTotals(clone $bookings, 'estimated_commission_amount'),
-            'pending_validation' => $this->itemTotals(clone $items, [AffiliateCommissionItemStatus::PendingReview, AffiliateCommissionItemStatus::Held]),
-            'approved_unpaid' => $this->itemTotals(clone $items, [AffiliateCommissionItemStatus::Approved, AffiliateCommissionItemStatus::IncludedInPayout]),
+            'estimated' => $this->bookingTotals((clone $bookings)->where('commission_state', AffiliateCommissionState::Estimated), 'estimated_commission_amount'),
+            'pending' => $this->pendingTotals(clone $bookings, clone $items),
             'paid' => $this->itemTotals(clone $items, [AffiliateCommissionItemStatus::Paid]),
             'conversion' => $this->conversion((clone $clicks)->count(), (clone $bookings)->count()),
         ];
@@ -84,6 +86,28 @@ class AffiliateReportService
     {
         return $query->whereIn('status', $statuses)->select('currency', DB::raw('SUM(COALESCE(approved_commission_amount, original_commission_amount)) amount'))->groupBy('currency')->orderBy('currency')->get()
             ->map(fn ($row): array => ['currency' => $row->currency, 'amount' => (string) $row->getRawOriginal('amount')])->all();
+    }
+
+    private function pendingTotals(Builder $bookings, Builder $items): array
+    {
+        $bookingTotals = $this->bookingTotals(
+            $bookings->where('commission_state', AffiliateCommissionState::PendingValidation)
+                ->whereDoesntHave('commissionItem'),
+            'estimated_commission_amount',
+        );
+        $itemTotals = $this->itemTotals($items, [
+            AffiliateCommissionItemStatus::PendingReview,
+            AffiliateCommissionItemStatus::Held,
+            AffiliateCommissionItemStatus::Approved,
+            AffiliateCommissionItemStatus::IncludedInPayout,
+        ]);
+
+        return collect([...$bookingTotals, ...$itemTotals])
+            ->groupBy('currency')
+            ->map(fn (Collection $rows, string $currency): array => [
+                'currency' => $currency,
+                'amount' => app(DecimalMoney::class)->sum($rows->pluck('amount')),
+            ])->values()->all();
     }
 
     private function conversion(int $clicks, int $bookings): array

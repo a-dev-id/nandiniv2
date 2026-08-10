@@ -15,7 +15,7 @@ enum AffiliateCommissionItemStatus: string
     {
         return match ($this) {
             self::PendingReview => 'Pending Validation',
-            self::Approved => 'Approved',
+            self::Approved => 'Pending Payment',
             self::Held => 'On Hold',
             self::Excluded => 'Not Eligible',
             self::IncludedInPayout => 'Included in Payout',
@@ -26,5 +26,15 @@ enum AffiliateCommissionItemStatus: string
     public function isFinanciallyLocked(): bool
     {
         return in_array($this, [self::IncludedInPayout, self::Paid], true);
+    }
+
+    public function badgeColor(): string
+    {
+        return match ($this) {
+            self::PendingReview, self::Held, self::Approved => 'warning',
+            self::Paid => 'success',
+            self::Excluded => 'danger',
+            self::IncludedInPayout => 'info',
+        };
     }
 }
