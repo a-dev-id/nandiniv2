@@ -136,9 +136,6 @@ class AffiliateNotificationService
             'details' => [
                 'Payout number' => $payout->payout_number,
                 'Amount' => $payout->currency.' '.number_format((float) $payout->net_payout_amount, 2),
-                ...($payout->source_currency && $payout->source_currency !== $payout->currency ? [
-                    'Exchange rate used' => '1 '.$payout->currency.' = '.$payout->source_currency.' '.number_format((float) $payout->exchange_rate_snapshot, 6),
-                ] : []),
                 'Payment method' => $method,
                 'Payment date' => $payout->paid_at->timezone(config('app.timezone'))->format('d M Y'),
                 'Payment reference' => $payout->payment_reference,

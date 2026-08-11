@@ -11,7 +11,6 @@ use App\Enums\AffiliatePayoutStatus;
 use App\Enums\AffiliateRegistrationSource;
 use App\Enums\AffiliateStatus;
 use App\Models\Affiliate;
-use App\Models\AffiliateExchangeRate;
 use App\Models\AffiliateAuditEvent;
 use App\Models\AffiliateBooking;
 use App\Models\AffiliateCommissionItem;
@@ -426,45 +425,6 @@ class AffiliateFinanceWorkflowTest extends TestCase
 
         $this->expectException(DomainException::class);
         app(PayAffiliateCommissionService::class)->pay($item->fresh(), $finance, '2026-08-10', 'DUPLICATE');
-    }
-
-    public function test_manual_exchange_rate_converts_and_locks_usd_payout(): void
-    {
-        [$affiliateUser, $affiliate] = $this->affiliate('usd-affiliate@example.com', 'usdfinance4826');
-        $this->wiseProfile($affiliate)->update(['preferred_currency' => 'USD']);
-        AffiliateExchangeRate::query()->create([
-            'base_currency' => 'IDR',
-            'quote_currency' => 'USD',
-            'base_units_per_quote' => '16478.100000',
-            'is_active' => true,
-            'effective_at' => now(),
-        ]);
-        $item = $this->approvedFinalizedItem($affiliate, '347687.80', 'IDR', 'usd');
-        $finance = $this->staff(Role::FINANCE);
-
-        $this->actingAs($affiliateUser, 'affiliate')
-            ->get('http://affiliate.nandinibali.test/dashboard')
-            ->assertOk()
-            ->assertSee('USD 21.10')
-            ->assertSee('Estimated using Nandini');
-
-        $payout = app(PayAffiliateCommissionService::class)->pay(
-            $item,
-            $finance,
-            '2026-08-10',
-            'USD-PAYMENT-001',
-        );
-
-        $this->assertSame('USD', $payout->currency);
-        $this->assertSame('21.10', $payout->net_payout_amount);
-        $this->assertSame('IDR', $payout->source_currency);
-        $this->assertSame('347687.80', $payout->source_amount);
-        $this->assertSame('16478.100000', $payout->exchange_rate_snapshot);
-
-        AffiliateExchangeRate::query()->where('quote_currency', 'USD')->update(['base_units_per_quote' => '17000.000000']);
-
-        $this->assertSame('21.10', $payout->fresh()->net_payout_amount);
-        $this->assertSame('16478.100000', $payout->fresh()->exchange_rate_snapshot);
     }
 
     private function affiliate(string $email = 'affiliate@example.com', string $code = 'finance4826', AffiliateStatus $status = AffiliateStatus::Approved): array

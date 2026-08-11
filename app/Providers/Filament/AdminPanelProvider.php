@@ -5,7 +5,6 @@ namespace App\Providers\Filament;
 use App\Filament\Resources\AffiliateBookings\AffiliateBookingResource;
 use App\Filament\Resources\AffiliateCommissionItems\AffiliateCommissionItemResource;
 use App\Filament\Resources\AffiliateCommissionPeriods\AffiliateCommissionPeriodResource;
-use App\Filament\Resources\AffiliateExchangeRates\AffiliateExchangeRateResource;
 use App\Filament\Resources\AffiliateMarketingAssets\AffiliateMarketingAssetResource;
 use App\Filament\Resources\AffiliatePaymentProfiles\AffiliatePaymentProfileResource;
 use App\Filament\Resources\AffiliatePayoutMinimums\AffiliatePayoutMinimumResource;
@@ -77,7 +76,6 @@ class AdminPanelProvider extends PanelProvider
                         ...($user->hasPermissionTo(Permission::AFFILIATE_BOOKING_VIEW) ? AffiliateBookingResource::getNavigationItems() : []),
                         ...($user->hasPermissionTo(Permission::AFFILIATE_COMMISSION_VIEW) ? AffiliateCommissionItemResource::getNavigationItems() : []),
                         ...($user->hasPermissionTo(Permission::AFFILIATE_PAYMENT_PROFILE_VIEW) ? AffiliatePaymentProfileResource::getNavigationItems() : []),
-                        ...($user->hasPermissionTo(Permission::AFFILIATE_PAYOUT_MANAGE) ? AffiliateExchangeRateResource::getNavigationItems() : []),
                     ]);
             })
             ->middleware([

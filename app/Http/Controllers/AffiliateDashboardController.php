@@ -10,7 +10,6 @@ use App\Services\Affiliate\Booking\AffiliateBookingAnalyticsService;
 use App\Services\Affiliate\Booking\AffiliateMoneyFormatter;
 use App\Services\Affiliate\Click\AffiliateClickAnalyticsService;
 use App\Services\Affiliate\Finance\AffiliateFinanceAnalyticsService;
-use App\Services\Affiliate\Finance\AffiliateCurrencyConverter;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +26,6 @@ class AffiliateDashboardController extends Controller
         AffiliateBookingAnalyticsService $bookingAnalytics,
         AffiliateMoneyFormatter $money,
         AffiliateFinanceAnalyticsService $financeAnalytics,
-        AffiliateCurrencyConverter $currencyConverter,
     ): View {
         $affiliate = Auth::guard('affiliate')->user();
 
@@ -80,7 +78,6 @@ class AffiliateDashboardController extends Controller
             'bookingDataMayBeStale' => $affiliate->isApproved() && ($lastSuccessfulBookingSync === null || $lastSuccessfulBookingSync->lt(now()->subHours($bookingSyncMaximumAgeHours))),
             'money' => $money,
             'finance' => $affiliate->isApproved() ? $financeAnalytics->forAffiliate($affiliate) : null,
-            'currencyConverter' => $currencyConverter,
         ]);
     }
 }

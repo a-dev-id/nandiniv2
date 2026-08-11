@@ -21,7 +21,6 @@ class PayAffiliateCommissionService
         private readonly AffiliatePayoutNumberGenerator $numbers,
         private readonly AffiliateAuditService $audit,
         private readonly AffiliateNotificationService $notifications,
-        private readonly AffiliateCurrencyConverter $currencies,
     ) {}
 
     public function pay(AffiliateCommissionItem $item, User $actor, mixed $paymentDate, string $reference, ?string $note = null): AffiliatePayout
@@ -57,19 +56,14 @@ class PayAffiliateCommissionService
             }
 
             $paidAt = CarbonImmutable::parse((string) ($paymentDate ?: now()), config('app.timezone'))->startOfDay();
-            $payoutCurrency = $profile->preferred_currency->value;
-            $conversion = $this->currencies->convert($amount, $item->currency, $payoutCurrency);
             $payout = AffiliatePayout::query()->create([
                 'payout_number' => $this->numbers->next(),
                 'affiliate_id' => $item->affiliate_id,
-                'currency' => $payoutCurrency,
-                'source_currency' => $item->currency,
-                'source_amount' => $amount,
-                'exchange_rate_snapshot' => $conversion['rate'],
-                'gross_commission_amount' => $conversion['amount'],
+                'currency' => $item->currency,
+                'gross_commission_amount' => $amount,
                 'adjustment_amount' => '0.00',
                 'adjustment_reason' => filled($note) ? trim((string) $note) : null,
-                'net_payout_amount' => $conversion['amount'],
+                'net_payout_amount' => $amount,
                 'payment_method_snapshot' => $profile->payment_method->value,
                 'payment_details_masked_snapshot' => $profile->maskedDetails(),
                 'status' => AffiliatePayoutStatus::Paid,
@@ -91,10 +85,7 @@ class PayAffiliateCommissionService
                 'payout_id' => $payout->id,
                 'payout_number' => $payout->payout_number,
                 'currency' => $payout->currency,
-                'amount' => $payout->net_payout_amount,
-                'source_currency' => $item->currency,
-                'source_amount' => $amount,
-                'exchange_rate' => $conversion['rate'],
+                'amount' => $amount,
                 'payment_reference' => $reference,
                 'payment_date' => $paidAt->toDateString(),
                 'note' => filled($note) ? trim((string) $note) : null,

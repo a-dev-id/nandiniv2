@@ -13,9 +13,6 @@ class AffiliatePayout extends Model
         'payout_number',
         'affiliate_id',
         'currency',
-        'source_currency',
-        'source_amount',
-        'exchange_rate_snapshot',
         'gross_commission_amount',
         'adjustment_amount',
         'adjustment_reason',
@@ -39,8 +36,6 @@ class AffiliatePayout extends Model
 
     protected $casts = [
         'gross_commission_amount' => 'decimal:2',
-        'source_amount' => 'decimal:2',
-        'exchange_rate_snapshot' => 'decimal:6',
         'adjustment_amount' => 'decimal:2',
         'net_payout_amount' => 'decimal:2',
         'status' => AffiliatePayoutStatus::class,
