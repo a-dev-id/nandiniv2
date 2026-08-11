@@ -91,6 +91,114 @@
         display: none !important;
     }
 
+    /* Keep every blog-detail content source on the same readable type scale. */
+    .blog-detail-content {
+        font-size: 0.875rem;
+        line-height: 1.75;
+        letter-spacing: 0.01em;
+    }
+
+    .blog-detail-content p {
+        margin: 0 0 1rem;
+    }
+
+    .blog-detail-content p:last-child {
+        margin-bottom: 0;
+    }
+
+    .blog-detail-content h1,
+    .blog-detail-content h2,
+    .blog-detail-section-title {
+        margin: 2rem 0 0.75rem;
+        font-size: 1.125rem;
+        line-height: 1.45;
+        letter-spacing: 0.1em !important;
+    }
+
+    .blog-detail-content h3 {
+        margin: 1.75rem 0 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        letter-spacing: 0.08em !important;
+    }
+
+    .blog-detail-content h4,
+    .blog-detail-content h5,
+    .blog-detail-content h6 {
+        margin: 1.5rem 0 0.625rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        letter-spacing: 0.08em !important;
+    }
+
+    .blog-detail-content > :first-child {
+        margin-top: 0;
+    }
+
+    .blog-detail-section-title {
+        margin-top: 0;
+    }
+
+    .blog-detail-content ul,
+    .blog-detail-content ol {
+        margin: 1rem 0 1.25rem;
+        padding-left: 1.5rem;
+    }
+
+    .blog-detail-content ul {
+        list-style-type: disc;
+    }
+
+    .blog-detail-content ol {
+        list-style-type: decimal;
+    }
+
+    .blog-detail-content li {
+        margin-bottom: 0.5rem;
+        padding-left: 0.25rem;
+    }
+
+    .blog-detail-content li:last-child {
+        margin-bottom: 0;
+    }
+
+    .blog-detail-content li::marker {
+        color: #64748b;
+    }
+
+    .blog-detail-content a {
+        color: #a88444;
+        text-decoration: underline;
+        text-underline-offset: 0.125rem;
+    }
+
+    .blog-detail-content strong {
+        font-weight: 600;
+    }
+
+    @media (min-width: 640px) {
+        .blog-detail-content {
+            font-size: 0.9375rem;
+            line-height: 1.8;
+        }
+
+        .blog-detail-content h1,
+        .blog-detail-content h2,
+        .blog-detail-section-title {
+            font-size: 1.25rem;
+        }
+
+        .blog-detail-content h3 {
+            font-size: 1.125rem;
+        }
+
+        .blog-detail-content h4,
+        .blog-detail-content h5,
+        .blog-detail-content h6 {
+            font-size: 1rem;
+        }
+    }
+
     .itemcarousel-slick .slick-track {
         display: flex !important;
     }
