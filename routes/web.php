@@ -464,7 +464,11 @@ Route::domain(config('domains.main'))->group(function (): void {
         ->name('cron.webhotelier.sync');
 
     Route::get('/cron/bookings/sync/{token}', BookingSyncController::class)
-        ->withoutMiddleware(\Illuminate\Session\Middleware\StartSession::class)
+        ->withoutMiddleware([
+            \Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        ])
         ->name('cron.bookings.sync');
 
     Route::get('/cron/members/lifecycle/{token}', MembershipLifecycleController::class)

@@ -35,16 +35,35 @@ class AffiliateBookingTrackingTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_booking_sync_cron_does_not_start_or_write_browser_sessions(): void
+    public function test_booking_sync_cron_does_not_require_or_write_browser_sessions(): void
     {
         $route = collect(app('router')->getRoutes()->getRoutes())
             ->first(fn ($route) => $route->getName() === 'cron.bookings.sync');
 
         $this->assertNotNull($route);
+        $middleware = app('router')->gatherRouteMiddleware($route);
+
         $this->assertNotContains(
             \Illuminate\Session\Middleware\StartSession::class,
-            app('router')->gatherRouteMiddleware($route),
+            $middleware,
         );
+        $this->assertNotContains(
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            $middleware,
+        );
+        $this->assertNotContains(
+            \Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class,
+            $middleware,
+        );
+
+        config(['services.membership_api.booking_sync_cron_token' => 'valid-token']);
+
+        $this->getJson('http://nandinibali.test/cron/bookings/sync/wrong-token')
+            ->assertForbidden()
+            ->assertJson([
+                'success' => false,
+                'message' => 'Invalid cron token.',
+            ]);
     }
 
     protected function setUp(): void
