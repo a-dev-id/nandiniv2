@@ -88,6 +88,18 @@ $headingClass = 'mt-16 text-center font-serif text-xl uppercase tracking-[0.18em
             </div>
             @endif
 
+            @if ($blogNews->isNotEmpty())
+            <h2 class="{{ $headingClass }}">Blog &amp; News</h2>
+
+            <div class="mt-8 w-full space-y-7">
+                @foreach ($blogNews as $article)
+                <a href="{{ route('blog.show', $article) . '?' . $utm }}" target="_blank" rel="noopener" class="{{ $linkClass }}">
+                    {{ $article->title }}
+                </a>
+                @endforeach
+            </div>
+            @endif
+
             <div class="my-16 flex items-center justify-center gap-5 text-[#A88444]">
                 <a href="{{ $socialLinks['instagram'] }}" target="_blank" rel="noopener" aria-label="Instagram" class="transition hover:text-[#0B2341]">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 fill-current" viewBox="0 0 24 24" aria-hidden="true">

@@ -55,7 +55,6 @@ class BlogController extends Controller
 
         $blog = BlogNews::query()
             ->published()
-            ->blog()
             ->where('slug', $slug)
             ->with([
                 'activeSections.images' => fn($query) => $query

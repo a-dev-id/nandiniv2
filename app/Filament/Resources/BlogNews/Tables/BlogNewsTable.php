@@ -7,10 +7,9 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
@@ -88,9 +87,8 @@ class BlogNewsTable
                     ->limit(45)
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                IconColumn::make('is_featured')
+                ToggleColumn::make('is_featured')
                     ->label('Featured')
-                    ->boolean()
                     ->sortable(),
 
                 ToggleColumn::make('is_active')

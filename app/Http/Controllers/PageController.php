@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BlogNews;
 use App\Models\Experience;
 use App\Models\Offer;
 use App\Models\Page;
@@ -95,21 +96,40 @@ class PageController extends Controller
             ->limit(8)
             ->get();
 
+        $experienceSlugs = [
+            'moonlit-jungle-romance',
+            'riverside-romance',
+            'balinese-blessing-purification-at-the-holy-river',
+            'nandini-signature-spa-on-the-river',
+        ];
+
+        $experienceOrder = collect($experienceSlugs)
+            ->map(fn(string $slug, int $index): string => "WHEN ? THEN {$index}")
+            ->implode(' ');
+
         $experiences = Experience::query()
             ->where('is_active', true)
-            ->whereIn('slug', [
-                'moonlit-jungle-romance',
-                'riverside-romance',
-                'balinese-blessing-purification-at-the-holy-river',
-                'nandini-signature-spa-on-the-river',
+            ->whereIn('slug', $experienceSlugs)
+            ->orderByRaw("CASE slug {$experienceOrder} ELSE ? END", [
+                ...$experienceSlugs,
+                count($experienceSlugs),
             ])
-            ->orderByRaw("FIELD(slug, 'moonlit-jungle-romance', 'riverside-romance', 'balinese-blessing-purification-at-the-holy-river', 'nandini-signature-spa-on-the-river')")
+            ->get();
+
+        $blogNews = BlogNews::query()
+            ->published()
+            ->where('is_featured', true)
+            ->orderBy('sort_order')
+            ->orderByDesc('published_at')
+            ->orderByDesc('id')
+            ->limit(8)
             ->get();
 
         return view('pages.explore', [
             'page' => $page,
             'offers' => $offers,
             'experiences' => $experiences,
+            'blogNews' => $blogNews,
         ]);
     }
 }
