@@ -65,14 +65,14 @@ class EventForm
                                     ->native(false)
                                     ->seconds(false)
                                     ->beforeOrEqual('event_end_at')
-                                    ->helperText('Optional. Regular events remain visible without a start date.'),
+                                    ->helperText('The manually entered date and time for this event occurrence.'),
 
                                 DateTimePicker::make('event_end_at')
                                     ->label('Event End')
                                     ->native(false)
                                     ->seconds(false)
                                     ->afterOrEqual('event_start_at')
-                                    ->helperText('Optional. Leave blank when the event has no fixed end date.'),
+                                    ->helperText('After this date and time, the event is automatically hidden from the public website.'),
 
                                 Select::make('event_type')
                                     ->label('Event Type')
@@ -80,13 +80,20 @@ class EventForm
                                     ->default(EventType::Regular->value)
                                     ->required()
                                     ->native(false)
-                                    ->helperText('Regular events always appear in the Regular Events section.'),
+                                    ->helperText('Each record represents one event occurrence and never repeats automatically.'),
 
                                 TextInput::make('schedule_text')
                                     ->label('Schedule Text')
                                     ->placeholder('Start from 7:00 PM - 9:00 PM')
                                     ->maxLength(255)
                                     ->helperText('Optional custom schedule shown on the event card. Times entered in 24-hour format are displayed with AM/PM.'),
+
+                                Toggle::make('is_dish_of_month')
+                                    ->label('Dish of the Month')
+                                    ->default(false)
+                                    ->inline(false)
+                                    ->onColor('warning')
+                                    ->helperText('Feature this record between Today’s Event and Upcoming Events. Enabling it replaces the previous Dish of the Month.'),
 
                                 Toggle::make('status')
                                     ->label('Active')

@@ -36,12 +36,7 @@ class EventsTable
                     ->label('Type')
                     ->badge()
                     ->getStateUsing(fn (Event $record): string => $record->event_type->label())
-                    ->color(fn (string $state): string => match ($state) {
-                        'Weekly' => 'info',
-                        'Monthly' => 'warning',
-                        'Yearly' => 'success',
-                        default => 'gray',
-                    }),
+                    ->color('gray'),
 
                 ToggleColumn::make('status')
                     ->label('Active')
@@ -55,6 +50,11 @@ class EventsTable
 
                         return $state;
                     })
+                    ->onColor('warning')
+                    ->offColor('gray'),
+
+                ToggleColumn::make('is_dish_of_month')
+                    ->label('Dish of Month')
                     ->onColor('warning')
                     ->offColor('gray'),
 
@@ -74,6 +74,14 @@ class EventsTable
                     ->dateTime('d M Y H:i')
                     ->placeholder('—')
                     ->sortable(),
+
+                TextColumn::make('expiry_status')
+                    ->label('Visibility')
+                    ->getStateUsing(fn (Event $record): string => $record->event_end_at?->lt(now(config('app.timezone')))
+                        ? 'Expired'
+                        : 'Current')
+                    ->badge()
+                    ->color(fn (string $state): string => $state === 'Expired' ? 'danger' : 'success'),
 
                 TextColumn::make('updated_at')
                     ->label('Updated')

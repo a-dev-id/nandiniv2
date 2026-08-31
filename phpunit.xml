@@ -21,6 +21,7 @@
         <env name="APP_ENV" value="testing"/>
         <env name="APP_URL" value="http://nandinibali.test"/>
         <env name="MAIN_DOMAIN" value="nandinibali.test"/>
+        <env name="SPA_DOMAIN" value="spa.nandinibali.test"/>
         <env name="MEMBERSHIP_DOMAIN" value="nandinibali.test"/>
         <env name="VOUCHER_DOMAIN" value="voucher.nandinibali.test"/>
         <env name="SESSION_DOMAIN" value=".nandinibali.test"/>

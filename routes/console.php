@@ -9,7 +9,6 @@ use App\Services\Affiliate\Click\CleanupAffiliateClickEventsService;
 use App\Services\Affiliate\Finance\PrepareAffiliateCommissionPeriodService;
 use App\Services\Affiliate\Operations\AffiliateOperationalStateService;
 use App\Services\BlogNewsPublicationService;
-use App\Services\EventScheduleService;
 use App\Services\MemberCheckoutNotificationService;
 use App\Services\MembershipLifecycleService;
 use App\Services\MemberStayDateBackfillService;
@@ -113,13 +112,6 @@ Artisan::command('blog-news:sync-publication', function (BlogNewsPublicationServ
     $this->info("Future Blog & News deactivated: {$summary['deactivated_scheduled']}");
 })->purpose('Activate and deactivate Blog & News based on their published date.');
 
-Artisan::command('events:sync-schedule', function (EventScheduleService $service) {
-    $summary = $service->sync();
-
-    $this->info("Recurring events checked: {$summary['checked']}");
-    $this->info("Recurring events advanced: {$summary['updated']}");
-})->purpose('Advance published recurring events to their next scheduled occurrence.');
-
 Artisan::command('affiliate-clicks:cleanup {--retention= : Override the configured retention in days}', function (CleanupAffiliateClickEventsService $service) {
     $state = app(AffiliateOperationalStateService::class);
     $state->attempted('click_cleanup', 'Affiliate click retention cleanup started.');
@@ -216,10 +208,6 @@ Schedule::command('membership:process-lifecycle')->dailyAt('08:00');
 Schedule::command('membership:send-checkout-notifications')->dailyAt('07:00');
 Schedule::command('offers:sync-publication')->dailyAt('00:05');
 Schedule::command('blog-news:sync-publication')->dailyAt('00:10');
-Schedule::command('events:sync-schedule')
-    ->dailyAt('00:15')
-    ->timezone(config('app.timezone'))
-    ->withoutOverlapping();
 Schedule::command('affiliate-clicks:cleanup')->dailyAt('02:20')->timezone(config('app.timezone'))->withoutOverlapping();
 Schedule::command('affiliate:heartbeat')->everyFiveMinutes()->timezone(config('app.timezone'))->withoutOverlapping();
 Schedule::command('affiliate:prepare-commissions')

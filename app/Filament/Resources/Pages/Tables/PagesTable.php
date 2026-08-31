@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Pages\Tables;
 
+use App\Models\Page;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -9,6 +10,7 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -47,6 +49,15 @@ class PagesTable
                     ->tooltip(fn($record): ?string => $record->page_name)
                     ->description(fn($record): ?string => Str::limit($record->title ?? '', 45)),
 
+                TextColumn::make('site')
+                    ->label('Website')
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                        Page::SITE_SPA => 'Spa Website',
+                        default => 'Main Website',
+                    })
+                    ->badge()
+                    ->sortable(),
+
                 TextColumn::make('excerpt')
                     ->label('Excerpt')
                     ->limit(55)
@@ -71,6 +82,13 @@ class PagesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                SelectFilter::make('site')
+                    ->label('Website')
+                    ->options([
+                        Page::SITE_MAIN => 'Main Website',
+                        Page::SITE_SPA => 'Spa Website',
+                    ]),
+
                 TernaryFilter::make('is_active')
                     ->label('Active Status')
                     ->placeholder('All pages')

@@ -15,9 +15,7 @@ use Database\Seeders\AffiliateFoundationSeeder;
 use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
@@ -32,6 +30,7 @@ class EventPageTest extends TestCase
         parent::setUp();
 
         config(['domains.main' => 'nandinibali.test']);
+        config(['app.timezone' => 'Asia/Makassar']);
 
         Page::query()->forceCreate([
             'id' => 43,
@@ -62,6 +61,7 @@ class EventPageTest extends TestCase
             'event_end_at',
             'event_type',
             'schedule_text',
+            'is_dish_of_month',
         ]));
     }
 
@@ -76,7 +76,7 @@ class EventPageTest extends TestCase
             'description' => '<p>Enjoy an evening of Balinese culture and cuisine.</p>',
             'image' => 'events/balinese-dance.webp',
             'image_name' => 'balinese-dance',
-            'event_type' => EventType::Weekly,
+            'event_type' => EventType::Regular,
             'schedule_text' => null,
             'event_start_at' => '2026-08-05 19:00:00',
             'event_end_at' => '2026-08-05 21:00:00',
@@ -84,9 +84,21 @@ class EventPageTest extends TestCase
 
         $upcoming = $this->event([
             'title' => 'Jungle Acoustic Night',
-            'event_type' => EventType::Monthly,
+            'event_type' => EventType::Regular,
             'event_start_at' => '2026-08-06 12:00:00',
             'event_end_at' => '2026-08-06 14:00:00',
+        ]);
+
+        $dishOfTheMonth = $this->event([
+            'title' => 'Jungle Harvest Tasting Plate',
+            'subtitle' => 'The chef’s featured creation',
+            'excerpt' => 'A monthly presentation inspired by local ingredients.',
+            'description' => '<p>Available this month at Wild Ginger Restaurant.</p>',
+            'image' => 'events/jungle-harvest.webp',
+            'image_name' => 'jungle-harvest',
+            'event_start_at' => null,
+            'event_end_at' => null,
+            'is_dish_of_month' => true,
         ]);
 
         $regular = $this->event([
@@ -96,30 +108,23 @@ class EventPageTest extends TestCase
             'schedule_text' => 'Start from 19:00 - 21:00',
         ]);
 
-        $weekly = $this->event([
-            'title' => 'Weekly Flute Performance',
-            'event_type' => EventType::Weekly,
-            'event_start_at' => '2026-07-29 22:00:00',
-            'event_end_at' => '2026-07-29 23:00:00',
-        ]);
-
         $this->event([
             'title' => 'Second Upcoming Event',
-            'event_type' => EventType::Monthly,
+            'event_type' => EventType::Regular,
             'event_start_at' => '2026-08-07 18:00:00',
             'event_end_at' => '2026-08-07 20:00:00',
         ]);
 
         $this->event([
             'title' => 'Third Upcoming Event',
-            'event_type' => EventType::Yearly,
+            'event_type' => EventType::Regular,
             'event_start_at' => '2026-08-08 18:00:00',
             'event_end_at' => '2026-08-08 20:00:00',
         ]);
 
         $fourthUpcoming = $this->event([
             'title' => 'Fourth Upcoming Event',
-            'event_type' => EventType::Yearly,
+            'event_type' => EventType::Regular,
             'event_start_at' => '2026-08-20 18:00:00',
             'event_end_at' => '2026-08-20 20:00:00',
         ]);
@@ -143,21 +148,23 @@ class EventPageTest extends TestCase
                 'Start from 7:00 PM – 9:00 PM',
                 $today->title,
                 'Reserve a table',
+                'Dish of the Month',
+                $dishOfTheMonth->title,
                 'Upcoming Events',
                 $upcoming->title,
                 'Regular Events',
                 $regular->title,
-                $weekly->title,
             ])
             ->assertSee('Our Upcoming Dining Events at Wild Ginger Restaurant offer exclusive dining experiences available on selected dates throughout the year.')
             ->assertSee('At Wild Ginger Restaurant, every dining experience is enriched with contemporary Balinese culture through regular evening events featuring traditional dance performances and live music.')
             ->assertSee('events/balinese-dance.webp', false)
             ->assertSee('data-today-event-layout="split"', false)
+            ->assertSee('data-dish-of-the-month-layout="split"', false)
+            ->assertSee('events/jungle-harvest.webp', false)
             ->assertSee('width="600"', false)
             ->assertSee('height="850"', false)
             ->assertSee('Start from 7:00 PM - 9:00 PM')
             ->assertSee('August 6th, 2026. Start from 12:00 PM - 2:00 PM')
-            ->assertSee('Every Wednesday · 10:00 PM – 11:00 PM')
             ->assertSee('href="https://cho.pe/wildginger.web"', false)
             ->assertSee('Reserve a table')
             ->assertSee('aria-label="Previous upcoming events"', false)
@@ -169,72 +176,54 @@ class EventPageTest extends TestCase
             ->assertDontSee($fourthUpcoming->title)
             ->assertDontSee('Hidden Draft Event');
 
-        $this->assertTrue($weekly->occursOn(today()));
-        $this->assertFalse($weekly->occursOn(today()->addDay()));
+        $this->assertSame(1, substr_count($response->getContent(), $dishOfTheMonth->title));
+
     }
 
-    public function test_daily_event_schedule_sync_advances_recurring_events_and_preserves_their_duration(): void
+    public function test_expired_events_are_hidden_without_changing_or_deleting_the_cms_record(): void
     {
-        CarbonImmutable::setTestNow('2026-08-05 00:15:00');
+        CarbonImmutable::setTestNow('2026-08-05 14:01:00', 'Asia/Makassar');
 
-        $weekly = $this->event([
-            'event_type' => EventType::Weekly,
-            'event_start_at' => '2026-07-29 19:00:00',
-            'event_end_at' => '2026-07-29 21:00:00',
+        $expired = $this->event([
+            'title' => 'Expired Pool Event',
+            'event_start_at' => '2026-08-05 12:00:00',
+            'event_end_at' => '2026-08-05 14:00:00',
         ]);
 
-        $regular = $this->event([
-            'event_type' => EventType::Regular,
-            'event_start_at' => null,
-            'event_end_at' => null,
+        $current = $this->event([
+            'title' => 'Current Pool Event',
+            'event_start_at' => '2026-08-05 14:00:00',
+            'event_end_at' => '2026-08-05 16:00:00',
         ]);
 
-        $this->assertSame(0, Artisan::call('events:sync-schedule'));
-
-        $this->assertSame('2026-08-05 19:00:00', $weekly->refresh()->event_start_at->format('Y-m-d H:i:s'));
-        $this->assertSame('2026-08-05 21:00:00', $weekly->event_end_at->format('Y-m-d H:i:s'));
-        $this->assertNull($regular->refresh()->event_start_at);
-
-        $scheduled = collect(Schedule::events())
-            ->first(fn ($event): bool => str_contains($event->command ?? '', 'events:sync-schedule'));
-
-        $this->assertNotNull($scheduled);
-        $this->assertSame('15 0 * * *', $scheduled->expression);
-    }
-
-    public function test_event_schedule_cron_url_runs_with_a_valid_token(): void
-    {
-        CarbonImmutable::setTestNow('2026-08-05 00:15:00');
-        config(['services.events.schedule_cron_token' => 'test-event-token']);
-
-        $weekly = $this->event([
-            'event_type' => EventType::Weekly,
-            'event_start_at' => '2026-07-29 19:00:00',
-            'event_end_at' => '2026-07-29 21:00:00',
-        ]);
-
-        $this->getJson('http://nandinibali.test/cron/events/schedule/test-event-token')
+        $this->get('http://nandinibali.test/events-entertainments')
             ->assertOk()
-            ->assertJson([
-                'success' => true,
-                'message' => 'Event schedule cron completed.',
-                'checked' => 1,
-                'updated' => 1,
-            ]);
+            ->assertDontSee($expired->title)
+            ->assertSee($current->title);
 
-        $this->assertSame('2026-08-05 19:00:00', $weekly->refresh()->event_start_at->format('Y-m-d H:i:s'));
+        $this->assertDatabaseHas('events', [
+            'id' => $expired->id,
+            'status' => EventStatus::Published->value,
+            'event_start_at' => '2026-08-05 12:00:00',
+            'event_end_at' => '2026-08-05 14:00:00',
+        ]);
     }
 
-    public function test_event_schedule_cron_url_rejects_an_invalid_token(): void
+    public function test_only_one_event_can_be_the_dish_of_the_month(): void
     {
-        config(['services.events.schedule_cron_token' => 'test-event-token']);
+        $previousDish = $this->event([
+            'title' => 'Previous Monthly Dish',
+            'is_dish_of_month' => true,
+        ]);
 
-        $this->getJson('http://nandinibali.test/cron/events/schedule/wrong-token')
-            ->assertForbidden()
-            ->assertJson([
-                'success' => false,
-                'message' => 'Invalid cron token.',
-            ]);
+        $currentDish = $this->event([
+            'title' => 'Current Monthly Dish',
+            'is_dish_of_month' => true,
+        ]);
+
+        $this->assertFalse($previousDish->refresh()->is_dish_of_month);
+        $this->assertTrue($currentDish->refresh()->is_dish_of_month);
+        $this->assertSame(1, Event::query()->where('is_dish_of_month', true)->count());
     }
 
     public function test_short_events_url_redirects_to_the_canonical_page_and_filament_routes_are_registered(): void
@@ -273,6 +262,7 @@ class EventPageTest extends TestCase
                 'event_end_at' => null,
                 'event_type' => EventType::Regular->value,
                 'schedule_text' => 'Start from 19:00 - 21:00',
+                'is_dish_of_month' => true,
             ])
             ->call('create')
             ->assertHasNoFormErrors();
@@ -284,6 +274,7 @@ class EventPageTest extends TestCase
         $this->assertNull($event->event_start_at);
         $this->assertNull($event->event_end_at);
         $this->assertSame('Start from 19:00 - 21:00', $event->schedule_text);
+        $this->assertTrue($event->is_dish_of_month);
         $this->assertSame('moonlight-dinner', $event->image_name);
         $this->assertStringEndsWith('.webp', $event->image);
         Storage::disk('public')->assertExists($event->image);
@@ -291,6 +282,7 @@ class EventPageTest extends TestCase
 
         Livewire::test(ListEvents::class)
             ->assertTableColumnExists('status', fn (ToggleColumn $column): bool => true)
+            ->assertTableColumnExists('is_dish_of_month', fn (ToggleColumn $column): bool => true)
             ->call('updateTableColumnState', 'status', (string) $event->getKey(), false);
 
         $this->assertSame(EventStatus::Draft, $event->refresh()->status);
@@ -315,6 +307,7 @@ class EventPageTest extends TestCase
             'event_start_at' => '2026-08-10 18:00:00',
             'event_end_at' => '2026-08-10 20:00:00',
             'event_type' => EventType::Regular,
+            'is_dish_of_month' => false,
         ], $overrides));
     }
 }

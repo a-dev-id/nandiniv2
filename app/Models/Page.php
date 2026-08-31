@@ -2,12 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Page extends Model
 {
+    public const SITE_MAIN = 'main';
+
+    public const SITE_SPA = 'spa';
+
     protected $fillable = [
+        'site',
         'page_name',
         'title',
         'slug',
@@ -28,6 +34,16 @@ class Page extends Model
         'is_active' => 'boolean',
         'sort_order' => 'integer',
     ];
+
+    public function scopeForMainSite(Builder $query): Builder
+    {
+        return $query->where('site', self::SITE_MAIN);
+    }
+
+    public function scopeForSpaSite(Builder $query): Builder
+    {
+        return $query->where('site', self::SITE_SPA);
+    }
 
     public function sections(): HasMany
     {

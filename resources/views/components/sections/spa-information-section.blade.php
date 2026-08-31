@@ -1,5 +1,6 @@
 @props([
 'section' => null,
+'spaAccent' => false,
 
 'spaType' => 'Traditional Balinese wellness and spa treatments',
 
@@ -57,7 +58,7 @@ $buttons = [
 }
 @endphp
 
-<section class="bg-[#F3F4F5] px-6 py-14 md:px-12 md:py-16 lg:px-[70px]">
+<section class="bg-[#F3F4F5] px-6 py-14 md:px-12 md:py-20 lg:px-[70px]">
     <div class="mx-auto grid max-w-7xl gap-12 lg:grid-cols-3 lg:gap-16">
         {{-- Spa Information --}}
         <div class="text-center">
@@ -86,11 +87,11 @@ $buttons = [
 
                 @if ($label)
                 @if ($isExternalUrl)
-                <x-buttons.link-button :href="$url" variant="solid" class="h-[50px] w-full min-w-0 px-4 text-center" target="_blank" rel="noopener">
+                <x-buttons.link-button :href="$url" variant="solid" class="h-[50px] w-full min-w-0 px-4 text-center {{ $spaAccent ? '!border-[#791841] !bg-[#791841] hover:!border-[#5f1233] hover:!bg-[#5f1233]' : '' }}" target="_blank" rel="noopener">
                     {{ $label }}
                 </x-buttons.link-button>
                 @else
-                <x-buttons.link-button :href="$url" variant="solid" class="h-[50px] w-full min-w-0 px-4 text-center">
+                <x-buttons.link-button :href="$url" variant="solid" class="h-[50px] w-full min-w-0 px-4 text-center {{ $spaAccent ? '!border-[#791841] !bg-[#791841] hover:!border-[#5f1233] hover:!bg-[#5f1233]' : '' }}">
                     {{ $label }}
                 </x-buttons.link-button>
                 @endif

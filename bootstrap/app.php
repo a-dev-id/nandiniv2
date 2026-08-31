@@ -3,6 +3,7 @@
 use App\Http\Middleware\EnsureAffiliateAuthenticated;
 use App\Http\Middleware\EnsureAffiliateRegistrationEnabled;
 use App\Http\Middleware\EnsureAffiliateRegistrationGuest;
+use App\Http\Middleware\EnsureSpaSiteEnabled;
 use App\Http\Middleware\RedirectDisabledAffiliate;
 use App\Http\Middleware\RedirectDisabledMembership;
 use App\Http\Middleware\RedirectDisabledVoucher;
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             __DIR__.'/../routes/short-link.php',
             __DIR__.'/../routes/voucher.php',
             __DIR__.'/../routes/affiliate.php',
+            __DIR__.'/../routes/spa.php',
             __DIR__.'/../routes/web.php',
         ],
         api: __DIR__.'/../routes/api.php',
@@ -38,6 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'affiliate.enabled' => RedirectDisabledAffiliate::class,
             'affiliate.registration.guest' => EnsureAffiliateRegistrationGuest::class,
             'membership.enabled' => RedirectDisabledMembership::class,
+            'spa.enabled' => EnsureSpaSiteEnabled::class,
             'voucher.enabled' => RedirectDisabledVoucher::class,
         ]);
     })

@@ -14,6 +14,7 @@ class PageController extends Controller
     public function home(): View
     {
         $page = Page::query()
+            ->forMainSite()
             ->with([
                 'sections' => function ($query) {
                     $query
@@ -57,6 +58,7 @@ class PageController extends Controller
     public function show(string $slug): View|RedirectResponse
     {
         $page = Page::query()
+            ->forMainSite()
             ->with([
                 'sections' => function ($query) {
                     $query

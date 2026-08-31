@@ -2,6 +2,8 @@
 
 return [
     'main' => env('MAIN_DOMAIN', 'nandinibali.test'),
+    'spa' => env('SPA_DOMAIN', 'spa.nandinibali.test'),
+    'spa_enabled' => (bool) env('SPA_ENABLED', false),
     'membership' => env('MEMBERSHIP_DOMAIN', env('MAIN_DOMAIN', 'nandinibali.test')),
     'affiliate' => env('AFFILIATE_DOMAIN', 'affiliate.nandinibali.test'),
     'short_link' => env('SHORT_LINK_DOMAIN', 'go.nandinibali.test'),

@@ -3,6 +3,7 @@
 'height' => 'h-[460px] sm:h-[560px] lg:h-[760px]',
 'darkOverlay' => true,
 'align' => 'center',
+'spaAccent' => false,
 ])
 
 @php
@@ -168,7 +169,7 @@ default => 'justify-center',
 
                 @if ($buttonLabel && $buttonUrl)
                 <div class="mt-8 flex {{ $buttonAlignClass }}">
-                    <a href="{{ $buttonUrl }}" class="inline-flex items-center justify-center bg-[#A88444] text-white px-5 py-2.5 uppercase text-xs font-medium hover:bg-[#B8945B] transition tracking-[0.08em] sm:text-sm">
+                    <a href="{{ $buttonUrl }}" class="inline-flex items-center justify-center {{ $spaAccent ? 'bg-[#791841] hover:bg-[#5f1233]' : 'bg-[#A88444] hover:bg-[#B8945B]' }} text-white px-5 py-2.5 uppercase text-xs font-medium transition tracking-[0.08em] sm:text-sm">
                         {{ $buttonLabel }}
                     </a>
                 </div>

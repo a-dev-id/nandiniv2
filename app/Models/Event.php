@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Enums\EventStatus;
 use App\Enums\EventType;
 use Carbon\CarbonImmutable;
-use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,6 +23,7 @@ class Event extends Model
         'event_end_at',
         'event_type',
         'schedule_text',
+        'is_dish_of_month',
     ];
 
     protected function casts(): array
@@ -33,7 +33,22 @@ class Event extends Model
             'event_type' => EventType::class,
             'event_start_at' => 'datetime',
             'event_end_at' => 'datetime',
+            'is_dish_of_month' => 'boolean',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saved(function (Event $event): void {
+            if (! $event->is_dish_of_month) {
+                return;
+            }
+
+            Event::query()
+                ->whereKeyNot($event->getKey())
+                ->where('is_dish_of_month', true)
+                ->update(['is_dish_of_month' => false]);
+        });
     }
 
     public function scopePublished(Builder $query): Builder
@@ -41,33 +56,21 @@ class Event extends Model
         return $query->where('status', EventStatus::Published->value);
     }
 
-    public function occursOn(CarbonInterface $date): bool
+    public function scopePubliclyVisible(Builder $query): Builder
     {
-        if (! $this->event_start_at) {
-            return false;
-        }
+        $now = CarbonImmutable::now(config('app.timezone'));
 
-        $date = $date->copy()->startOfDay();
-        $startDate = $this->event_start_at->copy()->startOfDay();
-
-        if ($date->lt($startDate)) {
-            return false;
-        }
-
-        return match ($this->event_type) {
-            EventType::Regular => $date->betweenIncluded(
-                $startDate,
-                $this->event_end_at->copy()->startOfDay(),
-            ),
-            EventType::Weekly => $date->dayOfWeek === $startDate->dayOfWeek,
-            EventType::Monthly => $date->day === $startDate->day,
-            EventType::Yearly => $date->month === $startDate->month && $date->day === $startDate->day,
-        };
+        return $query
+            ->published()
+            ->where(function (Builder $query) use ($now): void {
+                $query->whereNull('event_end_at')
+                    ->orWhere('event_end_at', '>=', $now);
+            });
     }
 
     public function getScheduleLabelAttribute(): ?string
     {
-        if (filled($this->schedule_text)) {
+        if ((! $this->event_start_at || ! $this->event_end_at) && filled($this->schedule_text)) {
             return $this->formattedScheduleText();
         }
 
@@ -80,19 +83,14 @@ class Event extends Model
 
         $time = $start->format('g:i A').' – '.$end->format('g:i A');
 
-        return match ($this->event_type) {
-            EventType::Regular => $start->isSameDay($end)
-                ? $start->format('D, d M Y').' · '.$time
-                : $start->format('d M Y, g:i A').' – '.$end->format('d M Y, g:i A'),
-            EventType::Weekly => 'Every '.$start->format('l').' · '.$time,
-            EventType::Monthly => 'Monthly on day '.$start->format('j').' · '.$time,
-            EventType::Yearly => 'Every '.$start->format('d F').' · '.$time,
-        };
+        return $start->isSameDay($end)
+            ? $start->format('D, d M Y').' · '.$time
+            : $start->format('d M Y, g:i A').' – '.$end->format('d M Y, g:i A');
     }
 
     public function getUpcomingScheduleLabelAttribute(): ?string
     {
-        if (filled($this->schedule_text)) {
+        if (! $this->event_start_at && filled($this->schedule_text)) {
             return $this->formattedScheduleText();
         }
 
@@ -111,7 +109,7 @@ class Event extends Model
 
     public function getTodayScheduleLabelAttribute(): ?string
     {
-        if (filled($this->schedule_text)) {
+        if (! $this->event_start_at && filled($this->schedule_text)) {
             return $this->formattedScheduleText();
         }
 

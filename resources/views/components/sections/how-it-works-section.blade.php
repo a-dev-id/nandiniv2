@@ -1,5 +1,6 @@
 @props([
 'section' => null,
+'spaAccent' => false,
 ])
 
 @if ($section)
@@ -77,7 +78,7 @@ $icons = [
     <div class="mx-auto max-w-7xl text-center">
 
         @if ($section->subtitle)
-        <p class="mb-4 text-xs md:text-base leading-relaxed uppercase text-[#b28a4a] font-medium sm:text-sm">
+        <p class="mb-4 text-xs md:text-base leading-relaxed uppercase {{ $spaAccent ? 'text-[#791841]' : 'text-[#b28a4a]' }} font-medium sm:text-sm">
             {{ $section->subtitle }}
         </p>
         @endif
@@ -103,7 +104,7 @@ $icons = [
             @endphp
 
             <div class="flex flex-col items-center text-center">
-                <div class="mb-7 text-[#b28a4a]">
+                <div class="mb-7 {{ $spaAccent ? 'text-[#791841]' : 'text-[#b28a4a]' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         {!! $iconSvg !!}
                     </svg>

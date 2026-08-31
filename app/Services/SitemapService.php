@@ -82,6 +82,7 @@ class SitemapService
     private function pageUrls(): Collection
     {
         return Page::query()
+            ->forMainSite()
             ->where('is_active', true)
             ->whereNot('slug', 'home')
             ->orderBy('sort_order')

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\EventType;
 use App\Models\Event;
 use App\Models\Page;
 use Illuminate\Support\Collection;
@@ -19,27 +18,32 @@ class EventController extends Controller
 
         /** @var Collection<int, Event> $events */
         $events = Event::query()
-            ->published()
+            ->publiclyVisible()
             ->orderBy('event_start_at')
             ->orderBy('id')
             ->get();
 
-        $today = today();
-        $todayEvent = $events
-            ->filter(fn (Event $event): bool => $event->event_type !== EventType::Regular)
-            ->filter(fn (Event $event): bool => $event->occursOn($today))
+        $today = today(config('app.timezone'));
+        $dishOfTheMonth = $events
+            ->where('is_dish_of_month', true)
+            ->sortByDesc('updated_at')
+            ->first();
+
+        $scheduledEvents = $events->where('is_dish_of_month', false);
+
+        $todayEvent = $scheduledEvents
+            ->filter(fn (Event $event): bool => $event->event_start_at?->lte($today->copy()->endOfDay()) === true
+                && ($event->event_end_at?->gte($today->copy()->startOfDay()) ?? true))
             ->sortBy(fn (Event $event): string => $event->event_start_at->format('H:i:s'))
             ->first();
 
-        $upcomingEvents = $events
-            ->filter(fn (Event $event): bool => $event->event_type !== EventType::Regular)
+        $upcomingEvents = $scheduledEvents
             ->filter(fn (Event $event): bool => $event->event_start_at?->gt($today->copy()->endOfDay()) === true)
             ->take(3)
             ->values();
 
-        $regularEvents = $events
-            ->filter(fn (Event $event): bool => $event->event_type === EventType::Regular
-                || ! $event->event_start_at
+        $regularEvents = $scheduledEvents
+            ->filter(fn (Event $event): bool => ! $event->event_start_at
                 || $event->event_start_at->lte($today->copy()->endOfDay()))
             ->when(
                 $todayEvent,
@@ -50,6 +54,7 @@ class EventController extends Controller
         return view('pages.events', [
             'page' => $page,
             'todayEvent' => $todayEvent,
+            'dishOfTheMonth' => $dishOfTheMonth,
             'upcomingEvents' => $upcomingEvents,
             'regularEvents' => $regularEvents,
         ]);

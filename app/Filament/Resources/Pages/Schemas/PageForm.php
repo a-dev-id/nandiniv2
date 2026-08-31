@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources\Pages\Schemas;
 
+use App\Models\Page;
 use App\Support\FilamentWebpUpload;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
@@ -38,6 +40,15 @@ class PageForm
                             ->label('Page Name')
                             ->columnSpanFull()
                             ->helperText('Unique name for internal reference, e.g., "Home", "About Us".'),
+
+                        Select::make('site')
+                            ->label('Website')
+                            ->options([
+                                Page::SITE_MAIN => 'Main Website',
+                                Page::SITE_SPA => 'Spa Website',
+                            ])
+                            ->default(Page::SITE_MAIN)
+                            ->required(),
 
                         TextInput::make('title')
                             ->required()
