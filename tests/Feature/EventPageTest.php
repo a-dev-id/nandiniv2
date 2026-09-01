@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Enums\EventStatus;
 use App\Enums\EventType;
 use App\Filament\Resources\Events\Pages\CreateEvent;
+use App\Filament\Resources\Events\Pages\EditEvent;
 use App\Filament\Resources\Events\Pages\ListEvents;
 use App\Models\Event;
 use App\Models\Page;
@@ -12,6 +13,7 @@ use App\Models\Role;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Database\Seeders\AffiliateFoundationSeeder;
+use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -149,7 +151,6 @@ class EventPageTest extends TestCase
                 $today->title,
                 'Reserve a table',
                 'Dish of the Month',
-                $dishOfTheMonth->title,
                 'Upcoming Events',
                 $upcoming->title,
                 'Regular Events',
@@ -159,24 +160,30 @@ class EventPageTest extends TestCase
             ->assertSee('At Wild Ginger Restaurant, every dining experience is enriched with contemporary Balinese culture through regular evening events featuring traditional dance performances and live music.')
             ->assertSee('events/balinese-dance.webp', false)
             ->assertSee('data-today-event-layout="split"', false)
-            ->assertSee('data-dish-of-the-month-layout="split"', false)
+            ->assertSee('data-dish-of-the-month-layout="full-width"', false)
+            ->assertSee('class="group aspect-video w-full overflow-hidden"', false)
+            ->assertSee('group-hover:scale-105', false)
             ->assertSee('events/jungle-harvest.webp', false)
+            ->assertSee('width="2048"', false)
+            ->assertSee('height="1152"', false)
             ->assertSee('width="600"', false)
             ->assertSee('height="850"', false)
             ->assertSee('Start from 7:00 PM - 9:00 PM')
             ->assertSee('August 6th, 2026. Start from 12:00 PM - 2:00 PM')
-            ->assertSee('href="https://cho.pe/wildginger.web"', false)
+            ->assertSee('href="https://wa.me/6281236871170"', false)
             ->assertSee('Reserve a table')
             ->assertSee('aria-label="Previous upcoming events"', false)
             ->assertSee('aria-label="Next regular events"', false)
             ->assertDontSee('Event details')
             ->assertDontSee('Event excerpt.')
             ->assertDontSee('Event description.')
+            ->assertDontSee('One-time')
             ->assertDontSee('Discover weekly, monthly, and yearly experiences held throughout the Nandini calendar.')
+            ->assertDontSee($dishOfTheMonth->title)
             ->assertDontSee($fourthUpcoming->title)
             ->assertDontSee('Hidden Draft Event');
 
-        $this->assertSame(1, substr_count($response->getContent(), $dishOfTheMonth->title));
+        $this->assertSame(0, substr_count($response->getContent(), $dishOfTheMonth->title));
 
     }
 
@@ -278,7 +285,7 @@ class EventPageTest extends TestCase
         $this->assertSame('moonlight-dinner', $event->image_name);
         $this->assertStringEndsWith('.webp', $event->image);
         Storage::disk('public')->assertExists($event->image);
-        $this->assertSame([600, 850], array_slice(getimagesize(Storage::disk('public')->path($event->image)), 0, 2));
+        $this->assertSame([2048, 1152], array_slice(getimagesize(Storage::disk('public')->path($event->image)), 0, 2));
 
         Livewire::test(ListEvents::class)
             ->assertTableColumnExists('status', fn (ToggleColumn $column): bool => true)
@@ -291,6 +298,55 @@ class EventPageTest extends TestCase
             ->call('updateTableColumnState', 'status', (string) $event->getKey(), true);
 
         $this->assertSame(EventStatus::Published, $event->refresh()->status);
+    }
+
+    public function test_event_image_uploader_reacts_to_the_event_format_on_create_and_edit(): void
+    {
+        $this->seed(AffiliateFoundationSeeder::class);
+
+        $administrator = User::factory()->create();
+        $administrator->assignRole(Role::ADMINISTRATOR);
+        $this->actingAs($administrator);
+
+        Livewire::test(CreateEvent::class)
+            ->assertFormFieldExists('image', fn (FileUpload $field): bool => $field->getPanelAspectRatio() === '12:17')
+            ->fillForm(['is_dish_of_month' => true])
+            ->assertFormFieldExists('image', fn (FileUpload $field): bool => $field->getPanelAspectRatio() === '16:9')
+            ->fillForm(['is_dish_of_month' => false])
+            ->assertFormFieldExists('image', fn (FileUpload $field): bool => $field->getPanelAspectRatio() === '12:17');
+
+        $dish = $this->event(['is_dish_of_month' => true]);
+
+        Livewire::test(EditEvent::class, ['record' => $dish->getRouteKey()])
+            ->assertFormSet(['is_dish_of_month' => true])
+            ->assertFormFieldExists('image', fn (FileUpload $field): bool => $field->getPanelAspectRatio() === '16:9');
+    }
+
+    public function test_normal_event_upload_keeps_the_portrait_output_dimensions(): void
+    {
+        $this->seed(AffiliateFoundationSeeder::class);
+        Storage::fake('public');
+
+        $administrator = User::factory()->create();
+        $administrator->assignRole(Role::ADMINISTRATOR);
+        $this->actingAs($administrator);
+
+        Livewire::test(CreateEvent::class)
+            ->fillForm([
+                'title' => 'Portrait Event',
+                'image' => UploadedFile::fake()->image('portrait-event.jpg', 1200, 1700),
+                'image_name' => 'portrait-event',
+                'alt_text' => 'Portrait event artwork',
+                'event_type' => EventType::Regular->value,
+                'is_dish_of_month' => false,
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $event = Event::query()->where('title', 'Portrait Event')->firstOrFail();
+
+        $this->assertFalse($event->is_dish_of_month);
+        $this->assertSame([600, 850], array_slice(getimagesize(Storage::disk('public')->path($event->image)), 0, 2));
     }
 
     private function event(array $overrides = []): Event

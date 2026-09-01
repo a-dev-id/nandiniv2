@@ -94,12 +94,13 @@ class FilamentWebpUpload
             $cropHeight
         );
 
+        imagedestroy($sourceImage);
+
         $path = self::uniquePath($directory, $fileName, 'webp');
         $fullPath = $disk->path($path);
 
         imagewebp($finalImage, $fullPath, $quality);
 
-        imagedestroy($sourceImage);
         imagedestroy($finalImage);
 
         return $path;

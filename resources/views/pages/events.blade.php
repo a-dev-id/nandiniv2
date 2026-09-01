@@ -84,7 +84,7 @@ $metaImage = $page->hero_image ?? $page->hero_mobile_image ?? null;
                     </div>
                     @endif
 
-                    <a href="https://cho.pe/wildginger.web" target="_blank" rel="noopener noreferrer" class="mx-auto mt-8 inline-flex w-fit items-center justify-center border border-[#A88444] bg-[#A88444] px-5 py-3 text-xs font-medium uppercase tracking-[0.08em] text-white transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white sm:text-sm">
+                    <a href="https://wa.me/6281236871170" target="_blank" rel="noopener noreferrer" class="mx-auto mt-8 inline-flex w-fit items-center justify-center border border-[#A88444] bg-[#A88444] px-5 py-3 text-xs font-medium uppercase tracking-[0.08em] text-white transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white sm:text-sm">
                         Reserve a table
                     </a>
                 </div>
@@ -109,32 +109,14 @@ $metaImage = $page->hero_image ?? $page->hero_mobile_image ?? null;
                 <h2 id="dish-of-the-month-heading" class="text-lg font-medium uppercase leading-snug text-slate-700 sm:text-xl">Dish of the Month</h2>
             </div>
 
-            <article class="grid items-stretch gap-8 border border-slate-200 bg-slate-50 p-4 sm:p-6 lg:grid-cols-[minmax(0,520px)_minmax(0,1fr)] lg:gap-12 lg:p-8" data-dish-of-the-month-layout="split">
-                <div class="group mx-auto aspect-[12/17] w-full max-w-[520px] overflow-hidden bg-slate-200 lg:mx-0">
-                    <img src="{{ Storage::disk('public')->url($dishOfTheMonth->image) }}" alt="{{ $dishOfTheMonth->alt_text }}" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" width="600" height="850" loading="lazy" decoding="async">
+            <article class="text-center" data-dish-of-the-month-layout="full-width">
+                <div class="group aspect-video w-full overflow-hidden">
+                    <img src="{{ Storage::disk('public')->url($dishOfTheMonth->image) }}" alt="{{ $dishOfTheMonth->alt_text }}" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" width="2048" height="1152" loading="lazy" decoding="async">
                 </div>
 
-                <div class="flex h-full flex-col justify-center px-5 py-8 text-center sm:px-8 lg:px-10 lg:py-12">
-                    <h3 class="text-xl font-medium uppercase leading-snug text-slate-700 sm:text-2xl">{{ $dishOfTheMonth->title }}</h3>
-
-                    @if (filled($dishOfTheMonth->subtitle))
-                    <p class="mx-auto mt-3 max-w-xl text-xs font-medium leading-relaxed text-slate-700 sm:text-sm">{{ $dishOfTheMonth->subtitle }}</p>
-                    @endif
-
-                    @if (filled($dishOfTheMonth->excerpt))
-                    <p class="mx-auto mt-4 max-w-xl text-xs leading-relaxed text-gray-600 sm:text-sm">{{ $dishOfTheMonth->summary }}</p>
-                    @endif
-
-                    @if (filled($dishOfTheMonth->description))
-                    <div class="mx-auto mt-4 max-w-xl text-xs leading-relaxed text-gray-600 sm:text-sm [&_a]:text-[#8B6B35] [&_a]:underline [&_a]:underline-offset-4 [&_h2]:mb-3 [&_h2]:mt-7 [&_h2]:text-lg [&_h2]:font-medium [&_h2]:uppercase [&_h2]:text-slate-700 sm:[&_h2]:text-xl [&_li]:mb-2 [&_ol]:list-inside [&_ol]:list-decimal [&_p]:mb-4 [&_p:last-child]:mb-0 [&_ul]:list-inside [&_ul]:list-disc">
-                        {!! $dishOfTheMonth->description !!}
-                    </div>
-                    @endif
-
-                    <a href="https://cho.pe/wildginger.web" target="_blank" rel="noopener noreferrer" class="mx-auto mt-8 inline-flex w-fit items-center justify-center border border-[#A88444] bg-[#A88444] px-5 py-3 text-xs font-medium uppercase tracking-[0.08em] text-white transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white sm:text-sm">
-                        Reserve a table
-                    </a>
-                </div>
+                <a href="https://wa.me/6281236871170" target="_blank" rel="noopener noreferrer" class="mx-auto mt-8 inline-flex w-fit items-center justify-center border border-[#A88444] bg-[#A88444] px-5 py-3 text-xs font-medium uppercase tracking-[0.08em] text-white transition duration-300 hover:border-[#B8945B] hover:bg-[#B8945B] hover:text-white sm:text-sm">
+                    Reserve a table
+                </a>
             </article>
         </div>
     </section>

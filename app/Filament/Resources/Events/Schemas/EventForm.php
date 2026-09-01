@@ -91,6 +91,7 @@ class EventForm
                                 Toggle::make('is_dish_of_month')
                                     ->label('Dish of the Month')
                                     ->default(false)
+                                    ->live()
                                     ->inline(false)
                                     ->onColor('warning')
                                     ->helperText('Feature this record between Today’s Event and Upcoming Events. Enabling it replaces the previous Dish of the Month.'),
@@ -128,19 +129,30 @@ class EventForm
                                     ->image()
                                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                                     ->imagePreviewHeight('360')
-                                    ->panelAspectRatio('12:17')
+                                    ->panelAspectRatio(fn (Get $get): string => $get('is_dish_of_month') ? '16:9' : '12:17')
                                     ->panelLayout('integrated')
-                                    ->helperText('Upload a portrait event flyer. The image is saved at 600 × 850 pixels.')
+                                    ->imageEditor()
+                                    ->imageEditorAspectRatioOptions(fn (Get $get): array => [
+                                        $get('is_dish_of_month') ? '16:9' : '12:17',
+                                        null,
+                                    ])
+                                    ->helperText(fn (Get $get): string => $get('is_dish_of_month')
+                                        ? 'Upload a horizontal Dish of the Month image. Recommended size: 2048 × 1152 pixels (16:9).'
+                                        : 'Upload a portrait event flyer. The image is saved at 600 × 850 pixels.')
                                     ->openable()
                                     ->downloadable()
                                     ->saveUploadedFileUsing(
-                                        fn (TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
-                                            file: $file,
-                                            directory: 'events',
-                                            targetWidth: 600,
-                                            targetHeight: 850,
-                                            fileName: $get('image_name'),
-                                        )
+                                        function (TemporaryUploadedFile $file, Get $get): string {
+                                            $isDishOfTheMonth = (bool) $get('is_dish_of_month');
+
+                                            return FilamentWebpUpload::store(
+                                                file: $file,
+                                                directory: 'events',
+                                                targetWidth: $isDishOfTheMonth ? 2048 : 600,
+                                                targetHeight: $isDishOfTheMonth ? 1152 : 850,
+                                                fileName: $get('image_name'),
+                                            );
+                                        }
                                     ),
 
                                 TextInput::make('image_name')
