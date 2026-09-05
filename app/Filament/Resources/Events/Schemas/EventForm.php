@@ -80,7 +80,7 @@ class EventForm
                                     ->default(EventType::Regular->value)
                                     ->required()
                                     ->native(false)
-                                    ->helperText('Each record represents one event occurrence and never repeats automatically.'),
+                                    ->helperText('One-time events never repeat. The event schedule cron advances active weekly, monthly, and yearly events to their next occurrence.'),
 
                                 TextInput::make('schedule_text')
                                     ->label('Schedule Text')

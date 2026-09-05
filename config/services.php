@@ -85,6 +85,10 @@ return [
         'publication_cron_token' => env('BLOG_NEWS_PUBLICATION_CRON_TOKEN'),
     ],
 
+    'events' => [
+        'schedule_cron_token' => env('EVENT_SCHEDULE_CRON_TOKEN'),
+    ],
+
     'welcome_email' => [
         'test_mode' => env('WELCOME_EMAIL_TEST_MODE', true),
         'test_recipient' => env('WELCOME_EMAIL_TEST_RECIPIENT'),

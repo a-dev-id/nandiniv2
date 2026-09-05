@@ -8,6 +8,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Cron\BlogNewsPublicationController;
 use App\Http\Controllers\Cron\BookingSyncController;
+use App\Http\Controllers\Cron\EventScheduleController;
 use App\Http\Controllers\Cron\MemberCheckoutNotificationController;
 use App\Http\Controllers\Cron\MembershipLifecycleController;
 use App\Http\Controllers\Cron\OfferPublicationController;
@@ -481,6 +482,14 @@ Route::domain(config('domains.main'))->group(function (): void {
 
     Route::get('/cron/blog-news/publication/{token}', BlogNewsPublicationController::class)
         ->name('cron.blog-news.publication');
+
+    Route::get('/cron/events/schedule/{token}', EventScheduleController::class)
+        ->withoutMiddleware([
+            \Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        ])
+        ->name('cron.events.schedule');
 
     Route::get('/cron/members/test-welcome-email/{token}', TestWelcomeEmailController::class)
         ->name('cron.members.test-welcome-email');
