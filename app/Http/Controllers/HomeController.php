@@ -64,7 +64,7 @@ class HomeController extends Controller
             ->orderBy('sort_order')
             ->get()
             ->each(function (PageSection $section): void {
-                $section->setAttribute('show_url', route('dining.index'));
+                $section->setAttribute('show_url', config('dining.public_url'));
             });
 
         $spaSections = PageSection::query()

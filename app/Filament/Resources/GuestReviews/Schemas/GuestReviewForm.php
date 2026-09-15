@@ -97,6 +97,11 @@ class GuestReviewForm
                                     ->label('Featured')
                                     ->helperText('Only featured reviews are shown on the homepage.')
                                     ->default(false),
+
+                                Toggle::make('show_on_dining')
+                                    ->label('Show on Dining Subdomain')
+                                    ->helperText('Display this existing review in the Dining guest reviews slider.')
+                                    ->default(false),
                             ]),
                     ]),
             ]);

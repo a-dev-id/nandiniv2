@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Page;
 use App\Models\PageSection;
 use App\Models\Spa;
+use App\Models\SpaSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
@@ -64,12 +65,38 @@ class SpaSiteDomainTest extends TestCase
 
         $this->get('https://'.config('domains.spa').'/')
             ->assertOk()
-            ->assertSee('Spa Homepage')
+            ->assertSee('WELLNESS AT NANDINI JUNGLE')
+            ->assertSee('RESTORE IN THE HEART')
+            ->assertSee('BOOK A SPA EXPERIENCE')
+            ->assertSee('EXPLORE TREATMENTS')
+            ->assertSeeInOrder([
+                'Opening Hours',
+                '08:00 AM – 10:00 PM',
+                'Booking',
+                'Advance booking recommended',
+                'Location',
+                'Nandini Jungle, Ubud, Bali',
+                'Reservations',
+                '+62 812 3687 1170',
+                '(WhatsApp)',
+            ])
+            ->assertSee('href="https://wa.me/6281236871170"', false)
+            ->assertSeeInOrder([
+                '(WhatsApp)',
+                'OUR WELLNESS PHILOSOPHY',
+                'A SACRED PAUSE',
+                'IN THE JUNGLE',
+                'At Nandini Jungle, wellness is a harmonious journey of body, mind and spirit',
+            ])
+            ->assertSee('md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]', false)
+            ->assertSee('aspect-[4/3]', false)
+            ->assertSee('order-1', false)
             ->assertSee('id="mainNavbar"', false)
             ->assertSee('Copyright ©')
             ->assertDontSee('aria-label="Spa navigation"', false)
             ->assertDontSee('Visit the main Nandini website')
-            ->assertSee('--spa-accent: #791841', false)
+            ->assertSee('aria-label="Chat with us on WhatsApp"', false)
+            ->assertSee('nandini-mini-popup-closed-date', false)
             ->assertSee('https://'.config('domains.main'), false);
     }
 
@@ -80,42 +107,59 @@ class SpaSiteDomainTest extends TestCase
 
         $this->get('https://'.config('domains.spa').'/')
             ->assertOk()
-            ->assertSee('class="spa-site"', false)
-            ->assertSee('--spa-accent: #791841', false);
+            ->assertSee('id="spa-hero-title"', false)
+            ->assertDontSee('class="spa-site"', false);
 
         $this->get('https://'.config('domains.main').'/')
             ->assertOk()
-            ->assertDontSee('class="spa-site"', false)
-            ->assertDontSee('--spa-accent: #791841', false);
+            ->assertDontSee('id="spa-hero-title"', false);
     }
 
-    public function test_spa_homepage_renders_cms_hero_and_only_published_packages_in_order(): void
+    public function test_spa_homepage_renders_spa_landing_settings(): void
     {
-        $this->createPage([
-            'site' => Page::SITE_SPA,
-            'slug' => 'home',
-            'title' => 'Essence Spa Test Home',
-            'subtitle' => 'CMS supplied spa subtitle',
-            'excerpt' => 'CMS supplied spa excerpt',
+        SpaSetting::query()->firstOrFail()->update([
+            'hero_eyebrow' => 'CMS supplied spa eyebrow',
+            'hero_heading' => "CMS supplied spa\nheading",
+            'hero_description' => 'CMS supplied spa description',
             'hero_image' => 'pages/hero/spa-home.webp',
             'hero_image_alt' => 'CMS supplied spa hero alt text',
+            'information_bar_items' => [
+                ['icon' => 'clock', 'label' => 'Hours Test', 'value' => '09:00 AM – 09:00 PM'],
+                ['icon' => 'calendar', 'label' => 'Booking Test', 'value' => 'Book ahead'],
+                ['icon' => 'location', 'label' => 'Location Test', 'value' => 'Ubud, Bali'],
+                ['icon' => 'phone', 'label' => 'Contact Test', 'value' => '+62 812 3687 1170', 'link' => 'https://wa.me/6281236871170'],
+            ],
         ]);
-
-        $second = $this->createSpa('Second Published Package', 20);
-        $first = $this->createSpa('First Published Package', 10);
-        $this->createSpa('Inactive Package', 5, ['is_active' => false]);
-        $this->createSpa('Future Package', 1, ['valid_start_date' => today()->addDay()]);
 
         $this->get('https://'.config('domains.spa').'/')
             ->assertOk()
-            ->assertSee('CMS supplied spa subtitle')
-            ->assertSee('CMS supplied spa excerpt')
+            ->assertSee('CMS supplied spa eyebrow')
+            ->assertSee("CMS supplied spa<br />\nheading", false)
+            ->assertSee('CMS supplied spa description')
             ->assertSee('pages/hero/spa-home.webp')
             ->assertSee('CMS supplied spa hero alt text')
-            ->assertSeeInOrder([$first->title, $second->title])
-            ->assertSee(route('spa.show', $first->slug))
-            ->assertDontSee('Inactive Package')
-            ->assertDontSee('Future Package');
+            ->assertSeeInOrder(['Hours Test', 'Booking Test', 'Location Test', 'Contact Test'])
+            ->assertSee('min-h-[80svh]', false)
+            ->assertSee('href="https://wa.me/6281236871170"', false);
+    }
+
+    public function test_spa_homepage_renders_cms_wellness_philosophy_content(): void
+    {
+        SpaSetting::query()->firstOrFail()->update([
+            'wellness_philosophy_eyebrow' => 'CMS philosophy eyebrow',
+            'wellness_philosophy_heading' => "CMS philosophy\nheading",
+            'wellness_philosophy_description' => 'CMS philosophy description.',
+            'wellness_philosophy_image' => 'spa/wellness-philosophy/test.webp',
+            'wellness_philosophy_image_alt' => 'CMS philosophy image alt text',
+        ]);
+
+        $this->get('https://'.config('domains.spa').'/')
+            ->assertOk()
+            ->assertSee('CMS philosophy eyebrow')
+            ->assertSee("CMS philosophy<br />\nheading", false)
+            ->assertSee('CMS philosophy description.')
+            ->assertSee('spa/wellness-philosophy/test.webp')
+            ->assertSee('CMS philosophy image alt text');
     }
 
     public function test_main_page_cannot_be_displayed_on_the_spa_domain(): void
@@ -161,8 +205,8 @@ class SpaSiteDomainTest extends TestCase
 
     public function test_spa_route_names_and_generated_domains_are_isolated(): void
     {
-        $this->assertSame(config('domains.spa'), parse_url(route('spa-site.home'), PHP_URL_HOST));
-        $this->assertSame(config('domains.spa'), Route::getRoutes()->getByName('spa-site.home')?->getDomain());
+        $this->assertSame(config('domains.spa'), parse_url(route('spa-landing.index'), PHP_URL_HOST));
+        $this->assertSame(config('domains.spa'), Route::getRoutes()->getByName('spa-landing.index')?->getDomain());
         $this->assertSame(config('domains.main'), Route::getRoutes()->getByName('home')?->getDomain());
     }
 

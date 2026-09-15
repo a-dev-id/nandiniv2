@@ -50,7 +50,7 @@ class SitemapService
             ['route' => 'holy-river.index', 'changefreq' => 'weekly', 'priority' => '0.8'],
             ['route' => 'little-things.index', 'changefreq' => 'monthly', 'priority' => '0.7'],
             ['route' => 'honeymoon.index', 'changefreq' => 'weekly', 'priority' => '0.8'],
-            ['route' => 'dining.index', 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['url' => config('dining.public_url'), 'changefreq' => 'monthly', 'priority' => '0.7'],
             ['route' => 'spa.index', 'changefreq' => 'weekly', 'priority' => '0.8'],
             ['route' => 'wedding.index', 'changefreq' => 'monthly', 'priority' => '0.7'],
             ['route' => 'sustainability.index', 'changefreq' => 'monthly', 'priority' => '0.6'],
@@ -72,7 +72,7 @@ class SitemapService
         }
 
         return collect($urls)
-            ->map(fn (array $url) => $this->entry(route($url['route']), null, $url['changefreq'], $url['priority']))
+            ->map(fn (array $url) => $this->entry($url['url'] ?? route($url['route']), null, $url['changefreq'], $url['priority']))
             ->all();
     }
 
@@ -167,7 +167,7 @@ class SitemapService
                 return $this->entry(route($route, $experience->slug), $experience->updated_at, 'monthly', '0.7');
             });
 
-        return $categoryUrls->merge($experienceUrls);
+        return $categoryUrls->toBase()->merge($experienceUrls->toBase());
     }
 
     private function honeymoonUrls(): Collection

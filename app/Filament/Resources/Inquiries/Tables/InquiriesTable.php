@@ -44,6 +44,18 @@ class InquiriesTable
                     ->limit(40)
                     ->placeholder('-'),
 
+                TextColumn::make('dining_experience_name')
+                    ->label('Experience')
+                    ->getStateUsing(fn($record): ?string => $record->experience?->title)
+                    ->limit(40)
+                    ->placeholder('-'),
+
+                TextColumn::make('occasion')
+                    ->label('Occasion')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->placeholder('-'),
+
                 TextColumn::make('reserve_date')
                     ->label('Reserve Date')
                     ->date('d M Y')

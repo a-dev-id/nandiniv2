@@ -1,13 +1,15 @@
 @props([
     'reviews' => collect(),
     'seeMoreHref' => null,
+    'heading' => null,
+    'seeMoreLabel' => null,
 ])
 
 @if ($reviews->isNotEmpty())
 <section class="bg-white px-6 py-16 text-center md:py-24" aria-labelledby="guest-reviews-title">
     <div class="mx-auto max-w-7xl">
         <h2 id="guest-reviews-title" class="mb-12 text-lg font-medium uppercase text-slate-700 sm:text-xl">
-            What Our Guests Say
+            {{ $heading }}
         </h2>
 
         <div class="guest-review-slider" data-total="{{ $reviews->count() }}">
@@ -78,10 +80,10 @@
         </div>
         @endif
 
-        @if ($seeMoreHref)
+        @if ($seeMoreHref && $seeMoreLabel)
         <div class="mt-10 text-center">
             <x-buttons.link-button :href="$seeMoreHref" variant="solid" class="min-w-[145px]">
-                See More
+                {{ $seeMoreLabel }}
             </x-buttons.link-button>
         </div>
         @endif

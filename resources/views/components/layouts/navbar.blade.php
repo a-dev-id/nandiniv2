@@ -297,7 +297,7 @@ $navbarStartsSolid = (request()->routeIs('voucher.*') && ! request()->routeIs('v
                         Offers
                     </a>
 
-                    <a href="{{ $mainRoute('dining.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ config('dining.public_url') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Dining
                     </a>
 
@@ -418,7 +418,7 @@ $navbarStartsSolid = (request()->routeIs('voucher.*') && ! request()->routeIs('v
 
                         @unless ($affiliateDisabled)
                         <a id="navAffiliateSidebarBtn" href="{{ route('affiliate.landing') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium text-slate-600 transition duration-300 hover:text-[#B8945B] sm:text-[14px]">
-                            Affiliate
+                            Affiliate Program
                         </a>
                         @endunless
                     </div>

@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             __DIR__.'/../routes/voucher.php',
             __DIR__.'/../routes/affiliate.php',
             __DIR__.'/../routes/spa.php',
+            __DIR__.'/../routes/dining.php',
             __DIR__.'/../routes/web.php',
         ],
         api: __DIR__.'/../routes/api.php',

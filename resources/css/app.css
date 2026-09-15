@@ -7,6 +7,14 @@
 
 @font-face {
     font-family: "Span";
+    src: url("/fonts/Span-Regular.otf") format("opentype");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Span";
     src: url("/fonts/Span-Semibold.otf") format("opentype");
     font-style: normal;
     font-weight: 600;
@@ -43,8 +51,8 @@
     h5,
     h6 {
         font-family: var(--font-span);
-        letter-spacing: 0.15em !important;
-        font-weight: 600 !important;
+        letter-spacing: var(--heading-letter-spacing, 0.15em) !important;
+        font-weight: var(--heading-font-weight, 600) !important;
     }
 
     th {
@@ -211,6 +219,11 @@
     .itemcarousel-slick .slick-slide > div {
         display: flex;
         flex: 1;
+    }
+
+    .dining-experience-image {
+        aspect-ratio: 4 / 3 !important;
+        flex: none !important;
     }
 
     .slick-slider .slick-dots {

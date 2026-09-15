@@ -1,3 +1,5 @@
+@props(['showMiniPopup' => true])
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -107,7 +109,9 @@
     @endif
     @endif
 
-    <x-mini-popup-widget />
+    @if ($showMiniPopup)
+        <x-mini-popup-widget />
+    @endif
 
     @stack('scripts')
 </body>

@@ -16,6 +16,7 @@ class GuestReview extends Model
         'source',
         'is_active',
         'is_featured',
+        'show_on_dining',
         'sort_order',
     ];
 
@@ -24,6 +25,7 @@ class GuestReview extends Model
         'reviewed_at' => 'date',
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
+        'show_on_dining' => 'boolean',
         'sort_order' => 'integer',
     ];
 
@@ -35,5 +37,10 @@ class GuestReview extends Model
     public function scopeFeatured(Builder $query): Builder
     {
         return $query->where('is_featured', true);
+    }
+
+    public function scopeForDining(Builder $query): Builder
+    {
+        return $query->where('show_on_dining', true);
     }
 }

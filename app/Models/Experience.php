@@ -5,9 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Builder;
 
 class Experience extends Model
 {
+    public const DINING_INQUIRY_SLUGS = [
+        'romantic-dining-by-the-chapel',
+        'moonlit-jungle-romance',
+        'riverside-romance',
+    ];
+
     protected $fillable = [
         'experience_category_id',
         'title',
@@ -18,6 +25,9 @@ class Experience extends Model
         'inclusions',
         'duration',
         'location',
+        'opening_hours',
+        'experience_type',
+        'whatsapp_number',
 
         'image',
         'image_alt',
@@ -46,4 +56,24 @@ class Experience extends Model
         return $this->hasMany(ExperiencePrice::class)
             ->orderBy('sort_order');
     }
+
+    public function vouchers(): HasMany
+    {
+        return $this->hasMany(Voucher::class);
+    }
+
+    public function scopeDiningInquiryOptions(Builder $query): Builder
+    {
+        return $query
+            ->where('is_active', true)
+            ->whereIn('slug', self::DINING_INQUIRY_SLUGS)
+            ->whereHas('vouchers', fn (Builder $query): Builder => $query
+                ->where('is_active', true)
+                ->whereHas('category', fn (Builder $query): Builder => $query
+                    ->where('slug', 'signature-dining-experiences')
+                    ->where('is_active', true)))
+            ->orderBy('sort_order')
+            ->orderBy('title');
+    }
+
 }

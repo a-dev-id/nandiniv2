@@ -66,6 +66,18 @@
                                     <td style="padding:12px 0;border-bottom:1px solid #eee8df;color:#667085;font-size:13px;text-transform:uppercase;letter-spacing:1px;">Country</td>
                                     <td style="padding:12px 0;border-bottom:1px solid #eee8df;color:#344054;font-size:14px;">{{ $inquiry->country }}</td>
                                 </tr>
+                                @if ($inquiry->experience)
+                                <tr>
+                                    <td style="padding:12px 0;border-bottom:1px solid #eee8df;color:#667085;font-size:13px;text-transform:uppercase;letter-spacing:1px;">Experience</td>
+                                    <td style="padding:12px 0;border-bottom:1px solid #eee8df;color:#344054;font-size:14px;">{{ $inquiry->experience->title }}</td>
+                                </tr>
+                                @endif
+                                @if ($inquiry->occasion)
+                                <tr>
+                                    <td style="padding:12px 0;border-bottom:1px solid #eee8df;color:#667085;font-size:13px;text-transform:uppercase;letter-spacing:1px;">Occasion</td>
+                                    <td style="padding:12px 0;border-bottom:1px solid #eee8df;color:#344054;font-size:14px;">{{ $inquiry->occasion }}</td>
+                                </tr>
+                                @endif
                                 <tr>
                                     <td style="padding:12px 0;border-bottom:1px solid #eee8df;color:#667085;font-size:13px;text-transform:uppercase;letter-spacing:1px;">Reserve Date</td>
                                     <td style="padding:12px 0;border-bottom:1px solid #eee8df;color:#344054;font-size:14px;">{{ optional($inquiry->reserve_date)->format('d M Y') }}</td>

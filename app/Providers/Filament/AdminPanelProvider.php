@@ -4,14 +4,11 @@ namespace App\Providers\Filament;
 
 use App\Filament\Resources\AffiliateBookings\AffiliateBookingResource;
 use App\Filament\Resources\AffiliateCommissionItems\AffiliateCommissionItemResource;
-use App\Filament\Resources\AffiliateCommissionPeriods\AffiliateCommissionPeriodResource;
 use App\Filament\Resources\AffiliateMarketingAssets\AffiliateMarketingAssetResource;
 use App\Filament\Resources\AffiliatePaymentProfiles\AffiliatePaymentProfileResource;
-use App\Filament\Resources\AffiliatePayoutMinimums\AffiliatePayoutMinimumResource;
-use App\Filament\Resources\AffiliatePayouts\AffiliatePayoutResource;
 use App\Filament\Resources\Affiliates\AffiliateResource;
-use App\Filament\Widgets\BookingSyncOverview;
 use App\Filament\Widgets\AffiliateOverview;
+use App\Filament\Widgets\BookingSyncOverview;
 use App\Filament\Widgets\MembershipOverview;
 use App\Filament\Widgets\VoucherOverview;
 use App\Http\Middleware\RestrictFilamentAffiliateStaffAccess;
@@ -108,6 +105,12 @@ class AdminPanelProvider extends PanelProvider
 
                 NavigationGroup::make()
                     ->label('Website Content'),
+
+                NavigationGroup::make()
+                    ->label('Dining Landing Page'),
+
+                NavigationGroup::make()
+                    ->label('SPA Landing Page'),
 
                 NavigationGroup::make()
                     ->label('Settings'),

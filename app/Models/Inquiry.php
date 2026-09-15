@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Inquiry extends Model
 {
@@ -16,6 +17,8 @@ class Inquiry extends Model
         'phone',
         'note',
         'inquiry_title',
+        'experience_id',
+        'occasion',
         'inquiry_image',
         'reserve_date',
         'reserve_time',
@@ -43,5 +46,10 @@ class Inquiry extends Model
     public function getPhoneWaAttribute(): string
     {
         return trim($this->phone_code . ' ' . $this->phone);
+    }
+
+    public function experience(): BelongsTo
+    {
+        return $this->belongsTo(Experience::class);
     }
 }

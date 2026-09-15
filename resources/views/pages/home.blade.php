@@ -149,5 +149,5 @@
     @endif
     @endforeach
 
-    <x-sections.guest-reviews :reviews="$guestReviews" :see-more-href="route('guest-reviews.index')" />
+    <x-sections.guest-reviews :reviews="$guestReviews" heading="What Our Guests Say" see-more-label="See More" :see-more-href="route('guest-reviews.index')" />
 </x-layouts.app>

@@ -56,6 +56,20 @@ class InquiryForm
                                     ->disabled()
                                     ->columnSpanFull(),
 
+                                TextInput::make('dining_experience_name')
+                                    ->label('Experience')
+                                    ->disabled()
+                                    ->dehydrated(false)
+                                    ->afterStateHydrated(fn(TextInput $component, $record): mixed => $component->state($record?->experience?->title))
+                                    ->placeholder('-')
+                                    ->columnSpanFull(),
+
+                                TextInput::make('occasion')
+                                    ->label('Occasion')
+                                    ->disabled()
+                                    ->placeholder('-')
+                                    ->columnSpanFull(),
+
                                 Textarea::make('inquiry_image')
                                     ->label('Inquiry Image')
                                     ->rows(2)

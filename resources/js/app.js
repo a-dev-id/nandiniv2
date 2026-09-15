@@ -195,6 +195,7 @@ function initItemCarousel() {
         $(".itemcarousel-slick").each(function () {
             const $el = $(this);
             const $wrap = $el.closest(".item-carousel-wrap");
+            const slidesToShow = Number($el.data("slides-to-show")) || 3;
 
             if ($el.hasClass("slick-initialized")) {
                 $el.slick("refresh");
@@ -207,7 +208,7 @@ function initItemCarousel() {
             });
 
             $el.slick({
-                slidesToShow: 3,
+                slidesToShow,
                 slidesToScroll: 1,
                 infinite: true,
                 arrows: true,
@@ -390,6 +391,8 @@ Alpine.data("inquiryModal", () => ({
     itemImage: "",
     today: new Date().toISOString().slice(0, 10),
     reserveTime: "",
+    selectedExperienceId: "",
+    selectedOccasion: "",
     closeCountdown: 0,
     closeCountdownTimer: null,
 
@@ -421,11 +424,11 @@ Alpine.data("inquiryModal", () => ({
             this.open(trigger);
         });
 
-        window.addEventListener("open-inquiry-modal", () => this.open());
+        window.addEventListener("open-inquiry-modal", (event) => this.open(null, event.detail));
     },
 
-    open(trigger = null) {
-        this.setInquiryItem(trigger);
+    open(trigger = null, options = {}) {
+        this.setInquiryItem(trigger, options || {});
         this.clearCloseCountdown();
         this.isOpen = true;
         this.message = "";
@@ -440,10 +443,12 @@ Alpine.data("inquiryModal", () => ({
         document.body.classList.add("overflow-hidden");
     },
 
-    setInquiryItem(trigger) {
+    setInquiryItem(trigger, options = {}) {
         const container = trigger?.closest("section, article, main") || document;
         const triggerTitle = trigger?.dataset?.inquiryTitle?.trim();
         const triggerImage = trigger?.dataset?.inquiryImage?.trim();
+        const triggerExperienceId = trigger?.dataset?.experienceId?.trim();
+        const triggerOccasion = trigger?.dataset?.occasion?.trim();
         const heading =
             container.querySelector("h1") ||
             document.querySelector("h1") ||
@@ -459,6 +464,8 @@ Alpine.data("inquiryModal", () => ({
             "Nandini Inquiry";
 
         this.itemImage = triggerImage || ogImage?.content || image?.currentSrc || image?.src || "";
+        this.selectedExperienceId = options.experienceId || triggerExperienceId || "";
+        this.selectedOccasion = options.occasion || triggerOccasion || "";
     },
 
     close() {
@@ -524,7 +531,14 @@ Alpine.data("inquiryModal", () => ({
                     ? Object.values(data.errors).flat()[0]
                     : null;
 
-                throw new Error(firstError || data.message || "Please check the form and try again.");
+                const statusMessage = {
+                    419: "Your session expired. Refresh the page and try again.",
+                    422: "Please check the form and try again.",
+                    429: "Too many attempts. Please wait a moment and try again.",
+                    500: "The server could not process your inquiry. Please try again later.",
+                }[response.status];
+
+                throw new Error(firstError || data.message || statusMessage || `Request failed (${response.status}).`);
             }
 
             this.message = data.message || "Thank you. Your inquiry has been sent.";
@@ -532,7 +546,9 @@ Alpine.data("inquiryModal", () => ({
             resetRecaptcha(form);
             this.startCloseCountdown(5);
         } catch (error) {
-            this.error = error.message || "We could not send your inquiry. Please try again.";
+            this.error = error instanceof TypeError
+                ? "Unable to contact the inquiry service. Check your connection and try again."
+                : error.message || "We could not send your inquiry. Please try again.";
             resetRecaptcha(form);
         } finally {
             this.isSubmitting = false;

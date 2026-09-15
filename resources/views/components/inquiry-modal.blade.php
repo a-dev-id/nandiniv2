@@ -2,6 +2,15 @@
     $titles = \App\Support\InquiryOptions::titles();
     $countries = \App\Support\InquiryOptions::countries();
     $phoneCodes = \App\Support\InquiryOptions::phoneCodes();
+    $isDiningInquiry = request()->routeIs('dining-landing.*');
+    $diningExperiences = $isDiningInquiry && \Illuminate\Support\Facades\Schema::hasTable('vouchers')
+        ? \App\Models\Experience::query()
+            ->diningInquiryOptions()
+            ->get(['id', 'title'])
+        : collect();
+    $occasionOptions = $isDiningInquiry
+        ? \App\Models\DiningSetting::query()->find(1)?->occasionOptions() ?? \App\Models\DiningSetting::DEFAULT_OCCASIONS
+        : [];
 @endphp
 
 <div
@@ -32,7 +41,7 @@
             </button>
         </div>
 
-        <form method="POST" action="{{ route('inquiries.store') }}" x-on:submit.prevent="submit($event)" class="space-y-5">
+        <form method="POST" action="{{ route('inquiries.store', absolute: false) }}" x-on:submit.prevent="submit($event)" class="space-y-5">
             @csrf
 
             <input type="hidden" name="source_url" x-bind:value="sourceUrl">
@@ -111,6 +120,42 @@
                     <input type="tel" name="phone" required autocomplete="tel" class="w-full border border-slate-300 px-3 py-3 text-xs text-slate-700 focus:border-[#A88444] focus:outline-none sm:text-sm">
                 </div>
             </div>
+
+            @if ($isDiningInquiry)
+                <label class="block">
+                    <span class="mb-1 block text-xs font-semibold uppercase text-slate-600 sm:text-sm">Experience</span>
+                    <select
+                        name="experience_id"
+                        required
+                        x-model="selectedExperienceId"
+                        x-on:invalid="$event.target.setCustomValidity('Please select an experience.')"
+                        x-on:change="$event.target.setCustomValidity('')"
+                        class="w-full border border-slate-300 px-3 py-3 text-xs text-slate-700 focus:border-[#A88444] focus:outline-none sm:text-sm"
+                    >
+                        <option value="">Select experience</option>
+                        @foreach ($diningExperiences as $diningExperience)
+                            <option value="{{ $diningExperience->id }}">{{ $diningExperience->title }}</option>
+                        @endforeach
+                    </select>
+                </label>
+
+                <label class="block">
+                    <span class="mb-1 block text-xs font-semibold uppercase text-slate-600 sm:text-sm">Occasion</span>
+                    <select
+                        name="occasion"
+                        required
+                        x-model="selectedOccasion"
+                        x-on:invalid="$event.target.setCustomValidity('Please select an occasion.')"
+                        x-on:change="$event.target.setCustomValidity('')"
+                        class="w-full border border-slate-300 px-3 py-3 text-xs text-slate-700 focus:border-[#A88444] focus:outline-none sm:text-sm"
+                    >
+                        <option value="">Select occasion</option>
+                        @foreach ($occasionOptions as $occasion)
+                            <option value="{{ $occasion }}">{{ $occasion }}</option>
+                        @endforeach
+                    </select>
+                </label>
+            @endif
 
             <div class="grid gap-4 sm:grid-cols-2">
                 <label class="block">

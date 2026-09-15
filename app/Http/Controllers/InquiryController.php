@@ -3,18 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inquiry;
+use App\Models\DiningSetting;
+use App\Models\Experience;
 use App\Rules\Recaptcha;
 use App\Services\MembershipEmailRelayService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class InquiryController extends Controller
 {
     public function store(Request $request): JsonResponse|RedirectResponse
     {
+        $isDiningInquiry = $request->routeIs('dining-landing.inquiries.store');
+        $occasionOptions = $isDiningInquiry
+            ? DiningSetting::query()->find(1)?->occasionOptions() ?? DiningSetting::DEFAULT_OCCASIONS
+            : [];
+
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:20'],
             'first_name' => ['required', 'string', 'max:100'],
@@ -25,11 +33,40 @@ class InquiryController extends Controller
             'phone' => ['required', 'string', 'max:40'],
             'note' => ['nullable', 'string', 'max:2000'],
             'inquiry_title' => ['nullable', 'string', 'max:255'],
+            'experience_id' => [
+                $isDiningInquiry ? 'required' : 'nullable',
+                'integer',
+                Rule::exists('experiences', 'id')->where(function ($query): void {
+                    $query->where('is_active', true)
+                        ->whereIn('slug', Experience::DINING_INQUIRY_SLUGS)
+                        ->whereExists(function ($query): void {
+                        $query->selectRaw('1')
+                            ->from('vouchers')
+                            ->join('voucher_categories', 'voucher_categories.id', '=', 'vouchers.voucher_category_id')
+                            ->whereColumn('vouchers.experience_id', 'experiences.id')
+                            ->where('vouchers.is_active', true)
+                            ->whereNull('vouchers.deleted_at')
+                            ->where('voucher_categories.slug', 'signature-dining-experiences')
+                            ->where('voucher_categories.is_active', true);
+                    });
+                }),
+            ],
+            'occasion' => [
+                $isDiningInquiry ? 'required' : 'nullable',
+                'string',
+                'max:100',
+                Rule::in($occasionOptions),
+            ],
             'inquiry_image' => ['nullable', 'url', 'max:2048'],
             'reserve_date' => ['required', 'date'],
             'reserve_time' => ['required', 'date_format:H:i'],
             'source_url' => ['nullable', 'url', 'max:2048'],
             'g-recaptcha-response' => Recaptcha::rules(),
+        ], [
+            'experience_id.required' => 'Please select an experience.',
+            'experience_id.exists' => 'Please select an available experience.',
+            'occasion.required' => 'Please select an occasion.',
+            'occasion.in' => 'Please select an available occasion.',
         ]);
         unset($validated['g-recaptcha-response']);
 
@@ -50,6 +87,7 @@ class InquiryController extends Controller
             'user_agent' => (string) $request->userAgent(),
             'submitted_at' => now(),
         ]);
+        $inquiry->load('experience');
 
         $this->sendNotification($inquiry, $validated, $name, $sourceUrl);
 
@@ -79,7 +117,8 @@ class InquiryController extends Controller
                 'to' => $data['email'],
                 'cc' => [$recipient],
                 'bcc' => $this->guestBcc(),
-                'subject' => 'Your Inquiry: ' . $inquiry->inquiry_title,
+                'subject' => 'Your Inquiry: '.$inquiry->inquiry_title
+                    .($inquiry->experience ? ' — '.$inquiry->experience->title : ''),
                 'reply_to' => config('mail.guest_reply_to'),
             ]);
 
