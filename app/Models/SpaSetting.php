@@ -30,9 +30,18 @@ class SpaSetting extends Model
         'wellness_philosophy_description',
         'wellness_philosophy_image',
         'wellness_philosophy_image_alt',
+        'why_nandini_eyebrow',
+        'why_nandini_heading',
+        'why_nandini_items',
+        'wellness_journeys_eyebrow',
+        'wellness_journeys_heading',
+        'wellness_journeys_description',
+        'wellness_journeys_items',
     ];
 
     protected $casts = [
         'information_bar_items' => 'array',
+        'why_nandini_items' => 'array',
+        'wellness_journeys_items' => 'array',
     ];
 }

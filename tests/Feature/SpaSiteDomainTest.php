@@ -78,15 +78,30 @@ class SpaSiteDomainTest extends TestCase
                 'Nandini Jungle, Ubud, Bali',
                 'Reservations',
                 '+62 812 3687 1170',
-                '(WhatsApp)',
             ])
+            ->assertDontSee('(WhatsApp)')
             ->assertSee('href="https://wa.me/6281236871170"', false)
             ->assertSeeInOrder([
-                '(WhatsApp)',
+                '+62 812 3687 1170',
                 'OUR WELLNESS PHILOSOPHY',
                 'A SACRED PAUSE',
                 'IN THE JUNGLE',
                 'At Nandini Jungle, wellness is a harmonious journey of body, mind and spirit',
+                'WHY NANDINI',
+                'WELLNESS ROOTED IN NATURE',
+                'JUNGLE SANCTUARY',
+                'Treatments surrounded by tropical nature.',
+                'BALINESE RITUALS',
+                'Wellness inspired by traditional Balinese practices.',
+                'PERSONALISED CARE',
+                'Experiences tailored to individual wellbeing.',
+                'RIVER-SIDE SERENITY',
+                'A unique spa environment shaped by the jungle landscape.',
+                'WELLNESS JOURNEYS',
+                'SACRED JUNGLE WELLNESS JOURNEYS',
+                '2-DAY BALINESE WELLNESS ESCAPE',
+                '3-DAY INNER HARMONY RETREAT',
+                '4-DAY DEEP BALINESE WELLNESS IMMERSION',
             ])
             ->assertSee('md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]', false)
             ->assertSee('aspect-[4/3]', false)
@@ -97,6 +112,10 @@ class SpaSiteDomainTest extends TestCase
             ->assertDontSee('Visit the main Nandini website')
             ->assertSee('aria-label="Chat with us on WhatsApp"', false)
             ->assertSee('nandini-mini-popup-closed-date', false)
+            ->assertSee('spa-wellness-journeys-carousel', false)
+            ->assertSee('data-slides-to-show="3"', false)
+            ->assertSee('aria-label="Previous wellness journey"', false)
+            ->assertSee('aspect-[4/3]', false)
             ->assertSee('https://'.config('domains.main'), false);
     }
 
@@ -160,6 +179,73 @@ class SpaSiteDomainTest extends TestCase
             ->assertSee('CMS philosophy description.')
             ->assertSee('spa/wellness-philosophy/test.webp')
             ->assertSee('CMS philosophy image alt text');
+    }
+
+    public function test_spa_homepage_renders_cms_why_nandini_content_in_order(): void
+    {
+        SpaSetting::query()->firstOrFail()->update([
+            'why_nandini_eyebrow' => 'CMS why eyebrow',
+            'why_nandini_heading' => 'CMS why heading',
+            'why_nandini_items' => [
+                ['icon' => 'river', 'title' => 'First CMS benefit', 'description' => 'First CMS description.'],
+                ['icon' => 'care', 'title' => 'Second CMS benefit', 'description' => 'Second CMS description.'],
+                ['icon' => 'ritual', 'title' => 'Third CMS benefit', 'description' => 'Third CMS description.'],
+                ['icon' => 'jungle', 'title' => 'Fourth CMS benefit', 'description' => 'Fourth CMS description.'],
+            ],
+        ]);
+
+        $this->get('https://'.config('domains.spa').'/')
+            ->assertOk()
+            ->assertSee('CMS why eyebrow')
+            ->assertSee('CMS why heading')
+            ->assertSeeInOrder([
+                'First CMS benefit',
+                'Second CMS benefit',
+                'Third CMS benefit',
+                'Fourth CMS benefit',
+            ])
+            ->assertSee('lg:grid-cols-4', false)
+            ->assertSee('min-[420px]:grid-cols-2', false);
+    }
+
+    public function test_spa_homepage_renders_cms_wellness_journeys_in_order(): void
+    {
+        SpaSetting::query()->firstOrFail()->update([
+            'wellness_journeys_eyebrow' => 'CMS journeys eyebrow',
+            'wellness_journeys_heading' => 'CMS journeys heading',
+            'wellness_journeys_description' => 'CMS journeys description.',
+            'wellness_journeys_items' => [
+                [
+                    'title' => 'First CMS journey',
+                    'description' => 'First journey description.',
+                    'image' => 'spa/wellness-journeys/first.webp',
+                    'image_alt' => 'First image',
+                    'details_label' => 'First details',
+                    'details_url' => '/spa-wellness/first',
+                    'book_label' => 'First booking',
+                    'book_url' => 'https://wa.me/111',
+                ],
+                [
+                    'title' => 'Second CMS journey',
+                    'description' => 'Second journey description.',
+                    'image' => 'spa/wellness-journeys/second.webp',
+                    'image_alt' => 'Second image',
+                    'details_label' => 'Second details',
+                    'details_url' => '/spa-wellness/second',
+                    'book_label' => 'Second booking',
+                    'book_url' => 'https://wa.me/222',
+                ],
+            ],
+        ]);
+
+        $this->get('https://'.config('domains.spa').'/')
+            ->assertOk()
+            ->assertSee('CMS journeys eyebrow')
+            ->assertSee('CMS journeys heading')
+            ->assertSee('CMS journeys description.')
+            ->assertSeeInOrder(['First CMS journey', 'Second CMS journey'])
+            ->assertSee('https://'.config('domains.main').'/spa-wellness/first', false)
+            ->assertSee('https://wa.me/222', false);
     }
 
     public function test_main_page_cannot_be_displayed_on_the_spa_domain(): void

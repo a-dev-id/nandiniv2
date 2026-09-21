@@ -31,5 +31,7 @@
     <x-spa-landing.hero :settings="$spaSettings" :image="$heroImage" :mobile-image="$heroMobileImage" />
     <x-spa-landing.information-bar :settings="$spaSettings" />
     <x-spa-landing.wellness-philosophy :settings="$spaSettings" :image="$wellnessPhilosophyImage" />
+    <x-spa-landing.why-nandini :settings="$spaSettings" />
+    <x-spa-landing.wellness-journeys :settings="$spaSettings" />
     <div id="spa-content" aria-hidden="true"></div>
 </x-layouts.app>

@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Filament\Pages\Spa\GeneralSpaSettings;
 use App\Filament\Pages\Spa\InformationBarSettings;
 use App\Filament\Pages\Spa\WellnessPhilosophySettings;
+use App\Filament\Pages\Spa\WellnessJourneysSettings;
+use App\Filament\Pages\Spa\WhyNandiniSettings;
 use App\Models\Role;
 use App\Models\SpaSetting;
 use App\Models\User;
@@ -33,6 +35,8 @@ class SpaSettingsPagesTest extends TestCase
             GeneralSpaSettings::class => 'SPA General Settings',
             InformationBarSettings::class => 'SPA Information Bar Settings',
             WellnessPhilosophySettings::class => 'Wellness Philosophy Settings',
+            WhyNandiniSettings::class => 'Why Nandini Settings',
+            WellnessJourneysSettings::class => 'Wellness Journeys Settings',
         ];
 
         foreach ($pages as $page => $title) {
@@ -82,7 +86,7 @@ class SpaSettingsPagesTest extends TestCase
             ['icon' => 'clock', 'label' => 'Hours', 'value' => '08:00 AM – 10:00 PM', 'link' => null],
             ['icon' => 'calendar', 'label' => 'Booking', 'value' => 'Advance booking recommended', 'link' => null],
             ['icon' => 'location', 'label' => 'Location', 'value' => 'Ubud, Bali', 'link' => null],
-            ['icon' => 'phone', 'label' => 'Reservations', 'value' => "+62 812 3687 1170\n(WhatsApp)", 'link' => 'https://wa.me/6281236871170'],
+            ['icon' => 'phone', 'label' => 'Reservations', 'value' => '+62 812 3687 1170', 'link' => 'https://wa.me/6281236871170'],
         ];
 
         Livewire::test(InformationBarSettings::class)
@@ -118,5 +122,65 @@ class SpaSettingsPagesTest extends TestCase
         $this->assertSame("Updated philosophy\nheading", $settings->wellness_philosophy_heading);
         $this->assertSame('Updated philosophy description.', $settings->wellness_philosophy_description);
         $this->assertSame($originalInformationBar, $settings->information_bar_items);
+    }
+
+    public function test_why_nandini_page_updates_only_its_section(): void
+    {
+        $settings = SpaSetting::query()->firstOrFail();
+        $originalPhilosophyHeading = $settings->wellness_philosophy_heading;
+        $items = [
+            ['icon' => 'jungle', 'title' => 'Jungle', 'description' => 'Jungle description.'],
+            ['icon' => 'ritual', 'title' => 'Ritual', 'description' => 'Ritual description.'],
+            ['icon' => 'care', 'title' => 'Care', 'description' => 'Care description.'],
+            ['icon' => 'river', 'title' => 'River', 'description' => 'River description.'],
+        ];
+
+        Livewire::test(WhyNandiniSettings::class)
+            ->fillForm([
+                'why_nandini_eyebrow' => 'Updated Why Nandini',
+                'why_nandini_heading' => 'Updated wellness benefits',
+                'why_nandini_items' => $items,
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors()
+            ->assertNotified('SPA settings saved');
+
+        $settings->refresh();
+        $this->assertSame('Updated Why Nandini', $settings->why_nandini_eyebrow);
+        $this->assertSame('Jungle', $settings->why_nandini_items[0]['title']);
+        $this->assertSame('River', $settings->why_nandini_items[3]['title']);
+        $this->assertSame($originalPhilosophyHeading, $settings->wellness_philosophy_heading);
+    }
+
+    public function test_wellness_journeys_page_updates_only_its_section(): void
+    {
+        $settings = SpaSetting::query()->firstOrFail();
+        $originalWhyHeading = $settings->why_nandini_heading;
+        $journeys = [[
+            'title' => 'CMS Wellness Journey',
+            'description' => 'CMS journey description.',
+            'image' => 'spa/wellness-journeys/cms.webp',
+            'image_alt' => 'CMS wellness image',
+            'details_label' => 'Explore',
+            'details_url' => '/spa-wellness/cms-wellness-journey',
+            'book_label' => 'Reserve',
+            'book_url' => 'https://wa.me/6281236871170',
+        ]];
+
+        Livewire::test(WellnessJourneysSettings::class)
+            ->fillForm([
+                'wellness_journeys_eyebrow' => 'Updated journeys eyebrow',
+                'wellness_journeys_heading' => 'Updated journeys heading',
+                'wellness_journeys_description' => 'Updated journeys description.',
+                'wellness_journeys_items' => $journeys,
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors()
+            ->assertNotified('SPA settings saved');
+
+        $settings->refresh();
+        $this->assertSame('Updated journeys heading', $settings->wellness_journeys_heading);
+        $this->assertSame('CMS Wellness Journey', $settings->wellness_journeys_items[0]['title']);
+        $this->assertSame($originalWhyHeading, $settings->why_nandini_heading);
     }
 }
