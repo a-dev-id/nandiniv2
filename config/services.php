@@ -77,6 +77,10 @@ return [
         'lifecycle_cron_token' => env('MEMBERSHIP_LIFECYCLE_CRON_TOKEN'),
     ],
 
+    'guestletter_membership_api' => [
+        'token' => env('GUESTLETTER_MEMBERSHIP_API_TOKEN'),
+    ],
+
     'offers' => [
         'publication_cron_token' => env('OFFERS_PUBLICATION_CRON_TOKEN'),
     ],
