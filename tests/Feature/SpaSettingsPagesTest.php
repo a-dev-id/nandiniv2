@@ -3,7 +3,10 @@
 namespace Tests\Feature;
 
 use App\Filament\Pages\Spa\GeneralSpaSettings;
+use App\Filament\Pages\Spa\GuestReviewSettings;
 use App\Filament\Pages\Spa\InformationBarSettings;
+use App\Filament\Pages\Spa\BookingCtaSettings;
+use App\Filament\Pages\Spa\SignatureExperienceSettings;
 use App\Filament\Pages\Spa\WellnessPhilosophySettings;
 use App\Filament\Pages\Spa\WellnessJourneysSettings;
 use App\Filament\Pages\Spa\WhyNandiniSettings;
@@ -37,6 +40,9 @@ class SpaSettingsPagesTest extends TestCase
             WellnessPhilosophySettings::class => 'Wellness Philosophy Settings',
             WhyNandiniSettings::class => 'Why Nandini Settings',
             WellnessJourneysSettings::class => 'Wellness Journeys Settings',
+            SignatureExperienceSettings::class => 'SPA Signature Experience Settings',
+            GuestReviewSettings::class => 'SPA Guest Review Settings',
+            BookingCtaSettings::class => 'SPA Booking CTA Settings',
         ];
 
         foreach ($pages as $page => $title) {
@@ -159,8 +165,7 @@ class SpaSettingsPagesTest extends TestCase
         $journeys = [[
             'title' => 'CMS Wellness Journey',
             'description' => 'CMS journey description.',
-            'image' => 'spa/wellness-journeys/cms.webp',
-            'image_alt' => 'CMS wellness image',
+                    'image_alt' => 'CMS wellness image',
             'details_label' => 'Explore',
             'details_url' => '/spa-wellness/cms-wellness-journey',
             'book_label' => 'Reserve',
@@ -182,5 +187,49 @@ class SpaSettingsPagesTest extends TestCase
         $this->assertSame('Updated journeys heading', $settings->wellness_journeys_heading);
         $this->assertSame('CMS Wellness Journey', $settings->wellness_journeys_items[0]['title']);
         $this->assertSame($originalWhyHeading, $settings->why_nandini_heading);
+    }
+
+    public function test_new_spa_sections_are_independently_editable(): void
+    {
+        Livewire::test(SignatureExperienceSettings::class)
+            ->fillForm([
+                'signature_visible' => true,
+                'signature_eyebrow' => 'Updated signature eyebrow',
+                'signature_heading' => 'Updated signature heading',
+                'signature_description' => 'Updated signature description.',
+                'signature_image_alt' => 'Updated signature image alt',
+                'signature_link_label' => 'Discover',
+                'signature_link_url' => '/spa-wellness',
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        Livewire::test(GuestReviewSettings::class)
+            ->fillForm([
+                'guest_review_visible' => true,
+                'guest_review_quote' => 'Updated guest quote.',
+                'guest_review_label' => 'Updated guest label',
+                'guest_review_image_alt' => 'Updated guest image alt',
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        Livewire::test(BookingCtaSettings::class)
+            ->fillForm([
+                'booking_cta_visible' => true,
+                'booking_cta_eyebrow' => 'Updated booking eyebrow',
+                'booking_cta_heading' => 'Updated booking heading',
+                'booking_cta_description' => 'Updated booking description.',
+                'booking_cta_button_label' => 'Reserve',
+                'booking_cta_button_url' => 'https://wa.me/6281236871170',
+                'booking_cta_image_alt' => 'Updated booking image alt',
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $settings = SpaSetting::query()->firstOrFail();
+        $this->assertSame('Updated signature heading', $settings->signature_heading);
+        $this->assertSame('Updated guest quote.', $settings->guest_review_quote);
+        $this->assertSame('Updated booking heading', $settings->booking_cta_heading);
     }
 }

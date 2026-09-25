@@ -9,9 +9,13 @@ use Illuminate\Support\Facades\Storage;
 
 class SignatureDish extends Model
 {
-    protected $fillable = ['name', 'slug', 'eyebrow', 'subtitle', 'price', 'short_description', 'cta_label', 'cta_url', 'image', 'image_alt', 'content', 'is_published', 'sort_order', 'meta_title', 'meta_description'];
+    protected $fillable = ['name', 'slug', 'eyebrow', 'subtitle', 'price', 'short_description', 'cta_label', 'cta_url', 'image', 'image_alt', 'content', 'detail_content', 'is_published', 'sort_order', 'meta_title', 'meta_description'];
 
-    protected $casts = ['is_published' => 'boolean', 'sort_order' => 'integer'];
+    protected $casts = [
+        'detail_content' => 'array',
+        'is_published' => 'boolean',
+        'sort_order' => 'integer',
+    ];
 
     public function scopePublished(Builder $query): Builder
     {
@@ -25,15 +29,38 @@ class SignatureDish extends Model
 
     public function getImageUrlAttribute(): ?string
     {
-        if (blank($this->image)) {
+        return $this->resolveImageUrl($this->image);
+    }
+
+    /** @return array<string, mixed> */
+    public function getDetailAttribute(): array
+    {
+        $detailContent = $this->detail_content ?? [];
+
+        return is_array($detailContent) && isset($detailContent[0]) && is_array($detailContent[0])
+            ? $detailContent[0]
+            : [];
+    }
+
+    public function resolveImageUrl(?string $path): ?string
+    {
+        if (blank($path)) {
             return null;
         }
 
-        if (str_starts_with($this->image, 'http://') || str_starts_with($this->image, 'https://') || str_starts_with($this->image, '/')) {
-            return asset($this->image);
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
         }
 
-        return Storage::disk('public')->exists($this->image) ? asset('storage/'.$this->image) : null;
+        if (str_starts_with($path, '/')) {
+            return asset($path);
+        }
+
+        $publicStoragePath = public_path('storage/'.ltrim($path, '/'));
+
+        return is_file($publicStoragePath) || Storage::disk('public')->exists($path)
+            ? asset('storage/'.$path)
+            : null;
     }
 
     public function sections(): HasMany

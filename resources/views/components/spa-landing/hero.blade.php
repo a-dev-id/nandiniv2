@@ -6,7 +6,8 @@
 
 @php
     $eyebrow = $settings?->hero_eyebrow ?: 'WELLNESS AT NANDINI JUNGLE';
-    $heading = $settings?->hero_heading ?: "RESTORE IN THE HEART\nOF THE JUNGLE";
+    $heading = $settings?->hero_heading ?: 'ESSENCE SPA';
+    $subheading = $settings?->hero_subheading ?: 'Wellness in the Heart of Nature';
     $description = $settings?->hero_description ?: 'Experience deeply restorative spa rituals inspired by Bali, nature and the surrounding jungle. A serene sanctuary to rebalance your body, mind and soul.';
     $primaryLabel = $settings?->hero_primary_cta_label ?: 'BOOK A SPA EXPERIENCE';
     $primaryUrl = $settings?->hero_primary_cta_url ?: 'https://wa.me/6281236871170?text='.rawurlencode('Hello, I would like to book a spa experience at Nandini Jungle.');
@@ -21,13 +22,14 @@
             <img src="{{ $image }}" alt="{{ $settings?->hero_image_alt }}" class="h-full w-full object-cover object-center md:object-[center_58%]" width="1920" height="1080" fetchpriority="high" decoding="async">
         </picture>
     @endif
-    <div class="absolute inset-0 bg-black/35" aria-hidden="true"></div>
-    <div class="relative flex min-h-[760px] items-center px-6 pb-14 pt-28 md:min-h-[80svh] md:px-12 md:pb-20 md:pt-36 lg:min-h-[max(760px,82vh)] lg:px-[clamp(64px,5vw,100px)]">
+    <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.72)_0%,rgba(0,0,0,.48)_48%,rgba(0,0,0,.12)_100%)] max-md:bg-[linear-gradient(0deg,rgba(0,0,0,.78)_0%,rgba(0,0,0,.42)_58%,rgba(0,0,0,.14)_100%)]" aria-hidden="true"></div>
+    <div class="relative flex min-h-[760px] items-end px-6 pb-16 pt-32 md:min-h-[80svh] md:px-12 md:pb-20 md:pt-36 lg:min-h-[max(760px,82vh)] lg:px-[clamp(64px,5vw,100px)] lg:pb-24">
         <div class="max-w-2xl">
             @if ($eyebrow)<p class="mb-4 text-[10px] font-medium uppercase tracking-[.18em] text-[#d1b77d] sm:text-xs">{{ $eyebrow }}</p>@endif
-            <h1 id="spa-hero-title" class="mb-6 font-span text-4xl leading-[1.05] [--heading-font-weight:400] [--heading-letter-spacing:-.025em] sm:text-5xl lg:text-6xl">{!! nl2br(e($heading)) !!}</h1>
-            @if ($description)<p class="max-w-xl text-sm leading-relaxed text-white/90 sm:text-base">{!! nl2br(e($description)) !!}</p>@endif
-            <div class="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap">
+            <h1 id="spa-hero-title" class="mb-5 font-span text-4xl leading-[1.05] [--heading-font-weight:400] [--heading-letter-spacing:-.025em] sm:text-5xl">{!! nl2br(e($heading)) !!}</h1>
+            @if ($subheading)<p class="mb-3 text-xs leading-relaxed font-medium text-white sm:text-sm">{{ $subheading }}</p>@endif
+            @if ($description)<p class="mb-6 max-w-lg text-xs leading-relaxed text-white/85 sm:text-sm">{!! nl2br(e($description)) !!}</p>@endif
+            <div class="flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap">
                 @if ($primaryLabel && $primaryUrl)<x-buttons.link-button :href="$primaryUrl" variant="solid">{{ $primaryLabel }}</x-buttons.link-button>@endif
                 @if ($secondaryLabel && $secondaryUrl)<x-buttons.link-button :href="$secondaryUrl" variant="white-outline">{{ $secondaryLabel }}</x-buttons.link-button>@endif
             </div>

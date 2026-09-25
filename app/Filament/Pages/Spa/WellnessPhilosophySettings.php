@@ -6,6 +6,7 @@ use App\Support\FilamentWebpUpload;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Icons\Heroicon;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -31,6 +32,7 @@ class WellnessPhilosophySettings extends SpaSettingsPage
     {
         return [
             'wellness_philosophy_eyebrow',
+            'wellness_philosophy_visible',
             'wellness_philosophy_heading',
             'wellness_philosophy_description',
             'wellness_philosophy_image',
@@ -42,13 +44,14 @@ class WellnessPhilosophySettings extends SpaSettingsPage
     {
         return [
             Section::make('Section Content')->columns(2)->columnSpan(7)->schema([
+                Toggle::make('wellness_philosophy_visible')->label('Show Section')->default(true)->columnSpanFull(),
                 TextInput::make('wellness_philosophy_eyebrow')->label('Eyebrow / Label')->maxLength(255)->columnSpanFull(),
                 Textarea::make('wellness_philosophy_heading')->label('Main Heading')->rows(3)->columnSpanFull()
                     ->helperText('Line breaks are preserved on the website.'),
                 Textarea::make('wellness_philosophy_description')->label('Description')->rows(7)->columnSpanFull(),
             ]),
             Section::make('Media')->columnSpan(5)->schema([
-                FileUpload::make('wellness_philosophy_image')
+                self::withImagePreview(FileUpload::make('wellness_philosophy_image')
                     ->label('Spa Image')
                     ->disk('public')
                     ->directory('spa/wellness-philosophy')
@@ -65,7 +68,7 @@ class WellnessPhilosophySettings extends SpaSettingsPage
                         directory: 'spa/wellness-philosophy',
                         targetWidth: 1200,
                         targetHeight: 900,
-                    )),
+                    ))),
                 TextInput::make('wellness_philosophy_image_alt')->label('Image Alt Text')->maxLength(255),
             ]),
         ];

@@ -6,6 +6,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Icons\Heroicon;
 
@@ -28,13 +29,14 @@ class InformationBarSettings extends SpaSettingsPage
 
     protected function ownedFields(): array
     {
-        return ['information_bar_items'];
+        return ['information_bar_visible', 'information_bar_items'];
     }
 
     protected function formComponents(): array
     {
         return [
             Section::make('SPA Information Bar')->columnSpanFull()->schema([
+                Toggle::make('information_bar_visible')->label('Show Information Bar')->default(true),
                 Repeater::make('information_bar_items')
                     ->columns(2)
                     ->minItems(4)

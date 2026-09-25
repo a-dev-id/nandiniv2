@@ -5,6 +5,7 @@ namespace App\Filament\Pages\Spa;
 use App\Models\SpaSetting;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
@@ -91,5 +92,25 @@ abstract class SpaSettingsPage extends Page
                     ]),
                 ]),
         ]);
+    }
+
+    protected static function withImagePreview(FileUpload $upload): FileUpload
+    {
+        return $upload
+            ->fetchFileInformation(false)
+            ->getUploadedFileUsing(function (FileUpload $component, string $file, string|array|null $storedFileNames): array {
+                $url = match (true) {
+                    str_starts_with($file, 'http://'), str_starts_with($file, 'https://') => $file,
+                    str_starts_with($file, '/') => asset($file),
+                    default => asset('storage/'.$file),
+                };
+
+                return [
+                    'name' => ($component->isMultiple() ? ($storedFileNames[$file] ?? null) : $storedFileNames) ?? basename($file),
+                    'size' => 0,
+                    'type' => null,
+                    'url' => $url,
+                ];
+            });
     }
 }

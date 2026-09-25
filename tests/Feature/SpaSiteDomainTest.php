@@ -65,46 +65,42 @@ class SpaSiteDomainTest extends TestCase
 
         $this->get('https://'.config('domains.spa').'/')
             ->assertOk()
-            ->assertSee('WELLNESS AT NANDINI JUNGLE')
-            ->assertSee('RESTORE IN THE HEART')
-            ->assertSee('BOOK A SPA EXPERIENCE')
-            ->assertSee('EXPLORE TREATMENTS')
+            ->assertSee('Wellness at Nandini Jungle')
+            ->assertSee('Essence Spa')
+            ->assertSee('Wellness in the Heart of Nature')
+            ->assertSee('Book a Spa Experience')
+            ->assertSee('Explore Treatments')
             ->assertSeeInOrder([
                 'Opening Hours',
-                '08:00 AM – 10:00 PM',
-                'Booking',
-                'Advance booking recommended',
                 'Location',
-                'Nandini Jungle, Ubud, Bali',
+                'Advance Booking',
                 'Reservations',
                 '+62 812 3687 1170',
+                'Our Philosophy',
+                'A Deeper Sense',
+                'Signature Treatments',
+                'Journeys of Renewal',
+                '2-Day Balinese Wellness Escape',
+                '3-Day Inner Harmony Retreat',
+                '4-Day Deep Balinese Wellness Immersion',
+                'A Unique Setting',
+                'Spa on the River',
+                'Why Nandini Jungle Spa',
+                'Wellness Rooted in Nature',
+                'Natural Surroundings',
+                'Authentic Balinese Rituals',
+                'Personalised Care',
+                'River-Side Tranquillity',
+                'Guest Experience',
+                'Your Wellness Journey Awaits',
+                'Book Your Spa Experience',
             ])
             ->assertDontSee('(WhatsApp)')
+            ->assertDontSee('Learn More')
             ->assertSee('href="https://wa.me/6281236871170"', false)
-            ->assertSeeInOrder([
-                '+62 812 3687 1170',
-                'OUR WELLNESS PHILOSOPHY',
-                'A SACRED PAUSE',
-                'IN THE JUNGLE',
-                'At Nandini Jungle, wellness is a harmonious journey of body, mind and spirit',
-                'WHY NANDINI',
-                'WELLNESS ROOTED IN NATURE',
-                'JUNGLE SANCTUARY',
-                'Treatments surrounded by tropical nature.',
-                'BALINESE RITUALS',
-                'Wellness inspired by traditional Balinese practices.',
-                'PERSONALISED CARE',
-                'Experiences tailored to individual wellbeing.',
-                'RIVER-SIDE SERENITY',
-                'A unique spa environment shaped by the jungle landscape.',
-                'WELLNESS JOURNEYS',
-                'SACRED JUNGLE WELLNESS JOURNEYS',
-                '2-DAY BALINESE WELLNESS ESCAPE',
-                '3-DAY INNER HARMONY RETREAT',
-                '4-DAY DEEP BALINESE WELLNESS IMMERSION',
-            ])
             ->assertSee('md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]', false)
             ->assertSee('aspect-[4/3]', false)
+            ->assertSee('spa-wellness-journey-image aspect-4/3', false)
             ->assertSee('order-1', false)
             ->assertSee('id="mainNavbar"', false)
             ->assertSee('Copyright ©')
@@ -117,6 +113,58 @@ class SpaSiteDomainTest extends TestCase
             ->assertSee('aria-label="Previous wellness journey"', false)
             ->assertSee('aspect-[4/3]', false)
             ->assertSee('https://'.config('domains.main'), false);
+    }
+
+    public function test_spa_homepage_renders_and_hides_the_new_cms_sections(): void
+    {
+        SpaSetting::query()->firstOrFail()->update([
+            'signature_eyebrow' => 'CMS signature eyebrow',
+            'signature_heading' => 'CMS signature heading',
+            'signature_description' => 'CMS signature description.',
+            'signature_image' => 'spa/signature-experience/test.webp',
+            'signature_image_alt' => 'CMS signature image',
+            'signature_link_label' => 'CMS signature link',
+            'signature_link_url' => '/signature',
+            'guest_review_quote' => 'CMS guest review quote.',
+            'guest_review_label' => 'CMS guest label',
+            'guest_review_image' => 'spa/guest-review/test.webp',
+            'guest_review_image_alt' => 'CMS guest review image',
+            'booking_cta_eyebrow' => 'CMS booking eyebrow',
+            'booking_cta_heading' => 'CMS booking heading',
+            'booking_cta_description' => 'CMS booking description.',
+            'booking_cta_button_label' => 'CMS booking button',
+            'booking_cta_button_url' => 'https://wa.me/123',
+            'booking_cta_image' => 'spa/booking-cta/test.webp',
+            'booking_cta_image_alt' => 'CMS booking background',
+        ]);
+
+        $this->get('https://'.config('domains.spa').'/')
+            ->assertOk()
+            ->assertSeeInOrder([
+                'CMS signature heading',
+                'CMS guest review quote.',
+                'CMS booking heading',
+            ])
+            ->assertSee('spa/signature-experience/test.webp')
+            ->assertSee('CMS signature image')
+            ->assertSee('href="/signature"', false)
+            ->assertSee('spa/guest-review/test.webp')
+            ->assertSee('CMS guest review image')
+            ->assertSee('spa/booking-cta/test.webp')
+            ->assertSee('CMS booking background')
+            ->assertSee('href="https://wa.me/123"', false);
+
+        SpaSetting::query()->firstOrFail()->update([
+            'signature_visible' => false,
+            'guest_review_visible' => false,
+            'booking_cta_visible' => false,
+        ]);
+
+        $this->get('https://'.config('domains.spa').'/')
+            ->assertOk()
+            ->assertDontSee('CMS signature heading')
+            ->assertDontSee('CMS guest review quote.')
+            ->assertDontSee('CMS booking heading');
     }
 
     public function test_spa_accent_scope_and_shared_navigation_do_not_leak_into_the_main_homepage(): void

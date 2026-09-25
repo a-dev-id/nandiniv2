@@ -221,7 +221,8 @@
         flex: 1;
     }
 
-    .dining-experience-image {
+    .dining-experience-image,
+    .spa-wellness-journey-image {
         aspect-ratio: 4 / 3 !important;
         flex: none !important;
     }

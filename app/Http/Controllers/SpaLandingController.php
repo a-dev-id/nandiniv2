@@ -18,6 +18,9 @@ class SpaLandingController extends Controller
             'heroImage' => $this->resolveImage($spaSettings?->hero_image),
             'heroMobileImage' => $this->resolveImage($spaSettings?->hero_mobile_image ?: $spaSettings?->hero_image),
             'wellnessPhilosophyImage' => $this->resolveImage($spaSettings?->wellness_philosophy_image),
+            'signatureImage' => $this->resolveImage($spaSettings?->signature_image),
+            'guestReviewImage' => $this->resolveImage($spaSettings?->guest_review_image),
+            'bookingCtaImage' => $this->resolveImage($spaSettings?->booking_cta_image),
         ]);
     }
 

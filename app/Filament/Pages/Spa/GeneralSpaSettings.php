@@ -6,6 +6,7 @@ use App\Support\FilamentWebpUpload;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Icons\Heroicon;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -32,8 +33,8 @@ class GeneralSpaSettings extends SpaSettingsPage
         return [
             'reservation_whatsapp', 'reservation_url',
             'meta_title', 'meta_description', 'meta_author', 'meta_site_name',
-            'hero_image', 'hero_mobile_image', 'hero_image_alt', 'hero_mobile_image_alt',
-            'hero_eyebrow', 'hero_heading', 'hero_description',
+            'hero_visible', 'hero_image', 'hero_mobile_image', 'hero_image_alt', 'hero_mobile_image_alt',
+            'hero_eyebrow', 'hero_heading', 'hero_subheading', 'hero_description',
             'hero_primary_cta_label', 'hero_primary_cta_url',
             'hero_secondary_cta_label', 'hero_secondary_cta_url',
         ];
@@ -43,9 +44,11 @@ class GeneralSpaSettings extends SpaSettingsPage
     {
         return [
             Section::make('Hero Content')->columns(2)->columnSpan(7)->schema([
+                Toggle::make('hero_visible')->label('Show Hero')->default(true)->columnSpanFull(),
                 TextInput::make('hero_eyebrow')->label('Eyebrow')->maxLength(255)->columnSpanFull(),
                 Textarea::make('hero_heading')->label('Heading')->rows(3)->columnSpanFull()
                     ->helperText('Line breaks are preserved on the website.'),
+                TextInput::make('hero_subheading')->label('Subheading')->maxLength(255)->columnSpanFull(),
                 Textarea::make('hero_description')->label('Description')->rows(5)->columnSpanFull(),
                 TextInput::make('hero_primary_cta_label')->label('Primary CTA Label')->maxLength(255),
                 self::linkInput('hero_primary_cta_url', 'Primary CTA URL'),
@@ -81,7 +84,7 @@ class GeneralSpaSettings extends SpaSettingsPage
 
     private static function imageUpload(string $name, string $label, string $directory, int $width, int $height, string $ratio): FileUpload
     {
-        return FileUpload::make($name)->label($label)->disk('public')->directory($directory)
+        return self::withImagePreview(FileUpload::make($name)->label($label)->disk('public')->directory($directory)
             ->visibility('public')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
             ->imagePreviewHeight('220')->panelAspectRatio($ratio)->panelLayout('integrated')->openable()->downloadable()
             ->saveUploadedFileUsing(fn (TemporaryUploadedFile $file): string => FilamentWebpUpload::store(
@@ -89,6 +92,6 @@ class GeneralSpaSettings extends SpaSettingsPage
                 directory: $directory,
                 targetWidth: $width,
                 targetHeight: $height,
-            ));
+            )));
     }
 }

@@ -28,10 +28,31 @@
 @endpush
 
 <x-layouts.app>
-    <x-spa-landing.hero :settings="$spaSettings" :image="$heroImage" :mobile-image="$heroMobileImage" />
-    <x-spa-landing.information-bar :settings="$spaSettings" />
-    <x-spa-landing.wellness-philosophy :settings="$spaSettings" :image="$wellnessPhilosophyImage" />
-    <x-spa-landing.why-nandini :settings="$spaSettings" />
-    <x-spa-landing.wellness-journeys :settings="$spaSettings" />
+    @if ($spaSettings?->hero_visible ?? true)
+        <x-spa-landing.hero :settings="$spaSettings" :image="$heroImage" :mobile-image="$heroMobileImage" />
+    @endif
+    @if ($spaSettings?->information_bar_visible ?? true)
+        <x-spa-landing.information-bar :settings="$spaSettings" />
+    @endif
+    @if ($spaSettings?->wellness_philosophy_visible ?? true)
+        <x-spa-landing.wellness-philosophy :settings="$spaSettings" :image="$wellnessPhilosophyImage" />
+    @endif
+    @if ($spaSettings?->wellness_journeys_visible ?? true)
+        <x-spa-landing.wellness-journeys :settings="$spaSettings" />
+    @endif
+    @if ($spaSettings?->signature_visible ?? true)
+        <x-spa-landing.signature-experience :settings="$spaSettings" :image="$signatureImage" />
+    @endif
+    @if ($spaSettings?->why_nandini_visible ?? true)
+        <div id="why-nandini" class="scroll-mt-20">
+            <x-spa-landing.why-nandini :settings="$spaSettings" />
+        </div>
+    @endif
+    @if ($spaSettings?->guest_review_visible ?? true)
+        <x-spa-landing.guest-review :settings="$spaSettings" :image="$guestReviewImage" />
+    @endif
+    @if ($spaSettings?->booking_cta_visible ?? true)
+        <x-spa-landing.booking-cta :settings="$spaSettings" :image="$bookingCtaImage" />
+    @endif
     <div id="spa-content" aria-hidden="true"></div>
 </x-layouts.app>

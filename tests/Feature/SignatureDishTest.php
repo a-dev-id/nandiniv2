@@ -135,6 +135,55 @@ class SignatureDishTest extends TestCase
         );
     }
 
+    public function test_signature_dish_detail_renders_structured_editable_content(): void
+    {
+        SignatureDish::query()->delete();
+        $dish = $this->dish([
+            'name' => 'Structured Dish',
+            'slug' => 'structured-dish',
+            'detail_content' => [[
+                'hero_title' => 'Structured Hero Title',
+                'hero_description' => 'Structured hero description.',
+                'hero_image' => '/images/nasi-jinggo/nasi-jinggo.jpg',
+                'hero_image_alt' => 'Structured hero alt text',
+                'story_visible' => true,
+                'story_eyebrow' => 'Our Story',
+                'story_title' => 'Structured Story',
+                'story_description' => '<p>Structured story content.</p>',
+                'story_image' => '/images/nasi-jinggo/nasi-jinggo.jpg',
+                'story_image_alt' => 'Structured story alt text',
+                'highlights_visible' => true,
+                'highlights_title' => 'Structured Highlights',
+                'highlights' => [['title' => 'Local Sourcing', 'description' => 'Locally sourced ingredients.']],
+                'components_visible' => true,
+                'components_title' => 'Structured Components',
+                'components' => [[
+                    'title' => 'Pork Rib Bakar',
+                    'description' => 'Charcoal-grilled pork ribs.',
+                    'image' => '/images/nasi-jinggo/Pork Rib Bakar.jpg',
+                    'image_alt' => 'Pork rib component',
+                ]],
+                'premium_visible' => false,
+                'reservation_visible' => true,
+                'reservation_title' => 'Reserve Structured Dish',
+                'reservation_description' => 'Reservation description.',
+                'reservation_button_label' => 'Reserve Now',
+                'reservation_button_url' => '#reserve',
+            ]],
+        ]);
+
+        $this->get('https://'.config('domains.dining').'/signature-dishes/'.$dish->slug)
+            ->assertOk()
+            ->assertSee('Structured Hero Title')
+            ->assertSee('Structured hero description.')
+            ->assertSee('<p>Structured story content.</p>', false)
+            ->assertSee('Structured Highlights')
+            ->assertSee('Pork Rib Bakar')
+            ->assertSee('alt="Pork rib component"', false)
+            ->assertSee('Reserve Structured Dish')
+            ->assertSee('href="#reserve"', false);
+    }
+
     public function test_unpublished_signature_dish_is_hidden_and_returns_not_found(): void
     {
         SignatureDish::query()->delete();

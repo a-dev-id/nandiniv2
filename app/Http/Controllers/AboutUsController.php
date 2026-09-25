@@ -11,7 +11,8 @@ class AboutUsController extends Controller
     public function index(): View
     {
         $page = Page::query()
-            ->where('id', 22)
+            ->forMainSite()
+            ->where('slug', 'about-us')
             ->where('is_active', true)
             ->firstOrFail();
 
@@ -28,7 +29,7 @@ class AboutUsController extends Controller
         return $page->sections()
             ->where('is_active', true)
             ->with([
-                'images' => fn($query) => $query
+                'images' => fn ($query) => $query
                     ->where('is_active', true)
                     ->orderBy('sort_order'),
             ])

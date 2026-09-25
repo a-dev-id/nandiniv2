@@ -7,6 +7,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Icons\Heroicon;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -32,6 +33,7 @@ class WellnessJourneysSettings extends SpaSettingsPage
     {
         return [
             'wellness_journeys_eyebrow',
+            'wellness_journeys_visible',
             'wellness_journeys_heading',
             'wellness_journeys_description',
             'wellness_journeys_items',
@@ -42,6 +44,7 @@ class WellnessJourneysSettings extends SpaSettingsPage
     {
         return [
             Section::make('Section Content')->columns(2)->columnSpanFull()->schema([
+                Toggle::make('wellness_journeys_visible')->label('Show Section')->default(true)->columnSpanFull(),
                 TextInput::make('wellness_journeys_eyebrow')->label('Eyebrow')->maxLength(255),
                 Textarea::make('wellness_journeys_heading')->label('Main Heading')->rows(2),
                 Textarea::make('wellness_journeys_description')->label('Description')->rows(4)->columnSpanFull(),
@@ -58,7 +61,7 @@ class WellnessJourneysSettings extends SpaSettingsPage
                     ->schema([
                         Textarea::make('title')->rows(2)->required()->columnSpanFull(),
                         Textarea::make('description')->rows(4)->required()->columnSpanFull(),
-                        FileUpload::make('image')
+                        self::withImagePreview(FileUpload::make('image')
                             ->label('Card Image')
                             ->disk('public')
                             ->directory('spa/wellness-journeys')
@@ -75,7 +78,7 @@ class WellnessJourneysSettings extends SpaSettingsPage
                                 directory: 'spa/wellness-journeys',
                                 targetWidth: 1200,
                                 targetHeight: 900,
-                            )),
+                            ))),
                         TextInput::make('image_alt')->label('Image Alt Text')->maxLength(255),
                         TextInput::make('details_label')->label('Details Button Label')->maxLength(100)->default('MORE DETAILS'),
                         TextInput::make('details_url')->label('Details URL')->maxLength(2048)

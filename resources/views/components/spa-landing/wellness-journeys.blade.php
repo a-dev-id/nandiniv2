@@ -67,11 +67,11 @@
     };
 @endphp
 
-<section class="bg-white px-6 py-14 font-sans md:py-20" aria-labelledby="spa-wellness-journeys-title">
+<section id="treatments" class="scroll-mt-20 bg-[#f3f4f5] px-6 py-14 font-sans md:py-20" aria-labelledby="spa-wellness-journeys-title">
     <div class="mx-auto max-w-7xl">
         <header class="mx-auto mb-9 max-w-4xl text-center md:mb-12">
             <p class="mb-3 text-[10px] font-medium uppercase tracking-[.18em] text-[#A88444] sm:text-xs">{{ $eyebrow }}</p>
-            <h2 id="spa-wellness-journeys-title" class="font-span text-[clamp(1.75rem,3vw,2.75rem)] leading-[1.08] text-slate-700 [--heading-font-weight:400] [--heading-letter-spacing:.035em]">
+            <h2 id="spa-wellness-journeys-title" class="text-lg leading-snug font-medium text-slate-700 uppercase sm:text-xl">
                 {!! nl2br(e($heading)) !!}
             </h2>
             <p class="mx-auto mt-5 max-w-3xl text-xs leading-relaxed text-slate-600 sm:text-sm">
@@ -88,13 +88,13 @@
                         $bookUrl = $resolveLink($journey['book_url'] ?? $settings?->reservation_url);
                     @endphp
                     <article class="flex h-full w-full flex-col px-3" aria-labelledby="spa-wellness-journey-{{ $index }}">
-                        <div class="aspect-[4/3] w-full shrink-0 overflow-hidden bg-[#f3f4f5]">
+                        <div class="spa-wellness-journey-image aspect-4/3 w-full shrink-0 overflow-hidden bg-[#f3f4f5]">
                             @if ($image)
                                 <img src="{{ $image }}" alt="{{ $journey['image_alt'] ?? '' }}" class="h-full w-full object-cover object-center" width="1200" height="900" loading="lazy" decoding="async">
                             @endif
                         </div>
                         <div class="flex flex-1 flex-col border border-t-0 border-slate-200 bg-white px-5 pt-5 pb-6 sm:px-6">
-                            <h3 id="spa-wellness-journey-{{ $index }}" class="mb-3 font-sans text-sm leading-snug font-semibold text-slate-700 uppercase [--heading-letter-spacing:.06em] sm:text-base">
+                            <h3 id="spa-wellness-journey-{{ $index }}" class="mb-3 font-sans text-base leading-snug font-semibold text-slate-700 uppercase [--heading-letter-spacing:.06em] sm:text-lg">
                                 {{ $journey['title'] ?? '' }}
                             </h3>
                             <p class="mb-5 flex-1 text-xs leading-relaxed text-slate-600 sm:text-sm">

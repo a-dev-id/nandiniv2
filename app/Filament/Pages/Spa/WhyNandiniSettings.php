@@ -6,6 +6,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Icons\Heroicon;
 
@@ -28,13 +29,14 @@ class WhyNandiniSettings extends SpaSettingsPage
 
     protected function ownedFields(): array
     {
-        return ['why_nandini_eyebrow', 'why_nandini_heading', 'why_nandini_items'];
+        return ['why_nandini_visible', 'why_nandini_eyebrow', 'why_nandini_heading', 'why_nandini_items'];
     }
 
     protected function formComponents(): array
     {
         return [
             Section::make('Section Content')->columns(2)->columnSpanFull()->schema([
+                Toggle::make('why_nandini_visible')->label('Show Section')->default(true)->columnSpanFull(),
                 TextInput::make('why_nandini_eyebrow')->label('Eyebrow')->maxLength(255),
                 Textarea::make('why_nandini_heading')->label('Main Heading')->rows(3),
             ]),
