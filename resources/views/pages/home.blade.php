@@ -35,15 +35,15 @@
     ]), true));
     @endphp
 
-    <x-heroes.video-hero video-id="8aZOOwSdxwE" />
+    <x-heroes.video-hero video-id="8aZOOwSdxwE" data-gtm-section="hero" />
 
-    <x-sections.page-description :page="$page" :show-awards="true" />
+    <x-sections.page-description :page="$page" :show-awards="true" data-gtm-section="introduction" />
 
     @if ($leadContainedImage)
     <x-sections.contained-image-section :section="$leadContainedImage" />
     @endif
 
-    <section class="bg-white px-6 pt-14 text-center md:pt-20">
+    <section class="bg-white px-6 pt-14 text-center md:pt-20" data-gtm-section="villas">
         <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
             Private Jungle Villas & Royal Suites
         </h2>
@@ -54,10 +54,10 @@
 
     <x-sections.item-carousel :items="$villas" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" action-label="More Details" :mobile-arrows-on-image="true" />
 
-    <x-sections.presidential-suite-feature :accommodation="$presidentialSuite" />
+    <x-sections.presidential-suite-feature :accommodation="$presidentialSuite" data-gtm-section="featured_suite" />
 
     @if ($experienceCategories->isNotEmpty())
-    <section class="bg-white px-6 pt-10 text-center md:pt-14">
+    <section class="bg-white px-6 pt-10 text-center md:pt-14" data-gtm-section="experiences">
         <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
             Experiences Beyond the Stay
         </h2>
@@ -72,7 +72,7 @@
 
 
     @if ($offers->isNotEmpty())
-    <section class="bg-white px-6 pt-10 text-center md:pt-14">
+    <section class="bg-white px-6 pt-10 text-center md:pt-14" data-gtm-section="offers">
         <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
             Curated Escapes at Nandini Jungle
         </h2>
@@ -85,7 +85,7 @@
     @endif
 
     @if ($diningSections->isNotEmpty())
-    <section class="bg-white px-6 pt-10 text-center md:pt-14">
+    <section class="bg-white px-6 pt-10 text-center md:pt-14" data-gtm-section="dining">
         <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
             Culinary Journeys
         </h2>
@@ -98,7 +98,7 @@
     @endif
 
     @if ($spaSections->isNotEmpty())
-    <section class="bg-white px-6 pt-10 text-center md:pt-14">
+    <section class="bg-white px-6 pt-10 text-center md:pt-14" data-gtm-section="spa_wellness">
         <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
             Jungle Spa & Wellness
         </h2>
@@ -111,7 +111,7 @@
     @endif
 
     @if ($ubudJungleAdventures->isNotEmpty())
-    <section class="bg-white px-6 pt-10 text-center md:pt-14">
+    <section class="bg-white px-6 pt-10 text-center md:pt-14" data-gtm-section="activities">
         <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
             Bali Adventure Journeys
         </h2>
@@ -125,7 +125,7 @@
 
     @foreach ($remainingSections as $section)
     @if ($section->section_key === 'image_overlay_section')
-    <x-sections.image-overlay-section :section="$section" />
+    <x-sections.image-overlay-section :section="$section" data-gtm-section="riverside_wellness" />
     @endif
 
     @if ($section->section_key === 'split_media_section')
@@ -149,5 +149,5 @@
     @endif
     @endforeach
 
-    <x-sections.guest-reviews :reviews="$guestReviews" heading="What Our Guests Say" see-more-label="See More" :see-more-href="route('guest-reviews.index')" />
+    <x-sections.guest-reviews :reviews="$guestReviews" heading="What Our Guests Say" see-more-label="See More" :see-more-href="route('guest-reviews.index')" data-gtm-section="guest_reviews" />
 </x-layouts.app>

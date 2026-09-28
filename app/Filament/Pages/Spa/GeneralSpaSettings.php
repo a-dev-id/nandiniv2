@@ -33,7 +33,7 @@ class GeneralSpaSettings extends SpaSettingsPage
         return [
             'reservation_whatsapp', 'reservation_url',
             'meta_title', 'meta_description', 'meta_author', 'meta_site_name',
-            'hero_visible', 'hero_image', 'hero_mobile_image', 'hero_image_alt', 'hero_mobile_image_alt',
+            'hero_visible', 'hero_video_id', 'hero_image', 'hero_mobile_image', 'hero_image_alt', 'hero_mobile_image_alt',
             'hero_eyebrow', 'hero_heading', 'hero_subheading', 'hero_description',
             'hero_primary_cta_label', 'hero_primary_cta_url',
             'hero_secondary_cta_label', 'hero_secondary_cta_url',
@@ -56,6 +56,10 @@ class GeneralSpaSettings extends SpaSettingsPage
                 self::linkInput('hero_secondary_cta_url', 'Secondary CTA URL'),
             ]),
             Section::make('Hero Media')->columnSpan(5)->schema([
+                TextInput::make('hero_video_id')
+                    ->label('YouTube Video ID')
+                    ->maxLength(100)
+                    ->helperText('The image below is used as the loading poster and fallback.'),
                 self::imageUpload('hero_image', 'Desktop Hero Image', 'spa/hero', 1920, 1080, '16:9'),
                 TextInput::make('hero_image_alt')->label('Desktop Image Alt Text')->maxLength(255),
                 self::imageUpload('hero_mobile_image', 'Mobile Hero Image', 'spa/hero-mobile', 900, 1200, '3:4'),

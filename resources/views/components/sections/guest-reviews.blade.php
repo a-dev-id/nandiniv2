@@ -6,7 +6,7 @@
 ])
 
 @if ($reviews->isNotEmpty())
-<section class="bg-white px-6 py-16 text-center md:py-24" aria-labelledby="guest-reviews-title">
+<section class="bg-white px-6 py-16 text-center md:py-24" aria-labelledby="guest-reviews-title" {{ $attributes->only('data-gtm-section') }}>
     <div class="mx-auto max-w-7xl">
         <h2 id="guest-reviews-title" class="mb-12 text-lg font-medium uppercase text-slate-700 sm:text-xl">
             {{ $heading }}

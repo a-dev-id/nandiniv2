@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Pages\Spa\BookingCtaSettings;
 use App\Filament\Pages\Spa\GeneralSpaSettings;
 use App\Filament\Pages\Spa\GuestReviewSettings;
 use App\Filament\Pages\Spa\InformationBarSettings;
-use App\Filament\Pages\Spa\BookingCtaSettings;
 use App\Filament\Pages\Spa\SignatureExperienceSettings;
-use App\Filament\Pages\Spa\WellnessPhilosophySettings;
 use App\Filament\Pages\Spa\WellnessJourneysSettings;
+use App\Filament\Pages\Spa\WellnessPhilosophySettings;
 use App\Filament\Pages\Spa\WhyNandiniSettings;
 use App\Models\Role;
 use App\Models\SpaSetting;
@@ -60,6 +60,7 @@ class SpaSettingsPagesTest extends TestCase
 
         Livewire::test(GeneralSpaSettings::class)
             ->fillForm([
+                'hero_video_id' => 'updated-spa-video',
                 'hero_eyebrow' => 'Updated wellness eyebrow',
                 'hero_heading' => "Updated wellness\nheading",
                 'hero_description' => 'Updated SPA introduction.',
@@ -79,6 +80,7 @@ class SpaSettingsPagesTest extends TestCase
             ->assertNotified('SPA settings saved');
 
         $settings->refresh();
+        $this->assertSame('updated-spa-video', $settings->hero_video_id);
         $this->assertSame('Updated wellness eyebrow', $settings->hero_eyebrow);
         $this->assertSame("Updated wellness\nheading", $settings->hero_heading);
         $this->assertSame($informationBar, $settings->information_bar_items);
@@ -165,7 +167,7 @@ class SpaSettingsPagesTest extends TestCase
         $journeys = [[
             'title' => 'CMS Wellness Journey',
             'description' => 'CMS journey description.',
-                    'image_alt' => 'CMS wellness image',
+            'image_alt' => 'CMS wellness image',
             'details_label' => 'Explore',
             'details_url' => '/spa-wellness/cms-wellness-journey',
             'book_label' => 'Reserve',

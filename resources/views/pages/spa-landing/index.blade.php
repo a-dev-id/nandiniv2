@@ -38,7 +38,7 @@
         <x-spa-landing.wellness-philosophy :settings="$spaSettings" :image="$wellnessPhilosophyImage" />
     @endif
     @if ($spaSettings?->wellness_journeys_visible ?? true)
-        <x-spa-landing.wellness-journeys :settings="$spaSettings" />
+        <x-spa-landing.wellness-journeys :settings="$spaSettings" :source-journey="$sourceJourney" />
     @endif
     @if ($spaSettings?->signature_visible ?? true)
         <x-spa-landing.signature-experience :settings="$spaSettings" :image="$signatureImage" />

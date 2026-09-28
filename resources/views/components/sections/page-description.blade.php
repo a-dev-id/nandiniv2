@@ -4,7 +4,7 @@
 ])
 
 @if ($page)
-<section class="py-14 md:py-20 px-6 text-center">
+<section class="py-14 md:py-20 px-6 text-center" {{ $attributes->only('data-gtm-section') }}>
     <div class="max-w-3xl md:max-w-5xl mx-auto">
 
         @if ($showAwards)

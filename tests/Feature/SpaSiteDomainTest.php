@@ -70,6 +70,9 @@ class SpaSiteDomainTest extends TestCase
             ->assertSee('Wellness in the Heart of Nature')
             ->assertSee('Book a Spa Experience')
             ->assertSee('Explore Treatments')
+            ->assertSee('jafQbgUnfL4')
+            ->assertSee('data-youtube-embed', false)
+            ->assertSee('autoplay=1&amp;mute=1&amp;controls=0&amp;loop=1', false)
             ->assertSeeInOrder([
                 'Opening Hours',
                 'Location',
@@ -185,6 +188,7 @@ class SpaSiteDomainTest extends TestCase
     public function test_spa_homepage_renders_spa_landing_settings(): void
     {
         SpaSetting::query()->firstOrFail()->update([
+            'hero_video_id' => null,
             'hero_eyebrow' => 'CMS supplied spa eyebrow',
             'hero_heading' => "CMS supplied spa\nheading",
             'hero_description' => 'CMS supplied spa description',
@@ -206,7 +210,9 @@ class SpaSiteDomainTest extends TestCase
             ->assertSee('pages/hero/spa-home.webp')
             ->assertSee('CMS supplied spa hero alt text')
             ->assertSeeInOrder(['Hours Test', 'Booking Test', 'Location Test', 'Contact Test'])
-            ->assertSee('min-h-[80svh]', false)
+            ->assertSee('lg:h-screen', false)
+            ->assertSee('lg:h-full', false)
+            ->assertSee('items-center', false)
             ->assertSee('href="https://wa.me/6281236871170"', false);
     }
 
@@ -294,6 +300,27 @@ class SpaSiteDomainTest extends TestCase
             ->assertSeeInOrder(['First CMS journey', 'Second CMS journey'])
             ->assertSee('https://'.config('domains.main').'/spa-wellness/first', false)
             ->assertSee('https://wa.me/222', false);
+    }
+
+    public function test_spa_homepage_adds_the_mystical_journey_from_the_main_spa_page(): void
+    {
+        $this->createSpa('A Mystical Journey at Nandini - 4D3N Wellness Retreat', 4, [
+            'slug' => 'a-mystical-journey-at-nandini-4d3n-wellness-retreat',
+            'excerpt' => 'Discover the spiritual essence of Bali with our exclusive Nandini Wellness Retreat, nestled in the heart of the jungle at our luxury jungle resort in Bali, along the sacred Ayung River.',
+            'hero_image' => 'spas/hero/53c39f42-9deb-4263-b9a0-7d92b84b310b.webp',
+            'hero_image_alt' => 'A Mystical Journey at Nandini - 4D3N Wellness Retreat',
+            'button_label' => 'Book Now',
+            'button_url' => 'https://nandinijunglebyhanginggardens.reserve-online.net/?nights=3&bkcode=wellness',
+        ]);
+
+        $this->get('https://'.config('domains.spa').'/')
+            ->assertOk()
+            ->assertSee('A Mystical Journey at Nandini - 4D3N Wellness Retreat')
+            ->assertSee('Discover the spiritual essence of Bali with our exclusive Nandini Wellness Retreat')
+            ->assertSee('spas/hero/53c39f42-9deb-4263-b9a0-7d92b84b310b.webp')
+            ->assertSee('https://'.config('domains.main').'/spa-wellness/a-mystical-journey-at-nandini-4d3n-wellness-retreat', false)
+            ->assertSee('https://nandinijunglebyhanginggardens.reserve-online.net/?nights=3&amp;bkcode=wellness', false)
+            ->assertSee('data-total="4"', false);
     }
 
     public function test_main_page_cannot_be_displayed_on_the_spa_domain(): void

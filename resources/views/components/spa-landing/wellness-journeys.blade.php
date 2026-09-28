@@ -1,4 +1,7 @@
-@props(['settings' => null])
+@props([
+    'settings' => null,
+    'sourceJourney' => null,
+])
 
 @php
     $eyebrow = $settings?->wellness_journeys_eyebrow ?: 'WELLNESS JOURNEYS';
@@ -39,6 +42,20 @@
                 'book_url' => $settings?->reservation_url,
             ],
         ];
+    }
+
+    if (filled($sourceJourney)) {
+        $sourcePath = parse_url($sourceJourney['details_url'] ?? '', PHP_URL_PATH);
+        $alreadyIncluded = collect($journeys)->contains(function (array $journey) use ($sourcePath): bool {
+            $journeyPath = parse_url($journey['details_url'] ?? '', PHP_URL_PATH);
+
+            return filled($sourcePath)
+                && rtrim((string) $journeyPath, '/') === rtrim((string) $sourcePath, '/');
+        });
+
+        if (! $alreadyIncluded) {
+            $journeys[] = $sourceJourney;
+        }
     }
 
     $mainBaseUrl = 'https://'.config('domains.main');

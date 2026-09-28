@@ -121,7 +121,7 @@ default => 'justify-center',
 @endphp
 
 @if ($section)
-<section class="w-full">
+<section class="w-full" {{ $attributes->only('data-gtm-section') }}>
     <div class="relative w-full overflow-hidden bg-neutral-100">
 
         @if ($resolvedDesktopImage || $resolvedMobileImage)

@@ -14,6 +14,7 @@ class SpaSetting extends Model
         'meta_author',
         'meta_site_name',
         'hero_visible',
+        'hero_video_id',
         'hero_image',
         'hero_mobile_image',
         'hero_image_alt',

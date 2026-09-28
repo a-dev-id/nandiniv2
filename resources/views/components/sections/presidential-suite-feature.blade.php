@@ -50,7 +50,7 @@ $galleryImages = $accommodation?->activeImages
 @endphp
 
 @if ($accommodation)
-<section class="bg-white px-3 pb-12 md:px-10 md:pb-6">
+<section class="bg-white px-3 pb-12 md:px-10 md:pb-6" {{ $attributes->only('data-gtm-section') }}>
     <div class="mx-auto border border-slate-200 px-5 py-8 text-center md:px-12 md:py-12">
         @if ($title)
         <h2 class="text-lg font-medium uppercase leading-snug text-slate-700 mb-3 sm:text-xl">
