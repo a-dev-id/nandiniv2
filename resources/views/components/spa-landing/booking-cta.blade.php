@@ -11,7 +11,7 @@
     $buttonUrl = $settings?->booking_cta_button_url ?: $settings?->reservation_url;
 @endphp
 
-<section class="relative isolate overflow-hidden bg-[#142c24] px-6 py-20 text-center font-sans text-white md:px-12 md:py-24" aria-labelledby="spa-booking-cta-title">
+<section class="relative isolate overflow-hidden bg-[#142c24] px-6 py-20 text-center font-sans text-white md:px-12 md:py-24" aria-labelledby="spa-booking-cta-title" data-gtm-section="booking_cta">
     @if ($image)
         <img src="{{ $image }}" alt="{{ $settings?->booking_cta_image_alt }}" class="absolute inset-0 -z-20 h-full w-full object-cover object-center" width="1920" height="1080" loading="lazy" decoding="async">
     @endif

@@ -30,7 +30,7 @@
 
 <x-layouts.app>
     @if ($hasStructuredDetail)
-        <header class="shadow-xl">
+        <header class="shadow-xl" data-gtm-section="hero">
             <div class="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 lg:aspect-auto lg:h-[70vh]">
             @if ($heroImage)
                     <img src="{{ $heroImage }}" alt="{{ $detail['hero_image_alt'] ?? '' }}" class="absolute inset-0 h-full w-full object-cover object-center" width="1920" height="1080" loading="eager" fetchpriority="high" decoding="async">
@@ -38,7 +38,7 @@
             </div>
         </header>
 
-        <section class="bg-white px-6 py-14 text-center font-sans md:px-10 md:py-20 2xl:px-14" aria-labelledby="signature-dish-title">
+        <section class="bg-white px-6 py-14 text-center font-sans md:px-10 md:py-20 2xl:px-14" aria-labelledby="signature-dish-title" data-gtm-section="overview">
             <div class="mx-auto max-w-5xl">
                 <h1 id="signature-dish-title" class="text-xl font-medium uppercase text-slate-700 sm:text-2xl">{{ $detail['hero_title'] ?? $dish->name }}</h1>
                 @if (filled($detail['hero_description'] ?? null))
@@ -49,7 +49,7 @@
 
         @if ($detail['story_visible'] ?? true)
             @php($storyImage = $dish->resolveImageUrl($detail['story_image'] ?? null))
-            <section id="story" class="scroll-mt-20 bg-white px-6 py-14 font-sans md:px-10 md:py-20 2xl:px-14" aria-labelledby="signature-dish-story-title">
+            <section id="story" class="scroll-mt-20 bg-white px-6 py-14 font-sans md:px-10 md:py-20 2xl:px-14" aria-labelledby="signature-dish-story-title" data-gtm-section="story">
                 <div class="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2 lg:gap-16">
                     <div class="aspect-[4/3] overflow-hidden bg-[#f3f4f5]">
                         @if ($storyImage)
@@ -73,7 +73,7 @@
         @endif
 
         @if (($detail['highlights_visible'] ?? true) && ! empty($detail['highlights']))
-            <section id="experience" class="scroll-mt-20 bg-[#f3f4f5] px-6 py-14 font-sans md:px-10 md:py-20 2xl:px-14" aria-labelledby="signature-dish-highlights-title">
+            <section id="experience" class="scroll-mt-20 bg-[#f3f4f5] px-6 py-14 font-sans md:px-10 md:py-20 2xl:px-14" aria-labelledby="signature-dish-highlights-title" data-gtm-section="signature_experiences">
                 <div class="mx-auto max-w-7xl text-center">
                     @if (filled($detail['highlights_eyebrow'] ?? null))
                         <p class="mb-3 text-[10px] font-medium uppercase tracking-[.18em] text-[#A88444] sm:text-xs">{{ $detail['highlights_eyebrow'] }}</p>
@@ -125,7 +125,7 @@
 
         @if ($detail['premium_visible'] ?? true)
             @php($premiumImage = $dish->resolveImageUrl($detail['premium_image'] ?? null))
-            <section class="bg-[#f3f4f5] px-6 py-14 font-sans md:px-10 md:py-20 2xl:px-14" aria-labelledby="signature-dish-premium-title">
+            <section class="bg-[#f3f4f5] px-6 py-14 font-sans md:px-10 md:py-20 2xl:px-14" aria-labelledby="signature-dish-premium-title" data-gtm-section="premium_ingredients">
                 <div class="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] lg:gap-16">
                     <div>
                         @if (filled($detail['premium_eyebrow'] ?? null))
@@ -146,7 +146,7 @@
         @endif
 
         @if ($sections->isNotEmpty())
-            <section class="bg-white px-6 py-14 font-sans md:px-10 md:py-20" aria-label="Additional signature dish content">
+            <section class="bg-white px-6 py-14 font-sans md:px-10 md:py-20" aria-label="Additional signature dish content" data-gtm-section="related_content">
                 <div class="mx-auto max-w-5xl">
                     @foreach ($sections as $section)
                         @if ($section->section_key === 'intro_text_section')
@@ -165,7 +165,7 @@
 
         @if ($detail['reservation_visible'] ?? true)
             @php($reservationImage = $dish->resolveImageUrl($detail['reservation_image'] ?? null))
-            <section id="reserve" class="relative isolate flex min-h-[460px] scroll-mt-20 items-center overflow-hidden bg-[#142c24] px-6 py-16 font-sans text-white" aria-labelledby="signature-dish-reservation-title">
+            <section id="reserve" class="relative isolate flex min-h-[460px] scroll-mt-20 items-center overflow-hidden bg-[#142c24] px-6 py-16 font-sans text-white" aria-labelledby="signature-dish-reservation-title" data-gtm-section="booking_cta">
                 @if ($reservationImage)
                     <img src="{{ $reservationImage }}" alt="{{ $detail['reservation_image_alt'] ?? '' }}" class="absolute inset-0 -z-20 h-full w-full object-cover" width="1920" height="900" loading="lazy" decoding="async">
                 @endif
@@ -187,7 +187,7 @@
             </section>
         @endif
     @else
-        <section class="bg-[#faf9f6] px-6 pb-14 pt-32 font-sans md:px-10 md:pb-20 md:pt-40 2xl:px-14" aria-labelledby="signature-dish-title">
+        <section class="bg-[#faf9f6] px-6 pb-14 pt-32 font-sans md:px-10 md:pb-20 md:pt-40 2xl:px-14" aria-labelledby="signature-dish-title" data-gtm-section="hero">
             <div class="mx-auto grid max-w-7xl items-center gap-10 md:grid-cols-2 md:gap-14">
                 <div class="aspect-[4/3] overflow-hidden bg-[#f3f4f5] md:order-2">
                     @if ($dish->image_url)
@@ -207,7 +207,7 @@
         </section>
 
         @if ($body !== '')
-            <section class="bg-white px-6 py-14 font-sans md:py-20" aria-labelledby="signature-dish-content-title">
+            <section class="bg-white px-6 py-14 font-sans md:py-20" aria-labelledby="signature-dish-content-title" data-gtm-section="overview">
                 <div class="mx-auto max-w-3xl">
                     <p class="mb-3 text-[10px] font-medium uppercase tracking-[.18em] text-[#A88444] sm:text-xs">About the Dish</p>
                     <h2 id="signature-dish-content-title" class="sr-only">About {{ $dish->name }}</h2>
@@ -217,7 +217,7 @@
         @endif
 
         @if ($sections->isNotEmpty())
-            <section class="bg-white px-6 py-14 font-sans md:px-10 md:py-20" aria-label="Signature dish content">
+            <section class="bg-white px-6 py-14 font-sans md:px-10 md:py-20" aria-label="Signature dish content" data-gtm-section="related_content">
                 <div class="mx-auto max-w-5xl">
                     @foreach ($sections as $section)
                         @if ($section->section_key === 'intro_text_section')

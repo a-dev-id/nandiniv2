@@ -2,7 +2,7 @@
 'title' => 'How To Earn Points',
 ])
 
-<section class="bg-slate-100 px-6 py-14 md:py-20">
+<section class="bg-slate-100 px-6 py-14 md:py-20" {{ $attributes->only('data-gtm-section') }}>
     <div class="mx-auto max-w-[1500px]">
         <div class="mx-auto max-w-3xl text-center md:max-w-5xl">
             <h2 class="text-lg font-medium uppercase leading-snug text-slate-700 mb-3 sm:text-xl">

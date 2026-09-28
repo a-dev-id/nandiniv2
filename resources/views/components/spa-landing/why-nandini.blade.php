@@ -15,7 +15,7 @@
     }
 @endphp
 
-<section class="bg-[#f3f4f5] px-6 py-14 text-center font-sans md:py-20" aria-labelledby="spa-why-nandini-title">
+<section class="bg-[#f3f4f5] px-6 py-14 text-center font-sans md:py-20" aria-labelledby="spa-why-nandini-title" data-gtm-section="spa_benefits">
     <div class="mx-auto max-w-7xl">
         <p class="mb-3 text-[10px] font-medium uppercase tracking-[.18em] text-[#A88444] sm:text-xs">{{ $eyebrow }}</p>
         <h2 id="spa-why-nandini-title" class="mx-auto text-lg leading-snug font-medium text-slate-700 uppercase sm:text-xl">

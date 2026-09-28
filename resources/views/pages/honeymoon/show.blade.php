@@ -40,7 +40,7 @@
     />
     @endif
 
-    <section class="bg-white px-6 py-14 md:py-20 md:px-12 lg:px-[70px]">
+    <section class="bg-white px-6 py-14 md:py-20 md:px-12 lg:px-[70px]" data-gtm-section="package_details">
         <div class="mx-auto max-w-5xl text-center">
             <h1 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-2xl">
                 {{ $offer->title }}
@@ -69,7 +69,7 @@
     </section>
 
     @if ($relatedOffers->isNotEmpty())
-    <section class="bg-[#F7F7F7] px-6 py-14 md:py-20 md:px-12 lg:px-[70px]">
+    <section class="bg-[#F7F7F7] px-6 py-14 md:py-20 md:px-12 lg:px-[70px]" data-gtm-section="related_content">
         <div class="mx-auto w-full">
             <div class="mb-10 text-center">
                 <h2 class="text-lg leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-xl">

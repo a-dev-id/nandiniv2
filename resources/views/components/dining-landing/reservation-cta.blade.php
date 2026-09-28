@@ -7,7 +7,7 @@
         : (str_starts_with((string) $uploadedImage, 'http') || str_starts_with((string) $uploadedImage, '/') ? asset($uploadedImage) : null);
 @endphp
 
-<section class="relative isolate flex min-h-[420px] items-center overflow-hidden bg-[#142c24] px-6 py-16 font-sans text-white md:min-h-[460px]" aria-labelledby="dining-reservation-cta-title">
+<section class="relative isolate flex min-h-[420px] items-center overflow-hidden bg-[#142c24] px-6 py-16 font-sans text-white md:min-h-[460px]" aria-labelledby="dining-reservation-cta-title" data-gtm-section="booking_cta">
     @if ($backgroundImage)
     <picture class="absolute inset-0 -z-20">
         <source media="(max-width: 767px)" srcset="{{ $backgroundImage }}">

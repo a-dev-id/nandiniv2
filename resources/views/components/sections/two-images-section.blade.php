@@ -64,7 +64,7 @@ $displayButtonLink,
 @endphp
 
 @if ($section)
-<section class="py-14 md:py-28 w-full overflow-x-hidden {{ $reverse ? '' : 'bg-[#F7F7F7]' }}">
+<section class="py-14 md:py-28 w-full overflow-x-hidden {{ $reverse ? '' : 'bg-[#F7F7F7]' }}" {{ $attributes->only('data-gtm-section') }}>
     <div class="{{ $wrapper }}">
         <div class="grid grid-cols-1 lg:grid-cols-12 items-stretch gap-8 lg:gap-10">
 

@@ -1,3 +1,5 @@
+@props(['trackSections' => true])
+
 @php
 $socialLinks = [
 'instagram' => 'https://www.instagram.com/nandinijungleresort/',
@@ -37,7 +39,7 @@ $seoFooterLinks = \App\Models\Page::query()
     ]);
 @endphp
 
-<footer class="bg-black text-white" x-data="{ gdsOpen: false }" @keydown.escape.window="gdsOpen = false">
+<footer class="bg-black text-white" x-data="{ gdsOpen: false }" @keydown.escape.window="gdsOpen = false" @if ($trackSections) data-gtm-section="footer" @endif>
     <div class="mx-auto w-11/12 2xl:w-9/12">
 
         {{-- TOP --}}

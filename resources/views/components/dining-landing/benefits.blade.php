@@ -1,6 +1,6 @@
 @props(['settings' => null])
 
-<section class="bg-[#f3f4f5] px-6 py-14 font-sans text-center md:py-20" aria-labelledby="dining-benefits-title">
+<section class="bg-[#f3f4f5] px-6 py-14 font-sans text-center md:py-20" aria-labelledby="dining-benefits-title" data-gtm-section="overview">
     <div class="mx-auto max-w-7xl">
         <p class="mb-3 text-[10px] font-medium tracking-[.18em] text-[#A88444] uppercase sm:text-xs">{{ $settings?->why_dine_eyebrow }}</p>
         <h2 id="dining-benefits-title" class="mx-auto text-lg leading-snug font-medium text-slate-700 uppercase sm:text-xl">

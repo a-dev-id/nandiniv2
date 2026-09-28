@@ -221,7 +221,7 @@ $useShowMore = $model === 'experience'
 && $items->count() > $showMoreStep;
 @endphp
 
-<section class="pb-16 md:pb-28">
+<section class="pb-16 md:pb-28" {{ $attributes->only('data-gtm-section') }}>
     <div class="mx-auto px-3 lg:px-16" @if ($useShowMore) x-data="{ visibleCount: {{ $showMoreStep }} }" @endif>
 
         {{-- FILTER --}}

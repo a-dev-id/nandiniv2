@@ -31,9 +31,32 @@ $sections = $page->sections ?? collect();
 @endpush
 
 <x-layouts.app>
+    @php
+    $sectionTrackingNames = [
+        8 => 'wellness_sanctuary',
+        9 => 'wellness',
+        10 => 'accommodation',
+        11 => 'holy_water',
+        12 => 'booking_cta',
+        63 => 'overview',
+        64 => 'villas',
+        65 => 'spa_wellness',
+        66 => 'audience',
+        67 => 'booking_benefits',
+        68 => 'faq',
+        69 => 'overview',
+        70 => 'holistic_wellness',
+        71 => 'nature',
+        72 => 'cultural_experiences',
+        73 => 'accommodation',
+        74 => 'audience',
+        75 => 'booking_cta',
+    ];
+    @endphp
+
     <x-heroes.image-hero :page="$page" />
 
-    <section class="px-6 py-14 text-center md:py-20">
+    <section class="px-6 py-14 text-center md:py-20" data-gtm-section="introduction">
         <div class="mx-auto max-w-5xl">
             <h1 class="text-xl font-normal uppercase leading-snug text-slate-700 sm:text-2xl">
                 {!! str_ireplace(
@@ -63,43 +86,43 @@ $sections = $page->sections ?? collect();
 
     @foreach ($sections as $section)
     @if ($section->section_key === 'intro_text_section')
-    <x-sections.intro-text-section :section="$section" />
+    <x-sections.intro-text-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'image_overlay_section')
-    <x-sections.image-overlay-section :section="$section" />
+    <x-sections.image-overlay-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'contained_image_section')
-    <x-sections.contained-image-section :section="$section" />
+    <x-sections.contained-image-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'split_media_section')
-    <x-sections.split-media-section :section="$section" :excerpt-only="false" image-span="8" text-span="4" />
+    <x-sections.split-media-section :section="$section" :excerpt-only="false" image-span="8" text-span="4" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'split_media_reverse')
-    <x-sections.split-media-section :section="$section" :reverse="true" :excerpt-only="false" image-span="8" text-span="4" />
+    <x-sections.split-media-section :section="$section" :reverse="true" :excerpt-only="false" image-span="8" text-span="4" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'seo_split_media_section')
-    <x-sections.seo-split-media-section :section="$section" :page="$page" />
+    <x-sections.seo-split-media-section :section="$section" :page="$page" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'seo_split_media_reverse')
-    <x-sections.seo-split-media-section :section="$section" :page="$page" :reverse="true" />
+    <x-sections.seo-split-media-section :section="$section" :page="$page" :reverse="true" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'three_images_section')
-    <x-sections.three-images-section :section="$section" />
+    <x-sections.three-images-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'two_images_section')
-    <x-sections.two-images-section :section="$section" />
+    <x-sections.two-images-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'two_images_reverse')
-    <x-sections.two-images-section :section="$section" :reverse="true" />
+    <x-sections.two-images-section :section="$section" :reverse="true" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @endforeach

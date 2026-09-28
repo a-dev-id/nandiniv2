@@ -1,7 +1,7 @@
 @props(['dish' => null])
 
 @if ($dish)
-<section class="bg-[#f3f4f5] px-6 py-14 font-sans md:px-10 md:py-20 2xl:px-14" aria-labelledby="dining-signature-title">
+<section class="bg-[#f3f4f5] px-6 py-14 font-sans md:px-10 md:py-20 2xl:px-14" aria-labelledby="dining-signature-title" data-gtm-section="signature_dishes">
     <div class="mx-auto grid max-w-7xl items-center gap-10 md:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] md:gap-12 lg:gap-16">
         <div class="order-1 aspect-[16/10] overflow-hidden bg-[#f3f4f5] md:order-2">
             @if ($dish->image_url)

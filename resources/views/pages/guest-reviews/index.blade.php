@@ -17,7 +17,7 @@
 @endpush
 
 <x-layouts.app>
-    <section class="bg-white px-6 pb-14 pt-28 md:pb-20 md:pt-32" aria-labelledby="guest-review-list-title">
+    <section class="bg-white px-6 pb-14 pt-28 md:pb-20 md:pt-32" aria-labelledby="guest-review-list-title" data-gtm-section="guest_reviews">
         <div class="mx-auto max-w-6xl">
             <h1 id="guest-review-list-title" class="text-center text-xl font-medium uppercase leading-snug text-slate-700 sm:text-2xl">
                 What Our Guests Say

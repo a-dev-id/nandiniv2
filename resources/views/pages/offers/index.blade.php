@@ -38,5 +38,5 @@ $metaImage = $page->hero_image ?? $page->hero_mobile_image ?? null;
 
     <x-sections.page-description :page="$page" />
 
-    <x-sections.item-list model="offer" :items="$offers" :with-filter="false" route-name="offers.show" />
+    <x-sections.item-list model="offer" :items="$offers" :with-filter="false" route-name="offers.show" data-gtm-section="offers" />
 </x-layouts.app>

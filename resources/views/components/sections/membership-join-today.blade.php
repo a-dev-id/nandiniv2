@@ -93,7 +93,7 @@ $finalPrimaryUrl,
 );
 @endphp
 
-<section class="w-full bg-white px-0 py-0">
+<section class="w-full bg-white px-0 py-0" {{ $attributes->only('data-gtm-section') }}>
     <div class="relative w-full overflow-hidden bg-neutral-100">
         @if ($resolvedDesktopImage || $resolvedMobileImage)
         <picture class="absolute inset-0 h-full w-full overflow-hidden">

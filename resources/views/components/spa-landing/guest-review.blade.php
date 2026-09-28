@@ -8,7 +8,7 @@
     $label = $settings?->guest_review_label ?: 'Guest Experience';
 @endphp
 
-<section class="bg-white px-6 py-14 font-sans md:px-12 md:py-20 lg:px-6" aria-label="Guest spa experience">
+<section class="bg-white px-6 py-14 font-sans md:px-12 md:py-20 lg:px-6" aria-label="Guest spa experience" data-gtm-section="guest_reviews">
     <div class="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2 lg:gap-16">
         <div>
             <span class="block font-span text-5xl leading-none text-[#A88444]" aria-hidden="true">“</span>

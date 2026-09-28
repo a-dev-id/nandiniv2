@@ -167,7 +167,7 @@ $defaultItems = [
 $items = count($rewardItems) > 0 ? $rewardItems : $defaultItems;
 @endphp
 
-<section class="{{ $backgroundClass }} px-6 py-14 md:py-20">
+<section class="{{ $backgroundClass }} px-6 py-14 md:py-20" {{ $attributes->only('data-gtm-section') }}>
     <div class="mx-auto max-w-[1500px]">
 
         @if ($hasSubtitle)

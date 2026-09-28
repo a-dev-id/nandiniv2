@@ -18,6 +18,8 @@
 'secondaryUrl' => '#',
 ])
 
+@aware(['trackSections' => true])
+
 @php
 $desktopImageSrc = '';
 $mobileImageSrc = '';
@@ -70,7 +72,7 @@ $primaryHref = $resolveButtonUrl($primaryUrl, 'membership.register');
 $secondaryHref = $resolveButtonUrl($secondaryUrl, 'membership.login');
 @endphp
 
-<header class="relative shadow-xl">
+<header class="relative shadow-xl" @if ($trackSections) data-gtm-section="hero" @endif>
     <div class="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[70vh] overflow-hidden bg-slate-100">
         @if ($desktopImageSrc || $mobileImageSrc)
         <picture class="block w-full h-full">

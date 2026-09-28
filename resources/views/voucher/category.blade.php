@@ -9,7 +9,7 @@
 @endpush
 
 <x-layouts.app>
-    <section class="bg-[#F7F7F7] px-6 pb-14 pt-36 md:pb-20">
+    <section class="bg-[#F7F7F7] px-6 pb-14 pt-36 md:pb-20" data-gtm-section="hero">
         <div class="mx-auto max-w-6xl">
             <nav class="text-xs uppercase tracking-[0.08em] text-slate-500">
                 <a href="{{ route('voucher.index') }}" class="hover:text-[#A88444]">Vouchers</a>
@@ -21,7 +21,7 @@
         </div>
     </section>
 
-    <section class="bg-white px-6 py-14 md:py-20">
+    <section class="bg-white px-6 py-14 md:py-20" data-gtm-section="gift_vouchers">
         <div class="mx-auto max-w-6xl">
             @if ($vouchers->isEmpty())
                 <div class="border border-slate-200 bg-[#F7F7F7] p-8 text-center text-sm text-slate-600">There are no active vouchers in this category yet.</div>

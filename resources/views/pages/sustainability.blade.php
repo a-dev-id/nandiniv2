@@ -34,7 +34,7 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
 
     <x-sections.page-description :page="$page" />
 
-    <section class="bg-white px-6 pb-16 md:pb-24">
+    <section class="bg-white px-6 pb-16 md:pb-24" data-gtm-section="sustainability">
         <div class="mx-auto grid max-w-6xl grid-cols-1 gap-5 md:grid-cols-2">
             <div class="relative aspect-video overflow-hidden bg-black cursor-pointer" role="button" tabindex="0" aria-label="Play The Big Bloom" data-youtube-embed data-src="https://www.youtube-nocookie.com/embed/BdVcsMHRi5o?rel=0&modestbranding=1&playsinline=1" data-title="The Big Bloom">
                 <img src="https://i.ytimg.com/vi/BdVcsMHRi5o/hqdefault.jpg" alt="The Big Bloom video preview" class="h-full w-full object-cover" width="480" height="360" loading="lazy" decoding="async">

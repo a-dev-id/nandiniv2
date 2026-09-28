@@ -4,7 +4,7 @@
 <meta name="robots" content="noindex,nofollow">
 @endpush
 
-<x-layouts.app>
+<x-layouts.app :track-sections="false">
     <x-heroes.image-hero
         :image-src="asset('images/membership/join-today.webp')"
         alt-text="Nandini Partner Circle affiliate login"

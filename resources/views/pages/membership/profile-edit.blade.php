@@ -29,7 +29,7 @@ $metaImage = $page?->hero_image ?: $page?->hero_mobile_image ?: null;
 <meta name="twitter:description" content="{{ $metaDescription }}">
 @endpush
 
-<x-layouts.app>
+<x-layouts.app :track-sections="false">
     @php
     $firstName = old('first_name', $member->first_name);
     $lastName = old('last_name', $member->last_name);

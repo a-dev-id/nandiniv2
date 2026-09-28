@@ -3,7 +3,7 @@
 'label' => 'Practical information',
 ])
 
-<div class="bg-[#f3f4f5] font-sans text-[#20271f]" aria-label="{{ $label }}">
+<div class="bg-[#f3f4f5] font-sans text-[#20271f]" aria-label="{{ $label }}" {{ $attributes->only('data-gtm-section') }}>
     <dl class="mx-auto grid max-w-7xl grid-cols-2 px-6 py-2 md:py-6 lg:grid-cols-4">
         @foreach ($items as $item)
         <div class="flex flex-col items-start gap-3 border-r border-[#d1b77d]/25 py-[22px] pl-4 max-lg:odd:pl-0 max-lg:even:border-r-0 max-lg:nth-[-n+2]:border-b md:flex-row md:items-center md:gap-3.5 md:p-5 lg:px-5 lg:py-1.5 lg:first:pl-0 lg:last:border-r-0 lg:last:pr-0">

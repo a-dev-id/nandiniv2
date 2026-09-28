@@ -30,7 +30,7 @@ $description = $page->description
 $descriptionHasHtml = is_string($description) && $description !== strip_tags($description);
 @endphp
 
-<x-layouts.app>
+<x-layouts.app :track-sections="false">
     {{-- HERO --}}
     <x-heroes.image-hero :page="$page" :alt-text="$imageAlt" />
 

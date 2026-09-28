@@ -17,7 +17,7 @@
 'footerLabel' => 'Explore More',
 ])
 
-<section class="{{ $bottomPaddingClass }} {{ $wrapperClass }}">
+<section class="{{ $bottomPaddingClass }} {{ $wrapperClass }}" {{ $attributes->only('data-gtm-section') }}>
     <div class="item-carousel-wrap mx-auto {{ $innerPaddingClass }} relative">
 
         <div class="itemcarousel-slick">

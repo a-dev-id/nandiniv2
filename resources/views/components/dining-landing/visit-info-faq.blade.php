@@ -7,7 +7,7 @@
     $faqs = $settings?->faq_items ?? [];
 @endphp
 
-<section class="bg-[#f3f4f5] px-6 py-14 font-sans md:py-20" aria-label="Dining practical information and frequently asked questions">
+<section class="bg-[#f3f4f5] px-6 py-14 font-sans md:py-20" aria-label="Dining practical information and frequently asked questions" data-gtm-section="faq">
     <div class="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.04fr)] lg:gap-0">
         <div class="min-w-0 lg:pr-12 xl:pr-14">
             <p class="mb-3 text-[10px] font-medium tracking-[.18em] text-[#A88444] uppercase sm:text-xs">{{ $settings?->visit_eyebrow }}</p>

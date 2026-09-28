@@ -30,17 +30,28 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
 @endpush
 
 <x-layouts.app>
+    @php
+    $sectionTrackingNames = [
+        31 => 'membership_benefits',
+        32 => 'rewards',
+        33 => 'membership_validity',
+        34 => 'booking_policy',
+        35 => 'communications',
+        36 => 'terms_conditions',
+    ];
+    @endphp
+
     <x-heroes.membership-hero :page="$page" :show-content="false" :show-overlay="false" />
 
     @forelse ($sections as $section)
     @switch($section->section_key)
 
     @case('intro_text_section')
-    <x-sections.intro-text-section :section="$section" />
+    <x-sections.intro-text-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @break
 
     @case('contained_image_section')
-    <x-sections.contained-image-section :section="$section" />
+    <x-sections.contained-image-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @break
 
     @default

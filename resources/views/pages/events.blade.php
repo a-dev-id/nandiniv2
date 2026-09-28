@@ -29,7 +29,7 @@ $metaImage = $page->hero_image ?? $page->hero_mobile_image ?? null;
 <x-layouts.app>
     <x-heroes.image-hero :page="$page" />
 
-    <section class="bg-white px-6 py-14 text-center md:py-20" aria-labelledby="events-page-heading">
+    <section class="bg-white px-6 py-14 text-center md:py-20" aria-labelledby="events-page-heading" data-gtm-section="introduction">
         <div class="mx-auto max-w-5xl">
             <h1 id="events-page-heading" class="mb-3 text-xl font-medium uppercase leading-snug text-slate-700 sm:text-2xl">
                 {{ $page->title }}
@@ -49,7 +49,7 @@ $metaImage = $page->hero_image ?? $page->hero_mobile_image ?? null;
         </div>
     </section>
 
-    <section class="bg-slate-50 px-3 py-14 sm:px-6 md:py-20" aria-labelledby="todays-event-heading">
+    <section class="bg-slate-50 px-3 py-14 sm:px-6 md:py-20" aria-labelledby="todays-event-heading" data-gtm-section="daily_events">
         <div class="mx-auto max-w-7xl">
             @if ($todayEvent)
             <article class="grid items-stretch gap-8 lg:grid-cols-[minmax(0,600px)_minmax(0,1fr)] lg:gap-10" data-today-event-layout="split">
@@ -102,7 +102,7 @@ $metaImage = $page->hero_image ?? $page->hero_mobile_image ?? null;
     </section>
 
     @if ($dishOfTheMonth)
-    <section class="bg-white px-3 py-14 sm:px-6 md:py-20" aria-labelledby="dish-of-the-month-heading">
+    <section class="bg-white px-3 py-14 sm:px-6 md:py-20" aria-labelledby="dish-of-the-month-heading" data-gtm-section="dish_of_the_month">
         <div class="mx-auto max-w-7xl">
             <div class="mb-8 text-center md:mb-10">
                 <p class="mb-3 text-xs font-medium uppercase tracking-[0.08em] text-[#A88444] sm:text-sm">Chef’s Monthly Selection</p>
@@ -122,7 +122,7 @@ $metaImage = $page->hero_image ?? $page->hero_mobile_image ?? null;
     </section>
     @endif
 
-    <section class="bg-slate-50 px-3 py-14 sm:px-6 md:py-20" aria-labelledby="upcoming-events-heading">
+    <section class="bg-slate-50 px-3 py-14 sm:px-6 md:py-20" aria-labelledby="upcoming-events-heading" data-gtm-section="upcoming_events">
         <div class="mx-auto max-w-7xl">
             <div class="mb-8 text-center md:mb-10">
                 <h2 id="upcoming-events-heading" class="text-lg font-medium uppercase leading-snug text-slate-700 sm:text-xl">Upcoming Events</h2>
@@ -141,7 +141,7 @@ $metaImage = $page->hero_image ?? $page->hero_mobile_image ?? null;
         </div>
     </section>
 
-    <section class="bg-white px-3 py-14 sm:px-6 md:py-20" aria-labelledby="regular-events-heading">
+    <section class="bg-white px-3 py-14 sm:px-6 md:py-20" aria-labelledby="regular-events-heading" data-gtm-section="regular_events">
         <div class="mx-auto max-w-7xl">
             <div class="mb-8 text-center md:mb-10">
                 <h2 id="regular-events-heading" class="text-lg font-medium uppercase leading-snug text-slate-700 sm:text-xl">Regular Events</h2>

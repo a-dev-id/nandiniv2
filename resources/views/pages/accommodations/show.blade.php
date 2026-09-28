@@ -58,7 +58,7 @@ $metaImage = $accommodation->hero_image
     @endif
 
     {{-- Intro --}}
-    <section class="py-14 md:py-20 px-6 text-center bg-white">
+    <section class="py-14 md:py-20 px-6 text-center bg-white" data-gtm-section="overview">
         <div class="max-w-5xl mx-auto">
             <h1 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-2xl">
                 {{ $accommodation->title }}
@@ -77,11 +77,11 @@ $metaImage = $accommodation->hero_image
     </section>
 
     {{-- Features + Gallery --}}
-    <x-sections.accommodation-features-gallery :accommodation="$accommodation" />
+    <x-sections.accommodation-features-gallery :accommodation="$accommodation" data-gtm-section="facilities" />
 
     {{-- Related Accommodations --}}
     @if ($relatedAccommodations->isNotEmpty())
-    <section class="pt-14 md:pt-20 bg-white">
+    <section class="pt-14 md:pt-20 bg-white" data-gtm-section="related_content">
         <div class="px-6 mb-10 text-center">
             <h2 class="text-lg leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-xl">
                 You May Also Like

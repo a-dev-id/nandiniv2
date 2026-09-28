@@ -3,7 +3,7 @@
 <meta name="description" content="Change your temporary password and secure your Nandini Inner Circle membership account.">
 @endpush
 
-<x-layouts.app>
+<x-layouts.app :track-sections="false">
     <section class="w-full bg-[#F7F7F7] py-16 md:py-24 lg:py-28">
         <div class="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-8">
             <div class="mx-auto max-w-[620px] bg-white px-6 py-8 shadow-xl sm:px-8 md:px-10 md:py-10 lg:px-12">

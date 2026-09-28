@@ -97,7 +97,7 @@ $sectionItems = collect($section?->items ?? [])
 $tiers = count($sectionItems) > 0 ? $sectionItems : $defaultTiers;
 @endphp
 
-<section class="px-6 py-14 md:py-20 {{ $backgroundClass }}">
+<section class="px-6 py-14 md:py-20 {{ $backgroundClass }}" {{ $attributes->only('data-gtm-section') }}>
     <div class="mx-auto">
 
         @if ($hasSubtitle)

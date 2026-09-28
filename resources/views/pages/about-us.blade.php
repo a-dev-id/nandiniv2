@@ -119,7 +119,7 @@ $final = $storySections->get('about_story_final');
                 $heroButtonUrl = $sectionButtonUrl($hero);
                 @endphp
 
-                <header class="shadow-xl">
+                <header class="shadow-xl" data-gtm-section="hero">
                     <div class="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 lg:aspect-auto lg:h-[70vh]">
                     @if ($heroDesktop || $heroMobile)
                         <picture class="absolute inset-0 block h-full w-full">
@@ -131,7 +131,7 @@ $final = $storySections->get('about_story_final');
                     @endif
                     </div>
                 </header>
-                <section id="our-story" class="px-6 py-14 text-center md:py-20">
+                <section id="our-story" class="px-6 py-14 text-center md:py-20" data-gtm-section="introduction">
                     <div class="mx-auto max-w-5xl">
                         @if (filled($hero->subtitle))
                             <p class="mb-2 text-xs uppercase text-slate-500 sm:text-sm">{{ $plainText($hero->subtitle) }}</p>
@@ -162,7 +162,7 @@ $final = $storySections->get('about_story_final');
                 $originSmall = $origins->images->get(1);
                 $originMeta = collect($origins->items)->first() ?? [];
                 @endphp
-                <section class="bg-[#F7F7F7] py-14 md:py-28">
+                <section class="bg-[#F7F7F7] py-14 md:py-28" data-gtm-section="origins">
                     <div class="mx-auto grid w-full max-w-screen-2xl items-center gap-8 px-4 sm:px-6 lg:grid-cols-12 lg:gap-10 lg:px-8">
                         <div class="relative min-h-[420px] sm:min-h-[560px] lg:col-span-7">
                             @if ($originMain && $imageUrl($originMain->image ?: $originMain->mobile_image))
@@ -194,7 +194,7 @@ $final = $storySections->get('about_story_final');
             @endif
 
             @if ($timeline)
-                <section class="bg-white py-14 md:py-28">
+                <section class="bg-white py-14 md:py-28" data-gtm-section="history">
                     <div class="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-8">
                         <div class="text-center">
                             <p class="mb-2 text-xs uppercase text-slate-500 sm:text-sm">{{ $plainText($timeline->subtitle) }}</p>
@@ -221,7 +221,7 @@ $final = $storySections->get('about_story_final');
                     $chapterImage = $chapter->images->first();
                     $chapterButtonUrl = $sectionButtonUrl($chapter);
                     @endphp
-                    <section class="py-14 md:py-28 {{ $isReverse ? 'bg-white' : 'bg-[#F7F7F7]' }}">
+                    <section class="py-14 md:py-28 {{ $isReverse ? 'bg-white' : 'bg-[#F7F7F7]' }}" data-gtm-section="{{ $isReverse ? 'river_story' : 'resort_origins' }}">
                         <div class="mx-auto grid w-full max-w-screen-2xl grid-cols-1 items-stretch gap-8 px-4 sm:px-6 lg:grid-cols-12 lg:gap-10 lg:px-8">
                         <div class="relative min-h-[390px] lg:col-span-8 lg:min-h-[560px] {{ $isReverse ? 'lg:order-2' : 'lg:order-1' }}">
                             @if ($chapterImage && $imageUrl($chapterImage->image ?: $chapterImage->mobile_image))
@@ -258,7 +258,7 @@ $final = $storySections->get('about_story_final');
                 $thenImage = $comparison->images->get(0);
                 $nowImage = $comparison->images->get(1);
                 @endphp
-                <section class="bg-[#F7F7F7] py-14 md:py-28">
+                <section class="bg-[#F7F7F7] py-14 md:py-28" data-gtm-section="evolution">
                     <div class="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-8">
                         <div class="mx-auto max-w-4xl text-center">
                             <p class="mb-2 text-xs uppercase text-slate-500 sm:text-sm">{{ $plainText($comparison->subtitle) }}</p>
@@ -290,7 +290,7 @@ $final = $storySections->get('about_story_final');
 
             @if ($growth)
                 @php $growthImage = $growth->images->first(); @endphp
-                <section class="bg-white py-14 md:py-28">
+                <section class="bg-white py-14 md:py-28" data-gtm-section="growth">
                     <div class="mx-auto grid w-full max-w-screen-2xl items-center gap-8 px-4 sm:px-6 lg:grid-cols-12 lg:gap-10 lg:px-8">
                         <div class="lg:col-span-5 lg:px-8">
                             <p class="font-span text-3xl leading-none text-[#A88444] sm:text-4xl">{{ $plainText($growth->excerpt) }}</p>
@@ -308,7 +308,7 @@ $final = $storySections->get('about_story_final');
             @endif
 
             @if ($mosaic)
-                <section class="bg-[#F7F7F7] py-14 md:py-28">
+                <section class="bg-[#F7F7F7] py-14 md:py-28" data-gtm-section="renovation">
                     <div class="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-8">
                         <div class="mx-auto max-w-4xl text-center">
                             <p class="font-span text-3xl leading-none text-[#A88444] sm:text-4xl">{{ $plainText($mosaic->excerpt) }}</p>
@@ -329,7 +329,7 @@ $final = $storySections->get('about_story_final');
             @endif
 
             @if ($gallery)
-                <section class="bg-white py-14 md:py-28">
+                <section class="bg-white py-14 md:py-28" data-gtm-section="gallery">
                     <div class="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-8">
                         <div class="mx-auto max-w-4xl text-center">
                             <p class="font-span text-3xl leading-none text-[#A88444] sm:text-4xl">{{ $plainText($gallery->excerpt) }}</p>
@@ -354,7 +354,7 @@ $final = $storySections->get('about_story_final');
             @endif
 
             @if ($values)
-                <section class="bg-[#F7F7F7] py-14 md:py-28">
+                <section class="bg-[#F7F7F7] py-14 md:py-28" data-gtm-section="values">
                     <div class="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-8">
                         <div class="mx-auto max-w-4xl text-center">
                             <p class="mb-2 text-xs uppercase text-slate-500 sm:text-sm">{{ $plainText($values->subtitle) }}</p>
@@ -383,7 +383,7 @@ $final = $storySections->get('about_story_final');
                 $todayStats = $todayItems->where('kind', 'stat');
                 $todayLinks = $todayItems->where('kind', 'link');
                 @endphp
-                <section class="bg-white py-14 md:py-28">
+                <section class="bg-white py-14 md:py-28" data-gtm-section="nandini_today">
                     <div class="mx-auto grid w-full max-w-screen-2xl items-center gap-8 px-4 sm:px-6 lg:grid-cols-12 lg:gap-10 lg:px-8">
                         <div class="relative min-h-[400px] overflow-hidden bg-slate-100 lg:col-span-7 lg:min-h-[560px]">
                             @if ($todayImage && $imageUrl($todayImage->image ?: $todayImage->mobile_image))
@@ -424,7 +424,7 @@ $final = $storySections->get('about_story_final');
                     fn ($button) => strcasecmp((string) ($button['label'] ?? ''), 'Explore Nandini') === 0
                 );
                 @endphp
-                <section class="relative flex h-[460px] items-center overflow-hidden bg-neutral-100 px-6 text-center text-white sm:h-[560px] lg:h-[760px]">
+                <section class="relative flex h-[460px] items-center overflow-hidden bg-neutral-100 px-6 text-center text-white sm:h-[560px] lg:h-[760px]" data-gtm-section="booking_cta">
                     @if ($finalImage && $imageUrl($finalImage->image ?: $finalImage->mobile_image))
                         <img src="{{ $imageUrl($finalImage->image ?: $finalImage->mobile_image) }}" alt="{{ $finalImage->image_alt ?: $plainText($final->title) }}" class="absolute inset-0 h-full w-full object-cover" loading="lazy">
                     @endif

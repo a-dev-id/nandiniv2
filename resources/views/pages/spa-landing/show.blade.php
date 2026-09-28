@@ -22,7 +22,7 @@
 
 <x-layouts.app>
     @if ($heroImage)
-        <section class="relative min-h-[560px] overflow-hidden bg-[#173126] text-white">
+        <section class="relative min-h-[560px] overflow-hidden bg-[#173126] text-white" data-gtm-section="hero">
             <picture class="absolute inset-0 block h-full w-full">
                 @if ($mobileImage)<source media="(max-width: 767px)" srcset="{{ $mobileImage }}">@endif
                 <img src="{{ $heroImage }}" alt="{{ $page->hero_image_alt }}" class="h-full w-full object-cover" fetchpriority="high">
@@ -34,7 +34,7 @@
         </section>
     @endif
 
-    <section class="px-6 py-14 font-sans md:px-10 md:py-20">
+    <section class="px-6 py-14 font-sans md:px-10 md:py-20" data-gtm-section="overview">
         <div class="mx-auto max-w-5xl">
             @unless ($heroImage)<h1 class="font-span text-4xl text-slate-800">{{ $page->title }}</h1>@endunless
             @if ($page->excerpt)<p class="mt-5 text-sm leading-relaxed text-slate-600">{{ $page->excerpt }}</p>@endif

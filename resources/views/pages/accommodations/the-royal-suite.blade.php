@@ -45,16 +45,16 @@ return $accommodation->slug === 'presidential-royal-suite'
     <x-sections.page-description :page="$page" />
 
     @if ($page->slug === 'the-royal-suites' && $royalSuiteItems->isNotEmpty())
-    <x-sections.item-carousel :items="$royalSuiteItems" />
+    <x-sections.item-carousel :items="$royalSuiteItems" data-gtm-section="suites" />
     @endif
 
     @foreach ($sections as $section)
     @if ($section->section_key === 'image_overlay_section')
-    <x-sections.image-overlay-section :section="$section" />
+    <x-sections.image-overlay-section :section="$section" data-gtm-section="featured_suite" />
     @endif
 
     @if ($section->section_key === 'contained_image_section')
-    <x-sections.contained-image-section :section="$section" />
+    <x-sections.contained-image-section :section="$section" data-gtm-section="gallery" />
     @endif
     @endforeach
 </x-layouts.app>

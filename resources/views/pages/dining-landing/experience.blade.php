@@ -29,13 +29,13 @@
 
 <x-layouts.app>
     <main>
-        <section class="relative isolate min-h-[560px] overflow-hidden bg-[#1a3028] md:min-h-[680px]" aria-label="{{ $experience['title'] }}">
+        <section class="relative isolate min-h-[560px] overflow-hidden bg-[#1a3028] md:min-h-[680px]" aria-label="{{ $experience['title'] }}" data-gtm-section="hero">
             @if ($image)
                 <img src="{{ $image }}" alt="{{ $experience['alt'] }}" class="absolute inset-0 -z-20 h-full w-full object-cover object-center" width="1920" height="1080" fetchpriority="high" decoding="async">
             @endif
         </section>
 
-        <section class="bg-white px-6 py-14 font-sans md:py-20" aria-labelledby="dining-experience-overview-title">
+        <section class="bg-white px-6 py-14 font-sans md:py-20" aria-labelledby="dining-experience-overview-title" data-gtm-section="overview">
             <div class="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[minmax(0,40fr)_minmax(0,60fr)] lg:gap-16">
                 <div>
                     <p class="mb-3 text-[10px] font-medium tracking-[.18em] text-[#A88444] uppercase sm:text-xs">{{ $cmsExperience?->intro_eyebrow }}</p>
@@ -60,7 +60,7 @@
         </section>
 
         @if ($cmsExperience?->gallery?->isNotEmpty())
-            <section class="bg-white px-6 pb-14 font-sans md:pb-20" aria-label="{{ $experience['title'] }} gallery">
+            <section class="bg-white px-6 pb-14 font-sans md:pb-20" aria-label="{{ $experience['title'] }} gallery" data-gtm-section="gallery">
                 <div class="mx-auto grid max-w-7xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($cmsExperience->gallery as $galleryImage)
                         <figure>
@@ -79,6 +79,7 @@
             :settings="$diningSettings"
             heading-id="related-dining-experiences-title"
             background-class="bg-[#f3f4f5]"
+            data-gtm-section="related_content"
         />
 
         <x-dining-landing.reservation-cta :settings="$diningSettings" />

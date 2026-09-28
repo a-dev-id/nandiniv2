@@ -13,7 +13,7 @@
 @endphp
 
 @if ($dish)
-<section class="relative min-h-[500px] w-full overflow-hidden bg-slate-900 font-sans sm:min-h-[600px] lg:min-h-[700px]" aria-labelledby="dish-of-the-month-title">
+<section class="relative min-h-[500px] w-full overflow-hidden bg-slate-900 font-sans sm:min-h-[600px] lg:min-h-[700px]" aria-labelledby="dish-of-the-month-title" data-gtm-section="dish_of_the_month">
     @if ($imageUrl)
         <img src="{{ $imageUrl }}" alt="{{ $dish['alt'] ?? '' }}" class="absolute inset-0 h-full w-full object-cover" width="1920" height="1080" loading="lazy" decoding="async">
     @endif

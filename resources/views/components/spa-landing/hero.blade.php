@@ -16,7 +16,7 @@
     $videoId = $settings?->hero_video_id;
 @endphp
 
-<section class="relative min-h-[760px] overflow-hidden bg-[#173126] font-sans text-white md:min-h-[80svh] lg:h-screen lg:min-h-0" aria-labelledby="spa-hero-title">
+<section class="relative min-h-[760px] overflow-hidden bg-[#173126] font-sans text-white md:min-h-[80svh] lg:h-screen lg:min-h-0" aria-labelledby="spa-hero-title" data-gtm-section="hero">
     @if ($videoId)
         <x-heroes.video-hero :video-id="$videoId" :poster="$image" background />
     @elseif ($image)

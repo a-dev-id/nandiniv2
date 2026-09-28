@@ -33,7 +33,7 @@
     <x-sections.page-description :page="$page" />
 
     @if ($awards->count() > 0)
-    <section class="px-6 pb-16 md:pb-24">
+    <section class="px-6 pb-16 md:pb-24" data-gtm-section="awards">
         <div class="mx-auto max-w-7xl">
             @foreach ($awards as $award)
             @php

@@ -5,6 +5,8 @@
 'altText' => 'Header Image',
 ])
 
+@aware(['trackSections' => true])
+
 @php
 $desktopImageSrc = '';
 $mobileImageSrc = '';
@@ -27,7 +29,7 @@ $mobileImageSrc = $mobileImageSrcManual ?: $imageSrc;
 }
 @endphp
 
-<header class="shadow-xl">
+<header class="shadow-xl" @if ($trackSections) data-gtm-section="hero" @endif>
     <div class="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[70vh] overflow-hidden bg-slate-100">
         @if ($desktopImageSrc || $mobileImageSrc)
         <picture class="block w-full h-full">

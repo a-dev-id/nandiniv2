@@ -1,4 +1,7 @@
-@props(['showMiniPopup' => true])
+@props([
+    'showMiniPopup' => true,
+    'trackSections' => true,
+])
 
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -95,7 +98,7 @@
         {{ $slot }}
     </main>
 
-    <x-layouts.footer />
+    <x-layouts.footer :track-sections="$trackSections" />
 
     @unless (request()->routeIs('membership.login'))
     @hasSection('inquiry-modal')

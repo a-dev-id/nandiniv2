@@ -113,7 +113,7 @@ $buttonUrl,
 @endphp
 
 @if ($section)
-<section class="my-12 md:my-14 {{ $backgroundClass }} {{ $sectionPaddingClass }}">
+<section class="my-12 md:my-14 {{ $backgroundClass }} {{ $sectionPaddingClass }}" {{ $attributes->only('data-gtm-section') }}>
     @if ($contentLayout === 'split')
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2 md:items-stretch md:gap-8">
         <div class="{{ $imageOrderClass }} relative aspect-[16/9] w-full overflow-hidden bg-slate-100 md:aspect-auto md:min-h-60">

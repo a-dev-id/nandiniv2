@@ -3,7 +3,7 @@
     'image' => null,
 ])
 
-<section class="bg-white px-6 py-14 font-sans md:py-20" aria-labelledby="dining-philosophy-title">
+<section class="bg-white px-6 py-14 font-sans md:py-20" aria-labelledby="dining-philosophy-title" data-gtm-section="introduction">
     <div class="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] lg:gap-10">
         <div class="min-w-0">
             <p class="mb-3 text-[10px] font-medium tracking-[.18em] text-[#A88444] uppercase sm:text-xs">{{ $settings?->philosophy_eyebrow }}</p>

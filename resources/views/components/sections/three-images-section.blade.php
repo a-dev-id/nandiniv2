@@ -54,7 +54,7 @@ $displayButtonLink,
 @endphp
 
 @if ($section)
-<section class="py-14 md:py-28 overflow-x-hidden">
+<section class="py-14 md:py-28 overflow-x-hidden" {{ $attributes->only('data-gtm-section') }}>
 
     {{-- WIDE WRAPPER --}}
     <div class="w-[96%] md:w-[94%] mx-auto">

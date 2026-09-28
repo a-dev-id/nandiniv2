@@ -424,7 +424,7 @@ return 0;
 $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
 @endphp
 
-<x-layouts.app>
+<x-layouts.app :track-sections="false">
     <x-heroes.image-hero :page="$page" />
 
     <style>

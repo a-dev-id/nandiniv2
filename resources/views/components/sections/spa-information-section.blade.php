@@ -58,7 +58,7 @@ $buttons = [
 }
 @endphp
 
-<section class="bg-[#F3F4F5] px-6 py-14 md:px-12 md:py-20 lg:px-[70px]">
+<section class="bg-[#F3F4F5] px-6 py-14 md:px-12 md:py-20 lg:px-[70px]" {{ $attributes->only('data-gtm-section') }}>
     <div class="mx-auto grid max-w-7xl gap-12 lg:grid-cols-3 lg:gap-16">
         {{-- Spa Information --}}
         <div class="text-center">

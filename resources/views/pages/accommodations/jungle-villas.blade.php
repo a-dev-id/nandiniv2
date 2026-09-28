@@ -33,6 +33,6 @@
     <x-sections.page-description :page="$page" />
 
     @if ($page->slug === 'jungle-villas' && isset($accommodations) && $accommodations->isNotEmpty())
-    <x-sections.item-carousel :items="$accommodations" />
+    <x-sections.item-carousel :items="$accommodations" data-gtm-section="villas" />
     @endif
 </x-layouts.app>

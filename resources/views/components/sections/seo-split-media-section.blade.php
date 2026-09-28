@@ -119,7 +119,7 @@ $buttonUrl,
 @endphp
 
 @if ($section)
-<section class="{{ $backgroundClass }} px-6 py-14 md:py-20">
+<section class="{{ $backgroundClass }} px-6 py-14 md:py-20" {{ $attributes->only('data-gtm-section') }}>
     <div class="mx-auto grid max-w-7xl grid-cols-1 items-stretch gap-8 lg:grid-cols-12 lg:gap-10">
         @if ($desktopImageUrl || $mobileImageUrl)
         <div class="{{ $imageOrderClass }} relative self-stretch overflow-hidden bg-slate-100 lg:col-span-7 xl:col-span-7">

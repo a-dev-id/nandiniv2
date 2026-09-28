@@ -11,7 +11,7 @@
     $linkUrl = $settings?->signature_link_url ?: 'https://'.config('domains.main').'/spa-wellness';
 @endphp
 
-<section class="bg-white px-6 py-14 font-sans md:px-12 md:py-20 lg:px-6" aria-labelledby="spa-signature-title">
+<section class="bg-white px-6 py-14 font-sans md:px-12 md:py-20 lg:px-6" aria-labelledby="spa-signature-title" data-gtm-section="signature_experiences">
     <div class="mx-auto grid max-w-7xl items-center gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] md:gap-10 lg:gap-16">
         <div class="order-2 min-w-0 md:order-1 md:pr-2">
             @if ($eyebrow)<p class="mb-3 text-[10px] font-medium uppercase tracking-[.18em] text-[#A88444] sm:text-xs">{{ $eyebrow }}</p>@endif

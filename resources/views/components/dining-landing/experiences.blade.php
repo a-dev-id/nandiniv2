@@ -34,7 +34,7 @@
     $cards = $cards->reject(fn ($card) => $exclude && $card['slug'] === $exclude)->values();
 @endphp
 
-<section class="{{ $backgroundClass }} px-6 py-14 font-sans md:py-20" aria-labelledby="{{ $headingId }}">
+<section class="{{ $backgroundClass }} px-6 py-14 font-sans md:py-20" aria-labelledby="{{ $headingId }}" {{ $attributes->only('data-gtm-section') }}>
     <div class="mx-auto max-w-[1800px]">
         <header class="mb-8 text-center">
             <p class="mb-3 text-[10px] font-medium tracking-[.18em] text-[#A88444] uppercase sm:text-xs">{{ $settings?->experiences_eyebrow }}</p>

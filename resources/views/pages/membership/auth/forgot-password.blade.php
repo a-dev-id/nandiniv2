@@ -11,7 +11,7 @@ $imageAlt = $page->hero_image_alt
 
 @endphp
 
-<x-layouts.app>
+<x-layouts.app :track-sections="false">
     <x-heroes.image-hero :page="$page" :alt-text="$imageAlt" />
 
     <section class="w-full bg-[#F7F7F7] py-20 md:py-28 lg:py-32">

@@ -8,7 +8,7 @@
     $occasions = $settings?->private_dining_tags ?? [];
 @endphp
 
-<section class="bg-[#f3f4f5] px-6 py-14 font-sans md:py-20" aria-labelledby="dining-occasions-title">
+<section class="bg-[#f3f4f5] px-6 py-14 font-sans md:py-20" aria-labelledby="dining-occasions-title" data-gtm-section="celebrations">
     <div class="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[minmax(0,53fr)_minmax(0,47fr)] lg:gap-10">
         <div class="aspect-[4/3] min-w-0 overflow-hidden bg-white">
             @if ($image)

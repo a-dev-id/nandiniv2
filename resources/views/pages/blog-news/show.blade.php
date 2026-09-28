@@ -78,7 +78,7 @@ $metaImage = $blog->hero_image
     @endif
 
     {{-- Blog Content --}}
-    <section class="py-14 md:py-20 px-6">
+    <section class="py-14 md:py-20 px-6" data-gtm-section="article_content">
         <div class="max-w-4xl mx-auto text-center">
             <p class="mb-4 text-xs uppercase text-slate-500 sm:text-sm">
                 {{ ucfirst($blog->type) }}
@@ -189,7 +189,7 @@ $metaImage = $blog->hero_image
 
     {{-- Related Blog --}}
     @if ($relatedBlogs->isNotEmpty())
-    <section class="pt-14 md:pt-20">
+    <section class="pt-14 md:pt-20" data-gtm-section="related_content">
         <div class="px-6 mb-10 text-center">
             <h2 class="text-lg leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-xl">
                 Other Articles

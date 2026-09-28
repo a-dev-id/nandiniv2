@@ -84,7 +84,7 @@
     };
 @endphp
 
-<section id="treatments" class="scroll-mt-20 bg-[#f3f4f5] px-6 py-14 font-sans md:py-20" aria-labelledby="spa-wellness-journeys-title">
+<section id="treatments" class="scroll-mt-20 bg-[#f3f4f5] px-6 py-14 font-sans md:py-20" aria-labelledby="spa-wellness-journeys-title" data-gtm-section="treatments">
     <div class="mx-auto max-w-7xl">
         <header class="mx-auto mb-9 max-w-4xl text-center md:mb-12">
             <p class="mb-3 text-[10px] font-medium uppercase tracking-[.18em] text-[#A88444] sm:text-xs">{{ $eyebrow }}</p>

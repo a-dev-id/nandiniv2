@@ -4,7 +4,7 @@
 <meta name="robots" content="noindex,nofollow">
 @endpush
 
-<x-layouts.app>
+<x-layouts.app :track-sections="false">
     <section class="bg-[#F7F7F7] px-6 pb-14 pt-36 md:pb-20">
         <div class="mx-auto max-w-6xl">
             <h1 class="text-2xl uppercase text-slate-700 sm:text-4xl">Your Voucher Cart</h1>

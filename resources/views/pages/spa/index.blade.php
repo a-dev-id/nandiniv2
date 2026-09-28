@@ -28,13 +28,23 @@
 @endpush
 
 <x-layouts.app>
+    @php
+    $sectionTrackingNames = [
+        54 => 'overview',
+        55 => 'spa_wellness',
+        56 => 'spa_jacuzzi',
+        57 => 'wine_spa',
+        58 => 'spa_on_the_river',
+    ];
+    @endphp
+
     <x-heroes.image-hero :page="$page" />
 
     <x-sections.page-description :page="$page" />
 
     @foreach ($sections as $section)
     @if ($section->section_key === 'spa_information_section')
-    <x-sections.spa-information-section :section="$section" />
+    <x-sections.spa-information-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
 
     @if ($spas->isNotEmpty())
     {{-- Description --}}
@@ -47,36 +57,36 @@
         </div>
     </div>
 
-    <x-sections.item-carousel :items="$spas" route-name="spa.show" wrapper-class="pt-10 md:pt-16" />
+    <x-sections.item-carousel :items="$spas" route-name="spa.show" wrapper-class="pt-10 md:pt-16" data-gtm-section="treatments" />
     @endif
     @endif
 
     @if ($section->section_key === 'image_overlay_section')
-    <x-sections.image-overlay-section :section="$section" />
+    <x-sections.image-overlay-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'contained_image_section')
-    <x-sections.contained-image-section :section="$section" />
+    <x-sections.contained-image-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'split_media_section')
-    <x-sections.split-media-section :section="$section" :excerpt-only="false" image-span="8" text-span="4" />
+    <x-sections.split-media-section :section="$section" :excerpt-only="false" image-span="8" text-span="4" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'split_media_reverse')
-    <x-sections.split-media-section :section="$section" :reverse="true" :excerpt-only="false" image-span="8" text-span="4" />
+    <x-sections.split-media-section :section="$section" :reverse="true" :excerpt-only="false" image-span="8" text-span="4" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'three_images_section')
-    <x-sections.three-images-section :section="$section" />
+    <x-sections.three-images-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'two_images_section')
-    <x-sections.two-images-section :section="$section" />
+    <x-sections.two-images-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'two_images_reverse')
-    <x-sections.two-images-section :section="$section" :reverse="true" />
+    <x-sections.two-images-section :section="$section" :reverse="true" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
     @endforeach
 </x-layouts.app>

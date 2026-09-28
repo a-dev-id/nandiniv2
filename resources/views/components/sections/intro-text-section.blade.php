@@ -63,7 +63,7 @@ $sectionSpacingClass = ($hasTitle || $hasSubtitle)
 : 'pt-0 pb-14 md:pb-10';
 @endphp
 
-<section class="{{ $sectionSpacingClass }} px-6 {{ $backgroundClass }}">
+<section class="{{ $sectionSpacingClass }} px-6 {{ $backgroundClass }}" {{ $attributes->only('data-gtm-section') }}>
     <div class="max-w-[1200px] mx-auto">
 
         {{-- Subtitle --}}

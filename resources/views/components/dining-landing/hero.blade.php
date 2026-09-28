@@ -1,6 +1,6 @@
 @props(['image' => null, 'settings' => null])
 
-<section class="font-sans text-white [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-[5px] [&_a:focus-visible]:outline-[#d1b77d]" aria-labelledby="dining-title">
+<section class="font-sans text-white [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-[5px] [&_a:focus-visible]:outline-[#d1b77d]" aria-labelledby="dining-title" data-gtm-section="hero">
     <div class="relative aspect-[4/3] overflow-hidden bg-[#1a3028] md:aspect-auto md:min-h-[max(700px,100svh)] lg:min-h-[max(720px,100vh)]">
         @if ($settings?->hero_video_id)
             <div class="absolute inset-0">

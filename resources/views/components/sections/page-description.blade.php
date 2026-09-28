@@ -3,8 +3,10 @@
 'showAwards' => false,
 ])
 
+@aware(['trackSections' => true])
+
 @if ($page)
-<section class="py-14 md:py-20 px-6 text-center" {{ $attributes->only('data-gtm-section') }}>
+<section class="py-14 md:py-20 px-6 text-center" @if ($trackSections) data-gtm-section="{{ $attributes->get('data-gtm-section', 'introduction') }}" @endif>
     <div class="max-w-3xl md:max-w-5xl mx-auto">
 
         @if ($showAwards)

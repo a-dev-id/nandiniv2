@@ -33,11 +33,11 @@
     <x-dining-landing.hero :image="$heroImage" :settings="$diningSettings" />
     <x-dining-landing.philosophy :settings="$diningSettings" :image="$philosophyImage" />
     <x-dining-landing.benefits :settings="$diningSettings" />
-    <x-dining-landing.experiences :settings="$diningSettings" />
+    <x-dining-landing.experiences :settings="$diningSettings" data-gtm-section="dining" />
     <x-dining-landing.signature-dishes :dish="$signatureDish" />
     <x-dining-landing.dish-of-the-month :settings="$diningSettings" />
     <x-dining-landing.special-occasions :settings="$diningSettings" />
-    <x-sections.guest-reviews :reviews="$testimonials" :heading="$diningSettings?->guest_reviews_heading" />
+    <x-sections.guest-reviews :reviews="$testimonials" :heading="$diningSettings?->guest_reviews_heading" data-gtm-section="guest_reviews" />
     <x-dining-landing.visit-info-faq :settings="$diningSettings" />
     <x-dining-landing.reservation-cta :settings="$diningSettings" />
 </x-layouts.app>

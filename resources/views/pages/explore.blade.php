@@ -40,7 +40,7 @@ $headingClass = 'mt-16 text-center font-serif text-xl uppercase tracking-[0.18em
 
             {{-- <img class="mt-7 w-full max-w-md object-cover shadow-[0_16px_35px_rgba(15,23,42,0.16)]" src="{{ $heroImage }}" alt="{{ $page->hero_image_alt ?: $page->title }}"> --}}
 
-            <div class="mt-12 w-full space-y-7">
+            <div class="mt-12 w-full space-y-7" data-gtm-section="overview">
                 <a href="{{ route('home') . '?' . $utm }}" target="_blank" rel="noopener" class="{{ $linkClass }}">
                     Official Website
                 </a>
@@ -61,7 +61,7 @@ $headingClass = 'mt-16 text-center font-serif text-xl uppercase tracking-[0.18em
             @if ($offers->isNotEmpty())
             <h1 class="{{ $headingClass }}">Exclusive Offers</h1>
 
-            <div class="mt-8 w-full space-y-7">
+            <div class="mt-8 w-full space-y-7" data-gtm-section="offers">
                 @foreach ($offers as $offer)
                 <a href="{{ route('offers.show', $offer) . '?' . $utm }}" target="_blank" rel="noopener" class="{{ $linkClass }}">
                     {{ $offer->title }}
@@ -73,7 +73,7 @@ $headingClass = 'mt-16 text-center font-serif text-xl uppercase tracking-[0.18em
             @if ($experiences->isNotEmpty())
             <h2 class="{{ $headingClass }}">Unique Experiences</h2>
 
-            <div class="mt-8 w-full space-y-7">
+            <div class="mt-8 w-full space-y-7" data-gtm-section="experiences">
                 @foreach ($experiences as $experience)
                 @php
                 $experienceRoute = in_array($experience->slug, [
@@ -91,7 +91,7 @@ $headingClass = 'mt-16 text-center font-serif text-xl uppercase tracking-[0.18em
             @if ($blogNews->isNotEmpty())
             <h2 class="{{ $headingClass }}">Blog &amp; News</h2>
 
-            <div class="mt-8 w-full space-y-7">
+            <div class="mt-8 w-full space-y-7" data-gtm-section="articles">
                 @foreach ($blogNews as $article)
                 <a href="{{ route('blog.show', $article) . '?' . $utm }}" target="_blank" rel="noopener" class="{{ $linkClass }}">
                     {{ $article->title }}
@@ -100,7 +100,7 @@ $headingClass = 'mt-16 text-center font-serif text-xl uppercase tracking-[0.18em
             </div>
             @endif
 
-            <div class="my-16 flex items-center justify-center gap-5 text-[#A88444]">
+            <div class="my-16 flex items-center justify-center gap-5 text-[#A88444]" data-gtm-section="social_links">
                 <a href="{{ $socialLinks['instagram'] }}" target="_blank" rel="noopener" aria-label="Instagram" class="transition hover:text-[#0B2341]">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 fill-current" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M8 3C5.239 3 3 5.239 3 8v8c0 2.761 2.239 5 5 5h8c2.761 0 5-2.239 5-5V8c0-2.761-2.239-5-5-5H8zm10 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm-6 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" />

@@ -18,4 +18,4 @@
     }
 @endphp
 
-<x-landing-information-bar :items="$items" label="Spa information" />
+<x-landing-information-bar :items="$items" label="Spa information" data-gtm-section="overview" />

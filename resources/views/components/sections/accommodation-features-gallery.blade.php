@@ -79,7 +79,7 @@ if ($galleryImages->count() > 1 && $galleryImages->count() < 6) { $thumbnailImag
         @endphp
 
         @if ($accommodation)
-        <section class="py-14 md:py-28 w-full bg-[#F7F7F7]">
+        <section class="py-14 md:py-28 w-full bg-[#F7F7F7]" {{ $attributes->only('data-gtm-section') }}>
             <div class="{{ $wrapper }}">
                 <div class="grid grid-cols-1 lg:grid-cols-12 items-center gap-10 lg:gap-16">
 

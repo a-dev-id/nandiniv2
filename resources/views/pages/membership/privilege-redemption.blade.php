@@ -31,7 +31,7 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
 <meta name="twitter:description" content="{{ $metaDescription }}">
 @endpush
 
-<x-layouts.app>
+<x-layouts.app :track-sections="false">
     <x-heroes.membership-hero :page="$page" :show-content="false" :show-overlay="false" />
 
     <style>

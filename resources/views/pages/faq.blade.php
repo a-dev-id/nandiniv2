@@ -37,11 +37,11 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
     @forelse ($sections as $section)
         @switch($section->section_key)
             @case('membership_faq_section')
-                <x-sections.membership-faq-section :section="$section" contact-label="Contact" :contact-url="route('contact.index')" />
+                <x-sections.membership-faq-section :section="$section" contact-label="Contact" :contact-url="route('contact.index')" data-gtm-section="faq" />
                 @break
 
             @case('intro_text_section')
-                <x-sections.intro-text-section :section="$section" />
+                <x-sections.intro-text-section :section="$section" data-gtm-section="faq" />
                 @break
 
             @case('image_overlay_section')

@@ -25,7 +25,7 @@
         <x-heroes.image-hero :page="$landingPage" />
         <x-sections.page-description :page="$landingPage" />
     @else
-        <section class="bg-white px-6 py-14 text-center md:py-20">
+        <section class="bg-white px-6 py-14 text-center md:py-20" data-gtm-section="introduction">
             <div class="mx-auto max-w-3xl">
                 <h1 class="text-xl font-medium uppercase text-slate-700 sm:text-2xl">Gift Voucher</h1>
                 <p class="mt-4 text-sm leading-7 text-slate-600">Choose a refined voucher for yourself or someone special.</p>
@@ -33,7 +33,7 @@
         </section>
     @endif
 
-    <section id="featured-vouchers" class="bg-[#F7F7F7] px-6 py-14 md:py-20">
+    <section id="featured-vouchers" class="bg-[#F7F7F7] px-6 py-14 md:py-20" data-gtm-section="offers">
         <div class="mx-auto max-w-6xl">
             <h2 class="text-center text-xl uppercase text-slate-700 sm:text-2xl">Most Popular</h2>
             @if ($featuredVouchers->isEmpty())
@@ -64,7 +64,7 @@
         </div>
     </section>
 
-    <section class="bg-white px-6 py-14 md:py-20">
+    <section class="bg-white px-6 py-14 md:py-20" data-gtm-section="gift_vouchers">
         <div class="mx-auto max-w-6xl" x-data="{ visibleCount: 9 }">
             <h2 class="text-center text-xl uppercase text-slate-700 sm:text-2xl">All Experiences</h2>
 

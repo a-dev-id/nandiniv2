@@ -73,7 +73,7 @@ $metaImage = $spa->hero_image
     @endif
 
     {{-- Offer Content --}}
-    <section class="py-14 md:py-20 px-6">
+    <section class="py-14 md:py-20 px-6" data-gtm-section="treatment_details">
         <div class="max-w-4xl mx-auto text-center">
             <h1 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-2xl">
                 {{ $spa->title }}
@@ -125,7 +125,7 @@ $metaImage = $spa->hero_image
 
     {{-- Related Spa --}}
     @if ($relatedSpas->isNotEmpty())
-    <section class="pt-14 md:pt-20">
+    <section class="pt-14 md:pt-20" data-gtm-section="related_content">
         <div class="px-6 mb-10 text-center">
             <h2 class="text-lg leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-xl">
                 Other Spa & Wellness Journey

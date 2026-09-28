@@ -3,7 +3,7 @@
 <meta name="robots" content="noindex,nofollow">
 @endpush
 
-<x-layouts.app>
+<x-layouts.app :track-sections="false">
     <section class="min-h-[70vh] bg-[#F7F7F7] px-6 pb-16 pt-36 md:pb-24">
         <div class="mx-auto max-w-2xl border border-slate-200 bg-white p-7 text-center sm:p-10">
             <p class="text-xs uppercase tracking-[0.12em] text-[#A88444]">Secure Payment</p>

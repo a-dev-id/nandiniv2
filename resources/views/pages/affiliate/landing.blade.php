@@ -39,7 +39,7 @@
         :show-overlay="false"
     />
 
-    <section class="bg-white px-6 py-14 md:py-20" aria-labelledby="affiliate-intro-heading">
+    <section class="bg-white px-6 py-14 md:py-20" aria-labelledby="affiliate-intro-heading" data-gtm-section="introduction">
         <div class="mx-auto max-w-[950px] text-center">
             <h1 id="affiliate-intro-heading" class="text-lg font-medium uppercase leading-snug text-slate-700 sm:text-xl">
                 {{ $pageTitle }}
@@ -52,7 +52,7 @@
         </div>
     </section>
 
-    <section class="bg-slate-50 px-6 py-14 md:py-20" aria-labelledby="affiliate-benefits-heading">
+    <section class="bg-slate-50 px-6 py-14 md:py-20" aria-labelledby="affiliate-benefits-heading" data-gtm-section="affiliate_benefits">
         <div class="mx-auto max-w-6xl">
             <div class="mx-auto max-w-4xl text-center">
                 <h2 id="affiliate-benefits-heading" class="mb-3 text-lg font-medium uppercase leading-snug text-slate-700 sm:text-xl">Why Join?</h2>
@@ -79,7 +79,7 @@
         </div>
     </section>
 
-    <section class="bg-white px-6 py-16 md:py-24">
+    <section class="bg-white px-6 py-16 md:py-24" data-gtm-section="registration_cta">
         <div class="mx-auto max-w-4xl text-center">
             <p class="mx-auto max-w-3xl text-xs leading-relaxed text-gray-600 sm:text-sm">
                 Become part of our growing community of trusted partners and introduce travelers to one of Bali's most tranquil jungle retreats. It's a simple way to monetize your audience while helping guests enjoy exclusive savings when they book directly with Nandini Jungle by Hanging Gardens.

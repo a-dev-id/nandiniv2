@@ -30,43 +30,56 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
 @endpush
 
 <x-layouts.app>
+    @php
+    $sectionTrackingNames = [
+        22 => 'introduction',
+        23 => 'how_it_works',
+        25 => 'membership_overview',
+        26 => 'membership_benefits',
+        27 => 'points',
+        28 => 'membership_tiers',
+        29 => 'rewards',
+        30 => 'faq',
+    ];
+    @endphp
+
     <x-heroes.membership-hero :page="$page" primary-label="Join Now" primary-url="#" secondary-label="Sign In" secondary-url="#" :show-content="true" :show-overlay="true" />
 
     @forelse ($sections as $section)
     @switch($section->section_key)
 
     @case('intro_text_section')
-    <x-sections.intro-text-section :section="$section" />
+    <x-sections.intro-text-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @break
 
     @case('how_it_works_section')
-    <x-sections.how-it-works-section :section="$section" />
+    <x-sections.how-it-works-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @break
 
     @case('member_benefits_section')
-    <x-sections.member-benefits-section :section="$section" />
+    <x-sections.member-benefits-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @break
 
     @case('membership_tier_section')
-    <x-sections.membership-tier-section :section="$section" />
+    <x-sections.membership-tier-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @break
 
     @case('membership_use_points_section')
-    <x-sections.membership-use-points-section :section="$section" :rewards="$rewards" />
+    <x-sections.membership-use-points-section :section="$section" :rewards="$rewards" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @break
 
     @case('membership_faq_section')
-    <x-sections.membership-join-today image="images/membership/join-today.webp" mobile-image="images/membership/join-today-mobile.webp" primary-label="Join Now" primary-url="/membership/join" secondary-label="Sign In" secondary-url="/membership/sign-in" />
+    <x-sections.membership-join-today image="images/membership/join-today.webp" mobile-image="images/membership/join-today-mobile.webp" primary-label="Join Now" primary-url="/membership/join" secondary-label="Sign In" secondary-url="/membership/sign-in" data-gtm-section="membership_cta" />
 
-    <x-sections.membership-faq-section :section="$section" contact-label="Contact" contact-url="https://wa.me/6281236871170" />
+    <x-sections.membership-faq-section :section="$section" contact-label="Contact" contact-url="https://wa.me/6281236871170" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @break
 
     @case('image_overlay_section')
-    <x-sections.image-overlay-section :section="$section" />
+    <x-sections.image-overlay-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @break
 
     @case('contained_image_section')
-    <x-sections.contained-image-section :section="$section" />
+    <x-sections.contained-image-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @break
 
     @default

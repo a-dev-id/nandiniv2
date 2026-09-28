@@ -28,44 +28,54 @@
 @endpush
 
 <x-layouts.app>
+    @php
+    $sectionTrackingNames = [
+        16 => 'bedroom',
+        17 => 'private_garden',
+        18 => 'wellness',
+        19 => 'living_area',
+        20 => 'bathroom',
+    ];
+    @endphp
+
     <x-heroes.image-hero :page="$page" />
 
     <x-sections.page-description :page="$page" />
 
-    <x-sections.accommodation-features-gallery :accommodation="$accommodation" />
+    <x-sections.accommodation-features-gallery :accommodation="$accommodation" data-gtm-section="facilities" />
 
     @foreach ($sections as $section)
     @if ($section->section_key === 'image_overlay_section')
-    <x-sections.image-overlay-section :section="$section" />
+    <x-sections.image-overlay-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'contained_image_section')
-    <x-sections.contained-image-section :section="$section" />
+    <x-sections.contained-image-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'split_media_section')
-    <x-sections.split-media-section :section="$section" :excerpt-only="false" image-span="8" text-span="4" />
+    <x-sections.split-media-section :section="$section" :excerpt-only="false" image-span="8" text-span="4" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'split_media_reverse')
-    <x-sections.split-media-section :section="$section" :reverse="true" :excerpt-only="false" image-span="8" text-span="4" />
+    <x-sections.split-media-section :section="$section" :reverse="true" :excerpt-only="false" image-span="8" text-span="4" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'three_images_section')
-    <x-sections.three-images-section :section="$section" />
+    <x-sections.three-images-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'two_images_section')
-    <x-sections.two-images-section :section="$section" />
+    <x-sections.two-images-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'two_images_reverse')
-    <x-sections.two-images-section :section="$section" :reverse="true" />
+    <x-sections.two-images-section :section="$section" :reverse="true" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
     @endforeach
 
     @if ($relatedAccommodations->isNotEmpty())
-    <section class="pt-14 md:pt-20 bg-white">
+    <section class="pt-14 md:pt-20 bg-white" data-gtm-section="related_content">
         <div class="px-6 mb-10 text-center">
             <h2 class="text-lg leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-xl">
                 You May Also Like

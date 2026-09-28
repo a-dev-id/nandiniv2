@@ -74,7 +74,7 @@ $icons = [
 ];
 @endphp
 
-<section class="px-6 pt-14 pb-8 md:pt-20 md:pb-10 {{ $backgroundClass }}">
+<section class="px-6 pt-14 pb-8 md:pt-20 md:pb-10 {{ $backgroundClass }}" {{ $attributes->only('data-gtm-section') }}>
     <div class="mx-auto max-w-7xl text-center">
 
         @if ($section->subtitle)

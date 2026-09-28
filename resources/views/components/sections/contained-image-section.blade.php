@@ -52,7 +52,7 @@ $alt = $sectionImage?->image_alt
 @endphp
 
 @if ($section && ($desktopImage || $mobileImage))
-<section class="bg-white px-3 md:px-6">
+<section class="bg-white px-3 md:px-6" {{ $attributes->only('data-gtm-section') }}>
     <div class="mx-auto max-w-[1200px]">
         <picture class="group block w-full overflow-hidden bg-neutral-100">
             @if ($mobileImage)

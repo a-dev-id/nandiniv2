@@ -51,7 +51,7 @@ fn ($item) => is_array($item)
 @endpush
 
 <x-layouts.app>
-    <section class="bg-white px-6 pb-14 pt-36 md:pb-20">
+    <section class="bg-white px-6 pb-14 pt-36 md:pb-20" data-gtm-section="voucher_details">
         <div class="mx-auto grid max-w-6xl gap-10 lg:grid-cols-2">
             <div class="min-w-0">
                 @if ($galleryImages->isNotEmpty())
@@ -280,7 +280,7 @@ fn ($item) => is_array($item)
         </div>
     </div>
 
-    <section class="bg-[#F7F7F7] px-6 py-14 md:py-20">
+    <section class="bg-[#F7F7F7] px-6 py-14 md:py-20" data-gtm-section="related_content">
         <div class="mx-auto grid max-w-6xl gap-10 md:grid-cols-2 md:gap-12">
             @foreach ($termsSections as $section)
             <div @class(['md:col-span-2'=> count($termsSections) === 1])>

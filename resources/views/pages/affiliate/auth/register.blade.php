@@ -10,7 +10,7 @@
     $prefillEmail = old('email', $socialRegistrationPrefill['email'] ?? '');
 @endphp
 
-<x-layouts.app>
+<x-layouts.app :track-sections="false">
     <x-heroes.image-hero
         :image-src="asset('images/membership/join-today.webp')"
         alt-text="Nandini Partner Circle affiliate registration"

@@ -26,7 +26,7 @@ $tiers = [
 ];
 @endphp
 
-<section class="bg-white px-0 py-12 md:px-6 md:py-20">
+<section class="bg-white px-0 py-12 md:px-6 md:py-20" {{ $attributes->only('data-gtm-section') }}>
     <div class="mx-auto max-w-[1500px]">
 
         {{-- Header --}}

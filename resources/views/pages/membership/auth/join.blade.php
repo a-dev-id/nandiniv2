@@ -75,7 +75,7 @@ $countries = [
 <meta name="description" content="{{ $metaDescription }}">
 @endpush
 
-<x-layouts.app>
+<x-layouts.app :track-sections="false">
     {{-- HERO --}}
     @if ($page)
     <x-heroes.image-hero :page="$page" :alt-text="$imageAlt" />

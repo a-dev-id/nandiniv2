@@ -122,7 +122,7 @@ return [
 $faqs = count($sectionItems) > 0 ? $sectionItems : $defaultItems;
 @endphp
 
-<section class="{{ $backgroundClass }} px-6 py-14 md:py-20">
+<section class="{{ $backgroundClass }} px-6 py-14 md:py-20" {{ $attributes->only('data-gtm-section') }}>
     <div class="mx-auto grid max-w-[1500px] gap-12 lg:grid-cols-[0.75fr_1.5fr] lg:gap-20">
 
         <div class="{{ $headerAlignClass }}">
