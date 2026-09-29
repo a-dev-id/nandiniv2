@@ -6,6 +6,7 @@ use App\Models\Accommodation;
 use App\Models\BlogNews;
 use App\Models\Experience;
 use App\Models\ExperienceCategory;
+use App\Models\FestiveEvent;
 use App\Models\Honeymoon;
 use App\Models\Offer;
 use App\Models\Page;
@@ -29,6 +30,7 @@ class SitemapService
             ->merge($this->experienceUrls())
             ->merge($this->honeymoonUrls())
             ->merge($this->spaUrls())
+            ->merge($this->festiveEventUrls())
             ->unique('loc')
             ->values();
     }
@@ -58,6 +60,7 @@ class SitemapService
             ['route' => 'blog.index', 'changefreq' => 'daily', 'priority' => '0.8'],
             ['route' => 'awards.index', 'changefreq' => 'monthly', 'priority' => '0.6'],
             ['route' => 'events.index', 'changefreq' => 'weekly', 'priority' => '0.7'],
+            ['route' => 'festive.index', 'changefreq' => 'weekly', 'priority' => '0.8'],
             ['route' => 'gallery.index', 'changefreq' => 'monthly', 'priority' => '0.6'],
             ['route' => 'guest-reviews.index', 'changefreq' => 'monthly', 'priority' => '0.6'],
             ['route' => 'faq.index', 'changefreq' => 'monthly', 'priority' => '0.5'],
@@ -188,6 +191,20 @@ class SitemapService
             ->orderByDesc('valid_start_date')
             ->get(['slug', 'updated_at'])
             ->map(fn (Spa $spa) => $this->entry(route('spa.show', $spa->slug), $spa->updated_at, 'weekly', '0.7'));
+    }
+
+    private function festiveEventUrls(): Collection
+    {
+        return FestiveEvent::query()
+            ->published()
+            ->orderBy('sort_order')
+            ->get(['slug', 'updated_at'])
+            ->map(fn (FestiveEvent $event) => $this->entry(
+                route('festive.show', $event),
+                $event->updated_at,
+                'weekly',
+                '0.7'
+            ));
     }
 
     private function entry(string $loc, Carbon|string|null $lastmod, string $changefreq, string $priority): array

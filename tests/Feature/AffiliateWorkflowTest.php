@@ -11,6 +11,7 @@ use App\Models\AffiliateProgramSetting;
 use App\Models\Member;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\Affiliate\AffiliateCodeGenerator;
 use App\Services\Affiliate\AffiliateLinkService;
 use App\Services\Affiliate\AffiliateWorkflowService;
 use App\Services\Affiliate\CreateAffiliateService;
@@ -173,7 +174,7 @@ class AffiliateWorkflowTest extends TestCase
         $this->assertDatabaseMissing('users', ['email' => 'angga@example.com']);
         $this->assertSame(AffiliateStatus::Pending, $affiliate->status);
         $this->assertSame(AffiliateRegistrationSource::SelfRegistration, $affiliate->registration_source);
-        $this->assertSame('anggarista4826', $affiliate->affiliate_code);
+        $this->assertMatchesRegularExpression('/\ANJHG\d{5}\z/', $affiliate->affiliate_code);
         $this->assertSame($affiliate->affiliate_code, $affiliate->short_link_slug);
         $this->assertNull($affiliate->short_link_activated_at);
         $this->assertSame('https://www.instagram.com/angga.rista', $affiliate->instagram);
@@ -191,7 +192,7 @@ class AffiliateWorkflowTest extends TestCase
             ->assertOk()
             ->assertSee('href="https://nandinibali.com"', false)
             ->assertSee('Account under review')
-            ->assertDontSee('anggarista4826');
+            ->assertDontSee($affiliate->affiliate_code);
     }
 
     public function test_unverified_affiliate_can_use_dashboard_resend_and_verify_email(): void
@@ -319,16 +320,21 @@ class AffiliateWorkflowTest extends TestCase
         $this->assertDatabaseCount('affiliates', 1);
     }
 
-    public function test_duplicate_codes_receive_zero_padded_sequence(): void
+    public function test_duplicate_random_codes_are_retried(): void
     {
-        CarbonImmutable::setTestNow('2026-08-04 10:00:00');
+        $generator = \Mockery::mock(AffiliateCodeGenerator::class);
+        $generator->shouldReceive('candidate')
+            ->times(3)
+            ->andReturn('NJHG35278', 'NJHG35278', 'NJHG80421');
+        $this->app->instance(AffiliateCodeGenerator::class, $generator);
+
         $service = app(CreateAffiliateService::class);
 
         $first = $service->create($this->profileData(['email' => 'first@example.com']), AffiliateRegistrationSource::CreatedByNandini, actor: $this->sales());
         $second = $service->create($this->profileData(['email' => 'second@example.com']), AffiliateRegistrationSource::CreatedByNandini, actor: $this->sales());
 
-        $this->assertSame('anggarista4826', $first->affiliate_code);
-        $this->assertSame('anggarista482602', $second->affiliate_code);
+        $this->assertSame('NJHG35278', $first->affiliate_code);
+        $this->assertSame('NJHG80421', $second->affiliate_code);
         $this->assertSame($second->affiliate_code, $second->short_link_slug);
     }
 

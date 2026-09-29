@@ -40,10 +40,9 @@ class CreateAffiliateService
 
         $data = $this->normalizer->normalize($data);
         $registeredAt = now();
-        $baseCode = $this->codes->base($data['name'], $registeredAt);
 
         for ($attempt = 1; $attempt <= self::MAX_CODE_ATTEMPTS; $attempt++) {
-            $code = $this->codes->candidate($baseCode, $attempt);
+            $code = $this->codes->candidate();
 
             try {
                 return DB::transaction(function () use ($data, $source, $status, $actor, $password, $registeredAt, $code): Affiliate {

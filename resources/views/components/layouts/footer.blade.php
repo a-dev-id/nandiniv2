@@ -136,6 +136,7 @@ $seoFooterLinks = \App\Models\Page::query()
                         <li><a href="{{ $voucherUrl }}" class="hover:underline">Gift Voucher</a></li>
                         @endunless
                         <li><a href="{{ $mainRoute('events.index') }}" class="hover:underline">Events</a></li>
+                        <li><a href="{{ $mainRoute('festive.index') }}" class="hover:underline">Festive Season</a></li>
                         @unless ($affiliateDisabled)
                         <li><a href="{{ route('affiliate.landing') }}" class="hover:underline">Affiliate Program</a></li>
                         @endunless
@@ -245,6 +246,7 @@ $seoFooterLinks = \App\Models\Page::query()
                         <a href="{{ $voucherUrl }}" class="hover:underline">Gift Voucher</a>
                         @endunless
                         <a href="{{ $mainRoute('events.index') }}" class="hover:underline">Events</a>
+                        <a href="{{ $mainRoute('festive.index') }}" class="hover:underline">Festive Season</a>
                         @unless ($affiliateDisabled)
                         <a href="{{ route('affiliate.landing') }}" class="hover:underline">Affiliate Program</a>
                         @endunless

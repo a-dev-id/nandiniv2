@@ -78,6 +78,9 @@ class SitemapTest extends TestCase
         $response->assertSee($baseUrl.'/offer/summer-escape', false);
         $response->assertSee($baseUrl.'/blog-news/a-day-in-the-jungle', false);
         $response->assertSee($baseUrl.'/guest-reviews', false);
+        $response->assertSee($baseUrl.'/festive-season', false);
+        $response->assertSee($baseUrl.'/festive-season/christmas-dinner', false);
+        $response->assertSee($baseUrl.'/festive-season/new-year-dinner', false);
         $response->assertSee('https://dining.nandinibali.com/', false);
 
         $response->assertDontSee('hidden-page', false);

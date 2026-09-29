@@ -113,6 +113,9 @@ class AdminPanelProvider extends PanelProvider
                     ->label('SPA Landing Page'),
 
                 NavigationGroup::make()
+                    ->label('Festive Landing Page'),
+
+                NavigationGroup::make()
                     ->label('Settings'),
             ]);
     }

@@ -18,6 +18,8 @@ use App\Http\Controllers\DiningController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\FestiveLandingController;
+use App\Http\Controllers\FestiveEventController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\GuestReviewController;
 use App\Http\Controllers\HolyRiverController;
@@ -329,6 +331,17 @@ Route::domain(config('domains.main'))->group(function (): void {
     */
     Route::get('/gallery', [GalleryController::class, 'index'])
         ->name('gallery.index');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Festive Season
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/festive-season', FestiveLandingController::class)
+        ->name('festive.index');
+
+    Route::get('/festive-season/{festiveEvent:slug}', FestiveEventController::class)
+        ->name('festive.show');
 
     /*
     |--------------------------------------------------------------------------

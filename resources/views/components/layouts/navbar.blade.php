@@ -304,6 +304,9 @@ $navbarStartsSolid = (request()->routeIs('voucher.*') && ! request()->routeIs('v
                     <a href="{{ $mainRoute('events.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Events
                     </a>
+                    <a href="{{ $mainRoute('festive.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                        Festive Season
+                    </a>
 
                     <a href="{{ $mainRoute('spa.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Spa & Wellness
