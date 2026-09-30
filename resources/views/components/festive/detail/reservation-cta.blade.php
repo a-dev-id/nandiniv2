@@ -1,5 +1,14 @@
 @props(['event', 'image' => null])
 
+@php
+    $reservationUrl = \App\Support\UtmUrl::add($event->reservation_button_url, [
+        'utm_source' => 'nandinibali.com',
+        'utm_medium' => 'website',
+        'utm_campaign' => 'festive_season_2026',
+        'utm_content' => $event->slug.'_reserve_button',
+    ]);
+@endphp
+
 <section id="reserve" class="relative flex min-h-[440px] scroll-mt-20 items-center overflow-hidden bg-[#101713] px-6 py-16 text-center text-white md:px-12" aria-labelledby="festive-reservation-title" data-gtm-section="reservation_cta">
     @if ($image)
         <img src="{{ $image }}" alt="" class="absolute inset-0 h-full w-full object-cover object-center" width="1920" height="900" loading="lazy" decoding="async">
@@ -16,7 +25,7 @@
             <p class="mx-auto my-4 max-w-2xl text-xs leading-relaxed text-white/85 sm:text-sm">{!! nl2br(e($event->reservation_description)) !!}</p>
         @endif
         @if ($event->reservation_button_label && $event->reservation_button_url)
-            <x-buttons.link-button :href="$event->reservation_button_url" variant="solid">{{ $event->reservation_button_label }}</x-buttons.link-button>
+            <x-buttons.link-button :href="$reservationUrl" variant="solid">{{ $event->reservation_button_label }}</x-buttons.link-button>
         @endif
     </div>
 </section>

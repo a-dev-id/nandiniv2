@@ -3,6 +3,15 @@
     'image' => null,
 ])
 
+@php
+    $reservationUrl = \App\Support\UtmUrl::add($settings?->booking_cta_button_url, [
+        'utm_source' => 'nandinibali.com',
+        'utm_medium' => 'website',
+        'utm_campaign' => 'festive_season_2026',
+        'utm_content' => 'landing_reserve_button',
+    ]);
+@endphp
+
 <section id="reserve" class="relative flex min-h-[440px] scroll-mt-20 items-center overflow-hidden bg-[#101713] px-6 py-16 text-center text-white md:px-12" aria-labelledby="festive-reservation-title" data-gtm-section="reservation_cta">
     @if ($image)
         <img src="{{ $image }}" alt="{{ $settings?->booking_cta_image_alt }}" class="absolute inset-0 h-full w-full object-cover object-center" width="1920" height="900" loading="lazy" decoding="async">
@@ -19,7 +28,7 @@
             <p class="mx-auto my-4 max-w-2xl text-xs leading-relaxed text-white/85 sm:text-sm">{!! nl2br(e($settings->booking_cta_description)) !!}</p>
         @endif
         @if ($settings?->booking_cta_button_label && $settings?->booking_cta_button_url)
-            <x-buttons.link-button :href="$settings->booking_cta_button_url" variant="solid">{{ $settings->booking_cta_button_label }}</x-buttons.link-button>
+            <x-buttons.link-button :href="$reservationUrl" variant="solid">{{ $settings->booking_cta_button_label }}</x-buttons.link-button>
         @endif
     </div>
 </section>

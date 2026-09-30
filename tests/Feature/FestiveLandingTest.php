@@ -41,6 +41,7 @@ class FestiveLandingTest extends TestCase
             ->assertSee('/images/festive/2026/new-year-dining.jpg', false)
             ->assertSee('/festive-season/christmas-dinner', false)
             ->assertSee('/festive-season/new-year-dinner', false)
+            ->assertSee('utm_source=nandinibali.com&amp;utm_medium=website&amp;utm_campaign=festive_season_2026&amp;utm_content=landing_reserve_button', false)
             ->assertSee('rgba(0,0,0,.4)', false)
             ->assertDontSee('rgba(0,0,0,.78)', false)
             ->assertDontSee('from-black/35', false)

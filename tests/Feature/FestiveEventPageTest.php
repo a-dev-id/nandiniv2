@@ -41,6 +41,7 @@ class FestiveEventPageTest extends TestCase
             ->assertSee('lg:h-[70vh]', false)
             ->assertSee('justify-center', false)
             ->assertSee('lg:w-[calc(25%_-_1.875rem)]', false)
+            ->assertSee('utm_source=nandinibali.com&amp;utm_medium=website&amp;utm_campaign=festive_season_2026&amp;utm_content=christmas-dinner_reserve_button', false)
             ->assertSee('bg-[#A88444]', false);
     }
 
@@ -58,6 +59,7 @@ class FestiveEventPageTest extends TestCase
             ->assertSee('Programme of the Evening<br />', false)
             ->assertSee('31 December 2026')
             ->assertSee('Dinner with Balinese Dance Performance')
+            ->assertSee('utm_source=nandinibali.com&amp;utm_medium=website&amp;utm_campaign=festive_season_2026&amp;utm_content=new-year-dinner_reserve_button', false)
             ->assertSee('Countdown to 2027');
     }
 

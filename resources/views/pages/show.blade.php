@@ -7,6 +7,7 @@ $metaDescription = $page->meta_description
 
 $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
 $sections = $page->sections ?? collect();
+$isJungleSpaPage = $page->slug === 'jungle-spa-ubud';
 @endphp
 
 <title>{{ $metaTitle }}</title>
@@ -86,7 +87,7 @@ $sections = $page->sections ?? collect();
 
     @foreach ($sections as $section)
     @if ($section->section_key === 'intro_text_section')
-    <x-sections.intro-text-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
+    <x-sections.intro-text-section :section="$section" :comfortable-text-spacing="$isJungleSpaPage" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'image_overlay_section')
@@ -106,11 +107,11 @@ $sections = $page->sections ?? collect();
     @endif
 
     @if ($section->section_key === 'seo_split_media_section')
-    <x-sections.seo-split-media-section :section="$section" :page="$page" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
+    <x-sections.seo-split-media-section :section="$section" :page="$page" :image-four-three="$isJungleSpaPage" :comfortable-text-spacing="$isJungleSpaPage" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'seo_split_media_reverse')
-    <x-sections.seo-split-media-section :section="$section" :page="$page" :reverse="true" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
+    <x-sections.seo-split-media-section :section="$section" :page="$page" :reverse="true" :image-four-three="$isJungleSpaPage" :comfortable-text-spacing="$isJungleSpaPage" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'three_images_section')

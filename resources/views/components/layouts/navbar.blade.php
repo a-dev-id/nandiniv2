@@ -255,13 +255,17 @@ $navbarStartsSolid = (request()->routeIs('voucher.*') && ! request()->routeIs('v
             {{-- LINKS --}}
             <div class="px-7 pb-8 grow overflow-y-auto min-h-0">
                 <nav class="space-y-5 text-left">
-                    <a href="{{ $mainRoute('home') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('home') }}" data-menu-item="home" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Home
+                    </a>
+
+                    <a href="{{ $mainRoute('festive.index') }}" data-menu-item="festive-season" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                        Festive Season
                     </a>
 
                     {{-- Dropdown: Accommodations --}}
                     <div>
-                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]" data-oc-toggle="ocVillas" aria-expanded="false">
+                        <button type="button" data-menu-item="accommodations" class="w-full flex items-start justify-between gap-3 text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]" data-oc-toggle="ocVillas" aria-expanded="false">
                             <span class="leading-6 text-left">Jungle Villas &<br> Royal Suites</span>
                             <svg data-oc-icon class="h-4 w-4 text-slate-500 shrink-0 mt-1 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" d="M6 9l6 6 6-6" />
@@ -281,82 +285,37 @@ $navbarStartsSolid = (request()->routeIs('voucher.*') && ! request()->routeIs('v
                         </div>
                     </div>
 
-                    <a href="{{ $mainRoute('holy-river.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('holy-river.index') }}" data-menu-item="holy-river" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Holy River
                     </a>
 
-                    <a href="{{ $mainRoute('little-things.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('little-things.index') }}" data-menu-item="little-things" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         The Little Things
                     </a>
 
-                    <a href="{{ $mainRoute('experiences.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('experiences.index') }}" data-menu-item="experiences" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Experiences
                     </a>
 
-                    <a href="{{ $mainRoute('offers.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('offers.index') }}" data-menu-item="offers" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Offers
                     </a>
 
-                    <a href="{{ config('dining.public_url') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('events.index') }}" data-menu-item="events" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                        Events
+                    </a>
+
+                    <a href="{{ config('dining.public_url') }}" data-menu-item="dining" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Dining
                     </a>
 
-                    <a href="{{ $mainRoute('events.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                        Events
-                    </a>
-                    <a href="{{ $mainRoute('festive.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                        Festive Season
-                    </a>
-
-                    <a href="{{ $mainRoute('spa.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ $mainRoute('spa.index') }}" data-menu-item="spa-wellness" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Spa & Wellness
                     </a>
 
-                    <a href="{{ $mainRoute('wedding.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                        Wedding
-                    </a>
-
-                    <a href="{{ $mainRoute('sustainability.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                        Sustainability
-                    </a>
-
-                    <a href="{{ $mainRoute('gallery.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                        Gallery
-                    </a>
-
-                    <a href="{{ $mainRoute('blog.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                        Blog & News
-                    </a>
-
-                    <a href="{{ $mainRoute('about-us.index') }}" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                        About Us
-                    </a>
-
-                    {{-- Dropdown: Offers & Experiences --}}
-                    {{-- <div>
-                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]" data-oc-toggle="ocOffers" aria-expanded="false">
-                            <span class="leading-6 text-left">Offers &amp; Experiences</span>
-                            <svg data-oc-icon class="h-4 w-4 text-slate-500 shrink-0 mt-1 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" d="M6 9l6 6 6-6" />
-                            </svg>
-                        </button>
-
-                        <div id="ocOffers" data-oc-panel class="overflow-hidden text-left transition-all duration-300 ease-out" style="max-height: 0px; opacity: 0;">
-                            <div class="pt-6 pb-5 ml-7 space-y-5">
-                                <a href="{{ route('offers.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                                    Offers
-                                </a>
-
-                                <a href="{{ route('experiences.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                                    Experiences
-                                </a>
-                            </div>
-                        </div>
-                    </div> --}}
-
                     {{-- Dropdown: More --}}
                     <div>
-                        <button type="button" class="w-full flex items-start justify-between gap-3 text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]" data-oc-toggle="ocMore" aria-expanded="false">
+                        <button type="button" data-menu-item="more" class="w-full flex items-start justify-between gap-3 text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]" data-oc-toggle="ocMore" aria-expanded="false">
                             <span class="leading-6 text-left">More</span>
                             <svg data-oc-icon class="h-4 w-4 text-slate-500 shrink-0 mt-1 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" d="M6 9l6 6 6-6" />
@@ -365,49 +324,41 @@ $navbarStartsSolid = (request()->routeIs('voucher.*') && ! request()->routeIs('v
 
                         <div id="ocMore" data-oc-panel class="overflow-hidden text-left transition-all duration-300 ease-out" style="max-height: 0px; opacity: 0;">
                             <div class="pt-6 pb-5 ml-7 space-y-5">
-                                <a href="{{ $mainPath('/honeymoon') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                                    Honeymoon
-                                </a>
-
-                                {{-- <a href="{{ route('dining.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                                    Dining
-                                </a>
-
-                                <a href="{{ route('spa.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                                    Spa &amp; Wellness
-                                </a>
-
-                                <a href="{{ route('wedding.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                <a href="{{ $mainRoute('wedding.index') }}" data-more-menu-item="wedding" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
                                     Wedding
                                 </a>
 
-                                <a href="{{ route('about-us.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                <a href="{{ $mainRoute('sustainability.index') }}" data-more-menu-item="sustainability" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                    Sustainability
+                                </a>
+
+                                <a href="{{ $mainRoute('gallery.index') }}" data-more-menu-item="gallery" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                    Gallery
+                                </a>
+
+                                <a href="{{ $mainRoute('blog.index') }}" data-more-menu-item="blog-news" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                    Blog & News
+                                </a>
+
+                                <a href="{{ $mainRoute('about-us.index') }}" data-more-menu-item="about-us" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
                                     About Us
                                 </a>
 
-                                <a href="{{ route('blog.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                                    Blog & News
-                                </a> --}}
+                                <a href="{{ $mainPath('/honeymoon') }}" data-more-menu-item="honeymoon" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                    Honeymoon
+                                </a>
 
-                                <a href="{{ $mainRoute('awards.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                <a href="{{ $mainRoute('awards.index') }}" data-more-menu-item="awards" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
                                     Awards
                                 </a>
 
-                                <a href="{{ $mainRoute('contact.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                <a href="{{ $mainRoute('contact.index') }}" data-more-menu-item="contact" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
                                     Contact
                                 </a>
 
-                                {{-- <a href="{{ route('gallery.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                                    Gallery
-                                </a> --}}
-
-                                <a href="{{ $mainRoute('faq.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                                <a href="{{ $mainRoute('faq.index') }}" data-more-menu-item="faq" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
                                     FAQ
                                 </a>
-
-                                {{-- <a href="{{ route('sustainability.index') }}" class="block text-[12px] leading-6 uppercase text-slate-600 hover:text-[#B8945B] text-left tracking-[0.08em] font-medium sm:text-[14px]">
-                                    Sustainability
-                                </a> --}}
                             </div>
                         </div>
                     </div>

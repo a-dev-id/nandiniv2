@@ -2,6 +2,8 @@
 'section' => null,
 'page' => null,
 'reverse' => false,
+'imageFourThree' => false,
+'comfortableTextSpacing' => false,
 ])
 
 @php
@@ -93,12 +95,19 @@ default => 'bg-slate-50',
 
 $titleColorClass = $backgroundColor === 'dark_navy' ? 'text-white' : 'text-slate-700';
 $bodyColorClass = $backgroundColor === 'dark_navy' ? 'text-white/85' : 'text-slate-700';
+$richTextColorClass = $backgroundColor === 'dark_navy'
+? '[&_h2]:text-white [&_p]:text-white/85'
+: '[&_h2]:text-slate-700 [&_p]:text-slate-700';
 $buttonClass = $backgroundColor === 'dark_navy'
 ? 'border-white text-white hover:bg-white hover:text-slate-900'
 : 'border-slate-700 text-slate-700 hover:bg-[#A88444] hover:border-[#A88444] hover:text-white';
 
 $imageOrderClass = $reverse ? 'lg:order-2' : 'lg:order-1';
 $textOrderClass = $reverse ? 'lg:order-1' : 'lg:order-2';
+$imageFrameClass = $imageFourThree ? 'aspect-[4/3] self-center' : 'self-stretch';
+$richTextSpacingClass = $comfortableTextSpacing
+? '[&_p]:mb-4 [&_p:last-child]:mb-0 [&_h2]:mt-7 [&_h2:first-child]:mt-0 [&_h3:first-child]:mt-0 [&_ul]:mt-4 [&_ol]:mt-4'
+: '';
 
 $buttonLabel = $section?->button_label ?: null;
 $buttonUrl = null;
@@ -119,10 +128,10 @@ $buttonUrl,
 @endphp
 
 @if ($section)
-<section class="{{ $backgroundClass }} px-6 py-14 md:py-20" {{ $attributes->only('data-gtm-section') }}>
+<section class="{{ $backgroundClass }} px-6 py-14 md:py-20" {{ $attributes->only('data-gtm-section') }} @if ($comfortableTextSpacing) data-text-spacing="comfortable" @endif>
     <div class="mx-auto grid max-w-7xl grid-cols-1 items-stretch gap-8 lg:grid-cols-12 lg:gap-10">
         @if ($desktopImageUrl || $mobileImageUrl)
-        <div class="{{ $imageOrderClass }} relative self-stretch overflow-hidden bg-slate-100 lg:col-span-7 xl:col-span-7">
+        <div class="{{ $imageOrderClass }} {{ $imageFrameClass }} relative overflow-hidden bg-slate-100 lg:col-span-7 xl:col-span-7" @if ($imageFourThree) data-image-aspect="4:3" @endif>
             <picture class="block lg:hidden">
                 @if ($mobileImageUrl)
                 <source media="(max-width: 767px)" srcset="{{ $mobileImageUrl }}">
@@ -152,7 +161,7 @@ $buttonUrl,
                 @endif
 
                 @if ($body !== '')
-                <div class="mt-8 text-xs leading-relaxed sm:text-sm [&_a]:underline [&_h2]:mb-3 [&_h2]:text-md [&_h2]:font-medium [&_h2]:leading-snug [&_h2]:text-slate-700 [&_p]:text-slate-700 [&_h3]:mb-1 [&_h3]:uppercase [&_h3]:mt-6 [&_h3]:text-base [&_h3]:font-semibold [&_li]:leading-6 [&_ol]:mb-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_strong]:font-semibold [&_ul]:mb-5 [&_ul]:list-disc [&_ul]:pl-5 sm:[&_h3]:text-lg {{ $listAlignClass }}">
+                <div class="mt-8 text-xs leading-relaxed sm:text-sm [&_a]:underline [&_h2]:mb-3 [&_h2]:text-md [&_h2]:font-medium [&_h2]:leading-snug [&_h3]:mb-1 [&_h3]:uppercase [&_h3]:mt-6 [&_h3]:text-base [&_h3]:font-semibold [&_li]:leading-6 [&_ol]:mb-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_strong]:font-semibold [&_ul]:mb-5 [&_ul]:list-disc [&_ul]:pl-5 sm:[&_h3]:text-lg {{ $richTextColorClass }} {{ $richTextSpacingClass }} {{ $listAlignClass }}">
                     {!! $body !!}
                 </div>
                 @endif

@@ -24,18 +24,20 @@ $mainRoute = function (string $name, array $parameters = []) use ($mainDomainBas
 $mainPath = fn (string $path): string => $mainDomainBase . '/' . ltrim($path, '/');
 
 $seoFooterPageLabels = [
-    31 => 'Bali Jungle Resort Ubud',
-    34 => 'Ubud Wellness Retreat',
+    'ubud-jungle-resort-in-bali' => 'Bali Jungle Resort Ubud',
+    'ubud-wellness-retreat' => 'Ubud Wellness Retreat',
+    'jungle-spa-ubud' => 'Jungle Spa Ubud',
 ];
 
 $seoFooterLinks = \App\Models\Page::query()
-    ->whereIn('id', array_keys($seoFooterPageLabels))
+    ->forMainSite()
+    ->whereIn('slug', array_keys($seoFooterPageLabels))
     ->where('is_active', true)
-    ->get(['id', 'slug'])
-    ->sortBy(fn ($page) => array_search($page->id, array_keys($seoFooterPageLabels), true))
+    ->get(['slug'])
+    ->sortBy(fn ($page) => array_search($page->slug, array_keys($seoFooterPageLabels), true))
     ->map(fn ($page) => [
         'href' => $mainRoute('pages.show', ['slug' => $page->slug]),
-        'label' => $seoFooterPageLabels[$page->id],
+        'label' => $seoFooterPageLabels[$page->slug],
     ]);
 @endphp
 
@@ -46,10 +48,10 @@ $seoFooterLinks = \App\Models\Page::query()
         <div class="py-12">
 
             {{-- DESKTOP LAYOUT (lg+) --}}
-            <div class="hidden lg:grid lg:grid-cols-12 lg:gap-10">
+            <div class="hidden lg:grid lg:grid-cols-4 lg:gap-8 xl:gap-12">
 
                 {{-- LOGO --}}
-                <div class="lg:col-span-3 flex flex-col items-center text-center">
+                <div class="flex flex-col items-center text-center">
                     <a href="{{ $mainRoute('home') }}" class="inline-flex tracking-[0.08em] font-medium">
                         <img src="{{ asset('images/logo-njhg.png') }}" alt="Nandini Jungle by Hanging Gardens" class="w-36 lg:w-44 h-auto max-h-52 shrink-0 brightness-0 invert" loading="lazy" />
                     </a>
@@ -61,7 +63,7 @@ $seoFooterLinks = \App\Models\Page::query()
                 </div>
 
                 {{-- ADDRESS --}}
-                <div class="lg:order-4 lg:col-span-4">
+                <div class="lg:order-4">
                     <h3 class="text-base uppercase mb-3 sm:text-lg">Address</h3>
 
                     <div class="text-xs leading-7 text-white/90 sm:text-sm">
@@ -93,7 +95,7 @@ $seoFooterLinks = \App\Models\Page::query()
                 </div>
 
                 {{-- ABOUT --}}
-                <div class="lg:order-2 lg:col-span-2">
+                <div class="lg:order-2">
                     <h3 class="text-base uppercase mb-3 sm:text-lg">About</h3>
                     <ul class="space-y-3 text-xs text-white/90 sm:text-sm">
                         <li><a href="{{ $mainRoute('about-us.index') }}" class="hover:underline">About Us</a></li>
@@ -102,10 +104,19 @@ $seoFooterLinks = \App\Models\Page::query()
                         <li><a href="{{ $mainRoute('gallery.index') }}" class="hover:underline">Gallery</a></li>
                         <li><a href="{{ $mainRoute('contact.index') }}" class="hover:underline">Contact Us</a></li>
                     </ul>
+
+                    @if ($seoFooterLinks->isNotEmpty())
+                    <h3 class="mb-3 mt-8 text-base uppercase sm:text-lg">Usefull Link</h3>
+                    <ul class="space-y-3 text-xs text-white/90 sm:text-sm">
+                        @foreach ($seoFooterLinks as $link)
+                        <li><a href="{{ $link['href'] }}" class="hover:underline">{{ $link['label'] }}</a></li>
+                        @endforeach
+                    </ul>
+                    @endif
                 </div>
 
                 {{-- OTHERS --}}
-                <div class="lg:order-3 lg:col-span-3">
+                <div class="lg:order-3">
                     <h3 class="text-base uppercase mb-3 sm:text-lg">Others</h3>
                     <ul class="space-y-3 text-xs text-white/90 sm:text-sm">
                         <li>
@@ -147,9 +158,6 @@ $seoFooterLinks = \App\Models\Page::query()
                                 GDS Code
                             </button>
                         </li>
-                        @foreach ($seoFooterLinks as $link)
-                        <li><a href="{{ $link['href'] }}" class="hover:underline">{{ $link['label'] }}</a></li>
-                        @endforeach
                     </ul>
                 </div>
 
@@ -256,11 +264,20 @@ $seoFooterLinks = \App\Models\Page::query()
                         <button type="button" class="hover:underline" @click="gdsOpen = true">
                             GDS Code
                         </button>
+                    </div>
+                </div>
+
+                {{-- USEFULL LINK --}}
+                @if ($seoFooterLinks->isNotEmpty())
+                <div class="order-7 mt-12">
+                    <h3 class="mb-3 text-base uppercase sm:text-lg">Usefull Link</h3>
+                    <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs text-white/90 sm:text-sm">
                         @foreach ($seoFooterLinks as $link)
                         <a href="{{ $link['href'] }}" class="hover:underline">{{ $link['label'] }}</a>
                         @endforeach
                     </div>
                 </div>
+                @endif
 
             </div>
         </div>
