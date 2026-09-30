@@ -8,8 +8,8 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -117,6 +117,12 @@ class PageForm
                                     ->default(true)
                                     ->required(),
 
+                                Toggle::make('include_in_sitemap')
+                                    ->label('Include in Sitemap')
+                                    ->helperText('Enable only for standalone public pages. Pages rendered by a dedicated route are added automatically.')
+                                    ->default(true)
+                                    ->required(),
+
                                 Hidden::make('sort_order')
                                     ->default(0),
                             ]),
@@ -144,7 +150,7 @@ class PageForm
                                     ->openable()
                                     ->downloadable()
                                     ->saveUploadedFileUsing(
-                                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
+                                        fn (TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                                             file: $file,
                                             directory: 'pages/hero',
                                             targetWidth: 1600,
@@ -178,7 +184,7 @@ class PageForm
                                     ->openable()
                                     ->downloadable()
                                     ->saveUploadedFileUsing(
-                                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
+                                        fn (TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                                             file: $file,
                                             directory: 'pages/hero-mobile',
                                             targetWidth: 1200,
@@ -266,7 +272,7 @@ class PageForm
             $cropHeight
         );
 
-        $path = $directory . '/' . Str::uuid() . '.webp';
+        $path = $directory.'/'.Str::uuid().'.webp';
         $fullPath = $disk->path($path);
 
         imagewebp($finalImage, $fullPath, 82);

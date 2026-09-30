@@ -27,11 +27,13 @@ class Page extends Model
         'meta_title',
         'meta_description',
         'is_active',
+        'include_in_sitemap',
         'sort_order',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'include_in_sitemap' => 'boolean',
         'sort_order' => 'integer',
     ];
 

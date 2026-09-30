@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\RobotsController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\Voucher\CartController;
 use App\Http\Controllers\Voucher\CheckoutController;
 use App\Http\Controllers\Voucher\OrderController;
@@ -12,6 +14,8 @@ Route::domain(config('domains.voucher'))
     ->name('voucher.')
     ->middleware(['web', 'voucher.enabled'])
     ->group(function (): void {
+        Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+        Route::get('/robots.txt', RobotsController::class)->name('robots');
         Route::get('/', [VoucherController::class, 'index'])->name('index');
         Route::get('/category/{voucherCategory:slug}', [VoucherController::class, 'category'])->name('category.show');
         Route::get('/voucher/{voucher:slug}', [VoucherController::class, 'show'])->name('show');

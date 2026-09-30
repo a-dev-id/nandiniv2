@@ -18,8 +18,8 @@ use App\Http\Controllers\DiningController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\FaqController;
-use App\Http\Controllers\FestiveLandingController;
 use App\Http\Controllers\FestiveEventController;
+use App\Http\Controllers\FestiveLandingController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\GuestReviewController;
 use App\Http\Controllers\HolyRiverController;
@@ -35,14 +35,18 @@ use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\MembershipProfileController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SpaController;
 use App\Http\Controllers\SustainabilityController;
 use App\Http\Controllers\VoucherEmailPreviewController;
 use App\Http\Controllers\WeddingController;
 use App\Services\WebhotelierPullService;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 Route::domain(config('domains.main'))->group(function (): void {
 
@@ -61,6 +65,9 @@ Route::domain(config('domains.main'))->group(function (): void {
 
     Route::get('/sitemap.xml', SitemapController::class)
         ->name('sitemap');
+
+    Route::get('/robots.txt', RobotsController::class)
+        ->name('robots');
 
     Route::get('/login', function () {
         if (config('features.disable_membership_feature')) {
@@ -478,9 +485,9 @@ Route::domain(config('domains.main'))->group(function (): void {
 
     Route::get('/cron/bookings/sync/{token}', BookingSyncController::class)
         ->withoutMiddleware([
-            \Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class,
-            \Illuminate\Session\Middleware\StartSession::class,
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            PreventRequestForgery::class,
+            StartSession::class,
+            ShareErrorsFromSession::class,
         ])
         ->name('cron.bookings.sync');
 
@@ -498,9 +505,9 @@ Route::domain(config('domains.main'))->group(function (): void {
 
     Route::get('/cron/events/schedule/{token}', EventScheduleController::class)
         ->withoutMiddleware([
-            \Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class,
-            \Illuminate\Session\Middleware\StartSession::class,
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            PreventRequestForgery::class,
+            StartSession::class,
+            ShareErrorsFromSession::class,
         ])
         ->name('cron.events.schedule');
 

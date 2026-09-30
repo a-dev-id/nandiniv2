@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Voucher;
 use App\Http\Controllers\Controller;
 use App\Models\Page;
 use App\Models\Voucher;
+use App\Models\VoucherCategory;
 use App\Services\Voucher\Cart\VoucherCartService;
 use Illuminate\View\View;
 

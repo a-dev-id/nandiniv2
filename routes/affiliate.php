@@ -11,6 +11,8 @@ use App\Http\Controllers\AffiliatePaymentProfileController;
 use App\Http\Controllers\AffiliateProfileController;
 use App\Http\Controllers\AffiliateRegistrationController;
 use App\Http\Controllers\AffiliateReportController;
+use App\Http\Controllers\RobotsController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Middleware\SeparateMemberAndAffiliateSessions;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +20,8 @@ Route::domain(config('domains.affiliate'))
     ->name('affiliate.')
     ->middleware(['web', 'affiliate.enabled', SeparateMemberAndAffiliateSessions::class])
     ->group(function (): void {
+        Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+        Route::get('/robots.txt', RobotsController::class)->name('robots');
         Route::get('/', AffiliateLandingController::class)->name('landing');
         Route::get('/verify-email/{affiliate}/{hash}', [AffiliateEmailVerificationController::class, 'verify'])
             ->middleware('throttle:12,1')

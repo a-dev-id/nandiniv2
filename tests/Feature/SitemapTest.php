@@ -30,6 +30,14 @@ class SitemapTest extends TestCase
             'sort_order' => 2,
         ]);
 
+        Page::create([
+            'title' => 'Public Page Excluded From Search',
+            'slug' => 'excluded-public-page',
+            'is_active' => true,
+            'include_in_sitemap' => false,
+            'sort_order' => 3,
+        ]);
+
         Offer::create([
             'title' => 'Summer Escape',
             'slug' => 'summer-escape',
@@ -81,10 +89,16 @@ class SitemapTest extends TestCase
         $response->assertSee($baseUrl.'/festive-season', false);
         $response->assertSee($baseUrl.'/festive-season/christmas-dinner', false);
         $response->assertSee($baseUrl.'/festive-season/new-year-dinner', false);
-        $response->assertSee('https://dining.nandinibali.com/', false);
+        $response->assertSee($baseUrl.'/dining', false);
+        $response->assertSee($baseUrl.'/jungle-spa-ubud', false);
 
         $response->assertDontSee('hidden-page', false);
+        $response->assertDontSee('excluded-public-page', false);
         $response->assertDontSee('expired-escape', false);
         $response->assertDontSee('future-story', false);
+        $response->assertDontSee('<loc>'.$baseUrl.'/events-entertainment</loc>', false);
+        $response->assertDontSee($baseUrl.'/sign-in', false);
+        $response->assertDontSee($baseUrl.'/membership/join', false);
+        $response->assertDontSee('https://'.config('domains.dining').'/', false);
     }
 }

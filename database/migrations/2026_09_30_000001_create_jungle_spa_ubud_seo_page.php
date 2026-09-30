@@ -43,7 +43,10 @@ return new class extends Migration
         if ($pageId) {
             DB::table('pages')->where('id', $pageId)->update($page);
         } else {
+            $pageId = max(1000, ((int) DB::table('pages')->max('id')) + 1);
+
             $pageId = DB::table('pages')->insertGetId($page + [
+                'id' => $pageId,
                 'sort_order' => ((int) DB::table('pages')->max('sort_order')) + 1,
                 'created_at' => $now,
             ]);

@@ -4,13 +4,17 @@ namespace App\Services;
 
 use App\Models\Accommodation;
 use App\Models\BlogNews;
+use App\Models\DiningExperience;
 use App\Models\Experience;
 use App\Models\ExperienceCategory;
 use App\Models\FestiveEvent;
 use App\Models\Honeymoon;
 use App\Models\Offer;
 use App\Models\Page;
+use App\Models\SignatureDish;
 use App\Models\Spa;
+use App\Models\Voucher;
+use App\Models\VoucherCategory;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -19,7 +23,23 @@ class SitemapService
     /**
      * @return Collection<int, array{loc: string, lastmod: string|null, changefreq: string, priority: string}>
      */
-    public function urls(): Collection
+    public function urls(?string $host = null): Collection
+    {
+        $host ??= config('domains.main');
+
+        return match ($host) {
+            config('domains.dining') => $this->diningUrls(),
+            config('domains.spa') => $this->spaSiteUrls(),
+            config('domains.voucher') => $this->voucherUrls(),
+            config('domains.affiliate') => $this->affiliateUrls(),
+            default => $this->mainSiteUrls(),
+        };
+    }
+
+    /**
+     * @return Collection<int, array{loc: string, lastmod: string|null, changefreq: string, priority: string}>
+     */
+    private function mainSiteUrls(): Collection
     {
         return collect()
             ->merge($this->staticUrls())
@@ -52,7 +72,7 @@ class SitemapService
             ['route' => 'holy-river.index', 'changefreq' => 'weekly', 'priority' => '0.8'],
             ['route' => 'little-things.index', 'changefreq' => 'monthly', 'priority' => '0.7'],
             ['route' => 'honeymoon.index', 'changefreq' => 'weekly', 'priority' => '0.8'],
-            ['url' => config('dining.public_url'), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['route' => 'dining.index', 'changefreq' => 'monthly', 'priority' => '0.7'],
             ['route' => 'spa.index', 'changefreq' => 'weekly', 'priority' => '0.8'],
             ['route' => 'wedding.index', 'changefreq' => 'monthly', 'priority' => '0.7'],
             ['route' => 'sustainability.index', 'changefreq' => 'monthly', 'priority' => '0.6'],
@@ -71,7 +91,6 @@ class SitemapService
             $urls[] = ['route' => 'membership.index', 'changefreq' => 'monthly', 'priority' => '0.7'];
             $urls[] = ['route' => 'membership.benefits', 'changefreq' => 'monthly', 'priority' => '0.6'];
             $urls[] = ['route' => 'membership.privilege-redemption', 'changefreq' => 'weekly', 'priority' => '0.6'];
-            $urls[] = ['route' => 'membership.register', 'changefreq' => 'monthly', 'priority' => '0.5'];
         }
 
         return collect($urls)
@@ -87,6 +106,7 @@ class SitemapService
         return Page::query()
             ->forMainSite()
             ->where('is_active', true)
+            ->where('include_in_sitemap', true)
             ->whereNot('slug', 'home')
             ->orderBy('sort_order')
             ->orderBy('title')
@@ -205,6 +225,116 @@ class SitemapService
                 'weekly',
                 '0.7'
             ));
+    }
+
+    /**
+     * @return Collection<int, array{loc: string, lastmod: string|null, changefreq: string, priority: string}>
+     */
+    private function diningUrls(): Collection
+    {
+        $experiences = DiningExperience::query()
+            ->published()
+            ->inDisplayOrder()
+            ->get(['slug', 'updated_at'])
+            ->map(fn (DiningExperience $experience) => $this->entry(
+                route('dining-landing.experiences.show', $experience->slug),
+                $experience->updated_at,
+                'monthly',
+                '0.7'
+            ));
+
+        $signatureDishes = SignatureDish::query()
+            ->published()
+            ->inDisplayOrder()
+            ->get(['slug', 'updated_at'])
+            ->map(fn (SignatureDish $dish) => $this->entry(
+                route('dining-landing.signature-dishes.show', $dish->slug),
+                $dish->updated_at,
+                'monthly',
+                '0.7'
+            ));
+
+        return collect([
+            $this->entry(route('dining-landing.index'), null, 'weekly', '1.0'),
+        ])
+            ->merge($experiences)
+            ->merge($signatureDishes)
+            ->unique('loc')
+            ->values();
+    }
+
+    /**
+     * @return Collection<int, array{loc: string, lastmod: string|null, changefreq: string, priority: string}>
+     */
+    private function spaSiteUrls(): Collection
+    {
+        $pages = Page::query()
+            ->forSpaSite()
+            ->where('is_active', true)
+            ->where('include_in_sitemap', true)
+            ->whereNot('slug', 'home')
+            ->orderBy('sort_order')
+            ->get(['slug', 'updated_at'])
+            ->map(fn (Page $page) => $this->entry(
+                route('spa-landing.pages.show', $page->slug),
+                $page->updated_at,
+                'monthly',
+                '0.7'
+            ));
+
+        return collect([
+            $this->entry(route('spa-landing.index'), null, 'weekly', '1.0'),
+        ])
+            ->merge($pages)
+            ->unique('loc')
+            ->values();
+    }
+
+    /**
+     * @return Collection<int, array{loc: string, lastmod: string|null, changefreq: string, priority: string}>
+     */
+    private function voucherUrls(): Collection
+    {
+        $categories = VoucherCategory::query()
+            ->active()
+            ->ordered()
+            ->get(['slug', 'updated_at'])
+            ->map(fn (VoucherCategory $category) => $this->entry(
+                route('voucher.category.show', $category),
+                $category->updated_at,
+                'weekly',
+                '0.7'
+            ));
+
+        $vouchers = Voucher::query()
+            ->active()
+            ->ordered()
+            ->get(['id', 'slug', 'selling_price', 'discount_percentage', 'is_active', 'updated_at'])
+            ->filter(fn (Voucher $voucher) => $voucher->purchasable)
+            ->map(fn (Voucher $voucher) => $this->entry(
+                route('voucher.show', $voucher),
+                $voucher->updated_at,
+                'weekly',
+                '0.8'
+            ));
+
+        return collect([
+            $this->entry(route('voucher.index'), null, 'weekly', '1.0'),
+        ])
+            ->merge($categories)
+            ->merge($vouchers)
+            ->unique('loc')
+            ->values();
+    }
+
+    /**
+     * @return Collection<int, array{loc: string, lastmod: string|null, changefreq: string, priority: string}>
+     */
+    private function affiliateUrls(): Collection
+    {
+        return collect([
+            $this->entry(route('affiliate.landing'), null, 'monthly', '1.0'),
+        ]);
     }
 
     private function entry(string $loc, Carbon|string|null $lastmod, string $changefreq, string $priority): array

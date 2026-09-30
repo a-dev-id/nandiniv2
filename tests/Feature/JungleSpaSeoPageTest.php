@@ -57,6 +57,7 @@ class JungleSpaSeoPageTest extends TestCase
         $this->get(PageResource::getUrl('edit', ['record' => $page]))
             ->assertOk()
             ->assertSee('Jungle Spa in Ubud, Bali')
+            ->assertSee('Include in Sitemap')
             ->assertSee('Sections');
     }
 }

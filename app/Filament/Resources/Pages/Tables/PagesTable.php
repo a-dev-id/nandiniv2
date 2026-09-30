@@ -23,7 +23,7 @@ class PagesTable
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
             ->reorderRecordsTriggerAction(
-                fn(Action $action, bool $isReordering) => $action
+                fn (Action $action, bool $isReordering) => $action
                     ->button()
                     ->label($isReordering ? 'Done sorting' : 'Sort pages')
             )
@@ -37,7 +37,7 @@ class PagesTable
                 ImageColumn::make('preview_image')
                     ->label('Image')
                     ->square()
-                    ->getStateUsing(fn($record): ?string => $record->hero_image
+                    ->getStateUsing(fn ($record): ?string => $record->hero_image
                         ?: $record->hero_mobile_image),
 
                 TextColumn::make('page_name')
@@ -46,12 +46,12 @@ class PagesTable
                     ->sortable()
                     ->weight('semibold')
                     ->limit(45)
-                    ->tooltip(fn($record): ?string => $record->page_name)
-                    ->description(fn($record): ?string => Str::limit($record->title ?? '', 45)),
+                    ->tooltip(fn ($record): ?string => $record->page_name)
+                    ->description(fn ($record): ?string => Str::limit($record->title ?? '', 45)),
 
                 TextColumn::make('site')
                     ->label('Website')
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
                         Page::SITE_SPA => 'Spa Website',
                         default => 'Main Website',
                     })
@@ -62,11 +62,15 @@ class PagesTable
                     ->label('Excerpt')
                     ->limit(55)
                     ->searchable()
-                    ->tooltip(fn($record): ?string => $record->excerpt)
+                    ->tooltip(fn ($record): ?string => $record->excerpt)
                     ->toggleable(),
 
                 ToggleColumn::make('is_active')
                     ->label('Active')
+                    ->sortable(),
+
+                ToggleColumn::make('include_in_sitemap')
+                    ->label('Sitemap')
                     ->sortable(),
 
                 TextColumn::make('sort_order')
@@ -94,6 +98,12 @@ class PagesTable
                     ->placeholder('All pages')
                     ->trueLabel('Active pages')
                     ->falseLabel('Inactive pages'),
+
+                TernaryFilter::make('include_in_sitemap')
+                    ->label('Sitemap Visibility')
+                    ->placeholder('All pages')
+                    ->trueLabel('Included')
+                    ->falseLabel('Excluded'),
             ])
             ->recordActions([
                 EditAction::make(),

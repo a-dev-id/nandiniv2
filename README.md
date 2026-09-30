@@ -25,6 +25,31 @@ npm run build
 php artisan test
 ```
 
+## Restore From Git
+
+After cloning the repository on a new machine or server:
+
+```bash
+composer install --no-dev --optimize-autoloader
+cp .env.example .env
+php artisan key:generate
+npm ci
+npm run build
+php artisan migrate --force
+php artisan storage:link
+php artisan optimize:clear
+```
+
+Configure the database, mail, domain, booking, and other environment values in `.env` before running the migrations. Composer regenerates the ignored Filament assets during installation.
+
+Git intentionally excludes secrets, installed dependencies, compiled assets, runtime caches, temporary files, database exports, and uploaded media. Keep separate secure backups of:
+
+- the production `.env` file
+- the production database
+- user-uploaded files in `storage/app/public`
+
+Do not store production database dumps in this repository because they can contain guest, member, affiliate, inquiry, and booking information.
+
 The project is intended for shared hosting. Do not assume long-running queue workers or daemon processes are available. Automation should be implemented as Artisan commands that can be called by cron.
 
 ## Main Public Routes
