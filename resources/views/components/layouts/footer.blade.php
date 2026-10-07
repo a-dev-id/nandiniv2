@@ -15,30 +15,30 @@ $voucherUrl = route('voucher.index');
 
 $mainDomainBase = rtrim(request()->getScheme() . '://' . config('domains.main'), '/');
 $mainRoute = function (string $name, array $parameters = []) use ($mainDomainBase): string {
-    if (! \Illuminate\Support\Facades\Route::has($name)) {
-        return $mainDomainBase;
-    }
+if (! \Illuminate\Support\Facades\Route::has($name)) {
+return $mainDomainBase;
+}
 
-    return $mainDomainBase . route($name, $parameters, false);
+return $mainDomainBase . route($name, $parameters, false);
 };
 $mainPath = fn (string $path): string => $mainDomainBase . '/' . ltrim($path, '/');
 
 $seoFooterPageLabels = [
-    'ubud-jungle-resort-in-bali' => 'Bali Jungle Resort Ubud',
-    'ubud-wellness-retreat' => 'Ubud Wellness Retreat',
-    'jungle-spa-ubud' => 'Jungle Spa Ubud',
+'ubud-jungle-resort-in-bali' => 'Bali Jungle Resort Ubud',
+'ubud-wellness-retreat' => 'Ubud Wellness Retreat',
+'jungle-spa-ubud' => 'Jungle Spa Ubud',
 ];
 
 $seoFooterLinks = \App\Models\Page::query()
-    ->forMainSite()
-    ->whereIn('slug', array_keys($seoFooterPageLabels))
-    ->where('is_active', true)
-    ->get(['slug'])
-    ->sortBy(fn ($page) => array_search($page->slug, array_keys($seoFooterPageLabels), true))
-    ->map(fn ($page) => [
-        'href' => $mainRoute('pages.show', ['slug' => $page->slug]),
-        'label' => $seoFooterPageLabels[$page->slug],
-    ]);
+->forMainSite()
+->whereIn('slug', array_keys($seoFooterPageLabels))
+->where('is_active', true)
+->get(['slug'])
+->sortBy(fn ($page) => array_search($page->slug, array_keys($seoFooterPageLabels), true))
+->map(fn ($page) => [
+'href' => $mainRoute('pages.show', ['slug' => $page->slug]),
+'label' => $seoFooterPageLabels[$page->slug],
+]);
 @endphp
 
 <footer class="bg-black text-white" x-data="{ gdsOpen: false }" @keydown.escape.window="gdsOpen = false" @if ($trackSections) data-gtm-section="footer" @endif>
@@ -106,7 +106,7 @@ $seoFooterLinks = \App\Models\Page::query()
                     </ul>
 
                     @if ($seoFooterLinks->isNotEmpty())
-                    <h3 class="mb-3 mt-8 text-base uppercase sm:text-lg">Usefull Link</h3>
+                    <h3 class="mb-3 mt-8 text-base uppercase sm:text-lg">Useful Link</h3>
                     <ul class="space-y-3 text-xs text-white/90 sm:text-sm">
                         @foreach ($seoFooterLinks as $link)
                         <li><a href="{{ $link['href'] }}" class="hover:underline">{{ $link['label'] }}</a></li>
@@ -270,7 +270,7 @@ $seoFooterLinks = \App\Models\Page::query()
                 {{-- USEFULL LINK --}}
                 @if ($seoFooterLinks->isNotEmpty())
                 <div class="order-7 mt-12">
-                    <h3 class="mb-3 text-base uppercase sm:text-lg">Usefull Link</h3>
+                    <h3 class="mb-3 text-base uppercase sm:text-lg">Useful Link</h3>
                     <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs text-white/90 sm:text-sm">
                         @foreach ($seoFooterLinks as $link)
                         <a href="{{ $link['href'] }}" class="hover:underline">{{ $link['label'] }}</a>

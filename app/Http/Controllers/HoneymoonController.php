@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Accommodation;
 use App\Models\Honeymoon;
 use App\Models\Page;
 use Illuminate\Database\Eloquent\Collection;
@@ -10,6 +11,20 @@ use Illuminate\View\View;
 
 class HoneymoonController extends Controller
 {
+    private const LANDING_SECTION_KEYS = [
+        'honeymoon_hero',
+        'honeymoon_intro',
+        'honeymoon_features',
+        'honeymoon_accommodations',
+        'honeymoon_package',
+        'honeymoon_dining',
+        'honeymoon_spa',
+        'honeymoon_itinerary',
+        'honeymoon_celebrations',
+        'honeymoon_faq',
+        'honeymoon_final_cta',
+    ];
+
     public function index(): View
     {
         $page = Page::query()
@@ -18,6 +33,9 @@ class HoneymoonController extends Controller
             ->firstOrFail();
 
         $sections = $this->getPageSections($page);
+        $usesHoneymoonSections = $page->sections()
+            ->whereIn('section_key', self::LANDING_SECTION_KEYS)
+            ->exists();
 
         $honeymoons = Honeymoon::query()
             ->where('is_active', true)
@@ -39,12 +57,32 @@ class HoneymoonController extends Controller
             ->orderByDesc('valid_start_date')
             ->get();
 
+        $accommodationOrder = [
+            'panoramic-jungle-view-villa',
+            'private-garden-royal-suite',
+            'panoramic-corner-jacuzzi-royal-suite',
+        ];
+
+        $accommodations = Accommodation::query()
+            ->published()
+            ->whereIn('slug', $accommodationOrder)
+            ->get()
+            ->sortBy(fn (Accommodation $accommodation) => array_search(
+                $accommodation->slug,
+                $accommodationOrder,
+                true
+            ))
+            ->values();
+
         return view('pages.honeymoon.index', [
             'page' => $page,
             'sections' => $sections,
 
             // Main variable
             'honeymoons' => $honeymoons,
+            'featuredHoneymoon' => $honeymoons->firstWhere('is_featured', true) ?: $honeymoons->first(),
+            'accommodations' => $accommodations,
+            'usesHoneymoonSections' => $usesHoneymoonSections,
 
             // Keep this if your current blade still uses $offers
             'offers' => $honeymoons,

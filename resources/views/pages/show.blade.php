@@ -8,6 +8,7 @@ $metaDescription = $page->meta_description
 $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
 $sections = $page->sections ?? collect();
 $isJungleSpaPage = $page->slug === 'jungle-spa-ubud';
+$preserveSectionButtonLabels = $page->slug === 'ubud-jungle-resort-in-bali';
 @endphp
 
 <title>{{ $metaTitle }}</title>
@@ -107,11 +108,11 @@ $isJungleSpaPage = $page->slug === 'jungle-spa-ubud';
     @endif
 
     @if ($section->section_key === 'seo_split_media_section')
-    <x-sections.seo-split-media-section :section="$section" :page="$page" :image-four-three="$isJungleSpaPage" :comfortable-text-spacing="$isJungleSpaPage" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
+    <x-sections.seo-split-media-section :section="$section" :page="$page" :image-four-three="$isJungleSpaPage" :comfortable-text-spacing="$isJungleSpaPage" :preserve-button-label="$preserveSectionButtonLabels" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'seo_split_media_reverse')
-    <x-sections.seo-split-media-section :section="$section" :page="$page" :reverse="true" :image-four-three="$isJungleSpaPage" :comfortable-text-spacing="$isJungleSpaPage" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
+    <x-sections.seo-split-media-section :section="$section" :page="$page" :reverse="true" :image-four-three="$isJungleSpaPage" :comfortable-text-spacing="$isJungleSpaPage" :preserve-button-label="$preserveSectionButtonLabels" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
     @endif
 
     @if ($section->section_key === 'three_images_section')

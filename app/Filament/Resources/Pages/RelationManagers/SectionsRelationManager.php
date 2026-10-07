@@ -58,6 +58,13 @@ class SectionsRelationManager extends RelationManager
         'about_story_values',
         'about_story_today',
         'about_story_final',
+        'honeymoon_hero',
+        'honeymoon_intro',
+        'honeymoon_package',
+        'honeymoon_dining',
+        'honeymoon_spa',
+        'honeymoon_celebrations',
+        'honeymoon_final_cta',
     ];
 
     private const ITEM_SECTION_KEYS = [
@@ -78,6 +85,21 @@ class SectionsRelationManager extends RelationManager
         'about_story_values',
         'about_story_today',
         'about_story_final',
+        'honeymoon_features',
+        'honeymoon_accommodations',
+        'honeymoon_package',
+        'honeymoon_dining',
+        'honeymoon_spa',
+        'honeymoon_itinerary',
+        'honeymoon_faq',
+        'honeymoon_final_cta',
+    ];
+
+    private const HONEYMOON_ACTION_SECTION_KEYS = [
+        'honeymoon_package',
+        'honeymoon_dining',
+        'honeymoon_spa',
+        'honeymoon_final_cta',
     ];
 
     private const ABOUT_SECTION_KEYS = [
@@ -142,6 +164,17 @@ class SectionsRelationManager extends RelationManager
                                 'about_story_values' => 'About Story: Values',
                                 'about_story_today' => 'About Story: Today',
                                 'about_story_final' => 'About Story: Final CTA',
+                                'honeymoon_hero' => 'Honeymoon: Hero',
+                                'honeymoon_intro' => 'Honeymoon: Introduction',
+                                'honeymoon_features' => 'Honeymoon: Why Choose Nandini',
+                                'honeymoon_accommodations' => 'Honeymoon: Accommodations',
+                                'honeymoon_package' => 'Honeymoon: Package',
+                                'honeymoon_dining' => 'Honeymoon: Romantic Dining',
+                                'honeymoon_spa' => 'Honeymoon: Spa & Wellness',
+                                'honeymoon_itinerary' => 'Honeymoon: Itinerary',
+                                'honeymoon_celebrations' => 'Honeymoon: Celebrations',
+                                'honeymoon_faq' => 'Honeymoon: FAQ',
+                                'honeymoon_final_cta' => 'Honeymoon: Final CTA',
                             ])
                             ->default('intro_text_section')
                             ->afterStateUpdated(function (?string $state, Set $set, Get $get): void {
@@ -298,6 +331,11 @@ class SectionsRelationManager extends RelationManager
                                 'about_story_values' => 'Value Cards',
                                 'about_story_today' => 'Statistics and Navigation Cards',
                                 'about_story_final' => 'Call-to-action Buttons',
+                                'honeymoon_features' => 'Feature Cards',
+                                'honeymoon_accommodations' => 'Accommodation Cards',
+                                'honeymoon_package', 'honeymoon_dining', 'honeymoon_spa', 'honeymoon_final_cta' => 'Call-to-action Buttons',
+                                'honeymoon_itinerary' => 'Itinerary Days',
+                                'honeymoon_faq' => 'FAQ Rows',
                                 default => 'How It Works Items',
                             })
                             ->visible(fn (Get $get): bool => in_array($get('section_key'), self::ITEM_SECTION_KEYS, true))
@@ -317,6 +355,12 @@ class SectionsRelationManager extends RelationManager
                                 'about_story_gallery', 'about_story_values' => 3,
                                 'about_story_today' => 6,
                                 'about_story_final' => 2,
+                                'honeymoon_features' => 6,
+                                'honeymoon_accommodations' => 3,
+                                'honeymoon_package', 'honeymoon_dining', 'honeymoon_final_cta' => 2,
+                                'honeymoon_spa' => 3,
+                                'honeymoon_itinerary' => 4,
+                                'honeymoon_faq' => 10,
                                 default => 4,
                             })
                             ->minItems(1)
@@ -347,6 +391,22 @@ class SectionsRelationManager extends RelationManager
                                     return $state['question'] ?? 'FAQ Row';
                                 }
 
+                                if ($get('section_key') === 'honeymoon_faq') {
+                                    return $state['question'] ?? 'FAQ Row';
+                                }
+
+                                if (in_array($get('section_key'), self::HONEYMOON_ACTION_SECTION_KEYS, true)) {
+                                    return $state['label'] ?? 'Button';
+                                }
+
+                                if ($get('section_key') === 'honeymoon_itinerary') {
+                                    return trim(($state['label'] ?? '').' '.($state['title'] ?? '')) ?: 'Itinerary Day';
+                                }
+
+                                if (in_array($get('section_key'), ['honeymoon_features', 'honeymoon_accommodations'], true)) {
+                                    return $state['title'] ?? 'Card';
+                                }
+
                                 if (in_array($get('section_key'), ['dining_information_section', 'spa_information_section'], true)) {
                                     return $state['label'] ?? 'Button';
                                 }
@@ -374,11 +434,19 @@ class SectionsRelationManager extends RelationManager
                                 'about_story_final' => 'Add button',
                                 'about_story_comparison' => 'Add panel',
                                 'about_story_origins' => 'Add quote',
+                                'honeymoon_features' => 'Add feature',
+                                'honeymoon_accommodations' => 'Add accommodation',
+                                'honeymoon_package', 'honeymoon_dining', 'honeymoon_spa', 'honeymoon_final_cta' => 'Add button',
+                                'honeymoon_itinerary' => 'Add day',
+                                'honeymoon_faq' => 'Add FAQ',
                                 default => 'Add item',
                             })
                             ->schema([
                                 TextInput::make('label')
-                                    ->label(fn (Get $get): string => $get('../../section_key') === 'about_story_final' ? 'Button Label' : 'Label')
+                                    ->label(fn (Get $get): string => in_array($get('../../section_key'), [
+                                        'about_story_final',
+                                        ...self::HONEYMOON_ACTION_SECTION_KEYS,
+                                    ], true) ? 'Button Label' : ($get('../../section_key') === 'honeymoon_itinerary' ? 'Day Label' : 'Label'))
                                     ->default(fn (Get $get): ?string => in_array($get('../../section_key'), [
                                         'dining_information_section',
                                         'spa_information_section',
@@ -397,6 +465,8 @@ class SectionsRelationManager extends RelationManager
                                         'about_story_growth',
                                         'about_story_today',
                                         'about_story_final',
+                                        'honeymoon_itinerary',
+                                        ...self::HONEYMOON_ACTION_SECTION_KEYS,
                                     ], true)),
 
                                 TextInput::make('url')
@@ -412,12 +482,22 @@ class SectionsRelationManager extends RelationManager
                                         'spa_information_section',
                                         'about_story_today',
                                         'about_story_final',
+                                        'honeymoon_accommodations',
+                                        ...self::HONEYMOON_ACTION_SECTION_KEYS,
                                     ], true)),
 
+                                TextInput::make('link_label')
+                                    ->label('Card Link Label')
+                                    ->placeholder('View Details')
+                                    ->maxLength(255)
+                                    ->visible(fn (Get $get): bool => $get('../../section_key') === 'honeymoon_accommodations'),
+
                                 FileUpload::make('image')
-                                    ->label('Card Image')
+                                    ->label(fn (Get $get): string => $get('../../section_key') === 'honeymoon_itinerary' ? 'Day Image' : 'Card Image')
                                     ->disk('public')
-                                    ->directory('membership/use-points')
+                                    ->directory(fn (Get $get): string => $get('../../section_key') === 'membership_use_points_section'
+                                        ? 'membership/use-points'
+                                        : 'pages/sections')
                                     ->visibility('public')
                                     ->image()
                                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
@@ -426,16 +506,24 @@ class SectionsRelationManager extends RelationManager
                                     ->panelLayout('integrated')
                                     ->openable()
                                     ->downloadable()
-                                    ->saveUploadedFileUsing(
-                                        fn (TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
+                                    ->saveUploadedFileUsing(function (TemporaryUploadedFile $file, Get $get): string {
+                                        $directory = $get('../../section_key') === 'membership_use_points_section'
+                                            ? 'membership/use-points'
+                                            : 'pages/sections';
+
+                                        return FilamentWebpUpload::store(
                                             file: $file,
-                                            directory: 'membership/use-points',
+                                            directory: $directory,
                                             targetWidth: 1200,
                                             targetHeight: 750,
                                             fileName: $get('image_file_name'),
-                                        )
-                                    )
-                                    ->visible(fn (Get $get): bool => $get('../../section_key') === 'membership_use_points_section')
+                                        );
+                                    })
+                                    ->visible(fn (Get $get): bool => in_array($get('../../section_key'), [
+                                        'membership_use_points_section',
+                                        'honeymoon_accommodations',
+                                        'honeymoon_itinerary',
+                                    ], true))
                                     ->columnSpanFull(),
 
                                 TextInput::make('image_file_name')
@@ -444,7 +532,21 @@ class SectionsRelationManager extends RelationManager
                                     ->helperText('Optional. Saved as .webp; leave blank for automatic name.')
                                     ->maxLength(120)
                                     ->dehydrated(false)
-                                    ->visible(fn (Get $get): bool => $get('../../section_key') === 'membership_use_points_section')
+                                    ->visible(fn (Get $get): bool => in_array($get('../../section_key'), [
+                                        'membership_use_points_section',
+                                        'honeymoon_accommodations',
+                                        'honeymoon_itinerary',
+                                    ], true))
+                                    ->columnSpanFull(),
+
+                                TextInput::make('image_alt')
+                                    ->label('Image Alt Text')
+                                    ->placeholder('Describe the image for SEO and accessibility')
+                                    ->maxLength(255)
+                                    ->visible(fn (Get $get): bool => in_array($get('../../section_key'), [
+                                        'honeymoon_accommodations',
+                                        'honeymoon_itinerary',
+                                    ], true))
                                     ->columnSpanFull(),
 
                                 Select::make('icon')
@@ -460,10 +562,12 @@ class SectionsRelationManager extends RelationManager
                                         'gift' => 'Gift',
                                         'star' => 'Star',
                                         'sparkles' => 'Sparkles',
+                                        'diamond' => 'Diamond',
+                                        'leaf' => 'Leaf',
                                     ])
                                     ->default('user')
-                                    ->required(fn (Get $get): bool => $get('../../section_key') === 'how_it_works_section')
-                                    ->visible(fn (Get $get): bool => $get('../../section_key') === 'how_it_works_section'),
+                                    ->required(fn (Get $get): bool => in_array($get('../../section_key'), ['how_it_works_section', 'honeymoon_features'], true))
+                                    ->visible(fn (Get $get): bool => in_array($get('../../section_key'), ['how_it_works_section', 'honeymoon_features'], true)),
 
                                 TextInput::make('title')
                                     ->label('Title')
@@ -474,6 +578,9 @@ class SectionsRelationManager extends RelationManager
                                     ->required(fn (Get $get): bool => in_array($get('../../section_key'), [
                                         'how_it_works_section',
                                         'membership_use_points_section',
+                                        'honeymoon_features',
+                                        'honeymoon_accommodations',
+                                        'honeymoon_itinerary',
                                     ], true))
                                     ->visible(fn (Get $get): bool => in_array($get('../../section_key'), [
                                         'how_it_works_section',
@@ -483,6 +590,9 @@ class SectionsRelationManager extends RelationManager
                                         'about_story_gallery',
                                         'about_story_values',
                                         'about_story_today',
+                                        'honeymoon_features',
+                                        'honeymoon_accommodations',
+                                        'honeymoon_itinerary',
                                     ], true))
                                     ->columnSpan(fn (Get $get): int => $get('../../section_key') === 'membership_use_points_section' ? 2 : 1),
 
@@ -524,6 +634,9 @@ class SectionsRelationManager extends RelationManager
                                         'about_story_timeline',
                                         'about_story_comparison',
                                         'about_story_values',
+                                        'honeymoon_features',
+                                        'honeymoon_accommodations',
+                                        'honeymoon_itinerary',
                                     ], true)),
 
                                 Select::make('kind')
@@ -578,17 +691,28 @@ class SectionsRelationManager extends RelationManager
                                     ->label('Question')
                                     ->placeholder('How do I register?')
                                     ->maxLength(255)
-                                    ->required(fn (Get $get): bool => $get('../../section_key') === 'membership_faq_section')
-                                    ->visible(fn (Get $get): bool => $get('../../section_key') === 'membership_faq_section')
+                                    ->required(fn (Get $get): bool => in_array($get('../../section_key'), ['membership_faq_section', 'honeymoon_faq'], true))
+                                    ->visible(fn (Get $get): bool => in_array($get('../../section_key'), ['membership_faq_section', 'honeymoon_faq'], true))
                                     ->columnSpanFull(),
 
                                 Textarea::make('answer')
                                     ->label('Answer')
                                     ->placeholder('Write the answer for this FAQ.')
                                     ->rows(4)
-                                    ->required(fn (Get $get): bool => $get('../../section_key') === 'membership_faq_section')
-                                    ->visible(fn (Get $get): bool => $get('../../section_key') === 'membership_faq_section')
+                                    ->required(fn (Get $get): bool => in_array($get('../../section_key'), ['membership_faq_section', 'honeymoon_faq'], true))
+                                    ->visible(fn (Get $get): bool => in_array($get('../../section_key'), ['membership_faq_section', 'honeymoon_faq'], true))
                                     ->columnSpanFull(),
+
+                                Select::make('style')
+                                    ->label('Button Style')
+                                    ->native(false)
+                                    ->options([
+                                        'solid' => 'Gold',
+                                        'outline' => 'Outline',
+                                        'white-outline' => 'White Outline',
+                                    ])
+                                    ->default('outline')
+                                    ->visible(fn (Get $get): bool => in_array($get('../../section_key'), self::HONEYMOON_ACTION_SECTION_KEYS, true)),
 
                                 Select::make('card_design')
                                     ->label('Card Design')
@@ -765,10 +889,19 @@ class SectionsRelationManager extends RelationManager
                     ->schema([
                         Section::make('Button')
                             ->columnSpanFull()
-                            ->visible(fn (Get $get): bool => in_array($get('section_key'), [
-                                ...self::MEDIA_SECTION_KEYS,
-                                'member_benefits_section',
-                            ], true))
+                            ->visible(function (Get $get): bool {
+                                $sectionKey = $get('section_key');
+
+                                if (in_array($sectionKey, ['honeymoon_hero', ...self::HONEYMOON_ACTION_SECTION_KEYS], true)) {
+                                    return false;
+                                }
+
+                                return in_array($sectionKey, [
+                                    ...self::MEDIA_SECTION_KEYS,
+                                    'member_benefits_section',
+                                    'honeymoon_accommodations',
+                                ], true);
+                            })
                             ->schema([
                                 TextInput::make('button_label')
                                     ->label('Button Label')

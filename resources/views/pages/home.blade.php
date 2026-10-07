@@ -25,6 +25,11 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ $page->meta_title ?: $page->title }}">
 <meta name="twitter:description" content="{{ $page->meta_description ?? '' }}">
+
+<script type="application/ld+json">{!! json_encode(
+    \App\Support\HomepageStructuredData::make($page),
+    JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR
+) !!}</script>
 @endpush
 
 <x-layouts.app>
@@ -37,7 +42,7 @@
 
     <x-heroes.video-hero video-id="8aZOOwSdxwE" data-gtm-section="hero" />
 
-    <x-sections.page-description :page="$page" :show-awards="true" data-gtm-section="introduction" />
+    <x-sections.page-description :page="$page" :show-awards="true" :show-subtitle="true" data-gtm-section="introduction" />
 
     @if ($leadContainedImage)
     <x-sections.contained-image-section :section="$leadContainedImage" />

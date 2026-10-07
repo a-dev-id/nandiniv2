@@ -4,6 +4,7 @@
 'reverse' => false,
 'imageFourThree' => false,
 'comfortableTextSpacing' => false,
+'preserveButtonLabel' => false,
 ])
 
 @php
@@ -120,11 +121,13 @@ $buttonUrl = \Illuminate\Support\Facades\Route::has($section->button_route)
 $buttonUrl = $section?->button_url;
 }
 
+if (! $preserveButtonLabel) {
 $buttonLabel = \App\Support\DetailPageButtonLabel::resolve(
 $buttonLabel,
 $section?->button_route,
 $buttonUrl,
 );
+}
 @endphp
 
 @if ($section)
