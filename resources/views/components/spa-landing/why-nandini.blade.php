@@ -15,18 +15,18 @@
     }
 @endphp
 
-<section class="bg-[#f3f4f5] px-6 py-14 text-center font-sans md:py-20" aria-labelledby="spa-why-nandini-title" data-gtm-section="spa_benefits">
+<section class="bg-[#f3f4f5] px-6 py-14 text-center font-sans md:px-12 md:py-20 lg:px-6" aria-labelledby="spa-why-nandini-title" data-gtm-section="spa_benefits">
     <div class="mx-auto max-w-7xl">
         <p class="mb-3 text-[10px] font-medium uppercase tracking-[.18em] text-[#A88444] sm:text-xs">{{ $eyebrow }}</p>
         <h2 id="spa-why-nandini-title" class="mx-auto text-lg leading-snug font-medium text-slate-700 uppercase sm:text-xl">
             {!! nl2br(e($heading)) !!}
         </h2>
 
-        <ul class="mt-10 grid grid-cols-1 min-[420px]:grid-cols-2 min-[420px]:gap-y-10 lg:mt-12 lg:grid-cols-4 lg:gap-y-0">
+        <ul class="mt-10 grid grid-cols-1 gap-y-8 border-y border-[#A88444]/20 py-8 min-[480px]:grid-cols-2 min-[480px]:gap-x-8 md:mt-14 md:py-10 lg:grid-cols-4 lg:gap-x-10">
             @foreach ($items as $item)
-                <li class="relative mx-auto w-full max-w-[320px] px-6 py-7 max-[420px]:border-b max-[420px]:border-[#8f6b34]/15 max-[420px]:last:border-b-0 min-[420px]:max-w-none min-[420px]:px-3 min-[420px]:py-0 min-[420px]:after:absolute min-[420px]:after:right-0 min-[420px]:after:top-0 min-[420px]:after:h-[140px] min-[420px]:after:w-px min-[420px]:after:bg-[#8f6b34]/20 min-[420px]:max-lg:even:after:hidden md:px-6 lg:nth-[4n]:after:hidden lg:last:after:hidden">
+                <li class="mx-auto w-full max-w-[280px] py-3">
                     @if (in_array($item['icon'] ?? '', ['jungle', 'ritual', 'care', 'river'], true))
-                        <svg class="mx-auto mb-5 size-9 text-[#d1b77d] lg:size-10" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <svg class="mx-auto mb-5 size-8 text-[#A88444]" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             @switch($item['icon'])
                                 @case('jungle')
                                     <path d="M20 36V15M20 20C10 18 8 10 12 4c8 3 11 9 8 16Zm0 10C9 30 4 24 5 17c9 0 15 5 15 13Zm0-6c0-10 5-16 13-17 3 9-2 15-13 17Zm0 10c1-8 7-11 15-10-1 8-7 12-15 10Z"/><path d="m20 20-6-10m6 20L9 22m11 2 9-11m-9 21 10-6"/>
@@ -44,7 +44,7 @@
                         </svg>
                     @endif
 
-                    <h3 class="mb-3 font-sans text-xs leading-[1.25] text-[#20271f] uppercase [--heading-letter-spacing:.08em] md:text-[13px]">
+                    <h3 class="mb-3 font-sans text-xs leading-[1.3] text-[#26342e] uppercase [--heading-font-weight:600] [--heading-letter-spacing:.1em] md:text-[13px]">
                         {!! nl2br(e($item['title'] ?? '')) !!}
                     </h3>
                     <p class="mx-auto max-w-[240px] text-xs leading-relaxed text-slate-600 sm:text-sm">

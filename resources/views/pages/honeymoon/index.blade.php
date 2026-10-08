@@ -94,7 +94,7 @@ $diningActions = $diningSection ? ($diningSection->items ?? []) : [
     ['label' => 'Romantic Experiences', 'url' => route('experiences.category', ['categorySlug' => 'jungle-romance']), 'style' => 'outline'],
 ];
 $spaActions = $spaSection ? ($spaSection->items ?? []) : [
-    ['label' => 'Explore Spa & Wellness', 'url' => route('spa.index'), 'style' => 'solid'],
+    ['label' => 'Explore Spa & Wellness', 'url' => route('spa-landing.index'), 'style' => 'solid'],
     ['label' => 'Jungle Spa Ubud', 'url' => url('/jungle-spa-ubud'), 'style' => 'outline'],
     ['label' => 'Holy River', 'url' => route('holy-river.index'), 'style' => 'outline'],
 ];

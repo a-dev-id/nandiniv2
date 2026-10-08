@@ -7,7 +7,7 @@ $metaDescription = $spa->meta_description
 
 $metaImage = $spa->hero_image
 ?? $spa->card_image
-?? $page->hero_image
+?? $page?->hero_image
 ?? null;
 @endphp
 
@@ -39,13 +39,13 @@ $metaImage = $spa->hero_image
     @php
     $heroImage = $spa->hero_image
     ?? $spa->card_image
-    ?? $page->hero_image
+    ?? $page?->hero_image
     ?? null;
 
     $heroMobileImage = $spa->hero_mobile_image
     ?? $spa->hero_image
     ?? $spa->card_image
-    ?? $page->hero_mobile_image
+    ?? $page?->hero_mobile_image
     ?? $heroImage;
 
     $heroAlt = $spa->hero_image_alt
@@ -132,7 +132,7 @@ $metaImage = $spa->hero_image
             </h2>
         </div>
 
-        <x-sections.item-carousel :items="$relatedSpas" route-name="spa.show" />
+        <x-sections.item-carousel :items="$relatedSpas" route-name="spa-landing.treatments.show" />
     </section>
     @endif
 </x-layouts.app>

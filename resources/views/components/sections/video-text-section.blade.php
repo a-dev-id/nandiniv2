@@ -2,8 +2,10 @@
 'page' => null,
 'pageId' => null,
 'videoId' => null,
+'videoAlt' => null,
 'reverse' => false,
 'boxed' => true,
+'showSubtitle' => false,
 ])
 
 @php
@@ -62,7 +64,7 @@ $gridOrderText = $reverse ? 'lg:order-1' : 'lg:order-2';
                 <div class="relative aspect-[4/3] md:aspect-3/2 overflow-hidden bg-slate-100">
                     @if ($embedUrl)
                     <div class="absolute inset-0 cursor-pointer bg-black" role="button" tabindex="0" aria-label="Play {{ $page?->title ?? 'video' }}" data-youtube-embed data-src="{{ $embedUrl }}" data-title="{{ $page?->title ?? 'Video' }}">
-                        <img src="{{ $thumbnailUrl }}" alt="{{ $page?->title ?? 'Video preview' }}" class="h-full w-full object-cover" width="480" height="360" loading="lazy" decoding="async">
+                        <img src="{{ $thumbnailUrl }}" alt="{{ $videoAlt ?: ($page?->title ?? 'Video preview') }}" class="h-full w-full object-cover" width="480" height="360" loading="lazy" decoding="async">
                         <div class="absolute inset-0 bg-black/20"></div>
                         <span class="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white ring-1 ring-white/70" aria-hidden="true">
                             <span class="ml-1 h-0 w-0 border-y-[10px] border-l-[16px] border-y-transparent border-l-white"></span>
@@ -80,6 +82,12 @@ $gridOrderText = $reverse ? 'lg:order-1' : 'lg:order-2';
             <div class="lg:col-span-5 {{ $gridOrderText }}">
                 <div class="h-full flex flex-col justify-center px-4 sm:px-8 md:px-10 lg:px-12 md:py-14">
                     <div class="text-center">
+                        @if ($showSubtitle && $page?->subtitle)
+                        <p class="mb-4 text-[10px] font-medium uppercase tracking-[.18em] text-[#A88444] sm:text-xs">
+                            {{ $page->subtitle }}
+                        </p>
+                        @endif
+
                         @if ($page?->title)
                         <h1 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-2xl">
                             {{ $page->title }}
@@ -87,9 +95,11 @@ $gridOrderText = $reverse ? 'lg:order-1' : 'lg:order-2';
                         @endif
 
                         @if ($page?->excerpt)
-                        <p class="text-xs leading-relaxed text-gray-600 max-w-2xl sm:max-w-3xl md:max-w-5xl mx-auto sm:text-sm">
-                            {{ $page->excerpt }}
-                        </p>
+                        <div class="mx-auto max-w-2xl space-y-4 text-xs leading-relaxed text-gray-600 sm:max-w-3xl sm:text-sm md:max-w-5xl">
+                            @foreach (preg_split('/\R{2,}/', trim($page->excerpt)) as $paragraph)
+                            <p>{{ $paragraph }}</p>
+                            @endforeach
+                        </div>
                         @endif
                     </div>
                 </div>

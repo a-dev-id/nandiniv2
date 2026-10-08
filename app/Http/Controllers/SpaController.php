@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Page;
 use App\Models\Spa;
+use App\Models\SpaSetting;
 use App\Support\MemberBookingVoucher;
+use App\Support\SpaWellnessJourneys;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class SpaController extends Controller
@@ -27,7 +31,7 @@ class SpaController extends Controller
             ->orderByDesc('valid_start_date')
             ->get()
             ->map(function (Spa $spa) {
-                $spa->setAttribute('show_url', route('spa.show', $spa->slug));
+                $spa->setAttribute('show_url', route('spa-landing.treatments.show', $spa->slug));
                 $spa->setAttribute('booking_url', $this->resolveBookingUrl($spa));
 
                 return $spa;
@@ -48,18 +52,17 @@ class SpaController extends Controller
             ->first();
 
         if (! $spa) {
-            return redirect()->route('spa.index', [], 301);
+            return $this->showWellnessJourney($slug);
         }
 
-        $spa->setAttribute('show_url', route('spa.show', $spa->slug));
+        $spa->setAttribute('show_url', route('spa-landing.treatments.show', $spa->slug));
         $spa->setAttribute('booking_url', $this->resolveBookingUrl($spa));
 
         $page = Page::query()
-            ->where('id', 6)
+            ->forSpaSite()
+            ->where('slug', 'home')
             ->where('is_active', true)
-            ->firstOrFail();
-
-        $sections = $this->getPageSections($page);
+            ->first();
 
         $relatedSpas = Spa::query()
             ->published()
@@ -68,7 +71,7 @@ class SpaController extends Controller
             ->orderByDesc('valid_start_date')
             ->get()
             ->map(function (Spa $relatedSpa) {
-                $relatedSpa->setAttribute('show_url', route('spa.show', $relatedSpa->slug));
+                $relatedSpa->setAttribute('show_url', route('spa-landing.treatments.show', $relatedSpa->slug));
                 $relatedSpa->setAttribute('booking_url', $this->resolveBookingUrl($relatedSpa));
 
                 return $relatedSpa;
@@ -76,7 +79,6 @@ class SpaController extends Controller
 
         return view('pages.spa.show', [
             'page' => $page,
-            'sections' => $sections,
             'spa' => $spa,
             'relatedSpas' => $relatedSpas,
         ]);
@@ -87,12 +89,45 @@ class SpaController extends Controller
         return $page->sections()
             ->where('is_active', true)
             ->with([
-                'images' => fn($query) => $query
+                'images' => fn ($query) => $query
                     ->where('is_active', true)
                     ->orderBy('sort_order'),
             ])
             ->orderBy('sort_order')
             ->get();
+    }
+
+    private function showWellnessJourney(string $slug): View|RedirectResponse
+    {
+        $settings = Schema::hasTable('spa_settings') ? SpaSetting::query()->first() : null;
+        $journey = SpaWellnessJourneys::findBySlug($slug, $settings);
+
+        if (! $journey) {
+            return redirect()->route('spa-landing.index', [], 301);
+        }
+
+        return view('pages.spa-landing.journey-show', [
+            'journey' => $journey,
+            'image' => $this->resolveMediaUrl($journey['image'] ?? null),
+            'bookingUrl' => $journey['book_url'] ?? $settings?->reservation_url,
+        ]);
+    }
+
+    private function resolveMediaUrl(?string $path): ?string
+    {
+        if (blank($path)) {
+            return null;
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
+        if (str_starts_with($path, '/')) {
+            return asset(ltrim($path, '/'));
+        }
+
+        return Storage::disk('public')->url($path);
     }
 
     private function resolveBookingUrl(Spa $spa): ?string

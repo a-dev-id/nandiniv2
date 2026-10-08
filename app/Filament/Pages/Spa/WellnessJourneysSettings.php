@@ -82,7 +82,7 @@ class WellnessJourneysSettings extends SpaSettingsPage
                         TextInput::make('image_alt')->label('Image Alt Text')->maxLength(255),
                         TextInput::make('details_label')->label('Details Button Label')->maxLength(100)->default('MORE DETAILS'),
                         TextInput::make('details_url')->label('Details URL')->maxLength(2048)
-                            ->helperText('Use /spa-wellness/package-slug for a package on the main website.'),
+                            ->helperText('Use /spa-wellness/package-slug for a package on the SPA subdomain.'),
                         TextInput::make('book_label')->label('Booking Button Label')->maxLength(100)->default('BOOK NOW'),
                         TextInput::make('book_url')->label('Booking URL')->maxLength(2048)
                             ->helperText('Leave blank to use the SPA reservation URL.'),

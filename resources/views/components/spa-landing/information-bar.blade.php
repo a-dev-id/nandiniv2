@@ -5,9 +5,9 @@
 
     if (blank($items)) {
         $items = [
-            ['icon' => 'clock', 'label' => 'Opening Hours', 'value' => '08:00 AM – 10:00 PM'],
+            ['icon' => 'clock', 'label' => 'Opening Hours', 'value' => '09:00 AM – 10:00 PM'],
             ['icon' => 'calendar', 'label' => 'Booking', 'value' => 'Advance booking recommended'],
-            ['icon' => 'location', 'label' => 'Location', 'value' => 'Nandini Jungle, Ubud, Bali'],
+            ['icon' => 'location', 'label' => 'Location', 'value' => 'Nandini Jungle, Payangan, Ubud, Bali'],
             [
                 'icon' => 'phone',
                 'label' => 'Reservations',
@@ -18,4 +18,4 @@
     }
 @endphp
 
-<x-landing-information-bar :items="$items" label="Spa information" data-gtm-section="overview" />
+<x-landing-information-bar :items="$items" label="Spa information" compact data-gtm-section="overview" />

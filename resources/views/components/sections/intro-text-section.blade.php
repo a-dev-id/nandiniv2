@@ -69,7 +69,7 @@ $richTextSpacingClass = $comfortableTextSpacing
 : '[&_p]:mb-2';
 @endphp
 
-<section class="{{ $sectionSpacingClass }} px-6 {{ $backgroundClass }}" {{ $attributes->only('data-gtm-section') }} @if ($comfortableTextSpacing) data-text-spacing="comfortable" @endif>
+<section class="{{ $sectionSpacingClass }} px-6 {{ $backgroundClass }}" {{ $attributes->only(['id', 'data-gtm-section']) }} @if ($comfortableTextSpacing) data-text-spacing="comfortable" @endif>
     <div class="max-w-[1200px] mx-auto">
 
         {{-- Subtitle --}}

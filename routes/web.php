@@ -262,8 +262,9 @@ Route::domain(config('domains.main'))->group(function (): void {
     Route::get('/spa-wellness', [SpaController::class, 'index'])
         ->name('spa.index');
 
-    Route::get('/spa-wellness/{slug}', [SpaController::class, 'show'])
-        ->name('spa.show');
+    Route::get('/spa-wellness/{slug}', fn (string $slug) => redirect()->route('spa-landing.treatments.show', $slug, 301))
+        ->where('slug', '[A-Za-z0-9\-]+')
+        ->name('spa.legacy.show');
 
     /*
     |--------------------------------------------------------------------------

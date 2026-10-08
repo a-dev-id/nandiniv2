@@ -43,6 +43,8 @@ return new class extends Migration
 
         $settings = DB::table('spa_settings')->where('id', 1)->first();
         $reservationUrl = $settings?->reservation_url ?: 'https://wa.me/6281236871170';
+        $bookingUrl = $settings?->booking_cta_button_url
+            ?: $reservationUrl.'?text='.rawurlencode('Hello, I would like to book a spa experience at Nandini Jungle.');
         $mainSpaUrl = 'https://'.config('domains.main').'/spa-wellness';
         $mediaBase = 'https://nandinibali.com/storage/';
 
@@ -143,8 +145,8 @@ return new class extends Migration
             'booking_cta_eyebrow' => 'Your Wellness Journey Awaits',
             'booking_cta_heading' => 'Book Your Spa Experience',
             'booking_cta_description' => 'Step away from the everyday and reconnect with nature through a restorative Nandini Jungle Spa experience.',
-            'booking_cta_button_label' => 'Reserve Now',
-            'booking_cta_button_url' => $reservationUrl,
+            'booking_cta_button_label' => 'BOOK NOW',
+            'booking_cta_button_url' => $bookingUrl,
             'booking_cta_image' => $mediaBase.'pages/sections/ea97fbfe-7ca1-43fe-8e30-51b1e9dcea01.webp',
             'booking_cta_image_alt' => '',
             'created_at' => $settings?->created_at ?: now(),

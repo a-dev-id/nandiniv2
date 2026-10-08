@@ -1,7 +1,33 @@
 @php
-    $title = $spaSettings?->meta_title ?: 'Spa & Wellness | Nandini Jungle by Hanging Gardens';
-    $description = $spaSettings?->meta_description ?: 'Restore body, mind and soul with deeply restorative spa rituals in the heart of the Ubud jungle.';
+    $title = $spaSettings?->meta_title ?: 'Spa in Ubud, Bali | Essence Spa at Nandini Jungle';
+    $description = $spaSettings?->meta_description ?: "Discover Essence Spa at Nandini Jungle, a jungle spa in Ubud, Bali offering Balinese treatments, riverside wellness experiences and restorative rituals.";
     $canonical = 'https://'.config('domains.spa').'/';
+    $structuredData = [
+        '@context' => 'https://schema.org',
+        '@graph' => [
+            [
+                '@type' => 'WebPage',
+                '@id' => $canonical.'#webpage',
+                'url' => $canonical,
+                'name' => $title,
+                'description' => $description,
+                'about' => ['@id' => $canonical.'#spa-service'],
+                'isPartOf' => ['@id' => 'https://nandinibali.com/#website'],
+            ],
+            [
+                '@type' => 'Service',
+                '@id' => $canonical.'#spa-service',
+                'name' => 'Essence Spa at Nandini Jungle',
+                'serviceType' => 'Spa and wellness services',
+                'url' => $canonical,
+                'provider' => ['@id' => 'https://nandinibali.com/#hotel'],
+                'areaServed' => [
+                    '@type' => 'Place',
+                    'name' => 'Ubud, Bali, Indonesia',
+                ],
+            ],
+        ],
+    ];
 @endphp
 
 @push('meta')
@@ -21,6 +47,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ $title }}">
     <meta name="twitter:description" content="{{ $description }}">
+    <script type="application/ld+json">@json($structuredData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)</script>
 @endpush
 
 @push('css')
@@ -37,6 +64,7 @@
     @if ($spaSettings?->wellness_philosophy_visible ?? true)
         <x-spa-landing.wellness-philosophy :settings="$spaSettings" :image="$wellnessPhilosophyImage" />
     @endif
+    <x-spa-landing.treatments :treatments="$treatments" :settings="$spaSettings" />
     @if ($spaSettings?->wellness_journeys_visible ?? true)
         <x-spa-landing.wellness-journeys :settings="$spaSettings" :source-journey="$sourceJourney" />
     @endif

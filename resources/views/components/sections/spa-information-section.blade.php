@@ -4,7 +4,7 @@
 
 'spaType' => 'Traditional Balinese wellness and spa treatments',
 
-'openingTime' => '09:00 am to 09:00 pm',
+'openingTime' => '09:00 AM – 10:00 PM',
 
 'reserveUrl' => '#',
 'spaMenuUrl' => '#',

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\DiningExperience;
 use App\Models\Page;
 use App\Models\SignatureDish;
+use App\Models\Spa;
 use App\Models\Voucher;
 use App\Models\VoucherCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -68,13 +69,36 @@ class DomainSitemapTest extends TestCase
             'include_in_sitemap' => false,
         ]);
 
+        Spa::query()->create([
+            'title' => 'Sacred River Renewal',
+            'slug' => 'sacred-river-renewal',
+            'is_active' => true,
+        ]);
+
         $baseUrl = 'https://'.config('domains.spa');
 
         $this->get($baseUrl.'/sitemap.xml')
             ->assertOk()
             ->assertSee('<loc>'.$baseUrl.'</loc>', false)
             ->assertSee($baseUrl.'/spa-rituals', false)
+            ->assertSee($baseUrl.'/spa-wellness/sacred-river-renewal', false)
             ->assertDontSee('private-spa-page', false);
+    }
+
+    public function test_main_sitemap_keeps_the_existing_spa_wellness_page(): void
+    {
+        Page::query()->create([
+            'site' => Page::SITE_MAIN,
+            'page_name' => 'Spa & Wellness',
+            'title' => 'Spa & Wellness',
+            'slug' => 'spa-wellness',
+            'is_active' => true,
+            'include_in_sitemap' => true,
+        ]);
+
+        $this->get('https://'.config('domains.main').'/sitemap.xml')
+            ->assertOk()
+            ->assertSee('https://'.config('domains.main').'/spa-wellness', false);
     }
 
     public function test_voucher_sitemap_contains_public_categories_and_purchasable_vouchers(): void

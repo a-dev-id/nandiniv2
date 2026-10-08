@@ -3,6 +3,8 @@
 'background' => false,
 'poster' => null,
 'hideMobileOverlay' => false,
+'title' => 'Nandini Jungle video',
+'posterAlt' => '',
 ])
 
 @php
@@ -11,15 +13,15 @@ $thumbnailUrl = $poster ?: "https://i.ytimg.com/vi/{$videoId}/maxresdefault.jpg"
 @endphp
 
 @if ($background)
-    <div class="pointer-events-none absolute inset-0 overflow-hidden bg-black [container-type:size]" aria-hidden="true" data-youtube-embed data-autoload="true" data-autoload-delay="600" data-src="{{ $embedUrl }}" data-title="Nandini Jungle dining video" data-frame-class="absolute top-1/2 left-1/2 aspect-video h-auto w-[max(100cqw,177.78cqh)] -translate-x-1/2 -translate-y-1/2 pointer-events-none" {{ $attributes->only('data-gtm-section') }}>
-        <img src="{{ $thumbnailUrl }}" alt="" class="absolute inset-0 h-full w-full object-cover" width="1280" height="720" loading="eager" fetchpriority="high" decoding="async">
+    <div class="pointer-events-none absolute inset-0 overflow-hidden bg-black [container-type:size]" aria-hidden="true" data-youtube-embed data-autoload="true" data-autoload-delay="600" data-src="{{ $embedUrl }}" data-title="{{ $title }}" data-frame-class="absolute top-1/2 left-1/2 aspect-video h-auto w-[max(100cqw,177.78cqh)] -translate-x-1/2 -translate-y-1/2 pointer-events-none" {{ $attributes->only('data-gtm-section') }}>
+        <img src="{{ $thumbnailUrl }}" alt="{{ $posterAlt }}" class="absolute inset-0 h-full w-full object-cover" width="1280" height="720" loading="eager" fetchpriority="high" decoding="async">
     </div>
 @else
 <header class="shadow-xl" {{ $attributes->only('data-gtm-section') }}>
 
     <!-- Mobile / Tablet (1:1 ratio + stronger zoom) -->
-    <div class="relative block lg:hidden w-full aspect-[4/3] overflow-hidden bg-black cursor-pointer" role="button" tabindex="0" aria-label="Play Nandini Jungle video" data-youtube-embed data-autoload="true" data-autoload-delay="600" data-src="{{ $embedUrl }}" data-title="Nandini Jungle video hero" data-frame-class="absolute inset-1/2 w-[180%] h-[180%] -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-        <img src="{{ $thumbnailUrl }}" alt="Nandini Jungle video preview" class="absolute inset-0 h-full w-full object-cover" width="1280" height="720" loading="eager" fetchpriority="high" decoding="async">
+    <div class="relative block lg:hidden w-full aspect-[4/3] overflow-hidden bg-black cursor-pointer" role="button" tabindex="0" aria-label="Play {{ $title }}" data-youtube-embed data-autoload="true" data-autoload-delay="600" data-src="{{ $embedUrl }}" data-title="{{ $title }}" data-frame-class="absolute inset-1/2 w-[180%] h-[180%] -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+        <img src="{{ $thumbnailUrl }}" alt="{{ $posterAlt ?: 'Nandini Jungle video preview' }}" class="absolute inset-0 h-full w-full object-cover" width="1280" height="720" loading="eager" fetchpriority="high" decoding="async">
         <div class="absolute inset-0 bg-black/15 {{ $hideMobileOverlay ? 'hidden md:block' : '' }}"></div>
         <span class="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white ring-1 ring-white/70" aria-hidden="true">
             <span class="ml-1 h-0 w-0 border-y-[10px] border-l-[16px] border-y-transparent border-l-white"></span>
@@ -27,8 +29,8 @@ $thumbnailUrl = $poster ?: "https://i.ytimg.com/vi/{$videoId}/maxresdefault.jpg"
     </div>
 
     <!-- Desktop (Full Screen) -->
-    <div class="relative hidden lg:block h-screen overflow-hidden bg-black cursor-pointer" role="button" tabindex="0" aria-label="Play Nandini Jungle video" data-youtube-embed data-autoload="true" data-autoload-delay="600" data-src="{{ $embedUrl }}" data-title="Nandini Jungle video hero" data-frame-class="absolute inset-0 w-[102%] h-[120%] top-[-10%] left-[-1%] pointer-events-none">
-        <img src="{{ $thumbnailUrl }}" alt="Nandini Jungle video preview" class="absolute inset-0 h-full w-full object-cover" width="1280" height="720" loading="eager" fetchpriority="high" decoding="async">
+    <div class="relative hidden lg:block h-screen overflow-hidden bg-black cursor-pointer" role="button" tabindex="0" aria-label="Play {{ $title }}" data-youtube-embed data-autoload="true" data-autoload-delay="600" data-src="{{ $embedUrl }}" data-title="{{ $title }}" data-frame-class="absolute inset-0 w-[102%] h-[120%] top-[-10%] left-[-1%] pointer-events-none">
+        <img src="{{ $thumbnailUrl }}" alt="{{ $posterAlt ?: 'Nandini Jungle video preview' }}" class="absolute inset-0 h-full w-full object-cover" width="1280" height="720" loading="eager" fetchpriority="high" decoding="async">
         <div class="absolute inset-0 bg-black/15"></div>
         <span class="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white ring-1 ring-white/70" aria-hidden="true">
             <span class="ml-1 h-0 w-0 border-y-[12px] border-l-[18px] border-y-transparent border-l-white"></span>

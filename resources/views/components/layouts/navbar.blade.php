@@ -309,7 +309,7 @@ $navbarStartsSolid = (request()->routeIs('voucher.*') && ! request()->routeIs('v
                         Dining
                     </a>
 
-                    <a href="{{ $mainRoute('spa.index') }}" data-menu-item="spa-wellness" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
+                    <a href="{{ route('spa-landing.index') }}" data-menu-item="spa-wellness" class="block text-[12px] leading-6 uppercase text-left tracking-[0.08em] font-medium sm:text-[14px]">
                         Spa & Wellness
                     </a>
 

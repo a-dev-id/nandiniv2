@@ -4,6 +4,7 @@ use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SpaLandingController;
 use App\Http\Controllers\SpaLandingPageController;
+use App\Http\Controllers\SpaController;
 use Illuminate\Support\Facades\Route;
 
 Route::domain(config('domains.spa'))
@@ -18,6 +19,10 @@ Route::domain(config('domains.spa'))
 
         Route::get('/', SpaLandingController::class)
             ->name('index');
+
+        Route::get('/spa-wellness/{slug}', [SpaController::class, 'show'])
+            ->where('slug', '[A-Za-z0-9\-]+')
+            ->name('treatments.show');
 
         Route::get('/{slug}', [SpaLandingPageController::class, 'show'])
             ->where('slug', '[A-Za-z0-9\-]+')

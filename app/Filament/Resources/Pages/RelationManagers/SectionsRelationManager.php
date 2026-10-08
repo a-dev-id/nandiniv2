@@ -217,7 +217,7 @@ class SectionsRelationManager extends RelationManager
 
                                 if ($state === 'spa_information_section') {
                                     if (blank($get('description'))) {
-                                        $set('description', '<p><strong>Spa:</strong><br>Traditional Balinese wellness and spa treatments</p><p><strong>Opening times:</strong><br>Daily: 09:00 am to 09:00 pm</p>');
+                                        $set('description', '<p><strong>Spa:</strong><br>Traditional Balinese wellness and spa treatments</p><p><strong>Opening times:</strong><br>Daily: 09:00 AM – 10:00 PM</p>');
                                     }
 
                                     if (blank($get('excerpt'))) {

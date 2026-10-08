@@ -1,14 +1,23 @@
 @props([
 'items' => [],
 'label' => 'Practical information',
+'compact' => false,
 ])
 
 <div class="bg-[#f3f4f5] font-sans text-[#20271f]" aria-label="{{ $label }}" {{ $attributes->only('data-gtm-section') }}>
-    <dl class="mx-auto grid max-w-7xl grid-cols-2 px-6 py-2 md:py-6 lg:grid-cols-4">
+    <dl @class([
+        'mx-auto grid max-w-7xl grid-cols-2 px-6 lg:grid-cols-4',
+        'py-1 md:py-4' => $compact,
+        'py-2 md:py-6' => ! $compact,
+    ])>
         @foreach ($items as $item)
-        <div class="flex flex-col items-start gap-3 border-r border-[#d1b77d]/25 py-[22px] pl-4 max-lg:odd:pl-0 max-lg:even:border-r-0 max-lg:nth-[-n+2]:border-b md:flex-row md:items-center md:gap-3.5 md:p-5 lg:px-5 lg:py-1.5 lg:first:pl-0 lg:last:border-r-0 lg:last:pr-0">
+        <div @class([
+            'flex items-start border-r border-[#d1b77d]/25 pl-4 max-lg:odd:pl-0 max-lg:even:border-r-0 max-lg:nth-[-n+2]:border-b md:flex-row md:items-center lg:first:pl-0 lg:last:border-r-0 lg:last:pr-0',
+            'flex-row gap-2.5 py-4 md:gap-3 md:px-4 md:py-3 lg:px-5 lg:py-0.5' => $compact,
+            'flex-col gap-3 py-[22px] md:gap-3.5 md:p-5 lg:px-5 lg:py-1.5' => ! $compact,
+        ])>
             @if (in_array($item['icon'] ?? '', ['clock', 'calendar', 'dining', 'location', 'phone', 'whatsapp', 'email', 'guests'], true))
-            <svg class="size-[26px] shrink-0 text-[#d1b77d]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg @class(['shrink-0 text-[#A88444]', 'size-5' => $compact, 'size-[26px]' => ! $compact]) viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 @switch($item['icon'] ?? '')
                 @case('clock')
                 <circle cx="12" cy="12" r="9" />
@@ -38,8 +47,8 @@
             @endif
 
             <div>
-                <dt class="mb-[7px] text-[10px] font-medium uppercase tracking-[.08em] md:tracking-[.12em]">{{ $item['label'] ?? '' }}</dt>
-                <dd class="text-[13px] leading-[1.5] md:text-sm">
+                <dt @class(['text-[9px] font-medium uppercase tracking-[.12em]', 'mb-1' => $compact, 'mb-[7px]' => ! $compact])>{{ $item['label'] ?? '' }}</dt>
+                <dd @class(['leading-[1.5]', 'text-[11px] md:text-xs' => $compact, 'text-[13px] md:text-sm' => ! $compact])>
                     @if (filled($item['link'] ?? null))
                     <a class="-my-[13px] inline-flex min-h-12 items-center" href="{{ $item['link'] }}" @if (str_starts_with($item['link'], 'http' )) target="_blank" rel="noopener noreferrer" @endif>{!! nl2br(e($item['value'] ?? '')) !!}</a>
                     @else

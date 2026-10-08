@@ -49,7 +49,6 @@ class SitemapService
             ->merge($this->accommodationUrls())
             ->merge($this->experienceUrls())
             ->merge($this->honeymoonUrls())
-            ->merge($this->spaUrls())
             ->merge($this->festiveEventUrls())
             ->unique('loc')
             ->values();
@@ -73,7 +72,6 @@ class SitemapService
             ['route' => 'little-things.index', 'changefreq' => 'monthly', 'priority' => '0.7'],
             ['route' => 'honeymoon.index', 'changefreq' => 'weekly', 'priority' => '0.8'],
             ['route' => 'dining.index', 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['route' => 'spa.index', 'changefreq' => 'weekly', 'priority' => '0.8'],
             ['route' => 'wedding.index', 'changefreq' => 'monthly', 'priority' => '0.7'],
             ['route' => 'sustainability.index', 'changefreq' => 'monthly', 'priority' => '0.6'],
             ['route' => 'about-us.index', 'changefreq' => 'monthly', 'priority' => '0.7'],
@@ -210,7 +208,7 @@ class SitemapService
             ->orderBy('sort_order')
             ->orderByDesc('valid_start_date')
             ->get(['slug', 'updated_at'])
-            ->map(fn (Spa $spa) => $this->entry(route('spa.show', $spa->slug), $spa->updated_at, 'weekly', '0.7'));
+            ->map(fn (Spa $spa) => $this->entry(route('spa-landing.treatments.show', $spa->slug), $spa->updated_at, 'weekly', '0.7'));
     }
 
     private function festiveEventUrls(): Collection
@@ -286,6 +284,7 @@ class SitemapService
             $this->entry(route('spa-landing.index'), null, 'weekly', '1.0'),
         ])
             ->merge($pages)
+            ->merge($this->spaUrls())
             ->unique('loc')
             ->values();
     }

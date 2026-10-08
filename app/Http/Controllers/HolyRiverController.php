@@ -28,6 +28,7 @@ class HolyRiverController extends Controller
 
         $experiences = Experience::query()
             ->where('is_active', true)
+            ->where('slug', '!=', 'nandini-signature-spa-on-the-river')
             ->whereHas('category', function ($query) {
                 $query->where('slug', 'holy-river');
             })

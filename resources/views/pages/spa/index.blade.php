@@ -47,7 +47,6 @@
     <x-sections.spa-information-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
 
     @if ($spas->isNotEmpty())
-    {{-- Description --}}
     <div class="pt-8 md:pt-8 mx-auto max-w-sm sm:max-w-3xl md:max-w-5xl text-center text-gray-600">
         <h2 class="text-lg text-center leading-snug uppercase font-medium mt-20 mb-3 sm:text-xl">
             Sacred Jungle Wellness Journey
@@ -57,7 +56,7 @@
         </div>
     </div>
 
-    <x-sections.item-carousel :items="$spas" route-name="spa.show" wrapper-class="pt-10 md:pt-16" data-gtm-section="treatments" />
+    <x-sections.item-carousel :items="$spas" route-name="spa-landing.treatments.show" wrapper-class="pt-10 md:pt-16" data-gtm-section="treatments" />
     @endif
     @endif
 

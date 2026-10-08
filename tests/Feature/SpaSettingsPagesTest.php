@@ -91,7 +91,7 @@ class SpaSettingsPagesTest extends TestCase
         $settings = SpaSetting::query()->firstOrFail();
         $originalHeading = $settings->hero_heading;
         $items = [
-            ['icon' => 'clock', 'label' => 'Hours', 'value' => '08:00 AM – 10:00 PM', 'link' => null],
+            ['icon' => 'clock', 'label' => 'Hours', 'value' => '09:00 AM – 10:00 PM', 'link' => null],
             ['icon' => 'calendar', 'label' => 'Booking', 'value' => 'Advance booking recommended', 'link' => null],
             ['icon' => 'location', 'label' => 'Location', 'value' => 'Ubud, Bali', 'link' => null],
             ['icon' => 'phone', 'label' => 'Reservations', 'value' => '+62 812 3687 1170', 'link' => 'https://wa.me/6281236871170'],
