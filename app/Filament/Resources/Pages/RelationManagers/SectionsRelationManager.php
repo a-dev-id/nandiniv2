@@ -42,6 +42,7 @@ class SectionsRelationManager extends RelationManager
         'contained_image_section',
         'split_media_section',
         'split_media_reverse',
+        'holy_river_booking_cta',
         'seo_split_media_section',
         'seo_split_media_reverse',
         'three_images_section',
@@ -65,6 +66,10 @@ class SectionsRelationManager extends RelationManager
         'honeymoon_spa',
         'honeymoon_celebrations',
         'honeymoon_final_cta',
+        'wedding_chapel',
+        'wedding_river',
+        'wedding_dining',
+        'wedding_final_cta',
     ];
 
     private const ITEM_SECTION_KEYS = [
@@ -93,6 +98,10 @@ class SectionsRelationManager extends RelationManager
         'honeymoon_itinerary',
         'honeymoon_faq',
         'honeymoon_final_cta',
+        'wedding_ceremony_options',
+        'wedding_accommodation',
+        'wedding_planning',
+        'wedding_final_cta',
     ];
 
     private const HONEYMOON_ACTION_SECTION_KEYS = [
@@ -100,6 +109,16 @@ class SectionsRelationManager extends RelationManager
         'honeymoon_dining',
         'honeymoon_spa',
         'honeymoon_final_cta',
+    ];
+
+    private const WEDDING_ACTION_SECTION_KEYS = [
+        'wedding_final_cta',
+    ];
+
+    private const WEDDING_CARD_SECTION_KEYS = [
+        'wedding_ceremony_options',
+        'wedding_accommodation',
+        'wedding_planning',
     ];
 
     private const ABOUT_SECTION_KEYS = [
@@ -147,6 +166,7 @@ class SectionsRelationManager extends RelationManager
                                 'contained_image_section' => 'Contained Image Section',
                                 'split_media_section' => 'Split Media Section',
                                 'split_media_reverse' => 'Split Media Reverse',
+                                'holy_river_booking_cta' => 'Holy River: Booking CTA',
                                 'seo_split_media_section' => 'SEO Split Media Section',
                                 'seo_split_media_reverse' => 'SEO Split Media Reverse',
                                 'three_images_section' => 'Three Images Section',
@@ -175,6 +195,13 @@ class SectionsRelationManager extends RelationManager
                                 'honeymoon_celebrations' => 'Honeymoon: Celebrations',
                                 'honeymoon_faq' => 'Honeymoon: FAQ',
                                 'honeymoon_final_cta' => 'Honeymoon: Final CTA',
+                                'wedding_chapel' => 'Wedding: Chapel Venue',
+                                'wedding_river' => 'Wedding: River Venue',
+                                'wedding_ceremony_options' => 'Wedding: Ceremony Options',
+                                'wedding_dining' => 'Wedding: Dining & Celebrations',
+                                'wedding_accommodation' => 'Wedding: Accommodation',
+                                'wedding_planning' => 'Wedding: Planning',
+                                'wedding_final_cta' => 'Wedding: Final CTA',
                             ])
                             ->default('intro_text_section')
                             ->afterStateUpdated(function (?string $state, Set $set, Get $get): void {
@@ -336,6 +363,10 @@ class SectionsRelationManager extends RelationManager
                                 'honeymoon_package', 'honeymoon_dining', 'honeymoon_spa', 'honeymoon_final_cta' => 'Call-to-action Buttons',
                                 'honeymoon_itinerary' => 'Itinerary Days',
                                 'honeymoon_faq' => 'FAQ Rows',
+                                'wedding_ceremony_options' => 'Ceremony Cards',
+                                'wedding_accommodation' => 'Accommodation Cards',
+                                'wedding_planning' => 'Planning Blocks',
+                                'wedding_final_cta' => 'Call-to-action Buttons',
                                 default => 'How It Works Items',
                             })
                             ->visible(fn (Get $get): bool => in_array($get('section_key'), self::ITEM_SECTION_KEYS, true))
@@ -361,6 +392,10 @@ class SectionsRelationManager extends RelationManager
                                 'honeymoon_spa' => 3,
                                 'honeymoon_itinerary' => 4,
                                 'honeymoon_faq' => 10,
+                                'wedding_ceremony_options' => 3,
+                                'wedding_accommodation' => 2,
+                                'wedding_planning' => 4,
+                                'wedding_final_cta' => 2,
                                 default => 4,
                             })
                             ->minItems(1)
@@ -397,6 +432,14 @@ class SectionsRelationManager extends RelationManager
 
                                 if (in_array($get('section_key'), self::HONEYMOON_ACTION_SECTION_KEYS, true)) {
                                     return $state['label'] ?? 'Button';
+                                }
+
+                                if (in_array($get('section_key'), self::WEDDING_ACTION_SECTION_KEYS, true)) {
+                                    return $state['label'] ?? 'Button';
+                                }
+
+                                if (in_array($get('section_key'), self::WEDDING_CARD_SECTION_KEYS, true)) {
+                                    return $state['title'] ?? 'Card';
                                 }
 
                                 if ($get('section_key') === 'honeymoon_itinerary') {
@@ -439,6 +482,10 @@ class SectionsRelationManager extends RelationManager
                                 'honeymoon_package', 'honeymoon_dining', 'honeymoon_spa', 'honeymoon_final_cta' => 'Add button',
                                 'honeymoon_itinerary' => 'Add day',
                                 'honeymoon_faq' => 'Add FAQ',
+                                'wedding_ceremony_options' => 'Add ceremony option',
+                                'wedding_accommodation' => 'Add accommodation',
+                                'wedding_planning' => 'Add planning block',
+                                'wedding_final_cta' => 'Add button',
                                 default => 'Add item',
                             })
                             ->schema([
@@ -446,6 +493,7 @@ class SectionsRelationManager extends RelationManager
                                     ->label(fn (Get $get): string => in_array($get('../../section_key'), [
                                         'about_story_final',
                                         ...self::HONEYMOON_ACTION_SECTION_KEYS,
+                                        ...self::WEDDING_ACTION_SECTION_KEYS,
                                     ], true) ? 'Button Label' : ($get('../../section_key') === 'honeymoon_itinerary' ? 'Day Label' : 'Label'))
                                     ->default(fn (Get $get): ?string => in_array($get('../../section_key'), [
                                         'dining_information_section',
@@ -467,6 +515,7 @@ class SectionsRelationManager extends RelationManager
                                         'about_story_final',
                                         'honeymoon_itinerary',
                                         ...self::HONEYMOON_ACTION_SECTION_KEYS,
+                                        ...self::WEDDING_ACTION_SECTION_KEYS,
                                     ], true)),
 
                                 TextInput::make('url')
@@ -484,13 +533,15 @@ class SectionsRelationManager extends RelationManager
                                         'about_story_final',
                                         'honeymoon_accommodations',
                                         ...self::HONEYMOON_ACTION_SECTION_KEYS,
+                                        'wedding_accommodation',
+                                        ...self::WEDDING_ACTION_SECTION_KEYS,
                                     ], true)),
 
                                 TextInput::make('link_label')
                                     ->label('Card Link Label')
                                     ->placeholder('View Details')
                                     ->maxLength(255)
-                                    ->visible(fn (Get $get): bool => $get('../../section_key') === 'honeymoon_accommodations'),
+                                    ->visible(fn (Get $get): bool => in_array($get('../../section_key'), ['honeymoon_accommodations', 'wedding_accommodation'], true)),
 
                                 FileUpload::make('image')
                                     ->label(fn (Get $get): string => $get('../../section_key') === 'honeymoon_itinerary' ? 'Day Image' : 'Card Image')
@@ -581,6 +632,7 @@ class SectionsRelationManager extends RelationManager
                                         'honeymoon_features',
                                         'honeymoon_accommodations',
                                         'honeymoon_itinerary',
+                                        ...self::WEDDING_CARD_SECTION_KEYS,
                                     ], true))
                                     ->visible(fn (Get $get): bool => in_array($get('../../section_key'), [
                                         'how_it_works_section',
@@ -593,6 +645,7 @@ class SectionsRelationManager extends RelationManager
                                         'honeymoon_features',
                                         'honeymoon_accommodations',
                                         'honeymoon_itinerary',
+                                        ...self::WEDDING_CARD_SECTION_KEYS,
                                     ], true))
                                     ->columnSpan(fn (Get $get): int => $get('../../section_key') === 'membership_use_points_section' ? 2 : 1),
 
@@ -637,6 +690,7 @@ class SectionsRelationManager extends RelationManager
                                         'honeymoon_features',
                                         'honeymoon_accommodations',
                                         'honeymoon_itinerary',
+                                        ...self::WEDDING_CARD_SECTION_KEYS,
                                     ], true)),
 
                                 Select::make('kind')
@@ -712,7 +766,10 @@ class SectionsRelationManager extends RelationManager
                                         'white-outline' => 'White Outline',
                                     ])
                                     ->default('outline')
-                                    ->visible(fn (Get $get): bool => in_array($get('../../section_key'), self::HONEYMOON_ACTION_SECTION_KEYS, true)),
+                                    ->visible(fn (Get $get): bool => in_array($get('../../section_key'), [
+                                        ...self::HONEYMOON_ACTION_SECTION_KEYS,
+                                        ...self::WEDDING_ACTION_SECTION_KEYS,
+                                    ], true)),
 
                                 Select::make('card_design')
                                     ->label('Card Design')
@@ -800,6 +857,21 @@ class SectionsRelationManager extends RelationManager
                                     ->panelLayout('integrated')
                                     ->openable()
                                     ->downloadable()
+                                    ->fetchFileInformation(false)
+                                    ->getUploadedFileUsing(function (FileUpload $component, string $file, string|array|null $storedFileNames): array {
+                                        $url = match (true) {
+                                            str_starts_with($file, 'http://'), str_starts_with($file, 'https://') => $file,
+                                            str_starts_with($file, '/') => asset($file),
+                                            default => asset('storage/'.$file),
+                                        };
+
+                                        return [
+                                            'name' => ($component->isMultiple() ? ($storedFileNames[$file] ?? null) : $storedFileNames) ?? basename($file),
+                                            'size' => 0,
+                                            'type' => null,
+                                            'url' => $url,
+                                        ];
+                                    })
                                     ->saveUploadedFileUsing(
                                         fn (TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                                             file: $file,
@@ -840,6 +912,21 @@ class SectionsRelationManager extends RelationManager
                                     ->panelLayout('integrated')
                                     ->openable()
                                     ->downloadable()
+                                    ->fetchFileInformation(false)
+                                    ->getUploadedFileUsing(function (FileUpload $component, string $file, string|array|null $storedFileNames): array {
+                                        $url = match (true) {
+                                            str_starts_with($file, 'http://'), str_starts_with($file, 'https://') => $file,
+                                            str_starts_with($file, '/') => asset($file),
+                                            default => asset('storage/'.$file),
+                                        };
+
+                                        return [
+                                            'name' => ($component->isMultiple() ? ($storedFileNames[$file] ?? null) : $storedFileNames) ?? basename($file),
+                                            'size' => 0,
+                                            'type' => null,
+                                            'url' => $url,
+                                        ];
+                                    })
                                     ->saveUploadedFileUsing(
                                         fn (TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                                             file: $file,

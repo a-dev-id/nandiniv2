@@ -51,6 +51,36 @@
             12 => 'spa_on_river',
         ];
         $bookingUrl = 'https://wa.me/6281236871170?text='.rawurlencode('Hello, I would like to enquire about the Holy River and Balinese purification experiences at Nandini Jungle.');
+        $holyRiverFallbackImages = [
+            'ayung_river' => asset('images/holy-river/A-SACRED-SETTING-BY-THE-AYUNG-RIVER.jpg'),
+            'blessing_purification' => asset('images/holy-river/BALINESE-BLESSING-&-PURIFICATION.jpg'),
+            'spa_on_river' => asset('images/holy-river/SPA%20ON%20THE%20RIVER.webp'),
+            'booking_cta' => asset('images/holy-river/PLAN%20YOUR%20HOLY%20RIVER%20EXPERIENCE.webp'),
+        ];
+        $resolveImage = function (?string $raw): string {
+            $raw = trim((string) $raw);
+
+            if ($raw === '') {
+                return '';
+            }
+
+            if (str_starts_with($raw, 'http://') || str_starts_with($raw, 'https://') || str_starts_with($raw, '/')) {
+                return $raw;
+            }
+
+            if (str_starts_with($raw, 'storage/')) {
+                return '/'.$raw;
+            }
+
+            return asset('storage/'.$raw);
+        };
+        $bookingSection = $sections->firstWhere('section_key', 'holy_river_booking_cta');
+        $bookingSectionImage = $bookingSection?->images?->first();
+        $bookingImageUrl = $resolveImage($bookingSectionImage?->image ?: $bookingSectionImage?->mobile_image)
+            ?: $holyRiverFallbackImages['booking_cta'];
+        $bookingImageAlt = $bookingSectionImage?->image_alt
+            ?: $bookingSectionImage?->mobile_image_alt
+            ?: 'Guest meditating beside the Holy River at Nandini Jungle';
     @endphp
 
     <x-heroes.video-hero
@@ -69,8 +99,28 @@
     />
 
     @foreach ($sections as $section)
-        @if ($section->section_key === 'image_overlay_section')
+        @php
+            $trackingName = $sectionTrackingNames[$section->id] ?? null;
+            $sectionImage = $section->images?->first();
+            $hasSectionImage = filled($sectionImage?->image) || filled($sectionImage?->mobile_image);
+        @endphp
+
+        @if ($section->section_key === 'image_overlay_section' && ($sectionTrackingNames[$section->id] ?? null) !== 'spa_on_river')
             <x-sections.image-overlay-section :section="$section" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
+        @endif
+
+        @if (($sectionTrackingNames[$section->id] ?? null) === 'spa_on_river')
+            <x-sections.split-media-section
+                :section="$section"
+                :reverse="true"
+                :excerpt-only="false"
+                image-span="7"
+                text-span="5"
+                :image="$hasSectionImage ? null : $holyRiverFallbackImages['spa_on_river']"
+                :image-alt="$hasSectionImage ? null : 'Spa treatment beds beside the Ayung River at Nandini Jungle'"
+                :compact="true"
+                :data-gtm-section="$sectionTrackingNames[$section->id]"
+            />
         @endif
 
         @if ($section->section_key === 'contained_image_section')
@@ -78,17 +128,37 @@
         @endif
 
         @if ($section->section_key === 'split_media_section')
-            <x-sections.split-media-section :section="$section" :excerpt-only="false" image-span="8" text-span="4" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
+            <x-sections.split-media-section
+                :section="$section"
+                :excerpt-only="false"
+                image-span="8"
+                text-span="4"
+                :image="$trackingName === 'blessing_purification' && ! $hasSectionImage ? $holyRiverFallbackImages['blessing_purification'] : null"
+                :image-alt="$trackingName === 'blessing_purification' && ! $hasSectionImage ? 'Balinese blessing and purification ceremony beside the Ayung River' : null"
+                :compact="true"
+                :data-gtm-section="$sectionTrackingNames[$section->id] ?? null"
+            />
         @endif
 
         @if ($section->section_key === 'split_media_reverse')
-            <x-sections.split-media-section :section="$section" :reverse="true" :excerpt-only="false" image-span="8" text-span="4" :data-gtm-section="$sectionTrackingNames[$section->id] ?? null" />
+            <x-sections.split-media-section
+                :section="$section"
+                :reverse="true"
+                :excerpt-only="false"
+                image-span="8"
+                text-span="4"
+                :image="$trackingName === 'ayung_river' && ! $hasSectionImage ? $holyRiverFallbackImages['ayung_river'] : null"
+                :image-alt="$trackingName === 'ayung_river' && ! $hasSectionImage ? 'Sacred riverside deck surrounded by tropical jungle at Nandini Jungle' : null"
+                :compact="true"
+                :data-gtm-section="$sectionTrackingNames[$section->id] ?? null"
+            />
         @endif
 
         @if ($section->section_key === 'intro_text_section')
             <x-sections.intro-text-section
                 :section="$section"
                 id="holy-river-experiences"
+                :compact="true"
                 :data-gtm-section="$sectionTrackingNames[$section->id] ?? null"
             />
 
@@ -98,14 +168,18 @@
                     route-name="holy-river.show"
                     :show-reserve-button="false"
                     action-label="More Details"
+                    bottom-padding-class="pb-10 md:pb-16"
                     data-gtm-section="holy_river_experiences"
                 />
             @endif
         @endif
     @endforeach
 
-    <section class="relative isolate flex min-h-[420px] items-center overflow-hidden bg-[#142c24] px-6 py-16 text-center font-sans text-white md:min-h-[460px] md:px-12 md:py-20" aria-labelledby="holy-river-booking-title" data-gtm-section="booking_cta">
-        <div class="mx-auto w-full max-w-3xl border-y border-white/25 py-10 md:py-12">
+    <section class="relative isolate flex min-h-[420px] items-center overflow-hidden bg-[#142c24] px-6 py-12 text-center font-sans text-white md:min-h-[460px] md:px-12 md:py-16" aria-labelledby="holy-river-booking-title" data-gtm-section="booking_cta">
+        <img src="{{ $bookingImageUrl }}" alt="{{ $bookingImageAlt }}" class="absolute inset-0 -z-20 h-full w-full object-cover object-center" width="1600" height="900" loading="lazy" decoding="async">
+        <div class="absolute inset-0 -z-10 bg-black/45"></div>
+
+        <div class="mx-auto w-full max-w-3xl py-9 md:py-10">
             <p class="mb-3 text-[10px] font-medium uppercase tracking-[.18em] text-[#e2cca0] sm:text-xs">HOLY RIVER AT NANDINI</p>
             <h2 id="holy-river-booking-title" class="text-lg leading-snug font-medium text-white uppercase sm:text-xl">PLAN YOUR HOLY RIVER EXPERIENCE</h2>
             <p class="mx-auto mt-5 max-w-2xl text-xs leading-relaxed text-white/85 sm:text-sm">
@@ -113,7 +187,7 @@
             </p>
             <div class="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <x-buttons.link-button href="#holy-river-experiences" variant="white-outline">EXPLORE HOLY RIVER EXPERIENCES</x-buttons.link-button>
-                <x-buttons.link-button :href="$bookingUrl" variant="solid">ENQUIRE / RESERVE</x-buttons.link-button>
+                <x-buttons.link-button :href="$bookingUrl" variant="solid">RESERVE</x-buttons.link-button>
             </div>
         </div>
     </section>

@@ -3,6 +3,7 @@
 'imageSrc' => '',
 'mobileImageSrcManual' => '',
 'altText' => 'Header Image',
+'useProductionFallback' => false,
 ])
 
 @aware(['trackSections' => true])
@@ -16,8 +17,16 @@ if ($page && ($page->hero_image || $page->hero_mobile_image)) {
 $desktopImage = $page->hero_image ?: $page->hero_mobile_image;
 $mobileImage = $page->hero_mobile_image ?: $page->hero_image;
 
-$desktopImageSrc = Storage::disk('public')->url($desktopImage);
-$mobileImageSrc = Storage::disk('public')->url($mobileImage);
+$resolveStoredImage = function (string $path) use ($useProductionFallback): string {
+    if ($useProductionFallback && ! Storage::disk('public')->exists($path)) {
+        return 'https://nandinibali.com/storage/'.ltrim($path, '/');
+    }
+
+    return Storage::disk('public')->url($path);
+};
+
+$desktopImageSrc = $resolveStoredImage($desktopImage);
+$mobileImageSrc = $resolveStoredImage($mobileImage);
 
 $alt = $page->hero_image_alt
 ?: $page->hero_mobile_image_alt

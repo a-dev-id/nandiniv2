@@ -1,6 +1,7 @@
 @props([
 'section' => null,
 'comfortableTextSpacing' => false,
+'compact' => false,
 ])
 
 @if ($section)
@@ -60,10 +61,14 @@ it is treated as a continuation text section.
 Example: the description below "How It Works".
 */
 $sectionSpacingClass = ($hasTitle || $hasSubtitle)
-? 'py-14 md:py-20'
+? ($compact ? 'py-10 md:py-14' : 'py-14 md:py-20')
 : 'pt-0 pb-14 md:pb-10';
 
-$descriptionTopSpacingClass = $comfortableTextSpacing ? 'pt-5 md:pt-6' : 'pt-8 md:pt-10';
+$subtitleMarginClass = $compact ? 'mb-2' : 'mb-4';
+$titleMarginClass = $compact ? 'mb-2' : 'mb-3';
+$descriptionTopSpacingClass = $compact
+? 'pt-3 md:pt-4'
+: ($comfortableTextSpacing ? 'pt-5 md:pt-6' : 'pt-8 md:pt-10');
 $richTextSpacingClass = $comfortableTextSpacing
 ? '[&_p]:mb-4 [&_p:last-child]:mb-0 [&_h1]:mt-8 [&_h1:first-child]:mt-0 [&_h2]:mt-8 [&_h2:first-child]:mt-0 [&_h3]:mt-6 [&_h3:first-child]:mt-0 [&_ul]:mt-4 [&_ol]:mt-4'
 : '[&_p]:mb-2';
@@ -74,7 +79,7 @@ $richTextSpacingClass = $comfortableTextSpacing
 
         {{-- Subtitle --}}
         @if ($hasSubtitle)
-        <p class="mb-4 text-center text-xs md:text-base leading-relaxed uppercase text-[#b28a4a] font-medium sm:text-sm">
+        <p class="{{ $subtitleMarginClass }} text-center text-xs md:text-base leading-relaxed uppercase text-[#b28a4a] font-medium sm:text-sm">
             {!! str_ireplace(
             ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
             '<br class="hidden md:block">',
@@ -85,7 +90,7 @@ $richTextSpacingClass = $comfortableTextSpacing
 
         {{-- Title --}}
         @if ($hasTitle)
-        <h2 class="text-lg text-center leading-snug uppercase font-medium {{ $titleColorClass }} mb-3 sm:text-xl">
+        <h2 class="text-lg text-center leading-snug uppercase font-medium {{ $titleColorClass }} {{ $titleMarginClass }} sm:text-xl">
             {!! str_ireplace(
             ['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'],
             '<br class="hidden md:block">',

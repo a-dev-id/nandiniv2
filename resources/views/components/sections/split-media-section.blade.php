@@ -7,6 +7,10 @@
 'noButton' => false,
 'excerptOnly' => true,
 'spaAccent' => false,
+'image' => null,
+'mobileImage' => null,
+'imageAlt' => null,
+'compact' => false,
 ])
 
 @php
@@ -101,19 +105,26 @@ $descriptionText = $cleanText($description);
 
 $sectionImage = $section?->images?->first();
 
-$desktopRawImage = $sectionImage?->image ?? '';
+$desktopRawImage = $image ?: ($sectionImage?->image ?? '');
 
-$mobileRawImage = $sectionImage?->mobile_image
+$mobileRawImage = $mobileImage
+?: $image
+?: $sectionImage?->mobile_image
 ?: $sectionImage?->image
 ?: '';
 
 $desktopImageUrl = $resolveImage($desktopRawImage ?: $mobileRawImage);
 $mobileImageUrl = $resolveImage($mobileRawImage ?: $desktopRawImage);
 
-$imageAlt = $sectionImage?->image_alt
+$resolvedImageAlt = $imageAlt
+?: $sectionImage?->image_alt
 ?: $sectionImage?->mobile_image_alt
 ?: $titleText
 ?: 'Section image';
+
+$sectionSpacingClass = $compact
+? 'py-10 md:py-16'
+: 'py-14 md:py-28';
 
 $buttonLabel = $section?->button_label ?: 'DISCOVER';
 $buttonUrl = null;
@@ -134,7 +145,7 @@ $buttonUrl,
 @endphp
 
 @if ($section)
-<section class="py-14 md:py-28 w-full {{ $reverse ? '' : 'bg-[#F7F7F7]' }}" {{ $attributes->only('data-gtm-section') }}>
+<section class="{{ $sectionSpacingClass }} w-full {{ $reverse ? '' : 'bg-[#F7F7F7]' }}" {{ $attributes->only('data-gtm-section') }}>
     <div class="{{ $wrapper }}">
         <div class="grid grid-cols-1 lg:grid-cols-12 items-stretch gap-8 lg:gap-10">
 
@@ -146,7 +157,7 @@ $buttonUrl,
                         <source media="(max-width: 767px)" srcset="{{ $mobileImageUrl }}">
                         @endif
 
-                        <img src="{{ $desktopImageUrl ?: $mobileImageUrl }}" alt="{{ $imageAlt }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy">
+                        <img src="{{ $desktopImageUrl ?: $mobileImageUrl }}" alt="{{ $resolvedImageAlt }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy">
                     </picture>
                     @endif
                 </div>
