@@ -8,7 +8,10 @@ $metaDescription = $page->meta_description
 $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
 $sections = $page->sections ?? collect();
 $isJungleSpaPage = $page->slug === 'jungle-spa-ubud';
-$preserveSectionButtonLabels = $page->slug === 'ubud-jungle-resort-in-bali';
+$preserveSectionButtonLabels = in_array($page->slug, [
+    'ubud-jungle-resort-in-bali',
+    'jungle-spa-ubud',
+], true);
 @endphp
 
 <title>{{ $metaTitle }}</title>

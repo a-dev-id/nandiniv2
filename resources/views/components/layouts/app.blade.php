@@ -1,6 +1,6 @@
 @props([
-    'showMiniPopup' => true,
-    'trackSections' => true,
+'showMiniPopup' => true,
+'trackSections' => true,
 ])
 
 <!DOCTYPE html>
@@ -113,10 +113,13 @@
     @endif
 
     @if ($showMiniPopup)
-        <x-mini-popup-widget />
+    <x-mini-popup-widget />
     @endif
 
     @stack('scripts')
+    <script>
+        !function(w,d,s,u){if(w.oaiq)return;var q=function(){q.q.push(arguments)};q.q=[];w.oaiq=q;var j=d.createElement(s);j.async=1;j.src=u;var f=d.getElementsByTagName(s)[0];f.parentNode.insertBefore(j,f)}(window,document,"script","https://bzrcdn.openai.com/sdk/oaiq.min.js");oaiq("init",{pixelId:"YaQU7zhUgN9H9F5LBr93na",debug:true});
+    </script>
 </body>
 
 </html>

@@ -196,6 +196,7 @@ function initItemCarousel() {
             const $el = $(this);
             const $wrap = $el.closest(".item-carousel-wrap");
             const slidesToShow = Number($el.data("slides-to-show")) || 3;
+            const showDots = String($el.data("show-dots")) !== "false";
 
             if ($el.hasClass("slick-initialized")) {
                 $el.slick("refresh");
@@ -214,7 +215,7 @@ function initItemCarousel() {
                 arrows: true,
                 prevArrow: $wrap.find(".itemcarousel-prev"),
                 nextArrow: $wrap.find(".itemcarousel-next"),
-                dots: true,
+                dots: showDots,
                 speed: 450,
                 responsive: [
                     { breakpoint: 1024, settings: { slidesToShow: 2 } },

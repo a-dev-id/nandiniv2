@@ -7,16 +7,23 @@
 'textAlignClass' => 'text-left',
 'textColorClass' => 'text-slate-800',
 'mutedTextColorClass' => 'text-slate-700',
+'eyebrowFirst' => false,
 ])
 
 <div class="{{ $textAlignClass }} {{ $textColorClass }}">
+    @if ($eyebrowFirst && $subtitle !== '')
+    <p class="mb-3 text-xs font-medium uppercase leading-relaxed tracking-[0.08em] {{ $mutedTextColorClass }} sm:text-[0.8125rem]">
+        {{ $subtitle }}
+    </p>
+    @endif
+
     @if ($title !== '')
     <h2 class="blog-detail-section-title">
         {{ $title }}
     </h2>
     @endif
 
-    @if ($subtitle !== '')
+    @if (! $eyebrowFirst && $subtitle !== '')
     <p class="mb-3 text-xs font-medium uppercase leading-relaxed tracking-[0.08em] {{ $mutedTextColorClass }} sm:text-[0.8125rem]">
         {{ $subtitle }}
     </p>

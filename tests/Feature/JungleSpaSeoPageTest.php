@@ -14,7 +14,7 @@ class JungleSpaSeoPageTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_jungle_spa_seo_page_renders_attached_content_and_footer_link(): void
+    public function test_jungle_spa_page_renders_refined_content_links_and_unchanged_hero(): void
     {
         $page = Page::query()
             ->where('site', Page::SITE_MAIN)
@@ -24,9 +24,10 @@ class JungleSpaSeoPageTest extends TestCase
         $this->assertSame('SEO - Jungle Spa Ubud Page', $page->page_name);
         $this->assertSame('Jungle Spa Ubud | Spa in the Bali Jungle | Nandini', $page->meta_title);
         $this->assertCount(12, $page->sections);
+        $this->assertCount(7, $page->sections->where('is_active', true));
         $this->assertSame(
             'soft_gray',
-            $page->sections->firstWhere('title', 'Find Your Moment of Calm in the Bali Jungle')?->background_color,
+            $page->sections->firstWhere('title', 'Plan Your Spa Experience')?->background_color,
         );
 
         $response = $this->get('https://'.config('domains.main').'/jungle-spa-ubud');
@@ -36,18 +37,43 @@ class JungleSpaSeoPageTest extends TestCase
             ->assertViewIs('pages.show')
             ->assertSee('<title>Jungle Spa Ubud | Spa in the Bali Jungle | Nandini</title>', false)
             ->assertSee('Jungle Spa in Ubud, Bali')
-            ->assertSee('A Spa Experience Shaped by the Jungle')
-            ->assertSee('Signature Spa on the River')
-            ->assertSee('Why Experience a Jungle Spa at Nandini?')
-            ->assertSee('Frequently Asked Questions')
-            ->assertSee('Book Your Jungle Spa Experience')
-            ->assertSee('/holy-river/nandini-signature-spa-on-the-river', false)
-            ->assertSee('/storage/pages/sections/ubud-jungle-spa-treatment-nandini-wellness-retreat.webp', false)
+            ->assertSee('Discover Our Spa Experiences')
+            ->assertSee('Essence Spa')
+            ->assertSee('Nandini Signature Spa on the River')
+            ->assertSee('Wine Spa')
+            ->assertSee('Spa Jacuzzi')
+            ->assertSee('A Romantic Spa Escape')
+            ->assertSee('Plan Your Spa Experience')
+            ->assertSee('Explore Essence Spa')
+            ->assertSee('View Spa on the River')
+            ->assertSee('View Wine Spa')
+            ->assertSee('Book Spa Jacuzzi')
+            ->assertSee('Explore Honeymoon Experiences')
+            ->assertSee('Book a Spa Experience')
+            ->assertSee('href="https://spa.nandinibali.com/"', false)
+            ->assertSee('href="/holy-river/nandini-signature-spa-on-the-river"', false)
+            ->assertSee('href="https://voucher.nandinibali.com/voucher/luxury-spa-package-wine-spa"', false)
+            ->assertSee('href="/ubud-wellness-retreat"', false)
+            ->assertSee('href="/honeymoon"', false)
             ->assertSee('href="https://'.config('domains.main').'/jungle-spa-ubud"', false)
-            ->assertSee('Jungle Spa Ubud');
+            ->assertSee('alt="Balinese spa treatment at Essence Spa in Ubud, Bali"', false)
+            ->assertSee('alt="Riverside spa treatment beside the Ayung River at Nandini Jungle"', false)
+            ->assertDontSee('Frequently Asked Questions')
+            ->assertDontSee('FAQPage', false)
+            ->assertDontSee('A Spa Experience Shaped by the Jungle')
+            ->assertDontSee('Why Experience a Jungle Spa at Nandini?');
 
-        $this->assertSame(7, substr_count($response->getContent(), 'data-image-aspect="4:3"'));
-        $this->assertSame(12, substr_count($response->getContent(), 'data-text-spacing="comfortable"'));
+        $html = $response->getContent();
+
+        $this->assertSame(1, preg_match_all('/<h1\b/i', $html));
+        $this->assertSame(1, preg_match('/<header\b[^>]*data-gtm-section="hero"[^>]*>(.*?)<\/header>/is', $html, $hero));
+        $this->assertStringNotContainsString('<h1', $hero[1]);
+        $this->assertStringNotContainsString('<a ', $hero[1]);
+        $this->assertStringNotContainsString('<button', $hero[1]);
+        $this->assertStringContainsString('loading="eager"', $hero[1]);
+        $this->assertStringContainsString('fetchpriority="high"', $hero[1]);
+        $this->assertSame(6, substr_count($html, 'data-image-aspect="4:3"'));
+        $this->assertSame(7, substr_count($html, 'data-text-spacing="comfortable"'));
 
         $role = Role::query()->create(['name' => 'Administrator', 'slug' => Role::ADMINISTRATOR]);
         $user = User::factory()->create()->assignRole($role);

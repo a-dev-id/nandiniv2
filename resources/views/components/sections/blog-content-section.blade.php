@@ -29,7 +29,11 @@ if (str_starts_with($raw, '/')) {
 return $raw;
 }
 
-return asset('storage/' . $raw);
+if (\Illuminate\Support\Facades\Storage::disk('public')->exists($raw)) {
+return \Illuminate\Support\Facades\Storage::disk('public')->url($raw);
+}
+
+return rtrim(config('resort.url'), '/').'/storage/'.ltrim($raw, '/');
 };
 
 $cleanText = function (?string $value): string {
@@ -105,11 +109,16 @@ $buttonUrl = \Illuminate\Support\Facades\Route::has($section->button_route)
 $buttonUrl = $section?->button_url;
 }
 
+$editorialItems = is_array($section?->items) ? $section->items : [];
+$eyebrowFirst = filled(data_get($editorialItems, 'gtm_section'));
+
+if (! data_get($editorialItems, 'preserve_button_label', false)) {
 $buttonLabel = \App\Support\DetailPageButtonLabel::resolve(
 $buttonLabel,
 $section?->button_route,
 $buttonUrl,
 );
+}
 @endphp
 
 @if ($section)
@@ -137,7 +146,10 @@ $buttonUrl,
                     :text-align-class="$textAlignClass"
                     :text-color-class="$textColorClass"
                     :muted-text-color-class="$mutedTextColorClass"
+                    :eyebrow-first="$eyebrowFirst"
                 />
+
+                <x-sections.blog-editorial-items :items="$editorialItems" :muted-text-color-class="$mutedTextColorClass" />
 
                 @if (! $noButton && $buttonLabel && $buttonUrl)
                 <div class="mt-8 flex {{ $buttonAlignClass }}">
@@ -172,7 +184,10 @@ $buttonUrl,
             :text-align-class="$textAlignClass"
             :text-color-class="$textColorClass"
             :muted-text-color-class="$mutedTextColorClass"
+            :eyebrow-first="$eyebrowFirst"
         />
+
+        <x-sections.blog-editorial-items :items="$editorialItems" :muted-text-color-class="$mutedTextColorClass" />
 
         @if (! $noButton && $buttonLabel && $buttonUrl)
         <div class="pt-3 flex {{ $buttonAlignClass }}">

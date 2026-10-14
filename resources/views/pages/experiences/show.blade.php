@@ -190,7 +190,7 @@ $metaImage = $experience->card_image
             </h2>
         </div>
 
-        <x-sections.item-carousel :items="$relatedExperiences" route-name="experiences.show" />
+        <x-sections.item-carousel :items="$relatedExperiences" route-name="experiences.show" :show-dots="false" />
     </section>
     @endif
 </x-layouts.app>

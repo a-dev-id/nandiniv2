@@ -15,12 +15,13 @@
 'actionLabel' => 'More Details',
 'footerHref' => null,
 'footerLabel' => 'Explore More',
+'showDots' => true,
 ])
 
 <section class="{{ $bottomPaddingClass }} {{ $wrapperClass }}" {{ $attributes->only(['id', 'data-gtm-section']) }}>
     <div class="item-carousel-wrap mx-auto {{ $innerPaddingClass }} relative">
 
-        <div class="itemcarousel-slick">
+        <div class="itemcarousel-slick" data-show-dots="{{ $showDots ? 'true' : 'false' }}">
             @foreach ($items as $item)
             <article class="{{ $itemPaddingClass }} h-full w-full flex">
                 <div class="flex flex-col h-full w-full">
