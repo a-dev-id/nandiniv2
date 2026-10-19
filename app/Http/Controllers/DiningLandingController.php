@@ -35,6 +35,9 @@ class DiningLandingController extends Controller
             'diningSettings' => $diningSettings,
             'philosophyImage' => $philosophyImage,
             'signatureDish' => $signatureDish,
+            'restaurant' => Schema::hasTable('dining_experiences')
+                ? \App\Models\DiningExperience::query()->published()->where('slug', 'wild-ginger-restaurant')->first()
+                : null,
         ]);
     }
 

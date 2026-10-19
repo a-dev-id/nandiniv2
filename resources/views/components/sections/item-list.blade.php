@@ -331,6 +331,9 @@ $useShowMore = $model === 'experience'
             : null;
 
             $usesOfferCardLayout = in_array($model, ['offer', 'experience'], true);
+            $offerMobileSrcset = $model === 'offer' && $mobileImage
+                ? \App\Support\FilamentWebpUpload::responsiveSrcset($mobileImage)
+                : null;
 
             @endphp
 
@@ -363,7 +366,7 @@ $useShowMore = $model === 'experience'
                             @if ($desktopImage || $mobileImage)
                             <picture class="block h-full w-full">
                                 @if ($mobileImage)
-                                <source media="(max-width: 767px)" srcset="{{ asset('storage/' . $mobileImage) }}">
+                                <source media="(max-width: 767px)" srcset="{{ $offerMobileSrcset ?: asset('storage/' . $mobileImage) }}" @if ($offerMobileSrcset) sizes="calc(100vw - 26px)" @endif>
                                 @endif
 
                                 <img src="{{ asset('storage/' . ($desktopImage ?: $mobileImage)) }}" alt="{{ $desktopAlt }}" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" />

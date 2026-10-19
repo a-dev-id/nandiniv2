@@ -1,6 +1,7 @@
 @section('inquiry-modal', true)
 
 @push('meta')
+<x-seo.json-ld :data="\App\Support\SeoStructuredData::breadcrumb('https://nandinibali.com/experience/'.$experience->slug, $experience->title, 'https://nandinibali.com/experiences', 'Experiences')" />
 @php
 $metaTitle = $experience->meta_title ?: $experience->title;
 
@@ -173,6 +174,8 @@ $metaImage = $experience->card_image
                     href="#"
                     variant="solid"
                     data-inquiry-button
+                    data-inquiry-experience="{{ str_replace('-', '_', $experience->slug) }}"
+                    data-inquiry-category="{{ match ($experience->category?->slug) { 'jungle-romance' => 'romantic_experience', 'jungle-wellness-spa-rituals' => 'spa', 'signature-dining-experiences' => 'dining', default => 'experience' } }}"
                     data-inquiry-title="{{ $experience->title }}"
                     :data-inquiry-image="$inquiryImage ? asset('storage/' . $inquiryImage) : null"
                 >

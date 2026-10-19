@@ -220,6 +220,7 @@ class OfferForm
                                             targetWidth: 1200,
                                             targetHeight: 900,
                                             fileName: $get('hero_mobile_image_file_name'),
+                                            responsiveVariants: true,
                                         )
                                     ),
 

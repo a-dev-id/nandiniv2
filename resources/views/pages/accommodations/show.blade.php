@@ -1,4 +1,5 @@
 @push('meta')
+<x-seo.json-ld :data="\App\Support\SeoStructuredData::breadcrumb('https://nandinibali.com/'.$accommodation->url_prefix.'/'.$accommodation->slug, $accommodation->title, 'https://nandinibali.com/'.$accommodation->url_prefix, $accommodation->accommodation_type === 'suite' ? 'Royal Suites' : 'Jungle Villas')" />
 @php
 $metaTitle = $accommodation->meta_title ?: $accommodation->title;
 

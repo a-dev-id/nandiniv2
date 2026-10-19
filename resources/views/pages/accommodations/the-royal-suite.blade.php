@@ -37,6 +37,29 @@ return $accommodation->slug === 'presidential-royal-suite'
 );
 })
 ->values();
+
+$suiteCardContent = $royalSuiteItems->mapWithKeys(function ($accommodation) {
+    $features = $accommodation->features->pluck('label');
+    $details = [];
+    $amenityIcons = [
+        '/\b\d+\s*sqm\b/i' => 'square-meter.png',
+        '/king.*bed/i' => 'double-bed.png',
+        '/adults.*child/i' => 'family.png',
+        '/balcony|private terrace|patio/i' => 'balcony.png',
+        '/outdoor bathtub.*rain shower/i' => 'bathtub-outline.png',
+    ];
+
+    foreach ($amenityIcons as $pattern => $icon) {
+        $label = $features->first(fn ($feature) => preg_match($pattern, $feature));
+
+        if ($label) {
+            $label = preg_replace('/(Adults)\s+(\d+\s+Child)/i', '$1 + $2', $label);
+            $details[] = ['icon' => $icon, 'label' => $label];
+        }
+    }
+
+    return [$accommodation->slug => ['details' => $details, 'details_label' => 'Suite essentials']];
+})->all();
 @endphp
 
 <x-layouts.app>
@@ -45,7 +68,7 @@ return $accommodation->slug === 'presidential-royal-suite'
     <x-sections.page-description :page="$page" />
 
     @if ($page->slug === 'the-royal-suites' && $royalSuiteItems->isNotEmpty())
-    <x-sections.item-carousel :items="$royalSuiteItems" data-gtm-section="suites" />
+    <x-sections.item-carousel :items="$royalSuiteItems" :card-content="$suiteCardContent" data-gtm-section="suites" />
     @endif
 
     @foreach ($sections as $section)

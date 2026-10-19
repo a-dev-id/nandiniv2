@@ -16,7 +16,7 @@
     $videoId = $settings?->hero_video_id ?: (blank($settings?->hero_image) ? 'jafQbgUnfL4' : null);
 @endphp
 
-<section class="font-sans text-white [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-[5px] [&_a:focus-visible]:outline-[#d1b77d]" aria-labelledby="spa-hero-title" data-gtm-section="hero">
+<section class="relative font-sans text-white [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-[5px] [&_a:focus-visible]:outline-[#d1b77d]" aria-labelledby="spa-hero-title" data-gtm-section="hero">
     <div class="relative aspect-[4/3] overflow-hidden bg-[#1a3028] md:aspect-auto md:min-h-[max(700px,100svh)] lg:min-h-[max(720px,100vh)]">
         @if ($videoId)
             <div class="absolute inset-0">
@@ -29,17 +29,18 @@
             </picture>
         @endif
         <div class="absolute inset-0 hidden h-full w-full bg-[linear-gradient(90deg,rgba(0,0,0,.68)_0%,rgba(0,0,0,.48)_35%,rgba(0,0,0,.18)_65%,rgba(0,0,0,.12)_100%),linear-gradient(0deg,rgba(0,0,0,.35),transparent_50%)] md:block" aria-hidden="true"></div>
-        <div class="relative flex h-full w-full items-center px-6 pt-20 pb-6 md:min-h-[inherit] md:px-12 md:pt-36 md:pb-12 lg:px-[clamp(64px,5vw,100px)]">
-            <div class="hidden max-w-xl md:block">
+    </div>
+        <div class="relative flex w-full items-center justify-center bg-white px-6 py-8 text-center text-slate-700 md:absolute md:inset-0 md:h-full md:justify-start md:bg-transparent md:px-12 md:pt-36 md:pb-12 md:text-left md:text-white lg:px-[clamp(64px,5vw,100px)]">
+            <div class="w-full max-w-xl">
                 @if ($eyebrow)<p class="mb-4 text-[10px] font-medium tracking-[.18em] text-[#A88444] uppercase sm:text-xs">{{ $eyebrow }}</p>@endif
-                <h1 id="spa-hero-title" class="mb-5 font-span text-4xl leading-[1.05] [--heading-font-weight:400] [--heading-letter-spacing:-.025em] sm:text-5xl">{!! nl2br(e($heading)) !!}</h1>
-                @if ($subheading)<p class="mb-3 hidden text-xs leading-relaxed font-medium sm:block sm:text-sm">{{ $subheading }}</p>@endif
-                @if ($description)<p class="mb-6 hidden max-w-lg text-xs leading-relaxed text-white/85 sm:block sm:text-sm">{!! nl2br(e($description)) !!}</p>@endif
-                <div class="flex flex-wrap gap-3">
-                    @if ($primaryLabel && $primaryUrl)<x-buttons.link-button :href="$primaryUrl" variant="solid">{{ $primaryLabel }}</x-buttons.link-button>@endif
-                    @if ($secondaryLabel && $secondaryUrl)<x-buttons.link-button :href="$secondaryUrl" variant="white-outline">{{ $secondaryLabel }}</x-buttons.link-button>@endif
+                <h1 id="spa-hero-title" class="mb-5 font-span text-2xl leading-[1.05] [--heading-font-weight:400] [--heading-letter-spacing:-.025em] md:text-5xl">{!! nl2br(e($heading)) !!}</h1>
+                @if ($subheading)<p class="mb-3 hidden text-xs leading-relaxed font-medium md:block sm:text-sm">{{ $subheading }}</p>@endif
+                @if ($description)<p class="mb-6 hidden max-w-lg text-xs leading-relaxed text-white/85 md:block sm:text-sm">{!! nl2br(e($description)) !!}</p>@endif
+                <p class="mb-6 text-sm leading-relaxed text-slate-600 md:hidden">Experience restorative Balinese spa rituals surrounded by the tranquility of Nandini Jungle.</p>
+                <div class="flex flex-col gap-3 md:flex-row md:flex-wrap">
+                    @if ($primaryLabel && $primaryUrl)<x-buttons.link-button :href="$primaryUrl" variant="solid" class="min-h-11 w-full md:min-h-0 md:w-auto">{{ $primaryLabel }}</x-buttons.link-button>@endif
+                    @if ($secondaryLabel && $secondaryUrl)<x-buttons.link-button :href="$secondaryUrl" variant="white-outline" class="min-h-11 w-full max-md:border-slate-700 max-md:text-slate-700 md:min-h-0 md:w-auto">{{ $secondaryLabel }}</x-buttons.link-button>@endif
                 </div>
             </div>
         </div>
-    </div>
 </section>

@@ -1,4 +1,5 @@
 @push('meta')
+<x-seo.json-ld :data="\App\Support\SeoStructuredData::breadcrumb('https://nandinibali.com/presidential-royal-suite', $page->title, 'https://nandinibali.com/the-royal-suites', 'Royal Suites')" />
 <title>{{ $page->meta_title ?: $page->title }}</title>
 <meta name="description" content="{{ $page->meta_description ?? '' }}">
 

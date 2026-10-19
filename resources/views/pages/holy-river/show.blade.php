@@ -1,6 +1,7 @@
 @section('inquiry-modal', true)
 
 @push('meta')
+<x-seo.json-ld :data="\App\Support\SeoStructuredData::breadcrumb('https://nandinibali.com/holy-river/'.$experience->slug, $experience->title, 'https://nandinibali.com/holy-river', 'Holy River')" />
 @php
 $metaTitle = $experience->meta_title ?: $experience->title;
 
@@ -173,6 +174,7 @@ $metaImage = $experience->card_image
                     href="/holy-river"
                     variant="solid"
                     data-inquiry-button
+                    data-inquiry-experience="{{ str_replace('-', '_', $experience->slug) }}"
                     data-inquiry-title="{{ $experience->title }}"
                     :data-inquiry-image="$inquiryImage ? asset('storage/' . $inquiryImage) : null"
                 >

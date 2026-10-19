@@ -1,4 +1,5 @@
 @push('meta')
+<x-seo.json-ld :data="\App\Support\SeoStructuredData::page('https://nandinibali.com/jungle-villas', $page->title, $page->meta_description)" />
 <title>{{ $page->meta_title ?: $page->title }}</title>
 <meta name="description" content="{{ $page->meta_description ?? '' }}">
 
@@ -33,6 +34,32 @@
     <x-sections.page-description :page="$page" />
 
     @if ($page->slug === 'jungle-villas' && isset($accommodations) && $accommodations->isNotEmpty())
-    <x-sections.item-carousel :items="$accommodations" data-gtm-section="villas" />
+    @php
+    $villaDetails = [
+        ['icon' => 'square-meter.png', 'label' => '48 sqm'],
+        ['icon' => 'double-bed.png', 'label' => 'King-size bed'],
+        ['icon' => 'family.png', 'label' => '2 Adults + 1 Child'],
+        ['icon' => 'balcony.png', 'label' => 'Private Balcony'],
+        ['icon' => 'bathtub-outline.png', 'label' => 'Outdoor Bathtub & Rain Shower'],
+    ];
+    $villaCardContent = [
+        'jungle-view-villa' => [
+            'description' => 'Surrounded by tropical forest, the Jungle View Villa combines Balinese-inspired design with understated luxury. This 48-square-metre retreat features a king-size bed, a private balcony and an outdoor bathtub with rain shower, inviting guests to unwind in the tranquillity of the jungle.',
+            'details' => $villaDetails,
+        ],
+        'sunrise-view-villa' => [
+            'description' => "Wake to the soft morning light overlooking Ubud's rainforest. The 48-square-metre Sunrise View Villa offers a peaceful atmosphere with a king-size bed, private balcony and outdoor bathtub with rain shower, creating an intimate setting for a relaxing Bali escape.",
+            'details' => $villaDetails,
+        ],
+        'panoramic-jungle-view-villa' => [
+            'description' => "Discover sweeping views of the forested river valley from the Panoramic Jungle View Villa. Featuring 48 square metres of refined accommodation, a canopied king-size bed, private balcony and outdoor bathtub with rain shower, this villa offers an immersive connection to Ubud's tropical landscape.",
+            'details' => $villaDetails,
+        ],
+    ];
+    @endphp
+    <x-sections.item-carousel :items="$accommodations" :card-content="$villaCardContent" data-gtm-section="villas" />
+    <div class="mx-auto max-w-4xl px-6 pb-14 text-center text-xs leading-relaxed text-gray-600 sm:text-sm md:pb-20">
+        <p>For more spacious accommodation, explore our <a href="{{ route('accommodations.suites') }}" class="text-slate-700 underline">Royal Suites</a>. Discover the setting and experiences of our <a href="/ubud-jungle-resort-in-bali" class="text-slate-700 underline">Bali jungle resort in Ubud</a> to plan your stay.</p>
+    </div>
     @endif
 </x-layouts.app>

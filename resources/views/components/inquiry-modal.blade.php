@@ -15,6 +15,8 @@
 
 <div
     x-data="inquiryModal"
+    data-inquiry-category="{{ $isDiningInquiry ? 'dining' : (request()->routeIs('wedding.*') ? 'wedding' : (request()->routeIs('experiences.*', 'holy-river.*') ? 'experience' : 'general')) }}"
+    data-inquiry-source="{{ $isDiningInquiry ? 'dining' : (request()->routeIs('wedding.*') ? 'wedding' : (request()->routeIs('experiences.*', 'holy-river.*') ? 'experiences' : 'website')) }}"
     x-cloak
     x-show="isOpen"
     x-on:keydown.escape.window="close()"
@@ -41,11 +43,12 @@
             </button>
         </div>
 
-        <form method="POST" action="{{ route('inquiries.store', absolute: false) }}" x-on:submit.prevent="submit($event)" class="space-y-5">
+        <form method="POST" action="{{ route('inquiries.store', absolute: false) }}" data-inquiry-form @if ($isDiningInquiry) data-dining-inquiry @endif x-on:submit.prevent="submit($event)" class="space-y-5">
             @csrf
 
             <input type="hidden" name="source_url" x-bind:value="sourceUrl">
             <input type="hidden" name="inquiry_title" x-bind:value="itemTitle">
+            <input type="hidden" name="inquiry_category" x-bind:value="inquiryCategory">
             <input type="hidden" name="inquiry_image" x-bind:value="itemImage">
 
             <div x-show="itemTitle" class="border border-[#E5DDCF] bg-[#F8F4EC] px-4 py-3">

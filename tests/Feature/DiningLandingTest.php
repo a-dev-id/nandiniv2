@@ -439,6 +439,7 @@ class DiningLandingTest extends TestCase
             'phone_code' => '+62',
             'phone' => '8123456789',
             'inquiry_title' => 'Private Dining — Dining / Special Occasions',
+            'inquiry_category' => 'private_dining',
             'reserve_date' => now()->addWeek()->toDateString(),
             'reserve_time' => '18:30',
             'source_url' => 'https://'.config('domains.dining').'/',
@@ -460,12 +461,29 @@ class DiningLandingTest extends TestCase
             ...$payload,
             'experience_id' => $experience->id,
             'occasion' => 'Proposal',
-        ])->assertOk()->assertJsonPath('message', 'Thank you. Your inquiry has been sent.');
+        ])->assertOk()
+            ->assertJsonPath('message', 'Thank you. Your inquiry has been sent.')
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('lead_type', 'inquiry')
+            ->assertJsonPath('inquiry_category', 'private_dining')
+            ->assertJsonMissing(['email' => 'guest@example.com']);
 
         $inquiry = Inquiry::query()->latest('id')->firstOrFail();
         $this->assertSame($experience->id, $inquiry->experience_id);
         $this->assertSame('Romantic Dining by The Chapel', $inquiry->experience->title);
         $this->assertSame('Proposal', $inquiry->occasion);
+        $this->postJson('https://'.config('domains.dining').'/inquiries', [
+            ...$payload,
+            'experience_id' => $experience->id,
+            'occasion' => 'Proposal',
+            'inquiry_category' => 'guest@example.com',
+        ])->assertUnprocessable()->assertJsonValidationErrors('inquiry_category')->assertJsonMissing(['success' => true]);
+        $this->postJson('https://'.config('domains.main').'/inquiries', [
+            ...$payload,
+            'inquiry_category' => 'wedding',
+        ])->assertOk()->assertJsonPath('success', true)
+            ->assertJsonPath('lead_type', 'inquiry')
+            ->assertJsonPath('inquiry_category', 'wedding');
         Http::assertSent(fn($request): bool =>
             $request->url() === 'https://relay.example.test/send'
             && str_contains($request['subject'], 'Private Dining — Dining / Special Occasions — Romantic Dining by The Chapel')

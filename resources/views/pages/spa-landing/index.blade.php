@@ -1,7 +1,7 @@
 @php
     $title = $spaSettings?->meta_title ?: 'Spa in Ubud, Bali | Essence Spa at Nandini Jungle';
     $description = $spaSettings?->meta_description ?: "Discover Essence Spa at Nandini Jungle, a jungle spa in Ubud, Bali offering Balinese treatments, riverside wellness experiences and restorative rituals.";
-    $canonical = 'https://'.config('domains.spa').'/';
+    $canonical = \App\Support\SeoStructuredData::SPA.'/';
     $structuredData = [
         '@context' => 'https://schema.org',
         '@graph' => [

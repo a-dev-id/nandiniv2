@@ -85,7 +85,7 @@ class DomainSitemapTest extends TestCase
             ->assertDontSee('private-spa-page', false);
     }
 
-    public function test_main_sitemap_keeps_the_existing_spa_wellness_page(): void
+    public function test_main_sitemap_excludes_the_retired_spa_wellness_page_even_if_active(): void
     {
         Page::query()->create([
             'site' => Page::SITE_MAIN,
@@ -98,7 +98,7 @@ class DomainSitemapTest extends TestCase
 
         $this->get('https://'.config('domains.main').'/sitemap.xml')
             ->assertOk()
-            ->assertSee('https://'.config('domains.main').'/spa-wellness', false);
+            ->assertDontSee('https://'.config('domains.main').'/spa-wellness', false);
     }
 
     public function test_voucher_sitemap_contains_public_categories_and_purchasable_vouchers(): void

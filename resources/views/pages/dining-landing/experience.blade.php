@@ -5,6 +5,7 @@
 @endphp
 
 @push('meta')
+    <x-seo.json-ld :data="\App\Support\SeoStructuredData::breadcrumb('https://dining.nandinibali.com/experiences/'.$cmsExperience->slug, $cmsExperience->card_title, 'https://dining.nandinibali.com/', 'Dining')" />
     <title>{{ $title }}</title>
     <meta name="description" content="{{ $description }}">
     <meta name="author" content="Nandini Jungle by Hanging Gardens">

@@ -394,6 +394,11 @@ Alpine.data("inquiryModal", () => ({
     reserveTime: "",
     selectedExperienceId: "",
     selectedOccasion: "",
+    inquiryCategory: "general",
+    inquirySource: "website",
+    inquiryExperience: "general",
+    defaultInquiryCategory: "general",
+    trackedInquiryIds: new Set(),
     closeCountdown: 0,
     closeCountdownTimer: null,
 
@@ -404,6 +409,14 @@ Alpine.data("inquiryModal", () => ({
     },
 
     init() {
+        this.defaultInquiryCategory = this.$el.dataset.inquiryCategory || "general";
+        // Mark legacy text-based triggers before GTM evaluates link clicks.
+        document.querySelectorAll("a, button").forEach((trigger) => {
+            const label = trigger.textContent.trim().toLowerCase();
+            if (!trigger.closest("[role='dialog']") && (label.includes("inquire") || label.includes("inquiry"))) {
+                trigger.setAttribute("data-inquiry-button", "");
+            }
+        });
         document.addEventListener("click", (event) => {
             const trigger = event.target.closest("a, button");
 
@@ -429,6 +442,7 @@ Alpine.data("inquiryModal", () => ({
     },
 
     open(trigger = null, options = {}) {
+        if (this.isOpen) return;
         this.setInquiryItem(trigger, options || {});
         this.clearCloseCountdown();
         this.isOpen = true;
@@ -442,6 +456,7 @@ Alpine.data("inquiryModal", () => ({
 
         document.documentElement.classList.add("overflow-hidden");
         document.body.classList.add("overflow-hidden");
+        this.trackInquiry("inquiry_popup_open");
     },
 
     setInquiryItem(trigger, options = {}) {
@@ -467,6 +482,13 @@ Alpine.data("inquiryModal", () => ({
         this.itemImage = triggerImage || ogImage?.content || image?.currentSrc || image?.src || "";
         this.selectedExperienceId = options.experienceId || triggerExperienceId || "";
         this.selectedOccasion = options.occasion || triggerOccasion || "";
+        const category = options.inquiryCategory || trigger?.dataset?.inquiryCategory;
+        this.inquiryCategory = ["private_dining", "dining", "spa", "experience", "romantic_experience", "wedding", "general"].includes(category)
+            ? category
+            : this.defaultInquiryCategory;
+        this.inquirySource = ({ private_dining: "dining", dining: "dining", spa: "spa", experience: "experiences", romantic_experience: "experiences", wedding: "wedding", general: "website" })[this.inquiryCategory] || "website";
+        const experience = options.experience || trigger?.dataset?.inquiryExperience;
+        this.inquiryExperience = /^[a-z][a-z0-9_]{0,100}$/.test(experience || "") ? experience : this.inquiryCategory;
     },
 
     close() {
@@ -502,6 +524,26 @@ Alpine.data("inquiryModal", () => ({
         }
 
         this.closeCountdown = 0;
+    },
+
+    trackInquiry(event, category = this.inquiryCategory) {
+        const source = ({ private_dining: "dining", dining: "dining", spa: "spa", experience: "experiences", romantic_experience: "experiences", wedding: "wedding", general: "website" })[category];
+        if (!source) return;
+        // Only the pathname: no query strings, hash fragments or form values.
+        const path = window.location.pathname || "/";
+        try {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event,
+                ...(event === "inquiry_success" ? { lead_type: "inquiry" } : {}),
+                inquiry_category: category,
+                inquiry_source: source,
+                experience: this.inquiryExperience,
+                page_path: path,
+            });
+        } catch (error) {
+            // Tracking must not interrupt inquiry behavior or override GTM consent.
+        }
     },
 
     async submit(event) {
@@ -540,6 +582,18 @@ Alpine.data("inquiryModal", () => ({
                 }[response.status];
 
                 throw new Error(firstError || data.message || statusMessage || `Request failed (${response.status}).`);
+            }
+
+            if (data.success !== true) {
+                throw new Error("The inquiry service did not confirm success. Please try again.");
+            }
+
+            if (form.hasAttribute("data-inquiry-form") && data.lead_type === "inquiry"
+                && Number.isSafeInteger(data.inquiry_id) && data.inquiry_id > 0
+                && ["private_dining", "dining", "spa", "experience", "romantic_experience", "wedding", "general"].includes(data.inquiry_category)
+                && !this.trackedInquiryIds.has(data.inquiry_id)) {
+                this.trackedInquiryIds.add(data.inquiry_id);
+                this.trackInquiry("inquiry_success", data.inquiry_category);
             }
 
             this.message = data.message || "Thank you. Your inquiry has been sent.";

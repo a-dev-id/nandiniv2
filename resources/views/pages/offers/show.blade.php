@@ -1,4 +1,5 @@
 @push('meta')
+<x-seo.json-ld :data="\App\Support\SeoStructuredData::breadcrumb('https://nandinibali.com/offer/'.$offer->slug, $offer->title, 'https://nandinibali.com/offers', 'Offers')" />
 @php
 $metaTitle = $offer->meta_title ?: $offer->title;
 

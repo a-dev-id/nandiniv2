@@ -259,7 +259,11 @@ Route::domain(config('domains.main'))->group(function (): void {
     | Spa
     |--------------------------------------------------------------------------
     */
-    Route::get('/spa-wellness', [SpaController::class, 'index'])
+    Route::get('/spa-wellness', function (\Illuminate\Http\Request $request) {
+        $query = (string) $request->server('QUERY_STRING', '');
+
+        return redirect()->away('https://spa.nandinibali.com/'.($query ? '?'.$query : ''), 301);
+    })
         ->name('spa.index');
 
     Route::get('/spa-wellness/{slug}', fn (string $slug) => redirect()->route('spa-landing.treatments.show', $slug, 301))

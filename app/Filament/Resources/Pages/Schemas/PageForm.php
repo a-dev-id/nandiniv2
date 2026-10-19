@@ -184,12 +184,13 @@ class PageForm
                                     ->openable()
                                     ->downloadable()
                                     ->saveUploadedFileUsing(
-                                        fn (TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
+                                        fn (TemporaryUploadedFile $file, Get $get, ?Page $record): string => FilamentWebpUpload::store(
                                             file: $file,
                                             directory: 'pages/hero-mobile',
                                             targetWidth: 1200,
                                             targetHeight: 900,
                                             fileName: $get('hero_mobile_image_file_name'),
+                                            responsiveVariants: $record?->id === 2 || $get('slug') === 'limited-offers',
                                         )
                                     ),
 

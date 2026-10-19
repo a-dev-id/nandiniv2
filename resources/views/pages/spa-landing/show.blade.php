@@ -1,7 +1,7 @@
 @php
     $title = $page->meta_title ?: $page->title;
     $description = $page->meta_description ?: \Illuminate\Support\Str::limit(strip_tags($page->excerpt ?: $page->description ?: ''), 160, '');
-    $canonical = 'https://'.config('domains.spa').'/'.$page->slug;
+    $canonical = \App\Support\SeoStructuredData::SPA.'/'.$page->slug;
     $resolveImage = fn (?string $path): ?string => blank($path)
         ? null
         : (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '/')

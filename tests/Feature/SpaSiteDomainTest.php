@@ -56,7 +56,7 @@ class SpaSiteDomainTest extends TestCase
         $this->get('https://'.config('domains.spa').'/test-page')->assertNotFound();
         $this->get('https://'.config('domains.main').'/')->assertOk();
         $this->get('https://'.config('domains.main').'/spa-wellness')
-            ->assertOk();
+            ->assertStatus(301)->assertRedirect('https://spa.nandinibali.com/');
 
         config(['domains.spa_enabled' => true]);
 
@@ -64,13 +64,19 @@ class SpaSiteDomainTest extends TestCase
         $this->get('https://'.config('domains.spa').'/test-page')->assertOk();
     }
 
-    public function test_existing_main_spa_landing_url_remains_public(): void
+    public function test_retired_main_spa_landing_redirects_with_or_without_active_cms_record(): void
     {
         $this->createPage(['id' => 6, 'slug' => 'spa-wellness']);
 
         $this->get('https://'.config('domains.main').'/spa-wellness')
-            ->assertOk()
-            ->assertSee('<link rel="canonical" href="https://'.config('domains.main').'/spa-wellness">', false);
+            ->assertStatus(301)->assertRedirect('https://spa.nandinibali.com/')
+            ->assertDontSee('<link rel="canonical"', false);
+        Page::where('id', 6)->update(['is_active' => false]);
+        foreach (['/spa-wellness', '/spa-wellness/'] as $path) {
+            $this->get('https://'.config('domains.main').$path.'?utm_source=google&utm_campaign=spa%20escape')
+                ->assertStatus(301)
+                ->assertRedirect('https://spa.nandinibali.com/?utm_source=google&utm_campaign=spa%20escape');
+        }
     }
 
     public function test_spa_homepage_resolves_an_active_spa_home_page(): void
@@ -309,7 +315,7 @@ class SpaSiteDomainTest extends TestCase
             ->assertSeeInOrder(['Hours Test', 'Booking Test', 'Location Test', 'Contact Test'])
             ->assertSee('lg:min-h-[max(720px,100vh)]', false)
             ->assertSee('lg:px-[clamp(64px,5vw,100px)]', false)
-            ->assertSee('hidden max-w-xl md:block', false)
+            ->assertSee('w-full max-w-xl', false)
             ->assertSee('href="https://wa.me/6281236871170"', false);
     }
 

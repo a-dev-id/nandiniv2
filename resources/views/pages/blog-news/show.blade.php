@@ -13,7 +13,7 @@ $metaImage = $blog->hero_image
 ?? $page->hero_image
 ?? null;
 
-$metaImageUrl = $metaImage ? $siteUrl.'/storage/'.ltrim($metaImage, '/') : null;
+$metaImageUrl = \App\Support\SeoStructuredData::image($metaImage, $siteUrl);
 
 $structuredData = array_filter([
     '@context' => 'https://schema.org',
@@ -27,18 +27,18 @@ $structuredData = array_filter([
         '@id' => $canonical,
     ],
     'isPartOf' => ['@id' => 'https://nandinibali.com/#website'],
-    'about' => [
+    'about' => $blog->slug === 'ayung-river-ubud-guide' ? [
         '@type' => 'Place',
         'name' => 'Ayung River',
         'containedInPlace' => [
             '@type' => 'AdministrativeArea',
             'name' => 'Bali, Indonesia',
         ],
-    ],
+    ] : null,
     'author' => $blog->author_name === config('resort.name')
-        ? ['@id' => 'https://nandinibali.com/#organization']
+        ? ['@type' => 'Organization', '@id' => 'https://nandinibali.com/#organization', 'name' => config('resort.name'), 'url' => 'https://nandinibali.com/']
         : (filled($blog->author_name) ? ['@type' => 'Person', 'name' => $blog->author_name] : null),
-    'publisher' => ['@id' => 'https://nandinibali.com/#organization'],
+    'publisher' => ['@type' => 'Organization', '@id' => 'https://nandinibali.com/#organization', 'name' => config('resort.name'), 'url' => 'https://nandinibali.com/', 'logo' => ['@type' => 'ImageObject', 'url' => config('resort.logo_url')]],
     'datePublished' => $blog->published_at?->toDateString(),
     'dateModified' => $blog->updated_at?->toAtomString(),
     'image' => $metaImageUrl,
@@ -69,6 +69,7 @@ $structuredData = array_filter([
 <meta name="twitter:title" content="{{ $metaTitle }}">
 <meta name="twitter:description" content="{{ $metaDescription }}">
 <script type="application/ld+json">@json($structuredData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)</script>
+<x-seo.json-ld :data="\App\Support\SeoStructuredData::breadcrumb($canonical, $blog->title, 'https://nandinibali.com/blog-news', 'Blog & News')" />
 @endpush
 
 <x-layouts.app>

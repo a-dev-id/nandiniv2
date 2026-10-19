@@ -1,4 +1,5 @@
 @push('meta')
+<x-seo.json-ld :data="\App\Support\SeoStructuredData::breadcrumb('https://nandinibali.com/honeymoon/'.$offer->slug, $offer->title, 'https://nandinibali.com/honeymoon', 'Honeymoon')" />
 <title>{{ $offer->meta_title ?: $offer->title }}</title>
 <meta name="description" content="{{ $offer->meta_description ?: \Illuminate\Support\Str::limit(strip_tags($offer->excerpt ?: $offer->description), 160, '') }}">
 

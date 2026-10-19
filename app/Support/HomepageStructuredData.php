@@ -64,6 +64,7 @@ final class HomepageStructuredData
                         'postalCode' => (string) ($address['postal_code'] ?? ''),
                         'addressCountry' => (string) ($address['country'] ?? ''),
                     ],
+                    'parentOrganization' => ['@id' => $organizationId],
                     'sameAs' => $sameAs,
                 ],
             ],

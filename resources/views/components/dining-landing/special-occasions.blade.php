@@ -26,6 +26,7 @@
                     variant="solid"
                     class="w-full sm:w-auto"
                     data-inquiry-button
+                    data-inquiry-category="private_dining"
                     data-inquiry-title="Private Dining — Dining / Special Occasions"
                     :data-inquiry-image="$image"
                 >{{ $settings->private_dining_cta_label }}</x-buttons.link-button>

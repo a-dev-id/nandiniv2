@@ -16,6 +16,7 @@
 'footerHref' => null,
 'footerLabel' => 'Explore More',
 'showDots' => true,
+'cardContent' => [],
 ])
 
 <section class="{{ $bottomPaddingClass }} {{ $wrapperClass }}" {{ $attributes->only(['id', 'data-gtm-section']) }}>
@@ -44,6 +45,8 @@
                     $descriptionSummary = html_entity_decode(strip_tags((string) ($item->description ?? '')), ENT_QUOTES | ENT_HTML5, 'UTF-8');
                     $summary = trim($excerptSummary) !== '' ? $excerptSummary : $descriptionSummary;
                     $summary = trim((string) preg_replace('/\s+/', ' ', $summary));
+                    $listingContent = $cardContent[$item->slug] ?? [];
+                    $summary = $listingContent['description'] ?? $summary;
 
                     $reserveUrl = $item->resolved_button_url
                     ?? (! empty($item->booking_url)
@@ -81,6 +84,17 @@
                         <p class="mt-2 grow text-xs leading-relaxed text-slate-600 sm:text-sm">
                             {{ $summary }}
                         </p>
+                        @endif
+
+                        @if (! empty($listingContent['details']))
+                        <ul class="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 text-xs leading-relaxed text-slate-600 sm:text-sm" aria-label="{{ $listingContent['details_label'] ?? 'Villa essentials' }}">
+                            @foreach ($listingContent['details'] as $detail)
+                            <li class="flex items-center gap-3 {{ $loop->last ? 'col-span-2' : '' }}">
+                                <img src="{{ asset('images/jungle-villas/' . $detail['icon']) }}" alt="" class="h-5 w-5 shrink-0 object-contain" width="20" height="20" loading="lazy" decoding="async">
+                                <span>{{ $detail['label'] }}</span>
+                            </li>
+                            @endforeach
+                        </ul>
                         @endif
 
                         <div class="fold-carousel-actions mt-9 flex flex-wrap items-center {{ $buttonAlignClass }} gap-4">

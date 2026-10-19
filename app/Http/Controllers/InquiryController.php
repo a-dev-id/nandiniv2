@@ -33,6 +33,7 @@ class InquiryController extends Controller
             'phone' => ['required', 'string', 'max:40'],
             'note' => ['nullable', 'string', 'max:2000'],
             'inquiry_title' => ['nullable', 'string', 'max:255'],
+            'inquiry_category' => ['nullable', Rule::in(['private_dining', 'general_dining', 'dining_experience', 'dining', 'spa', 'experience', 'romantic_experience', 'wedding', 'general'])],
             'experience_id' => [
                 $isDiningInquiry ? 'required' : 'nullable',
                 'integer',
@@ -68,7 +69,12 @@ class InquiryController extends Controller
             'occasion.required' => 'Please select an occasion.',
             'occasion.in' => 'Please select an available occasion.',
         ]);
-        unset($validated['g-recaptcha-response']);
+        $inquiryCategory = $validated['inquiry_category'] ?? ($isDiningInquiry ? 'dining' : 'general');
+        $inquiryCategory = match ($inquiryCategory) {
+            'general_dining', 'dining_experience' => 'dining',
+            default => $inquiryCategory,
+        };
+        unset($validated['g-recaptcha-response'], $validated['inquiry_category']);
 
         $name = trim($validated['title'] . ' ' . $validated['first_name'] . ' ' . $validated['last_name']);
         $sourceUrl = $validated['source_url'] ?? url()->previous();
@@ -93,7 +99,11 @@ class InquiryController extends Controller
 
         if ($request->expectsJson()) {
             return response()->json([
+                'success' => true,
                 'message' => 'Thank you. Your inquiry has been sent.',
+                'inquiry_id' => $inquiry->id,
+                'lead_type' => 'inquiry',
+                'inquiry_category' => $inquiryCategory,
             ]);
         }
 

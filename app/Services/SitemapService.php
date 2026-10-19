@@ -106,6 +106,7 @@ class SitemapService
             ->where('is_active', true)
             ->where('include_in_sitemap', true)
             ->whereNot('slug', 'home')
+            ->whereNot('slug', 'spa-wellness')
             ->orderBy('sort_order')
             ->orderBy('title')
             ->get(['slug', 'updated_at'])
