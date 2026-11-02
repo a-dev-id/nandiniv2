@@ -221,6 +221,46 @@
         flex: 1;
     }
 
+    .itemcarousel-slick:not(.slick-initialized),
+    .guest-review-slider:not(.slick-initialized) {
+        display: flex;
+        overflow: hidden;
+    }
+
+    .itemcarousel-slick:not(.slick-initialized) > * {
+        flex: 0 0 100%;
+        min-width: 0;
+    }
+
+    .guest-review-slider:not(.slick-initialized) > * {
+        flex: 0 0 100%;
+        min-width: 0;
+    }
+
+    .guest-review-slider:not(.slick-initialized) > *:not(:first-child) {
+        display: none;
+    }
+
+    @media (min-width: 640px) {
+        .itemcarousel-slick:not(.slick-initialized) > * {
+            flex-basis: 50%;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .itemcarousel-slick:not(.slick-initialized) > * {
+            flex-basis: 33.333333%;
+        }
+
+        .itemcarousel-slick[data-slides-to-show="4"]:not(.slick-initialized) > * {
+            flex-basis: 25%;
+        }
+
+        .itemcarousel-slick[data-slides-to-show="5"]:not(.slick-initialized) > * {
+            flex-basis: 20%;
+        }
+    }
+
     .dining-experience-image,
     .spa-wellness-journey-image {
         aspect-ratio: 4 / 3 !important;

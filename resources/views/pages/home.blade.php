@@ -1,6 +1,17 @@
+@php
+$heroPosterMobile = asset('images/hero/nandini-video-poster-mobile-960.webp');
+$heroPosterMobileSrcset = asset('images/hero/nandini-video-poster-mobile-640.webp') . ' 640w, ' . $heroPosterMobile . ' 960w';
+$heroPosterMobileAvifSrcset = asset('images/hero/nandini-video-poster-mobile-640.avif') . ' 640w, ' . asset('images/hero/nandini-video-poster-mobile-960.avif') . ' 960w';
+$heroPosterDesktop = asset('images/hero/nandini-video-poster-desktop-1280.webp');
+$heroPosterDesktopAvif = asset('images/hero/nandini-video-poster-desktop-1280.avif');
+@endphp
+
 @push('meta')
 <title>{{ $page->meta_title ?: $page->title }}</title>
 <meta name="description" content="{{ $page->meta_description ?? '' }}">
+
+<link rel="preload" as="image" type="image/avif" href="{{ asset('images/hero/nandini-video-poster-mobile-960.avif') }}" imagesrcset="{{ $heroPosterMobileAvifSrcset }}" imagesizes="100vw" media="(max-width: 1023px)" fetchpriority="high">
+<link rel="preload" as="image" type="image/avif" href="{{ $heroPosterDesktopAvif }}" media="(min-width: 1024px)" fetchpriority="high">
 
 @if (! empty($page->meta_keywords))
 <meta name="keywords" content="{{ $page->meta_keywords }}">
@@ -40,7 +51,15 @@
     ]), true));
     @endphp
 
-    <x-heroes.video-hero video-id="8aZOOwSdxwE" data-gtm-section="hero" />
+    <x-heroes.video-hero
+        video-id="8aZOOwSdxwE"
+        :poster-mobile="$heroPosterMobile"
+        :poster-mobile-srcset="$heroPosterMobileSrcset"
+        :poster-mobile-avif-srcset="$heroPosterMobileAvifSrcset"
+        :poster-desktop="$heroPosterDesktop"
+        :poster-desktop-avif="$heroPosterDesktopAvif"
+        data-gtm-section="hero"
+    />
 
     <x-sections.page-description :page="$page" :show-awards="true" :show-subtitle="true" data-gtm-section="introduction" />
 

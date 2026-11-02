@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Accommodation;
 use App\Models\Member;
 use App\Models\Page;
+use App\Models\Role;
 use App\Rules\Recaptcha;
 use App\Services\MembershipEmailRelayService;
 use Illuminate\Auth\Events\PasswordReset;
@@ -389,6 +390,18 @@ class MembershipAuthController extends Controller
             }
         }
 
+        return $this->dashboardView($member);
+    }
+
+    public function previewDashboard(Request $request, Member $member): View
+    {
+        abort_unless($request->user('web')?->hasRole(Role::ADMINISTRATOR), 403);
+
+        return $this->dashboardView($member, isAdminPreview: true);
+    }
+
+    protected function dashboardView(Member $member, bool $isAdminPreview = false): View
+    {
         $page = Page::query()
             ->where('id', 37)
             ->where('is_active', true)
@@ -398,7 +411,7 @@ class MembershipAuthController extends Controller
         $accommodations = Accommodation::query()
             ->published()
             ->whereIn('id', $accommodationIds)
-            ->orderByRaw('FIELD(id, '.implode(',', $accommodationIds).')')
+            ->orderBy('id')
             ->get();
 
         $voucherOrders = ! config('features.disable_voucher_feature') && $member instanceof Member
@@ -409,6 +422,8 @@ class MembershipAuthController extends Controller
             : collect();
 
         return view('pages.membership.dashboard', [
+            'member' => $member,
+            'isAdminPreview' => $isAdminPreview,
             'page' => $page,
             'accommodations' => $accommodations,
             'voucherOrders' => $voucherOrders,

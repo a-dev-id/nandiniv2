@@ -3,17 +3,39 @@
 namespace App\Http\Controllers;
 
 use App\Models\Accommodation;
+use App\Models\AccommodationImage;
 use App\Models\Experience;
 use App\Models\ExperienceCategory;
 use App\Models\GuestReview;
 use App\Models\Offer;
 use App\Models\Page;
 use App\Models\PageSection;
+use App\Models\PageSectionImage;
+use App\Support\HomepageCache;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class HomeController extends Controller
 {
     public function index(): View
+    {
+        $payload = HomepageCache::remember(fn (): array => $this->getPublicContentPayload());
+        $content = $this->hydratePublicContent($payload);
+
+        $content['diningSections']->each(function (PageSection $section): void {
+            $section->setAttribute('show_url', config('dining.public_url'));
+        });
+
+        $content['spaSections']->each(function (PageSection $section): void {
+            $section->setAttribute('show_url', route('spa-landing.index'));
+        });
+
+        return view('pages.home', $content);
+    }
+
+    private function getPublicContentPayload(): array
     {
         $page = Page::query()
             ->where('id', 1)
@@ -31,6 +53,7 @@ class HomeController extends Controller
         $villas = Accommodation::query()
             ->published()
             ->where('slug', '!=', 'presidential-royal-suite')
+            ->with('images')
             ->get();
 
         $presidentialSuite = Accommodation::query()
@@ -62,10 +85,7 @@ class HomeController extends Controller
                     ->orderBy('sort_order');
             }])
             ->orderBy('sort_order')
-            ->get()
-            ->each(function (PageSection $section): void {
-                $section->setAttribute('show_url', config('dining.public_url'));
-            });
+            ->get();
 
         $spaSections = PageSection::query()
             ->where('page_id', 6)
@@ -82,10 +102,7 @@ class HomeController extends Controller
                     ->orderBy('sort_order');
             }])
             ->orderBy('sort_order')
-            ->get()
-            ->each(function (PageSection $section): void {
-                $section->setAttribute('show_url', route('spa-landing.index'));
-            });
+            ->get();
 
         $ubudJungleAdventures = Experience::query()
             ->where('is_active', true)
@@ -117,17 +134,161 @@ class HomeController extends Controller
             ->orderByDesc('id')
             ->get();
 
-        return view('pages.home', [
-            'page' => $page,
-            'offers' => $offers,
-            'villas' => $villas,
-            'presidentialSuite' => $presidentialSuite,
-            'experienceCategories' => $experienceCategories,
-            'diningSections' => $diningSections,
-            'spaSections' => $spaSections,
-            'ubudJungleAdventures' => $ubudJungleAdventures,
-            'sections' => $sections,
-            'guestReviews' => $guestReviews,
-        ]);
+        return [
+            'page' => $page->getAttributes(),
+            'offers' => $this->modelAttributes($offers),
+            'villas' => $villas->map(fn (Accommodation $villa): array => [
+                'attributes' => $villa->getAttributes(),
+                'images' => $this->modelAttributes($villa->images),
+            ])->all(),
+            'presidentialSuite' => $presidentialSuite ? [
+                'attributes' => $presidentialSuite->getAttributes(),
+                'activeImages' => $this->modelAttributes($presidentialSuite->activeImages),
+            ] : null,
+            'experienceCategories' => $this->modelAttributes($experienceCategories),
+            'diningSections' => $this->sectionsWithImagesAttributes($diningSections),
+            'spaSections' => $this->sectionsWithImagesAttributes($spaSections),
+            'ubudJungleAdventures' => $ubudJungleAdventures->map(fn (Experience $experience): array => [
+                'attributes' => $experience->getAttributes(),
+                'category' => $experience->category?->getAttributes(),
+            ])->all(),
+            'sections' => $this->sectionsWithImagesAttributes($sections),
+            'guestReviews' => $this->modelAttributes($guestReviews),
+        ];
+    }
+
+    private function hydratePublicContent(array $payload): array
+    {
+        return [
+            'page' => $this->hydrateModel(Page::class, $payload['page']),
+            'offers' => $this->hydrateCollection(Offer::class, $payload['offers']),
+            'villas' => $this->hydrateCollectionWithMany(
+                Accommodation::class,
+                $payload['villas'],
+                'images',
+                AccommodationImage::class,
+            ),
+            'presidentialSuite' => $payload['presidentialSuite']
+                ? $this->hydrateModelWithMany(
+                    Accommodation::class,
+                    $payload['presidentialSuite'],
+                    'activeImages',
+                    AccommodationImage::class,
+                )
+                : null,
+            'experienceCategories' => $this->hydrateCollection(
+                ExperienceCategory::class,
+                $payload['experienceCategories'],
+            ),
+            'diningSections' => $this->hydrateCollectionWithMany(
+                PageSection::class,
+                $payload['diningSections'],
+                'images',
+                PageSectionImage::class,
+            ),
+            'spaSections' => $this->hydrateCollectionWithMany(
+                PageSection::class,
+                $payload['spaSections'],
+                'images',
+                PageSectionImage::class,
+            ),
+            'ubudJungleAdventures' => $this->hydrateCollectionWithOne(
+                Experience::class,
+                $payload['ubudJungleAdventures'],
+                'category',
+                ExperienceCategory::class,
+            ),
+            'sections' => $this->hydrateCollectionWithMany(
+                PageSection::class,
+                $payload['sections'],
+                'images',
+                PageSectionImage::class,
+            ),
+            'guestReviews' => $this->hydrateCollection(GuestReview::class, $payload['guestReviews']),
+        ];
+    }
+
+    private function modelAttributes(Collection $models): array
+    {
+        return $models
+            ->map(fn (Model $model): array => $model->getAttributes())
+            ->all();
+    }
+
+    private function sectionsWithImagesAttributes(Collection $sections): array
+    {
+        return $sections->map(fn (PageSection $section): array => [
+            'attributes' => $section->getAttributes(),
+            'images' => $this->modelAttributes($section->images),
+        ])->all();
+    }
+
+    private function hydrateModel(string $modelClass, array $attributes): Model
+    {
+        return (new $modelClass)->newFromBuilder($attributes);
+    }
+
+    private function hydrateCollection(string $modelClass, array $rows): EloquentCollection
+    {
+        $model = new $modelClass;
+
+        return $model->newCollection(array_map(
+            fn (array $attributes): Model => $model->newFromBuilder($attributes),
+            $rows,
+        ));
+    }
+
+    private function hydrateCollectionWithMany(
+        string $modelClass,
+        array $rows,
+        string $relation,
+        string $relatedClass,
+    ): EloquentCollection {
+        $model = new $modelClass;
+
+        return $model->newCollection(array_map(
+            fn (array $row): Model => $this->hydrateModelWithMany(
+                $modelClass,
+                $row,
+                $relation,
+                $relatedClass,
+            ),
+            $rows,
+        ));
+    }
+
+    private function hydrateModelWithMany(
+        string $modelClass,
+        array $row,
+        string $relation,
+        string $relatedClass,
+    ): Model {
+        $model = $this->hydrateModel($modelClass, $row['attributes']);
+        $model->setRelation($relation, $this->hydrateCollection($relatedClass, $row[$relation]));
+
+        return $model;
+    }
+
+    private function hydrateCollectionWithOne(
+        string $modelClass,
+        array $rows,
+        string $relation,
+        string $relatedClass,
+    ): EloquentCollection {
+        $model = new $modelClass;
+
+        return $model->newCollection(array_map(function (array $row) use (
+            $modelClass,
+            $relation,
+            $relatedClass,
+        ): Model {
+            $model = $this->hydrateModel($modelClass, $row['attributes']);
+            $model->setRelation(
+                $relation,
+                $row[$relation] ? $this->hydrateModel($relatedClass, $row[$relation]) : null,
+            );
+
+            return $model;
+        }, $rows));
     }
 }

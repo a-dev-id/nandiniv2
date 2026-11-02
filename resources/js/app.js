@@ -13,6 +13,13 @@ const SLICK_SCRIPT = "https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/sl
 
 let jqueryPromise = null;
 let slickPromise = null;
+let carouselObserver = null;
+let carouselInitializationQueue = Promise.resolve();
+let youtubeApiPromise = null;
+let activeAutoloadYouTubeEmbed = null;
+
+const CAROUSEL_SELECTOR = ".itemcarousel-slick, .guest-review-slider";
+const CAROUSEL_PRELOAD_MARGIN = "300px 0px";
 
 function loadStyle(href) {
     if (document.querySelector(`link[href="${href}"]`)) {
@@ -174,60 +181,140 @@ function initNavbarActions() {
     }
 }
 
-function initItemCarousel() {
-    const carousels = document.querySelectorAll(".itemcarousel-slick");
+function updateSlickAccessibility($el) {
+    $el.find(".slick-slide[aria-hidden='true'] a, .slick-slide[aria-hidden='true'] button, .slick-slide[aria-hidden='true'] input, .slick-slide[aria-hidden='true'] select, .slick-slide[aria-hidden='true'] textarea, .slick-slide[aria-hidden='true'] [tabindex]")
+        .attr("tabindex", "-1")
+        .attr("aria-hidden", "true");
+
+    $el.find(".slick-slide[aria-hidden='false'] a, .slick-slide[aria-hidden='false'] button, .slick-slide[aria-hidden='false'] input, .slick-slide[aria-hidden='false'] select, .slick-slide[aria-hidden='false'] textarea")
+        .removeAttr("tabindex")
+        .removeAttr("aria-hidden");
+}
+
+function initializeItemCarousel($el) {
+    if ($el.hasClass("slick-initialized")) {
+        $el.slick("refresh");
+        updateSlickAccessibility($el);
+        return;
+    }
+
+    const $wrap = $el.closest(".item-carousel-wrap");
+    const slidesToShow = Number($el.data("slides-to-show")) || 3;
+    const showDots = String($el.data("show-dots")) !== "false";
+
+    $el.off(".nandiniCarousel");
+    $el.on("init.nandiniCarousel reInit.nandiniCarousel afterChange.nandiniCarousel setPosition.nandiniCarousel", function () {
+        updateSlickAccessibility($el);
+    });
+
+    $el.slick({
+        slidesToShow,
+        slidesToScroll: 1,
+        infinite: true,
+        arrows: true,
+        prevArrow: $wrap.find(".itemcarousel-prev"),
+        nextArrow: $wrap.find(".itemcarousel-next"),
+        dots: showDots,
+        speed: 450,
+        responsive: [
+            { breakpoint: 1024, settings: { slidesToShow: 2 } },
+            { breakpoint: 640, settings: { slidesToShow: 1 } },
+        ],
+    });
+}
+
+function initializeGuestReviewSlider($slider) {
+    if ($slider.hasClass("slick-initialized")) {
+        $slider.slick("refresh");
+        return;
+    }
+
+    const total = Number($slider.data("total") || 0);
+
+    $slider.slick({
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        adaptiveHeight: true,
+        arrows: total > 1,
+        dots: total > 1,
+        appendDots: $slider.closest("section").find(".guest-review-dots"),
+        infinite: total > 1,
+        prevArrow: $slider.closest("section").find(".guest-review-prev"),
+        nextArrow: $slider.closest("section").find(".guest-review-next"),
+        speed: 450,
+    });
+}
+
+function initializeCarousel(carousel) {
+    if (!carousel.isConnected || carousel.dataset.nandiniCarouselInitialized === "true") {
+        return Promise.resolve();
+    }
+
+    carousel.dataset.nandiniCarouselInitialized = "true";
+
+    return ensureSlick()
+        .then(($) => {
+            if (!carousel.isConnected) {
+                return;
+            }
+
+            const $carousel = $(carousel);
+
+            if (carousel.matches(".itemcarousel-slick")) {
+                initializeItemCarousel($carousel);
+            } else {
+                initializeGuestReviewSlider($carousel);
+            }
+        })
+        .catch((error) => {
+            delete carousel.dataset.nandiniCarouselInitialized;
+            console.error("Unable to initialize carousel.", error);
+        });
+}
+
+function queueCarouselInitialization(carousel) {
+    carouselInitializationQueue = carouselInitializationQueue
+        .then(() => initializeCarousel(carousel))
+        .then(() => new Promise((resolve) => window.requestAnimationFrame(resolve)));
+}
+
+function initDeferredCarousels() {
+    const carousels = document.querySelectorAll(`${CAROUSEL_SELECTOR}:not([data-nandini-carousel-observed])`);
 
     if (!carousels.length) {
         return;
     }
 
-    const updateSlickAccessibility = ($el) => {
-        $el.find(".slick-slide[aria-hidden='true'] a, .slick-slide[aria-hidden='true'] button, .slick-slide[aria-hidden='true'] input, .slick-slide[aria-hidden='true'] select, .slick-slide[aria-hidden='true'] textarea, .slick-slide[aria-hidden='true'] [tabindex]")
-            .attr("tabindex", "-1")
-            .attr("aria-hidden", "true");
+    if (!("IntersectionObserver" in window)) {
+        carousels.forEach((carousel) => {
+            carousel.dataset.nandiniCarouselObserved = "true";
+            queueCarouselInitialization(carousel);
+        });
+        return;
+    }
 
-        $el.find(".slick-slide[aria-hidden='false'] a, .slick-slide[aria-hidden='false'] button, .slick-slide[aria-hidden='false'] input, .slick-slide[aria-hidden='false'] select, .slick-slide[aria-hidden='false'] textarea")
-            .removeAttr("tabindex")
-            .removeAttr("aria-hidden");
-    };
-
-    ensureSlick().then(($) => {
-        $(".itemcarousel-slick").each(function () {
-            const $el = $(this);
-            const $wrap = $el.closest(".item-carousel-wrap");
-            const slidesToShow = Number($el.data("slides-to-show")) || 3;
-            const showDots = String($el.data("show-dots")) !== "false";
-
-            if ($el.hasClass("slick-initialized")) {
-                $el.slick("refresh");
-                updateSlickAccessibility($el);
+    carouselObserver ??= new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (!entry.isIntersecting) {
                 return;
             }
 
-            $el.on("init reInit afterChange setPosition", function () {
-                updateSlickAccessibility($el);
-            });
-
-            $el.slick({
-                slidesToShow,
-                slidesToScroll: 1,
-                infinite: true,
-                arrows: true,
-                prevArrow: $wrap.find(".itemcarousel-prev"),
-                nextArrow: $wrap.find(".itemcarousel-next"),
-                dots: showDots,
-                speed: 450,
-                responsive: [
-                    { breakpoint: 1024, settings: { slidesToShow: 2 } },
-                    { breakpoint: 640, settings: { slidesToShow: 1 } },
-                ],
-            });
+            carouselObserver.unobserve(entry.target);
+            queueCarouselInitialization(entry.target);
         });
+    }, {
+        rootMargin: CAROUSEL_PRELOAD_MARGIN,
+        threshold: 0,
+    });
+
+    carousels.forEach((carousel) => {
+        carousel.dataset.nandiniCarouselObserved = "true";
+        carouselObserver.observe(carousel);
     });
 }
 
-function preloadSlickWhenNeeded() {
-    if (document.querySelector(".itemcarousel-slick, .voucher-gallery, .guest-review-slider, .dashboard-reward-carousel, .dashboard-accommodation-carousel, .reward-carousel-items")) {
+function preloadSlickForLegacyCarousels() {
+    if (document.querySelector(".dashboard-reward-carousel, .dashboard-accommodation-carousel, .reward-carousel-items")) {
         ensureSlick();
     }
 }
@@ -264,40 +351,6 @@ function initVoucherGallery() {
     });
 }
 
-function initGuestReviewSlider() {
-    const sliders = document.querySelectorAll(".guest-review-slider");
-
-    if (!sliders.length) {
-        return;
-    }
-
-    ensureSlick().then(($) => {
-        $(".guest-review-slider").each(function () {
-            const $slider = $(this);
-
-            if ($slider.hasClass("slick-initialized")) {
-                $slider.slick("refresh");
-                return;
-            }
-
-            const total = Number($slider.data("total") || 0);
-
-            $slider.slick({
-                slidesToShow: 1,
-                slidesToScroll: 1,
-                adaptiveHeight: true,
-                arrows: total > 1,
-                dots: total > 1,
-                appendDots: $slider.closest("section").find(".guest-review-dots"),
-                infinite: total > 1,
-                prevArrow: $slider.closest("section").find(".guest-review-prev"),
-                nextArrow: $slider.closest("section").find(".guest-review-next"),
-                speed: 450,
-            });
-        });
-    });
-}
-
 function initDeferredYouTubeEmbeds() {
     const embeds = document.querySelectorAll("[data-youtube-embed]:not([data-loaded='true'])");
 
@@ -305,25 +358,141 @@ function initDeferredYouTubeEmbeds() {
         return;
     }
 
-    const toPrivacyUrl = (src) => src.replace("https://www.youtube.com/embed/", "https://www.youtube-nocookie.com/embed/");
+    const ensureYouTubeApi = () => {
+        if (window.YT?.Player) {
+            return Promise.resolve(window.YT);
+        }
+
+        if (youtubeApiPromise) {
+            return youtubeApiPromise;
+        }
+
+        youtubeApiPromise = new Promise((resolve, reject) => {
+            const previousReadyHandler = window.onYouTubeIframeAPIReady;
+
+            window.onYouTubeIframeAPIReady = () => {
+                previousReadyHandler?.();
+                resolve(window.YT);
+            };
+
+            let script = document.querySelector("script[src='https://www.youtube.com/iframe_api']");
+
+            if (!script) {
+                script = document.createElement("script");
+                script.src = "https://www.youtube.com/iframe_api";
+                script.async = true;
+                document.head.appendChild(script);
+            }
+
+            script.addEventListener("error", () => {
+                youtubeApiPromise = null;
+                reject(new Error("Unable to load the YouTube player API."));
+            }, { once: true });
+        });
+
+        return youtubeApiPromise;
+    };
+
+    const setPosterVisible = (embed, visible) => {
+        const poster = embed.querySelector("[data-youtube-poster]");
+
+        if (!poster) {
+            return;
+        }
+
+        poster.classList.toggle("opacity-0", !visible);
+        poster.classList.toggle("pointer-events-none", !visible);
+    };
+
+    const handlePlayerFailure = (embed, player = null) => {
+        setPosterVisible(embed, true);
+        embed.dataset.youtubeState = "error";
+
+        if (player?.destroy) {
+            player.destroy();
+        } else {
+            embed.querySelector("iframe")?.remove();
+        }
+
+        if (activeAutoloadYouTubeEmbed === embed) {
+            activeAutoloadYouTubeEmbed = null;
+        }
+    };
 
     const loadEmbed = (embed) => {
-        if (embed.dataset.loaded === "true" || !embed.dataset.src) {
+        if (embed.dataset.loaded === "true" || embed.dataset.youtubeState === "error" || !embed.dataset.src) {
             return;
+        }
+
+        if (embed.dataset.autoload === "true") {
+            if (activeAutoloadYouTubeEmbed && activeAutoloadYouTubeEmbed !== embed) {
+                return;
+            }
+
+            activeAutoloadYouTubeEmbed = embed;
         }
 
         const iframe = document.createElement("iframe");
         iframe.className = embed.dataset.frameClass || "absolute inset-0 h-full w-full";
-        iframe.src = toPrivacyUrl(embed.dataset.src);
+        iframe.src = embed.dataset.src.replace("https://www.youtube.com/embed/", "https://www.youtube-nocookie.com/embed/");
         iframe.title = embed.dataset.title || "Video";
-        iframe.loading = "lazy";
+        iframe.loading = "eager";
         iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
         iframe.referrerPolicy = "strict-origin-when-cross-origin";
         iframe.allowFullscreen = true;
+        iframe.tabIndex = -1;
         iframe.setAttribute("frameborder", "0");
+        iframe.addEventListener("error", () => handlePlayerFailure(embed), { once: true });
 
         embed.appendChild(iframe);
         embed.dataset.loaded = "true";
+        embed.dataset.youtubeState = "loading";
+
+        ensureYouTubeApi()
+            .then(() => {
+                if (!iframe.isConnected || embed.dataset.youtubeState === "error") {
+                    return;
+                }
+
+                let hasPlayed = false;
+                let player = null;
+
+                player = new window.YT.Player(iframe, {
+                    events: {
+                        onReady: (event) => {
+                            event.target.mute();
+
+                            if (event.target.getPlayerState() === window.YT.PlayerState.PLAYING) {
+                                hasPlayed = true;
+                                embed.dataset.youtubeState = "playing";
+                                setPosterVisible(embed, false);
+                                return;
+                            }
+
+                            event.target.playVideo();
+                        },
+                        onStateChange: (event) => {
+                            if (event.data !== window.YT.PlayerState.PLAYING) {
+                                return;
+                            }
+
+                            hasPlayed = true;
+                            embed.dataset.youtubeState = "playing";
+                            setPosterVisible(embed, false);
+                        },
+                        onAutoplayBlocked: () => {
+                            if (!hasPlayed) {
+                                embed.dataset.youtubeState = "autoplay-blocked";
+                                setPosterVisible(embed, true);
+                            }
+                        },
+                        onError: () => handlePlayerFailure(embed, player),
+                    },
+                });
+
+                embed.youtubePlayer = player;
+            })
+            .catch(() => handlePlayerFailure(embed));
     };
 
     const isVisible = (element) => {
@@ -332,23 +501,48 @@ function initDeferredYouTubeEmbeds() {
         return style.display !== "none" && style.visibility !== "hidden" && element.getClientRects().length > 0;
     };
 
-    embeds.forEach((embed) => {
-        if (embed.dataset.autoload === "true") {
-            if (isVisible(embed)) {
-                window.setTimeout(() => loadEmbed(embed), Number(embed.dataset.autoloadDelay || 600));
-            }
-
+    const requestPlayback = (embed) => {
+        if (embed.youtubePlayer?.playVideo) {
+            embed.youtubePlayer.mute();
+            embed.youtubePlayer.playVideo();
             return;
         }
 
-        embed.addEventListener("click", () => loadEmbed(embed), { once: true });
+        loadEmbed(embed);
+    };
+
+    embeds.forEach((embed) => {
+        embed.addEventListener("click", () => requestPlayback(embed));
         embed.addEventListener("keydown", (event) => {
             if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();
-                loadEmbed(embed);
+                requestPlayback(embed);
             }
-        }, { once: true });
+        });
     });
+
+    const loadVisibleAutoplayEmbed = () => {
+        const embed = Array.from(embeds).find((candidate) => candidate.dataset.autoload === "true" && isVisible(candidate));
+
+        if (embed) {
+            loadEmbed(embed);
+        }
+    };
+
+    const scheduleAutoplay = () => {
+        if ("requestIdleCallback" in window) {
+            window.requestIdleCallback(loadVisibleAutoplayEmbed, { timeout: 1000 });
+            return;
+        }
+
+        window.setTimeout(loadVisibleAutoplayEmbed, 250);
+    };
+
+    if (document.readyState === "complete") {
+        scheduleAutoplay();
+    } else {
+        window.addEventListener("load", scheduleAutoplay, { once: true });
+    }
 }
 
 function resetRecaptcha(form = null) {
@@ -375,10 +569,9 @@ function resetRecaptcha(form = null) {
 onPageReady(() => {
     initNavbarScroll();
     initNavbarActions();
-    preloadSlickWhenNeeded();
-    initItemCarousel();
+    preloadSlickForLegacyCarousels();
+    initDeferredCarousels();
     initVoucherGallery();
-    initGuestReviewSlider();
     initDeferredYouTubeEmbeds();
 });
 

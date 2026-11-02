@@ -1,4 +1,6 @@
+@unless ($isAdminPreview ?? false)
 @section('redemption-modal', true)
+@endunless
 
 @push('meta')
 @php
@@ -36,7 +38,11 @@ $metaImage = $page->hero_image ?: $page->hero_mobile_image ?: null;
 @endpush
 
 @php
-$member = auth('member')->user();
+$member = $member ?? auth('member')->user();
+$isAdminPreview = $isAdminPreview ?? false;
+$profileEditUrl = $isAdminPreview
+? \App\Filament\Resources\Members\MemberResource::getUrl('edit', ['record' => $member], panel: 'admin')
+: route('membership.profile.edit');
 
 $memberName = $member?->name ?: $member?->full_name ?: 'Inner Circle Member';
 $memberEmail = $member?->email ?: '-';
@@ -389,7 +395,7 @@ $currentBookings = $confirmedBookings
 ->reject(fn ($booking) => $booking->check_out && \Carbon\Carbon::parse($booking->check_out)->lt($today))
 ->values();
 
-$bookingHistories = $checkedOutBookings->map(function ($booking) {
+$bookingHistories = $checkedOutBookings->map(function ($booking) use ($getBookingRoomImage) {
 $room = $booking->room_name ?: $booking->room_type ?: 'Room';
 $dateRange = trim(($booking->check_in?->format('d M Y') ?? '-') . ' - ' . ($booking->check_out?->format('d M Y') ?? '-'));
 
@@ -485,6 +491,17 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
     <section class="bg-white px-6 py-14 md:py-20">
         <div class="mx-auto w-full max-w-6xl">
 
+            @if ($isAdminPreview)
+            <div class="mb-8 border border-[#A88444] bg-[#F7F7F7] p-6 text-center">
+                <p class="text-xs leading-relaxed text-gray-600 sm:text-sm">
+                    Administrator preview for {{ $memberName }}. This dashboard is read-only.
+                </p>
+                <a href="{{ $profileEditUrl }}" class="mt-3 inline-flex text-xs font-medium uppercase tracking-[0.08em] text-[#A88444] hover:text-[#B8945B] sm:text-sm">
+                    Back to Edit Member
+                </a>
+            </div>
+            @endif
+
             <div class="mx-auto max-w-3xl text-center">
                 <h1 class="text-xl leading-snug uppercase text-slate-700 font-medium mb-3 sm:text-2xl">
                     Member Profile
@@ -532,7 +549,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                     </div>
 
                     <div class="mt-2 flex justify-center lg:justify-start">
-                        <a href="{{ \Illuminate\Support\Facades\Route::has('membership.profile.edit') ? route('membership.profile.edit') : '#' }}" class="inline-flex min-w-[145px] items-center justify-center border border-[#A88444] bg-[#A88444] px-4 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
+                        <a href="{{ $profileEditUrl }}" class="inline-flex min-w-[145px] items-center justify-center border border-[#A88444] bg-[#A88444] px-4 py-2.5 text-xs uppercase text-white transition hover:border-[#B8945B] hover:bg-[#B8945B] tracking-[0.08em] font-medium sm:text-sm">
                             Edit Profile
                         </a>
                     </div>
@@ -1124,7 +1141,8 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
 
                     $pointsLabel = trim((string) ($reward->points_label ?? ''));
 
-                    $memberCanRedeem = $member
+                    $memberCanRedeem = ! $isAdminPreview
+                    && $member
                     && $reward->is_active
                     && $points > 0
                     && (int) $member->points >= $points
@@ -1178,7 +1196,7 @@ $hasMoreHistories = $activityHistories->count() > $historyDisplayLimit;
                                         </button>
                                         @else
                                         <button type="button" disabled class="inline-flex min-w-[115px] items-center justify-center border border-slate-300 bg-slate-100 px-4 py-2.5 text-xs uppercase text-slate-400 cursor-not-allowed tracking-[0.08em] font-medium sm:text-sm">
-                                            Not Enough
+                                            {{ $isAdminPreview ? 'Preview Only' : 'Not Enough' }}
                                         </button>
                                         @endif
                                     </div>

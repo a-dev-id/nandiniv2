@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Accommodations\RelationManagers;
 
 use App\Support\FilamentWebpUpload;
+use App\Support\HomepageCache;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -16,9 +17,9 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -52,7 +53,7 @@ class ImagesRelationManager extends RelationManager
                     ->openable()
                     ->downloadable()
                     ->saveUploadedFileUsing(
-                        fn(TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
+                        fn (TemporaryUploadedFile $file, Get $get): string => FilamentWebpUpload::store(
                             file: $file,
                             directory: 'accommodations/gallery',
                             targetWidth: 1200,
@@ -90,6 +91,7 @@ class ImagesRelationManager extends RelationManager
         return $table
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
+            ->afterReordering(fn () => HomepageCache::forget())
             ->columns([
                 ImageColumn::make('image')
                     ->label('Image')
@@ -196,7 +198,7 @@ class ImagesRelationManager extends RelationManager
             $cropHeight
         );
 
-        $path = $directory . '/' . Str::uuid() . '.webp';
+        $path = $directory.'/'.Str::uuid().'.webp';
         $fullPath = $disk->path($path);
 
         imagewebp($finalImage, $fullPath, 82);

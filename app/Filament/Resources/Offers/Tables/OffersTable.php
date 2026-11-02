@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Offers\Tables;
 
+use App\Support\HomepageCache;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -20,8 +21,9 @@ class OffersTable
         return $table
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
+            ->afterReordering(fn () => HomepageCache::forget())
             ->reorderRecordsTriggerAction(
-                fn(Action $action, bool $isReordering) => $action
+                fn (Action $action, bool $isReordering) => $action
                     ->button()
                     ->label($isReordering ? 'Done sorting' : 'Sort offers')
             )
@@ -30,7 +32,7 @@ class OffersTable
                     ->label('Image')
                     ->disk('public')
                     ->square()
-                    ->getStateUsing(fn($record): ?string => $record->card_image
+                    ->getStateUsing(fn ($record): ?string => $record->card_image
                         ?: $record->hero_image
                         ?: $record->hero_mobile_image),
 
@@ -39,7 +41,7 @@ class OffersTable
                     ->searchable()
                     ->sortable()
                     ->weight('semibold')
-                    ->description(fn($record): ?string => $record->subtitle ?: $record->slug),
+                    ->description(fn ($record): ?string => $record->subtitle ?: $record->slug),
 
                 TextColumn::make('publish_status')
                     ->label('Status')
@@ -59,7 +61,7 @@ class OffersTable
 
                         return 'Live';
                     })
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'Live' => 'success',
                         'Scheduled' => 'info',
                         'Expired' => 'danger',

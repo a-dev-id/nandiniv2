@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Pages\Tables;
 
 use App\Models\Page;
+use App\Support\HomepageCache;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -22,6 +23,7 @@ class PagesTable
         return $table
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
+            ->afterReordering(fn () => HomepageCache::forget())
             ->reorderRecordsTriggerAction(
                 fn (Action $action, bool $isReordering) => $action
                     ->button()

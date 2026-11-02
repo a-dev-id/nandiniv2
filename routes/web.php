@@ -97,6 +97,10 @@ Route::domain(config('domains.main'))->group(function (): void {
             ->middleware('signed')
             ->name('verify.email');
 
+        Route::get('/members/{member}/dashboard', [MembershipAuthController::class, 'previewDashboard'])
+            ->middleware('auth:web')
+            ->name('dashboard.preview');
+
         Route::middleware('guest:member')->group(function () {
             Route::get('/sign-in', [MembershipAuthController::class, 'showLoginForm'])
                 ->name('login');

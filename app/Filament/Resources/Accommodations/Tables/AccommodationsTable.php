@@ -2,13 +2,14 @@
 
 namespace App\Filament\Resources\Accommodations\Tables;
 
+use App\Support\HomepageCache;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 
 class AccommodationsTable
@@ -18,6 +19,7 @@ class AccommodationsTable
         return $table
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
+            ->afterReordering(fn () => HomepageCache::forget())
             ->columns([
                 ImageColumn::make('card_image')
                     ->label('Image')
@@ -27,7 +29,7 @@ class AccommodationsTable
 
                 TextColumn::make('title')
                     ->label('Accommodation')
-                    ->description(fn($record): ?string => $record->subtitle ?: $record->slug)
+                    ->description(fn ($record): ?string => $record->subtitle ?: $record->slug)
                     ->searchable()
                     ->sortable()
                     ->wrap(),

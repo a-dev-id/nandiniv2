@@ -2,13 +2,14 @@
 
 namespace App\Filament\Resources\Experiences\Tables;
 
+use App\Support\HomepageCache;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
@@ -18,6 +19,7 @@ class ExperiencesTable
     {
         return $table
             ->reorderable('sort_order')
+            ->afterReordering(fn () => HomepageCache::forget())
             ->defaultSort('sort_order')
             ->columns([
                 ImageColumn::make('image')
@@ -27,7 +29,7 @@ class ExperiencesTable
 
                 TextColumn::make('title')
                     ->label('Experience')
-                    ->description(fn($record): ?string => $record->subtitle)
+                    ->description(fn ($record): ?string => $record->subtitle)
                     ->searchable()
                     ->sortable(),
 

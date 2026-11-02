@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Pages\RelationManagers;
 
 use App\Support\FilamentWebpUpload;
+use App\Support\HomepageCache;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -1100,6 +1101,7 @@ class SectionsRelationManager extends RelationManager
             ->recordTitleAttribute('title')
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
+            ->afterReordering(fn () => HomepageCache::forget())
             ->reorderRecordsTriggerAction(
                 fn (Action $action, bool $isReordering) => $action
                     ->button()
