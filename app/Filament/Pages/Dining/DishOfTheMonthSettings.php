@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Dining;
 
 use App\Filament\Resources\DiningSettings\DiningSettingResource;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -54,6 +55,18 @@ class DishOfTheMonthSettings extends DiningSettingsPage
                         Textarea::make('panel_description')->label('Panel Description')->rows(4)->columnSpanFull(),
                         DiningSettingResource::imageUpload('image', 'dining/dish-of-the-month', 1920, 1080, '16:9'),
                         TextInput::make('alt')->label('Image Alt Text')->maxLength(255),
+                        Select::make('mobile_image_alignment')
+                            ->label('Mobile Image Alignment')
+                            ->options([
+                                'left' => 'Left',
+                                'center' => 'Center',
+                                'right' => 'Right',
+                            ])
+                            ->default('center')
+                            ->formatStateUsing(fn (?string $state): string => $state ?? 'center')
+                            ->native(false)
+                            ->required()
+                            ->helperText('Choose which part of the image stays visible on screens below 768px. Desktop alignment stays centered.'),
                     ])
                     ->columnSpanFull(),
             ]),

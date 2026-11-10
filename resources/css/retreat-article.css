@@ -1,0 +1,16 @@
+.retreat-gallery { columns: 2; column-gap: 1rem; }
+.retreat-gallery .retreat-photo { break-inside: avoid; margin-bottom: 1rem; }
+@media (min-width: 768px) { .retreat-gallery { columns: 3; } }
+@media (min-width: 1280px) { .retreat-gallery { columns: 4; } }
+.retreat-lightbox { position: fixed; inset: 0; width: 100vw; max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 4.5rem 1.5rem 1.5rem; border: 0; color: white; background: #0f172a; }
+.retreat-lightbox[open] { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.retreat-lightbox::backdrop { background: #0f172a; }
+.retreat-lightbox figure { display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; min-height: 0; width: 100%; }
+.retreat-lightbox img { min-height: 0; max-height: calc(100dvh - 14rem); max-width: 100%; object-fit: contain; }
+.retreat-lightbox figcaption { max-width: 48rem; font-size: .875rem; line-height: 1.6; text-align: center; }
+.retreat-lightbox button { min-width: 44px; min-height: 44px; cursor: pointer; padding: .625rem .75rem; font-size: .875rem; }
+.retreat-lightbox button:hover { color: #D8C6A8; }
+.retreat-lightbox button:focus-visible { outline: 2px solid #D8C6A8; outline-offset: 3px; }
+.retreat-lightbox-close { position: absolute; top: 1rem; right: 1rem; }
+.retreat-lightbox-controls { display: flex; align-items: center; justify-content: space-between; gap: .5rem; width: min(100%, 40rem); font-size: .75rem; }
+html:has(.retreat-lightbox[open]) { overflow: hidden; }

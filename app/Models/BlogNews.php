@@ -9,6 +9,8 @@ use Illuminate\Support\Str;
 
 class BlogNews extends Model
 {
+    public const GO_TYME_SLUG = 'go-tyme-group-retreat-bali-2026';
+
     protected $table = 'blog_news';
 
     protected $fillable = [
@@ -98,5 +100,17 @@ class BlogNews extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    public function publicPath(): string
+    {
+        return ($this->slug === self::GO_TYME_SLUG ? '/blog/' : '/blog-news/').$this->slug;
+    }
+
+    public function publicUrl(): string
+    {
+        return $this->slug === self::GO_TYME_SLUG
+            ? route('blog.go-tyme')
+            : route('blog.show', $this->slug);
     }
 }

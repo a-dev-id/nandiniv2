@@ -4,6 +4,11 @@
     $dish = collect($settings?->signature_dishes ?? [])->first();
     $image = $dish['image'] ?? null;
     $imageUrl = null;
+    $imageAlignment = match ($dish['mobile_image_alignment'] ?? 'center') {
+        'left' => 'object-left',
+        'right' => 'object-right',
+        default => 'object-center',
+    };
 
     if (filled($image)) {
         $imageUrl = str_starts_with($image, 'http://') || str_starts_with($image, 'https://') || str_starts_with($image, '/')
@@ -15,7 +20,7 @@
 @if ($dish)
 <section class="relative min-h-[500px] w-full overflow-hidden bg-slate-900 font-sans sm:min-h-[600px] lg:min-h-[700px]" aria-labelledby="dish-of-the-month-title" data-gtm-section="dish_of_the_month">
     @if ($imageUrl)
-        <img src="{{ $imageUrl }}" alt="{{ $dish['alt'] ?? '' }}" class="absolute inset-0 h-full w-full object-cover" width="1920" height="1080" loading="lazy" decoding="async">
+        <img src="{{ $imageUrl }}" alt="{{ $dish['alt'] ?? '' }}" class="absolute inset-0 h-full w-full object-cover {{ $imageAlignment }} md:object-center" width="1920" height="1080" loading="lazy" decoding="async">
     @endif
     <div class="relative flex min-h-[500px] items-center px-6 py-14 sm:min-h-[600px] md:px-10 md:py-20 lg:min-h-[700px] 2xl:px-14">
         <div class="max-w-md text-white">

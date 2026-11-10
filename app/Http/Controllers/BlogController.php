@@ -67,6 +67,10 @@ class BlogController extends Controller
             return redirect()->route('blog.index', [], 301);
         }
 
+        if ($blog->slug === BlogNews::GO_TYME_SLUG && request()->routeIs('blog.show')) {
+            return redirect()->to($blog->publicUrl(), 301);
+        }
+
         return $this->showBlog($page, $blog, $blog->activeSections);
     }
 

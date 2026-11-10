@@ -1,5 +1,6 @@
 @props([
 'accommodation' => null,
+'actionLabel' => 'More Details',
 ])
 
 @php
@@ -76,7 +77,7 @@ $galleryImages = $accommodation?->activeImages
 
         <div class="mt-5 flex justify-center">
             <x-buttons.link-button :href="$url" class="px-4 py-2">
-                More Details
+                {{ $actionLabel }}
             </x-buttons.link-button>
         </div>
     </div>

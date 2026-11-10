@@ -7,6 +7,7 @@ use App\Models\AccommodationImage;
 use App\Models\Experience;
 use App\Models\ExperienceCategory;
 use App\Models\GuestReview;
+use App\Models\HomepageSetting;
 use App\Models\Offer;
 use App\Models\Page;
 use App\Models\PageSection;
@@ -136,6 +137,7 @@ class HomeController extends Controller
 
         return [
             'page' => $page->getAttributes(),
+            'homepageSettings' => HomepageSetting::query()->findOrFail(1)->getAttributes(),
             'offers' => $this->modelAttributes($offers),
             'villas' => $villas->map(fn (Accommodation $villa): array => [
                 'attributes' => $villa->getAttributes(),
@@ -161,6 +163,7 @@ class HomeController extends Controller
     {
         return [
             'page' => $this->hydrateModel(Page::class, $payload['page']),
+            'homepageSettings' => $this->hydrateModel(HomepageSetting::class, $payload['homepageSettings']),
             'offers' => $this->hydrateCollection(Offer::class, $payload['offers']),
             'villas' => $this->hydrateCollectionWithMany(
                 Accommodation::class,

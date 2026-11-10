@@ -23,6 +23,22 @@ class DiningLandingTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_dish_of_the_month_image_alignment_applies_only_below_the_desktop_breakpoint(): void
+    {
+        foreach (['left', 'center', 'right', null, 'invalid'] as $alignment) {
+            $settings = new DiningSetting(['signature_dishes' => [[
+                'heading' => 'Monthly Dish',
+                'image' => '/images/dining/monthly-dish.webp',
+                'mobile_image_alignment' => $alignment,
+            ]]]);
+            $expectedAlignment = in_array($alignment, ['left', 'right'], true) ? $alignment : 'center';
+
+            $this->blade('<x-dining-landing.dish-of-the-month :settings="$settings" />', ['settings' => $settings])
+                ->assertSee('object-cover object-'.$expectedAlignment.' md:object-center', false)
+                ->assertSee('Monthly Dish');
+        }
+    }
+
     public function test_dining_home_renders_shared_layout_hero_and_philosophy(): void
     {
         DiningSetting::query()->firstOrCreate()->update(['hero_image' => '/images/dining-approved.webp']);

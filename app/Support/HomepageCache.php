@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Cache;
 
 class HomepageCache
 {
-    public const KEY = 'homepage:public-content:v1';
+    public const KEY = 'homepage:public-content:v2';
 
     public const TTL_SECONDS = 300;
 

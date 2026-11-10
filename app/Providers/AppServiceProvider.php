@@ -8,6 +8,7 @@ use App\Models\AccommodationImage;
 use App\Models\Experience;
 use App\Models\ExperienceCategory;
 use App\Models\GuestReview;
+use App\Models\HomepageSetting;
 use App\Models\Offer;
 use App\Models\Page;
 use App\Models\PageSection;
@@ -42,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
             ExperienceCategory::class,
             Experience::class,
             GuestReview::class,
+            HomepageSetting::class,
         ] as $model) {
             $model::observe(HomepageCacheObserver::class);
         }

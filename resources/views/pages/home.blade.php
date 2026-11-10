@@ -69,28 +69,28 @@ $heroPosterDesktopAvif = asset('images/hero/nandini-video-poster-desktop-1280.av
 
     <section class="bg-white px-6 pt-14 text-center md:pt-20" data-gtm-section="villas">
         <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
-            Private Jungle Villas & Royal Suites
+            {{ $homepageSettings->villas_heading }}
         </h2>
         <p class="mx-auto max-w-4xl text-xs leading-relaxed text-slate-600 mb-3 sm:text-sm">
-            Stay in private jungle villas in Ubud and spacious royal suites surrounded by rainforest, tropical greenery, and the calm atmosphere of Bali. Each accommodation at Nandini Jungle by Hanging Gardens is designed for comfort, privacy, and warm Balinese character, creating a refined jungle retreat for couples, families, and guests seeking space to reconnect with nature.
+            {{ $homepageSettings->villas_description }}
         </p>
     </section>
 
-    <x-sections.item-carousel :items="$villas" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" action-label="More Details" :mobile-arrows-on-image="true" />
+    <x-sections.item-carousel :items="$villas" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :action-label="$homepageSettings->villas_action_label" :mobile-arrows-on-image="true" />
 
-    <x-sections.presidential-suite-feature :accommodation="$presidentialSuite" data-gtm-section="featured_suite" />
+    <x-sections.presidential-suite-feature :accommodation="$presidentialSuite" :action-label="$homepageSettings->featured_suite_action_label" data-gtm-section="featured_suite" />
 
     @if ($experienceCategories->isNotEmpty())
     <section class="bg-white px-6 pt-10 text-center md:pt-14" data-gtm-section="experiences">
         <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
-            Experiences Beyond the Stay
+            {{ $homepageSettings->experiences_heading }}
         </h2>
         <p class="mx-auto max-w-4xl text-xs leading-relaxed text-slate-600 mb-3 sm:text-sm">
-            Enhance your stay at Nandini Jungle by Hanging Gardens with curated experiences in the heart of Bali's rainforest. From romantic dining and jungle celebrations to floating breakfast and calming spa rituals, each experience is designed to enrich your Ubud retreat with nature, romance, and authentic Balinese hospitality.
+            {{ $homepageSettings->experiences_description }}
         </p>
     </section>
 
-    <x-sections.item-carousel :items="$experienceCategories" route-name="experiences.category" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" action-label="Explore More" :footer-href="route('experiences.index')" :show-reserve-button="false" :mobile-arrows-on-image="true" />
+    <x-sections.item-carousel :items="$experienceCategories" route-name="experiences.category" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :action-label="$homepageSettings->experiences_action_label" :footer-label="$homepageSettings->experiences_footer_label" :footer-href="route('experiences.index')" :show-reserve-button="false" :mobile-arrows-on-image="true" />
     @endif
 
 
@@ -98,53 +98,53 @@ $heroPosterDesktopAvif = asset('images/hero/nandini-video-poster-desktop-1280.av
     @if ($offers->isNotEmpty())
     <section class="bg-white px-6 pt-10 text-center md:pt-14" data-gtm-section="offers">
         <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
-            Curated Escapes at Nandini Jungle
+            {{ $homepageSettings->offers_heading }}
         </h2>
         <p class="mx-auto max-w-4xl text-xs leading-relaxed text-slate-600 mb-3 sm:text-sm">
-            Discover exclusive offers at Nandini Jungle by Hanging Gardens, created for guests who want more than a short getaway. From extended stays to twin-island escapes, each package combines nature, comfort, and meaningful experiences for a memorable Bali jungle resort stay.
+            {{ $homepageSettings->offers_description }}
         </p>
     </section>
 
-    <x-sections.item-carousel :items="$offers" route-name="offers.show" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" action-label="More Details" :footer-href="route('offers.index')" :mobile-arrows-on-image="true" />
+    <x-sections.item-carousel :items="$offers" route-name="offers.show" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :action-label="$homepageSettings->offers_action_label" :footer-label="$homepageSettings->offers_footer_label" :footer-href="route('offers.index')" :mobile-arrows-on-image="true" />
     @endif
 
     @if ($diningSections->isNotEmpty())
     <section class="bg-white px-6 pt-10 text-center md:pt-14" data-gtm-section="dining">
         <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
-            Culinary Journeys
+            {{ $homepageSettings->dining_heading }}
         </h2>
         <p class="mx-auto max-w-4xl text-xs leading-relaxed text-slate-600 mb-3 sm:text-sm">
-            Dine surrounded by rainforest views and warm Balinese hospitality at Nandini Jungle by Hanging Gardens. From authentic flavors to afternoon tea and relaxed drinks, every culinary experience is crafted to complement your stay at a peaceful jungle resort in Ubud.
+            {{ $homepageSettings->dining_description }}
         </p>
     </section>
 
-    <x-sections.item-carousel :items="$diningSections" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" action-label="Explore More" :show-reserve-button="false" :mobile-arrows-on-image="true" />
+    <x-sections.item-carousel :items="$diningSections" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :action-label="$homepageSettings->dining_action_label" :show-reserve-button="false" :mobile-arrows-on-image="true" />
     @endif
 
     @if ($spaSections->isNotEmpty())
     <section class="bg-white px-6 pt-10 text-center md:pt-14" data-gtm-section="spa_wellness">
         <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
-            Jungle Spa & Wellness
+            {{ $homepageSettings->spa_heading }}
         </h2>
         <p class="mx-auto max-w-4xl text-xs leading-relaxed text-slate-600 mb-3 sm:text-sm">
-            Restore body, mind, and spirit at Essence Spa, where each treatment is inspired by the natural surroundings of Nandini Jungle by Hanging Gardens. Set within a quiet rainforest environment, our spa experiences combine nature, relaxation, and Balinese wellness traditions for a calming wellness retreat in Ubud.
+            {{ $homepageSettings->spa_description }}
         </p>
     </section>
 
-    <x-sections.item-carousel :items="$spaSections" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" action-label="Explore More" :show-reserve-button="false" :mobile-arrows-on-image="true" />
+    <x-sections.item-carousel :items="$spaSections" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :action-label="$homepageSettings->spa_action_label" :show-reserve-button="false" :mobile-arrows-on-image="true" />
     @endif
 
     @if ($ubudJungleAdventures->isNotEmpty())
     <section class="bg-white px-6 pt-10 text-center md:pt-14" data-gtm-section="activities">
         <h2 class="text-lg font-medium uppercase text-slate-700 mb-3 sm:text-xl">
-            Bali Adventure Journeys
+            {{ $homepageSettings->adventures_heading }}
         </h2>
         <p class="mx-auto max-w-4xl text-xs leading-relaxed text-slate-600 mb-3 sm:text-sm">
-            Discover Bali's natural landscapes beyond Nandini Jungle by Hanging Gardens. From Ayung River rafting and ATV adventures to Mount Batur sunrise tours, each journey is designed for guests who want to explore more of the island while returning to the calm of their jungle retreat in Ubud.
+            {{ $homepageSettings->adventures_description }}
         </p>
     </section>
 
-    <x-sections.item-carousel :items="$ubudJungleAdventures" route-name="experiences.show" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" action-label="More Details" :footer-href="route('experiences.category', 'ubud-jungle-adventures')" :show-reserve-button="false" :mobile-arrows-on-image="true" />
+    <x-sections.item-carousel :items="$ubudJungleAdventures" route-name="experiences.show" wrapper-class="pt-8 md:pt-3" bottom-padding-class="pb-8 md:pb-12" button-align-class="justify-start" :action-label="$homepageSettings->adventures_action_label" :footer-label="$homepageSettings->adventures_footer_label" :footer-href="route('experiences.category', 'ubud-jungle-adventures')" :show-reserve-button="false" :mobile-arrows-on-image="true" />
     @endif
 
     @foreach ($remainingSections as $section)
@@ -173,5 +173,5 @@ $heroPosterDesktopAvif = asset('images/hero/nandini-video-poster-desktop-1280.av
     @endif
     @endforeach
 
-    <x-sections.guest-reviews :reviews="$guestReviews" heading="What Our Guests Say" see-more-label="See More" :see-more-href="route('guest-reviews.index')" data-gtm-section="guest_reviews" />
+    <x-sections.guest-reviews :reviews="$guestReviews" :heading="$homepageSettings->guest_reviews_heading" :see-more-label="$homepageSettings->guest_reviews_action_label" :see-more-href="route('guest-reviews.index')" data-gtm-section="guest_reviews" />
 </x-layouts.app>

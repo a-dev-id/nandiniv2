@@ -175,6 +175,15 @@ class ExperienceForm
                             ->placeholder('Example: Ayung River')
                             ->maxLength(255),
 
+                        TextInput::make('travel_time_minutes')
+                            ->label('Travel Time From Nandini')
+                            ->integer()
+                            ->nullable()
+                            ->minValue(1)
+                            ->maxValue(600)
+                            ->suffix('minutes')
+                            ->helperText('Approximate driving/travel time from Nandini Jungle by Hanging Gardens.'),
+
                         Section::make('Prices')
                             ->columnSpanFull()
                             ->schema([

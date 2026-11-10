@@ -122,6 +122,7 @@ class DiningSettingsPagesTest extends TestCase
                     'price_display' => 'IDR 500,000++',
                     'panel_description' => 'Updated panel description.',
                     'alt' => 'Updated dish image alt text',
+                    'mobile_image_alignment' => 'right',
                 ]],
                 'signature_menu_label' => 'See the menu',
                 'signature_menu_url' => 'https://example.com/monthly-menu',
@@ -133,7 +134,21 @@ class DiningSettingsPagesTest extends TestCase
         $settings->refresh();
         $this->assertSame('Updated Dish', $settings->signature_dishes[0]['heading']);
         $this->assertSame('Updated dish image alt text', $settings->signature_dishes[0]['alt']);
+        $this->assertSame('right', $settings->signature_dishes[0]['mobile_image_alignment']);
         $this->assertSame('See the menu', $settings->signature_menu_label);
         $this->assertSame('https://example.com/monthly-menu', $settings->signature_menu_url);
+    }
+
+    public function test_existing_dish_defaults_to_centered_mobile_image_alignment(): void
+    {
+        $settings = DiningSetting::query()->firstOrCreate();
+        $settings->update(['signature_dishes' => [['heading' => 'Existing Dish']]]);
+
+        Livewire::test(DishOfTheMonthSettings::class)
+            ->assertSee('Mobile Image Alignment')
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertSame('center', $settings->fresh()->signature_dishes[0]['mobile_image_alignment']);
     }
 }

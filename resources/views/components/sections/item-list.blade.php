@@ -326,6 +326,12 @@ $useShowMore = $model === 'experience'
             ? $item->resolved_button_url
             : null;
 
+            if ($item instanceof BlogNews && $item->slug === BlogNews::GO_TYME_SLUG) {
+                $url = $item->publicUrl();
+                $desktopImage = ltrim($item->card_image, '/');
+                $mobileImage = $desktopImage;
+            }
+
             $reserveLabel = $model === 'offer'
             ? ($item->button_label ?: 'Reserve')
             : null;
@@ -366,10 +372,10 @@ $useShowMore = $model === 'experience'
                             @if ($desktopImage || $mobileImage)
                             <picture class="block h-full w-full">
                                 @if ($mobileImage)
-                                <source media="(max-width: 767px)" srcset="{{ $offerMobileSrcset ?: asset('storage/' . $mobileImage) }}" @if ($offerMobileSrcset) sizes="calc(100vw - 26px)" @endif>
+                                <source media="(max-width: 767px)" srcset="{{ $item instanceof BlogNews && $item->slug === BlogNews::GO_TYME_SLUG ? asset($mobileImage) : ($offerMobileSrcset ?: asset('storage/' . $mobileImage)) }}" @if ($offerMobileSrcset) sizes="calc(100vw - 26px)" @endif>
                                 @endif
 
-                                <img src="{{ asset('storage/' . ($desktopImage ?: $mobileImage)) }}" alt="{{ $desktopAlt }}" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" />
+                                <img src="{{ $item instanceof BlogNews && $item->slug === BlogNews::GO_TYME_SLUG ? asset($desktopImage) : asset('storage/' . ($desktopImage ?: $mobileImage)) }}" alt="{{ $desktopAlt }}" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" />
                             </picture>
                             @endif
                         </div>
@@ -382,6 +388,10 @@ $useShowMore = $model === 'experience'
                                 {{ $item->title }}
                             </a>
                         </h3>
+
+                        @if ($item instanceof Experience)
+                        <x-experiences.travel-time :experience="$item" />
+                        @endif
 
                         @if (! empty($item->excerpt))
                         <p class="mt-2 grow text-xs leading-relaxed text-slate-600 sm:text-sm">
@@ -403,6 +413,9 @@ $useShowMore = $model === 'experience'
                     </div>
                     @else
                     <div class="flex grow flex-col pt-7">
+                        @if ($item instanceof BlogNews && $item->slug === BlogNews::GO_TYME_SLUG && $item->published_at)
+                        <time datetime="{{ $item->published_at->toDateString() }}" class="mb-3 text-xs text-slate-500">{{ $item->published_at->format('j F Y') }}</time>
+                        @endif
                         <h3 class="text-base leading-snug font-medium uppercase text-slate-700 mb-3 sm:text-lg">
                             {{ $item->title }}
                         </h3>

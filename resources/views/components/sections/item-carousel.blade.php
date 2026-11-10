@@ -31,6 +31,9 @@
                     $title = $item->title ?? $item->name ?? '';
                     $sectionImage = $item->images?->first();
                     $image = $item->card_image ?? $item->hero_image ?? $item->image ?? $sectionImage?->image ?? null;
+                    $imageUrl = $item instanceof \App\Models\BlogNews && $item->slug === \App\Models\BlogNews::GO_TYME_SLUG
+                        ? asset(ltrim($image, '/'))
+                        : asset('storage/' . $image);
                     $alt = $item->card_image_alt ?? $item->hero_image_alt ?? $item->image_alt ?? $sectionImage?->image_alt ?? ($title ?: 'Gallery image');
 
                     $url = '#';
@@ -38,7 +41,7 @@
                     if (! empty($item->show_url)) {
                     $url = $item->show_url;
                     } elseif ($routeName && \Illuminate\Support\Facades\Route::has($routeName)) {
-                    $url = route($routeName, $item->slug);
+                    $url = $item instanceof \App\Models\BlogNews && $item->slug === \App\Models\BlogNews::GO_TYME_SLUG ? $item->publicUrl() : route($routeName, $item->slug);
                     }
 
                     $excerptSummary = html_entity_decode(strip_tags((string) ($item->excerpt ?? '')), ENT_QUOTES | ENT_HTML5, 'UTF-8');
@@ -61,14 +64,14 @@
                     @if ($variant === 'gallery')
                     <div class="group aspect-[4/3] md:aspect-[4/3] overflow-hidden bg-slate-100">
                         @if ($image)
-                        <img src="{{ asset('storage/' . $image) }}" alt="{{ $alt }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" width="640" height="480" loading="lazy" decoding="async" />
+                        <img src="{{ $imageUrl }}" alt="{{ $alt }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" width="640" height="480" loading="lazy" decoding="async" />
                         @endif
                     </div>
                     @else
                     <a href="{{ $url }}" class="block">
                         <div class="aspect-[4/3] md:aspect-4/3 overflow-hidden bg-slate-100 group">
                             @if ($image)
-                            <img src="{{ asset('storage/' . $image) }}" alt="{{ $alt }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" width="640" height="480" loading="lazy" decoding="async" />
+                            <img src="{{ $imageUrl }}" alt="{{ $alt }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" width="640" height="480" loading="lazy" decoding="async" />
                             @endif
                         </div>
                     </a>
@@ -79,6 +82,10 @@
                                 {{ $title }}
                             </a>
                         </h3>
+
+                        @if ($item instanceof \App\Models\Experience)
+                        <x-experiences.travel-time :experience="$item" />
+                        @endif
 
                         @if ($summary)
                         <p class="mt-2 grow text-xs leading-relaxed text-slate-600 sm:text-sm">

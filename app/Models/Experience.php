@@ -24,6 +24,7 @@ class Experience extends Model
         'description',
         'inclusions',
         'duration',
+        'travel_time_minutes',
         'location',
         'opening_hours',
         'experience_type',
@@ -42,6 +43,7 @@ class Experience extends Model
     ];
 
     protected $casts = [
+        'travel_time_minutes' => 'integer',
         'is_featured' => 'boolean',
         'is_active' => 'boolean',
     ];

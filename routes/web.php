@@ -306,6 +306,10 @@ Route::domain(config('domains.main'))->group(function (): void {
     Route::get('/blog-news', [BlogController::class, 'index'])
         ->name('blog.index');
 
+    Route::get('/blog/go-tyme-group-retreat-bali-2026', [BlogController::class, 'show'])
+        ->defaults('slug', \App\Models\BlogNews::GO_TYME_SLUG)
+        ->name('blog.go-tyme');
+
     Route::get('/blog-news/page/{page}', [BlogController::class, 'index'])
         ->whereNumber('page')
         ->name('blog.page');

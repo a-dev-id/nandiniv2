@@ -136,7 +136,7 @@ class SitemapService
             ->orderByDesc('id')
             ->get(['slug', 'published_at', 'updated_at'])
             ->map(fn (BlogNews $blog) => $this->entry(
-                route('blog.show', $blog->slug),
+                $blog->publicUrl(),
                 $blog->updated_at ?? $blog->published_at,
                 'monthly',
                 '0.7'

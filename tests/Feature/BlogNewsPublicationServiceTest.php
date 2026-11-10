@@ -12,6 +12,13 @@ class BlogNewsPublicationServiceTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Publication counts concern this test's fixtures, not migrated articles.
+        BlogNews::query()->delete();
+    }
+
     public function test_it_syncs_blog_news_active_state_from_published_date(): void
     {
         Carbon::setTestNow('2026-07-06 09:00:00');

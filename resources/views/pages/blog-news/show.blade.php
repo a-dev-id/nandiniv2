@@ -6,14 +6,17 @@ $metaDescription = $blog->meta_description
 ?: \Illuminate\Support\Str::limit(strip_tags($blog->excerpt ?: $blog->description ?: ''), 160, '');
 
 $siteUrl = rtrim(config('resort.url'), '/');
-$canonical = $siteUrl.'/blog-news/'.$blog->slug;
+$canonical = $siteUrl.$blog->publicPath();
+$isRetreat = $blog->slug === \App\Models\BlogNews::GO_TYME_SLUG;
 
 $metaImage = $blog->hero_image
 ?? $blog->card_image
 ?? $page->hero_image
 ?? null;
 
-$metaImageUrl = \App\Support\SeoStructuredData::image($metaImage, $siteUrl);
+$metaImageUrl = $isRetreat
+    ? $siteUrl.'/'.ltrim($metaImage, '/')
+    : \App\Support\SeoStructuredData::image($metaImage, $siteUrl);
 
 $structuredData = array_filter([
     '@context' => 'https://schema.org',
@@ -60,14 +63,20 @@ $structuredData = array_filter([
 
 @if (! empty($metaImage))
 <meta property="og:image" content="{{ $metaImageUrl }}">
+@unless ($isRetreat)
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+@endunless
+<meta property="og:image:alt" content="{{ $blog->hero_image_alt ?: $blog->title }}">
 <meta name="twitter:image" content="{{ $metaImageUrl }}">
 @endif
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ $metaTitle }}">
 <meta name="twitter:description" content="{{ $metaDescription }}">
+@if (request()->routeIs('blog.preview'))
+<meta name="robots" content="noindex, nofollow">
+@endif
 <script type="application/ld+json">@json($structuredData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)</script>
 <x-seo.json-ld :data="\App\Support\SeoStructuredData::breadcrumb($canonical, $blog->title, 'https://nandinibali.com/blog-news', 'Blog & News')" />
 @endpush
@@ -135,13 +144,31 @@ $structuredData = array_filter([
     $summarizePrompt = rawurlencode("Visit this URL and summarize this article for me:\n{$canonical}");
     @endphp
 
+    @if ($isRetreat)
+    <div data-retreat-story>
+    @endif
     @if ($heroImage)
+    @if ($isRetreat)
+    <a href="{{ asset('images/go-tyme-images/dsc08615-go-tyme-group.webp') }}" data-retreat-photo data-alt="{{ $heroAlt }}" aria-label="Enlarge photograph: {{ $heroAlt }}" class="block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A88444]">
+    @endif
     <x-heroes.image-hero :image-src="$heroImageUrl" :mobile-image-src-manual="$heroMobileImageUrl" :alt-text="$heroAlt" />
+    @if ($isRetreat)
+    </a>
+    @endif
     @endif
 
     {{-- Blog Content --}}
     <section class="py-14 md:py-20 px-6">
         <div class="max-w-4xl mx-auto text-center">
+            @if ($isRetreat)
+            <nav aria-label="Breadcrumb" class="mb-10 text-left text-xs leading-relaxed text-slate-500">
+                <ol class="flex flex-wrap gap-2">
+                    <li><a class="hover:underline" href="{{ route('home') }}">Home</a><span class="ml-2" aria-hidden="true">/</span></li>
+                    <li><a class="hover:underline" href="{{ route('blog.index') }}">Blog &amp; News</a><span class="ml-2" aria-hidden="true">/</span></li>
+                    <li aria-current="page">Go Tyme Group Retreat</li>
+                </ol>
+            </nav>
+            @endif
             <div data-gtm-section="article_intro">
                 <p class="mb-4 text-xs uppercase text-slate-500 sm:text-sm">
                     {{ ucfirst($blog->type) }}
@@ -211,6 +238,7 @@ $structuredData = array_filter([
             </div>
 
             {{-- Blog Sections --}}
+            @unless ($isRetreat)
             @foreach ($sections as $section)
             @php($gtmSection = data_get($section->items, 'gtm_section'))
             @if ($section->section_key === 'intro_text_section')
@@ -249,9 +277,14 @@ $structuredData = array_filter([
                 </x-buttons.link-button>
             </div>
             @endif
+            @endunless
         </div>
     </section>
 
+    @if ($isRetreat)
+    <x-blog.retreat-story :blog="$blog" :sections="$sections" />
+    </div>
+    @endif
     {{-- Related Blog --}}
     @if ($relatedBlogs->isNotEmpty())
     <section class="pt-14 md:pt-20" data-gtm-section="related_content">
