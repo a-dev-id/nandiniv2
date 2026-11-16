@@ -4,7 +4,9 @@ namespace Tests\Unit;
 
 use App\Models\DiningExperience;
 use App\Models\DiningSetting;
+use App\Models\Page;
 use App\Support\DiningStructuredData;
+use App\Support\HomepageStructuredData;
 use App\Support\SeoStructuredData;
 use Tests\TestCase;
 
@@ -36,6 +38,10 @@ class SeoStructuredDataTest extends TestCase
         $this->assertSame('Restaurant', $entity['@type']);
         $this->assertSame('Wild Ginger Restaurant', $entity['name']);
         $this->assertSame('80571', $entity['address']['postalCode']);
+        $hotel = collect(HomepageStructuredData::make(new Page)['@graph'])->firstWhere('@type', 'Hotel');
+        $this->assertSame([
+            '@type' => 'Hotel', '@id' => $hotel['@id'], 'name' => $hotel['name'],
+        ], $entity['containedInPlace']);
         $this->assertArrayNotHasKey('openingHours', $entity);
         $this->assertArrayNotHasKey('aggregateRating', $entity);
         $this->assertCount(2, $data['@graph']);

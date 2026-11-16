@@ -32,7 +32,7 @@ final class DiningStructuredData
                     'postalCode' => $address['postal_code'],
                     'addressCountry' => $address['country'],
                 ],
-                'containedInPlace' => ['@id' => SeoStructuredData::MAIN.'/#hotel'],
+                'containedInPlace' => SeoStructuredData::hotel(),
                 'parentOrganization' => ['@id' => SeoStructuredData::MAIN.'/#organization'],
                 'hasMenu' => $settings?->visit_food_menu_url ?: $settings?->food_menu_url,
                 'acceptsReservations' => $settings?->reservation_url ?: null,
@@ -40,6 +40,7 @@ final class DiningStructuredData
             ], fn ($value): bool => $value !== null && $value !== '');
             $graph[0]['mainEntity'] = ['@id' => $restaurantUrl.'#restaurant'];
         }
+
         return ['@context' => 'https://schema.org', '@graph' => $graph];
     }
 }

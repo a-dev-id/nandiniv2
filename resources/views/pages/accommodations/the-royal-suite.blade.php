@@ -62,6 +62,10 @@ $suiteCardContent = $royalSuiteItems->mapWithKeys(function ($accommodation) {
 })->all();
 @endphp
 
+@push('meta')
+<x-seo.json-ld :data="\App\Support\AccommodationStructuredData::listing($page, $royalSuiteItems)" />
+@endpush
+
 <x-layouts.app>
     <x-heroes.image-hero :page="$page" />
 

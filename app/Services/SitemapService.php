@@ -62,7 +62,6 @@ class SitemapService
         $urls = [
             ['route' => 'home', 'changefreq' => 'weekly', 'priority' => '1.0'],
             ['route' => 'explore', 'changefreq' => 'weekly', 'priority' => '0.8'],
-            ['route' => 'accommodations.index', 'changefreq' => 'weekly', 'priority' => '0.8'],
             ['route' => 'accommodations.villas', 'changefreq' => 'weekly', 'priority' => '0.8'],
             ['route' => 'accommodations.suites', 'changefreq' => 'weekly', 'priority' => '0.8'],
             ['route' => 'accommodations.presidential-royal-suite.show', 'changefreq' => 'weekly', 'priority' => '0.8'],

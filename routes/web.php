@@ -167,7 +167,7 @@ Route::domain(config('domains.main'))->group(function (): void {
     | Accommodations
     |--------------------------------------------------------------------------
     */
-    Route::get('/the-royal-suites-and-jungle-villas', [AccommodationController::class, 'index'])
+    Route::permanentRedirect('/the-royal-suites-and-jungle-villas', '/jungle-villas')
         ->name('accommodations.index');
 
     Route::get('/jungle-villas', [AccommodationController::class, 'villas'])

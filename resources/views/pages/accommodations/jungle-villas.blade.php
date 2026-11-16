@@ -1,5 +1,5 @@
 @push('meta')
-<x-seo.json-ld :data="\App\Support\SeoStructuredData::page('https://nandinibali.com/jungle-villas', $page->title, $page->meta_description)" />
+<x-seo.json-ld :data="\App\Support\AccommodationStructuredData::listing($page, $accommodations)" />
 <title>{{ $page->meta_title ?: $page->title }}</title>
 <meta name="description" content="{{ $page->meta_description ?? '' }}">
 

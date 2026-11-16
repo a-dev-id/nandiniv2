@@ -86,6 +86,9 @@
 </head>
 
 <body class="font-sans mx-auto lg:mx-0">
+    {{-- Visaible --}}
+    <noscript><a href="https://rates.nandinibali.com/hotel/nandini-jungle-by-hanging-gardens/">Nandini Jungle by Hanging Gardens — live room availability &amp; direct rates for every date</a></noscript>
+
     {{-- Google Tag Manager (noscript) --}}
     <noscript>
         <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TW272WHM" height="0" width="0" style="display:none;visibility:hidden"></iframe>

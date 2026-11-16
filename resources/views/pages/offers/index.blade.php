@@ -1,4 +1,5 @@
 @push('meta')
+<x-seo.json-ld :data="\App\Support\OfferStructuredData::listing($page, $offers->take(99))" />
 @php
 $metaTitle = $page->meta_title ?: $page->title;
 $metaDescription = $page->meta_description ?? '';

@@ -5,7 +5,9 @@ namespace App\Support;
 final class SeoStructuredData
 {
     public const MAIN = 'https://nandinibali.com';
+
     public const DINING = 'https://dining.nandinibali.com';
+
     public const SPA = 'https://spa.nandinibali.com';
 
     public static function image(?string $path, string $site = self::MAIN): ?string
@@ -20,16 +22,37 @@ final class SeoStructuredData
             return 'https://'.substr($path, 7);
         }
         $path = ltrim($path, '/');
+
         return rtrim($site, '/').'/'.(str_starts_with($path, 'storage/') ? $path : 'storage/'.$path);
     }
 
-    public static function breadcrumb(string $url, string $title, string $parentUrl, string $parentName): array
+    public static function hotel(): array
+    {
+        return [
+            '@type' => 'Hotel',
+            '@id' => rtrim((string) config('resort.url'), '/').'/#hotel',
+            'name' => config('resort.name'),
+        ];
+    }
+
+    public static function text(?string $value): ?string
+    {
+        $value = preg_replace('/<[^>]*>/', ' ', (string) $value);
+        $value = trim(preg_replace('/\s+/u', ' ', html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8')));
+
+        return $value === '' ? null : $value;
+    }
+
+    public static function breadcrumb(string $url, string $title, ?string $parentUrl = null, ?string $parentName = null): array
     {
         $items = [
             ['name' => 'Home', 'item' => self::MAIN.'/'],
-            ['name' => $parentName, 'item' => $parentUrl],
-            ['name' => $title, 'item' => $url],
         ];
+        if ($parentUrl && $parentName) {
+            $items[] = ['name' => $parentName, 'item' => $parentUrl];
+        }
+        $items[] = ['name' => $title, 'item' => $url];
+
         return [
             '@context' => 'https://schema.org',
             '@type' => 'BreadcrumbList',
@@ -52,5 +75,29 @@ final class SeoStructuredData
             'isPartOf' => ['@id' => self::MAIN.'/#website'],
             'about' => ['@id' => self::MAIN.'/#hotel'],
         ], fn ($value): bool => $value !== null && $value !== '');
+    }
+
+    public static function collection(string $url, string $title, ?string $description, array $items, string $type = 'CollectionPage'): array
+    {
+        $page = self::page($url, $title, $description);
+        unset($page['@context']);
+        $page['@type'] = $type;
+        $page['mainEntity'] = ['@id' => $url.'#itemlist'];
+        $items = array_values($items);
+
+        return [
+            '@context' => 'https://schema.org',
+            '@graph' => [
+                $page,
+                [
+                    '@type' => 'ItemList',
+                    '@id' => $url.'#itemlist',
+                    'itemListElement' => array_map(fn (array $item, int $index): array => [
+                        '@type' => 'ListItem',
+                        'position' => $index + 1,
+                    ] + $item, $items, array_keys($items)),
+                ],
+            ],
+        ];
     }
 }

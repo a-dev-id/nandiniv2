@@ -223,7 +223,7 @@ $faqSchema = [
                 <h2 class="text-lg font-medium uppercase leading-snug text-slate-700 sm:text-xl">{{ $accommodationsSection?->title ?: 'Jungle Villas & Royal Suites for Your Honeymoon' }}</h2>
                 <div class="mx-auto mt-3 max-w-3xl text-xs leading-relaxed text-gray-600 sm:text-sm">{!! $accommodationsSection?->description ?: '<p>Discover private jungle villas and spacious Royal Suites created for romantic stays in Ubud.</p>' !!}</div>
                 @if (filled($accommodationsButtonLabel))
-                    <x-buttons.link-button :href="$sectionLink($accommodationsSection, route('accommodations.index'))" variant="solid" class="mt-8">{{ $accommodationsButtonLabel }}</x-buttons.link-button>
+                    <x-buttons.link-button :href="$sectionLink($accommodationsSection, route('accommodations.villas'))" variant="solid" class="mt-8">{{ $accommodationsButtonLabel }}</x-buttons.link-button>
                 @endif
             </div>
             <div class="mt-10 grid gap-8 md:grid-cols-3">
