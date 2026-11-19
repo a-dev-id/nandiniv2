@@ -37,6 +37,7 @@ class User extends Authenticatable implements FilamentUser
     {
         return $panel->getId() === 'admin'
             && ($this->hasRole(Role::ADMINISTRATOR)
+                || $this->hasPermissionTo(Permission::WEBSITE_CONTENT_MANAGE)
                 || $this->hasPermissionTo(Permission::AFFILIATE_VIEW)
                 || $this->hasPermissionTo(Permission::AFFILIATE_BOOKING_VIEW)
                 || $this->hasPermissionTo(Permission::AFFILIATE_COMMISSION_VIEW)

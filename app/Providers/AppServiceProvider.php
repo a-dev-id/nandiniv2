@@ -13,10 +13,13 @@ use App\Models\Offer;
 use App\Models\Page;
 use App\Models\PageSection;
 use App\Models\PageSectionImage;
+use App\Models\User;
 use App\Observers\HomepageCacheObserver;
 use App\Services\Affiliate\Booking\AffiliateBookingAnalyticsService;
 use App\Services\Affiliate\Click\AffiliateClickAnalyticsService;
 use App\Services\Payments\Flywire\FlywirePaymentGateway;
+use App\Support\WebsiteContentAccess;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -31,6 +34,14 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Gate::before(function ($user, string $ability, array $arguments) {
+            if ($user instanceof User && WebsiteContentAccess::isEditor($user)) {
+                return WebsiteContentAccess::allows($user, $arguments[0] ?? null);
+            }
+
+            return null;
+        });
+
         Schema::defaultStringLength(191);
 
         foreach ([

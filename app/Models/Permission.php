@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Permission extends Model
 {
+    public const WEBSITE_CONTENT_MANAGE = 'website-content.manage';
+
     public const AFFILIATE_DASHBOARD_VIEW_OWN = 'affiliate-dashboard.view-own';
 
     public const AFFILIATE_PROFILE_VIEW_OWN = 'affiliate-profile.view-own';

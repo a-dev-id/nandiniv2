@@ -10,6 +10,8 @@ class Role extends Model
 {
     public const ADMINISTRATOR = 'administrator';
 
+    public const WEBSITE_CONTENT_EDITOR = 'website-content-editor';
+
     public const SALES_MARKETING = 'sales-marketing';
 
     public const FINANCE = 'finance';

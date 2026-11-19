@@ -14,6 +14,7 @@ use App\Filament\Widgets\VoucherOverview;
 use App\Http\Middleware\RestrictFilamentAffiliateStaffAccess;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Support\WebsiteContentAccess;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -66,6 +67,12 @@ class AdminPanelProvider extends PanelProvider
                     return true;
                 }
 
+                if (WebsiteContentAccess::isEditor($user)) {
+                    return (new NavigationBuilder)->group('Website Content', collect(
+                        WebsiteContentAccess::resources()
+                    )->flatMap(fn (string $resource): array => $resource::getNavigationItems())->all());
+                }
+
                 return (new NavigationBuilder)
                     ->group('Affiliate', [
                         ...($user->hasPermissionTo(Permission::AFFILIATE_VIEW) ? AffiliateResource::getNavigationItems() : []),
@@ -88,8 +95,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-                RestrictFilamentAffiliateStaffAccess::class,
             ])
+            ->authMiddleware([
+                RestrictFilamentAffiliateStaffAccess::class,
+            ], isPersistent: true)
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label('Guest Operations'),

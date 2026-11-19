@@ -2,8 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Filament\Resources\Pages\PageResource;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Support\WebsiteContentAccess;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,6 +17,21 @@ class RestrictFilamentAffiliateStaffAccess
         $user = $request->user();
 
         if ($user?->hasRole(Role::ADMINISTRATOR)) {
+            return $next($request);
+        }
+
+        if (WebsiteContentAccess::isEditor($user)) {
+            abort_unless($user->hasPermissionTo(Permission::WEBSITE_CONTENT_MANAGE), 403);
+
+            if ($request->routeIs('filament.admin.pages.dashboard')) {
+                return redirect(PageResource::getUrl('index'));
+            }
+
+            $allowed = collect(WebsiteContentAccess::resources())->contains(
+                fn (string $resource): bool => $request->routeIs('filament.admin.resources.'.$resource::getSlug().'.*')
+            );
+            abort_unless($allowed, 403);
+
             return $next($request);
         }
 
